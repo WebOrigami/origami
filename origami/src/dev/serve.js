@@ -11,7 +11,6 @@ const defaultPort = 5000;
 /**
  * Start a local web server for the indicated tree.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  *
  * @param {Maplike} maplike

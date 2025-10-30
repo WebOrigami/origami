@@ -4,7 +4,6 @@ import {
   getTreeArgument,
   keysFromPath,
 } from "@weborigami/async-tree";
-import { InvokeFunctionsTransform } from "@weborigami/language";
 import crawlResources from "./crawlResources.js";
 import { addValueToObject, getBaseUrl } from "./utilities.js";
 
@@ -55,7 +54,7 @@ export default async function crawlBuiltin(maplike, baseHref) {
   // value.
   const result = Tree.deepMerge(
     new DeepObjectMap(cache),
-    new (InvokeFunctionsTransform(DeepObjectMap))(resources)
+    await Tree.invokeFunctions(resources, { deep: true })
   );
   return result;
 }

@@ -17,7 +17,6 @@ const mapPathToRoot = new Map();
  * Otherwise, this looks for a package.json file to determine the project root.
  * If no package.json is found, the current folder is used as the project root.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @param {string} [dirname]
  */

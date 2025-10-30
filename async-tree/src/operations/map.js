@@ -6,7 +6,7 @@ import isUnpackable from "../utilities/isUnpackable.js";
 import toFunction from "../utilities/toFunction.js";
 import cachedKeyFunctions from "./cachedKeyFunctions.js";
 import extensionKeyFunctions from "./extensionKeyFunctions.js";
-import isAsyncTree from "./isAsyncTree.js";
+import isMap from "./isMap.js";
 import keys from "./keys.js";
 import parseExtensions from "./parseExtensions.js";
 
@@ -48,9 +48,7 @@ function createGet(tree, options, mapFn) {
         // Special case: deep tree and value is expected to be a subtree
         const sourceValue = await tree.get(resultKey);
         // If we did get a subtree, apply the map to it
-        const resultValue = isAsyncTree(sourceValue)
-          ? mapFn(sourceValue)
-          : undefined;
+        const resultValue = isMap(sourceValue) ? mapFn(sourceValue) : undefined;
         return resultValue;
       } else {
         // No inverseKeyFn, or it returned undefined; use resultKey
@@ -70,7 +68,7 @@ function createGet(tree, options, mapFn) {
     if (sourceValue === undefined) {
       // No source value means no result value
       resultValue = undefined;
-    } else if (deep && isAsyncTree(sourceValue)) {
+    } else if (deep && isMap(sourceValue)) {
       // We weren't expecting a subtree but got one; map it
       resultValue = mapFn(sourceValue);
     } else if (valueFn) {

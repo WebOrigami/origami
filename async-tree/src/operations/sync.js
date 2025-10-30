@@ -1,7 +1,7 @@
 import SyncMap from "../drivers/SyncMap.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import entries from "./entries.js";
-import isAsyncTree from "./isAsyncTree.js";
+import isMap from "./isMap.js";
 
 /**
  * Resolve the async tree to a synchronous tree.
@@ -15,7 +15,7 @@ export default async function sync(maplike) {
   const treeEntries = await entries(tree);
   const resolved = await Promise.all(
     treeEntries.map(async ([key, value]) => {
-      const resolvedValue = isAsyncTree(value) ? await sync(value) : value;
+      const resolvedValue = isMap(value) ? await sync(value) : value;
       return [key, resolvedValue];
     })
   );

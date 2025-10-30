@@ -6,7 +6,6 @@ import documentObject from "../common/documentObject.js";
  * Inline any Origami expressions found inside ${...} placeholders in the input
  * text.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @param {any} input
  */

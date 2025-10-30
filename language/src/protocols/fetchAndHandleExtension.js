@@ -3,7 +3,6 @@ import handleExtension from "../runtime/handleExtension.js";
 /**
  * Fetch the resource at the given href.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @param {string} href
  */

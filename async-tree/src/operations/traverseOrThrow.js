@@ -7,7 +7,6 @@ import from from "./from.js";
  * step of the path doesn't lead to a result.
  *
  * @typedef {import("../../index.ts").Maplike} Maplike
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @param {Maplike} maplike
  * @param  {...any} keys

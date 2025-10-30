@@ -15,7 +15,6 @@ const TypedArray = Object.getPrototypeOf(Uint8Array);
  * Parse an Origami expression, evaluate it in the context of a tree (provided
  * by `this`), and return the result as text.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @param {string} expression
  */

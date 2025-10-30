@@ -18,9 +18,11 @@ import indexPage from "../origami/indexPage.js";
  * As a convenience, this transform also provides a default index.html page if
  * the tree doesn't define one.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("../../index.ts").Constructor<AsyncTree>} AsyncTreeConstructor
- * @param {AsyncTreeConstructor} Base
+ * @typedef {import("@weborigami/async-tree").AsyncMap} AsyncMap
+ * @typedef {import("../../index.ts").Constructor<Map>} MapConstructor
+ * @typedef {import("../../index.ts").Constructor<AsyncMap>} AsyncMapConstructor
+ *
+ * @param {MapConstructor|AsyncMapConstructor} Base
  */
 export default function ExplorableSiteTransform(Base) {
   return class ExplorableSite extends Base {
@@ -38,7 +40,7 @@ export default function ExplorableSiteTransform(Base) {
         }
       }
 
-      if (Tree.isAsyncTree(value)) {
+      if (Tree.isMap(value)) {
         // Ensure this transform is applied to any tree result so the user
         // browse into data and trees of classes other than the current class.
         if (!isTransformApplied(ExplorableSiteTransform, value)) {

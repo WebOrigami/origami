@@ -3,7 +3,6 @@ import getTreeArgument from "../utilities/getTreeArgument.js";
 /**
  * Return the number of keys in the tree.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
  * @param {Maplike} maplike

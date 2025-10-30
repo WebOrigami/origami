@@ -1,6 +1,6 @@
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import from from "./from.js";
-import isAsyncTree from "./isAsyncTree.js";
+import isMap from "./isMap.js";
 
 /**
  * Returns a function that traverses a tree deeply and returns the values of the
@@ -25,7 +25,7 @@ async function traverse(tree, count) {
       break;
     }
     let value = await tree.get(key);
-    if (isAsyncTree(value)) {
+    if (isMap(value)) {
       const traversed = await traverse(value, count);
       values.push(...traversed.values);
       count = traversed.count;

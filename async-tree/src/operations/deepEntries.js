@@ -1,6 +1,6 @@
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import entries from "./entries.js";
-import isAsyncTree from "./isAsyncTree.js";
+import isMap from "./isMap.js";
 
 /**
  * Return the deep nested entries in the tree as arrays of [key, value] pairs.
@@ -15,9 +15,7 @@ export default async function deepEntries(maplike) {
   const treeEntries = await entries(tree);
   const result = await Promise.all(
     treeEntries.map(async ([key, value]) => {
-      const resolvedValue = isAsyncTree(value)
-        ? await deepEntries(value)
-        : value;
+      const resolvedValue = isMap(value) ? await deepEntries(value) : value;
       return [key, resolvedValue];
     })
   );

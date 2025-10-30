@@ -4,7 +4,6 @@ import keys from "./keys.js";
 /**
  * Return the number of keys in the tree.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
  * @param {Maplike} maplike

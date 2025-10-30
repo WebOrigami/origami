@@ -4,7 +4,6 @@ import process, { stdout } from "node:process";
 import { transformObject } from "../common/utilities.js";
 
 /**
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  *
  * @param {Maplike} source

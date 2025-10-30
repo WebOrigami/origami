@@ -38,7 +38,7 @@ export default async function changes(oldMaplike, newMaplike) {
     const oldValue = await oldTree.get(oldKey);
     const newValue = await newTree.get(oldKey);
 
-    if (Tree.isAsyncTree(oldValue) && Tree.isAsyncTree(newValue)) {
+    if (Tree.isMap(oldValue) && Tree.isMap(newValue)) {
       const treeChanges = await changes(oldValue, newValue);
       if (treeChanges && Object.keys(treeChanges).length > 0) {
         result ??= {};

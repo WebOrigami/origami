@@ -3,7 +3,7 @@ import * as trailingSlash from "../trailingSlash.js";
 import isPlainObject from "../utilities/isPlainObject.js";
 import isUnpackable from "../utilities/isUnpackable.js";
 import from from "./from.js";
-import isAsyncTree from "./isAsyncTree.js";
+import isMap from "./isMap.js";
 import keys from "./keys.js";
 
 /**
@@ -15,7 +15,6 @@ import keys from "./keys.js";
  * returns a defined value for the key, that value is returned. If none of the
  * trees return a defined value, the `get` method returns undefined.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.ts").PlainObject} PlainObject
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
@@ -31,9 +30,7 @@ export default async function merge(...treelikes) {
   );
 
   // If all arguments are plain objects, return a plain object.
-  if (
-    unpacked.every((source) => !isAsyncTree(source) && isPlainObject(source))
-  ) {
+  if (unpacked.every((source) => !isMap(source) && isPlainObject(source))) {
     return unpacked.reduce((acc, obj) => ({ ...acc, ...obj }), {});
   }
 

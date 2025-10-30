@@ -238,7 +238,7 @@ Tree:
     isAsyncMutableTree:
       args: (object)
       description: True if object is an async mutable tree
-    isAsyncTree:
+    isMap:
       args: (object)
       description: True if object is an async tree
     isTraversable:

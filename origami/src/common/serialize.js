@@ -2,7 +2,7 @@
  * @typedef {import("../../index.ts").JsonValue} JsonValue
  * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
  * @typedef {import("@weborigami/async-tree").Maplike} Maplike
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/async-tree").SyncOrAsyncMap} SyncOrAsyncMap
  */
 
 import { Tree, toPlainValue } from "@weborigami/async-tree";
@@ -14,14 +14,15 @@ import * as YAMLModule from "yaml";
 const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
 /**
- *
  * @param {string} text
- * @param {AsyncTree|null} [parent]
+ * @param {SyncOrAsyncMap|null} [parent]
  */
 export async function evaluateYaml(text, parent) {
   const data = parseYaml(String(text));
-  if (Tree.isAsyncTree(data)) {
-    data.parent = parent;
+  if (Tree.isMap(data)) {
+    if ("parent" in data && data.parent !== undefined) {
+      /** @type {any} */ (data).parent = parent;
+    }
     return Tree.plain(data);
   } else {
     return data;

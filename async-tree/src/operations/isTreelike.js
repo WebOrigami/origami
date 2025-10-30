@@ -1,5 +1,5 @@
 import isPlainObject from "../utilities/isPlainObject.js";
-import isAsyncTree from "./isAsyncTree.js";
+import isMap from "./isMap.js";
 
 /**
  * Returns true if the indicated object can be directly treated as an
@@ -23,7 +23,7 @@ import isAsyncTree from "./isAsyncTree.js";
  */
 export default function isMaplike(obj) {
   return (
-    isAsyncTree(obj) ||
+    isMap(obj) ||
     obj instanceof Array ||
     obj instanceof Function ||
     obj instanceof Map ||

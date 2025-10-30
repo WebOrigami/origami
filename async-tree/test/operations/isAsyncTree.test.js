@@ -1,26 +1,26 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import isAsyncTree from "../../src/operations/isAsyncTree.js";
+import isMap from "../../src/operations/isMap.js";
 
-describe("isAsyncTree", () => {
+describe("isMap", () => {
   test("returns true if the object is a tree", () => {
     const missingGetAndKeys = {};
-    assert(!isAsyncTree(missingGetAndKeys));
+    assert(!isMap(missingGetAndKeys));
 
     const missingIterator = {
       async get() {},
     };
-    assert(!isAsyncTree(missingIterator));
+    assert(!isMap(missingIterator));
 
     const missingGet = {
       async *keys() {},
     };
-    assert(!isAsyncTree(missingGet));
+    assert(!isMap(missingGet));
 
     const hasGetAndKeys = {
       async get() {},
       async *keys() {},
     };
-    assert(isAsyncTree(hasGetAndKeys));
+    assert(isMap(hasGetAndKeys));
   });
 });

@@ -3,7 +3,6 @@ import { isUnpackable, toPlainValue } from "@weborigami/async-tree";
 /**
  * Render the given object in JSON format.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @param {any} [obj]
  */

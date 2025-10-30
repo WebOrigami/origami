@@ -1,7 +1,6 @@
 import documentObject from "../common/documentObject.js";
 
 /**
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Stringlike} Stringlike
  *
  * @param {Stringlike} text

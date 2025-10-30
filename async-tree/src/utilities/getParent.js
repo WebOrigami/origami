@@ -5,11 +5,11 @@ import * as symbols from "../symbols.js";
  *
  * This is intended to be called by unpack functions.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("../../index.ts").SyncOrAsyncMap} SyncOrAsyncMap
  *
  * @param {any} packed
  * @param {any} [options]
- * @returns {AsyncTree|null}
+ * @returns {SyncOrAsyncMap|null}
  */
 export default function getParent(packed, options = {}) {
   // Prefer parent set on options

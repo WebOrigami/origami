@@ -5,7 +5,6 @@ import YAML from "yaml";
 import version from "./version.js";
 
 /**
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @param {string} [key]
  */

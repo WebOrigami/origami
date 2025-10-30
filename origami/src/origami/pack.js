@@ -1,5 +1,4 @@
 /**
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @param {any} obj
  */

@@ -1,6 +1,6 @@
 import * as trailingSlash from "../trailingSlash.js";
 import from from "./from.js";
-import isAsyncTree from "./isAsyncTree.js";
+import isMap from "./isMap.js";
 
 /**
  * Returns slash-separated paths for all values in the tree.
@@ -38,7 +38,7 @@ export default async function paths(maplike, options = {}) {
     }
     if (value) {
       // If we got the value we can check if it's a subtree
-      isSubtree = isAsyncTree(value);
+      isSubtree = isMap(value);
     }
     if (isSubtree) {
       const subPaths = await paths(value, { assumeSlashes, base: valuePath });

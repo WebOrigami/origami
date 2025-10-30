@@ -5,8 +5,8 @@ import { maybeOrigamiSourceCode } from "./errors.js";
 import * as moduleCache from "./moduleCache.js";
 
 /**
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("../../index.ts").Constructor<AsyncTree & { dirname: string }>} BaseConstructor
+ * @typedef {import("@weborigami/async-tree").AsyncMap} AsyncMap
+ * @typedef {import("../../index.ts").Constructor<AsyncMap & { dirname: string }>} BaseConstructor
  * @param {BaseConstructor} Base
  */
 export default function ImportModulesMixin(Base) {

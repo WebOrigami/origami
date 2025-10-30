@@ -1,4 +1,4 @@
-import isAsyncTree from "../operations/isAsyncTree.js";
+import isMap from "../operations/isMap.js";
 import isPlainObject from "../utilities/isPlainObject.js";
 import ObjectMap from "./ObjectMap.js";
 
@@ -17,7 +17,7 @@ export default class DeepObjectMap extends ObjectMap {
   }
 
   isSubtree(value) {
-    return value instanceof Array || isPlainObject(value) || isAsyncTree(value);
+    return value instanceof Array || isPlainObject(value) || isMap(value);
   }
 
   // See delete()

@@ -1,6 +1,6 @@
 import AsyncMap from "../drivers/AsyncMap.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
-import isAsyncTree from "./isAsyncTree.js";
+import isMap from "./isMap.js";
 import keys from "./keys.js";
 
 /**
@@ -20,7 +20,7 @@ export default async function deepReverse(maplike) {
 
     async get(key) {
       let value = await tree.get(key);
-      if (isAsyncTree(value)) {
+      if (isMap(value)) {
         value = deepReverse(value);
       }
       return value;

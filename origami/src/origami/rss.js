@@ -2,7 +2,6 @@ import { getTreeArgument, Tree } from "@weborigami/async-tree";
 import jsonFeedToRss from "@weborigami/json-feed-to-rss";
 
 /**
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  *
  * @param {Maplike} jsonFeed

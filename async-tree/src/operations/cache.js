@@ -1,7 +1,7 @@
 import AsyncMap from "../drivers/AsyncMap.js";
 import SyncMap from "../drivers/SyncMap.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
-import isAsyncTree from "./isAsyncTree.js";
+import isMap from "./isMap.js";
 import isReadOnlyMap from "./isReadOnlyMap.js";
 import keys from "./keys.js";
 
@@ -43,14 +43,14 @@ export default async function treeCache(sourceMaplike, cacheMaplike) {
     async get(key) {
       // Check cache tree first.
       let cacheValue = await cache.get(key);
-      if (cacheValue !== undefined && !isAsyncTree(cacheValue)) {
+      if (cacheValue !== undefined && !isMap(cacheValue)) {
         // Leaf node cache hit
         return cacheValue;
       }
 
       // Cache miss or interior node cache hit.
       let value = await source.get(key);
-      if (isAsyncTree(value)) {
+      if (isMap(value)) {
         // Construct merged tree for a tree result.
         if (cacheValue === undefined) {
           // Construct new empty container in cache

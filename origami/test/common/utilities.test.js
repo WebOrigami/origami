@@ -93,7 +93,7 @@ describe("utilities", () => {
       return class Uppercase extends Base {
         async get(key) {
           const value = await super.get(key);
-          return Tree.isAsyncTree(value) ? value : value.toUpperCase();
+          return Tree.isMap(value) ? value : value.toUpperCase();
         }
       };
     }

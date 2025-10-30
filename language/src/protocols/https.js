@@ -4,7 +4,6 @@ import fetchAndHandleExtension from "./fetchAndHandleExtension.js";
 /**
  * Retrieve the indicated web resource via HTTPS.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @param {string} host
  * @param  {...string} keys

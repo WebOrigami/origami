@@ -2,14 +2,13 @@ import AsyncMap from "../drivers/AsyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import isUnpackable from "../utilities/isUnpackable.js";
 import from from "./from.js";
-import isAsyncTree from "./isAsyncTree.js";
+import isMap from "./isMap.js";
 import isMaplike from "./isMaplike.js";
 import keys from "./keys.js";
 
 /**
  * Return a tree that performs a deep merge of the given trees.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
  * @param {Maplike[]} treelikes
@@ -34,10 +33,7 @@ export default async function deepMerge(...treelikes) {
       for (let index = sources.length - 1; index >= 0; index--) {
         const tree = sources[index];
         const value = await tree.get(key);
-        if (
-          isAsyncTree(value) ||
-          (isMaplike(value) && trailingSlash.has(key))
-        ) {
+        if (isMap(value) || (isMaplike(value) && trailingSlash.has(key))) {
           subtrees.unshift(value);
         } else if (value !== undefined) {
           return value;

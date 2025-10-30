@@ -2,7 +2,7 @@ import AsyncMap from "../drivers/AsyncMap.js";
 import ObjectMap from "../drivers/ObjectMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
-import isAsyncTree from "./isAsyncTree.js";
+import isMap from "./isMap.js";
 import merge from "./merge.js";
 
 const globstar = "**";
@@ -17,7 +17,7 @@ export default async function globKeys(maplike) {
       }
 
       let value = await matchGlobs(globs, key);
-      if (isAsyncTree(value)) {
+      if (isMap(value)) {
         value = globKeys(value);
       }
       return value;
@@ -60,7 +60,7 @@ async function matchGlobs(globs, key) {
       // Text matches glob, get value
       const globValue = await globs.get(glob);
       if (globValue !== undefined) {
-        if (!isAsyncTree(globValue)) {
+        if (!isMap(globValue)) {
           // Found a non-tree match, return immediately
           return globValue;
         }
@@ -78,7 +78,7 @@ async function matchGlobs(globs, key) {
     } else {
       // Try globstar
       const globstarValue = await matchGlobs(globstarGlobs, key);
-      if (!isAsyncTree(globstarValue)) {
+      if (!isMap(globstarValue)) {
         // Found a non-tree match, return immediately
         return globstarValue;
       } else if (trailingSlash.has(key)) {

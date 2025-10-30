@@ -1,7 +1,7 @@
 import AsyncMap from "../drivers/AsyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
-import isAsyncTree from "./isAsyncTree.js";
+import isMap from "./isMap.js";
 import isMaplike from "./isMaplike.js";
 import keys from "./keys.js";
 
@@ -10,7 +10,6 @@ import keys from "./keys.js";
  * that exist in `b` and have truthy values are kept. The filter operation is
  * deep: if a value from `a` is a subtree, it will be filtered recursively.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
  * @param {Maplike} aMaplike
@@ -50,7 +49,7 @@ export default async function mask(aMaplike, bMaplike) {
       const aKeySlashes = aKeys.map((key, index) =>
         trailingSlash.toggle(
           key,
-          trailingSlash.has(key) || isAsyncTree(bValues[index])
+          trailingSlash.has(key) || isMap(bValues[index])
         )
       );
       // Remove keys that don't have values in b

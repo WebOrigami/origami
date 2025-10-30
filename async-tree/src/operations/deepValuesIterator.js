@@ -1,5 +1,5 @@
 import getTreeArgument from "../utilities/getTreeArgument.js";
-import isAsyncTree from "./isAsyncTree.js";
+import isMap from "./isMap.js";
 import isMaplike from "./isMaplike.js";
 
 /**
@@ -25,7 +25,7 @@ export default async function* deepValuesIterator(
 
     // Recurse into child trees, but don't expand functions.
     const recurse =
-      isAsyncTree(value) ||
+      isMap(value) ||
       (options.expand && typeof value !== "function" && isMaplike(value));
     if (recurse) {
       yield* deepValuesIterator(value, options);

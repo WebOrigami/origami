@@ -1,5 +1,5 @@
 import from from "./from.js";
-import isAsyncTree from "./isAsyncTree.js";
+import isMap from "./isMap.js";
 
 /**
  * Map and reduce a tree.
@@ -31,7 +31,7 @@ export default async function mapReduce(maplike, mapFn, reduceFn) {
     treeKeys.push(key);
     const promise = (async () => {
       const value = await tree.get(key);
-      return isAsyncTree(value)
+      return isMap(value)
         ? mapReduce(value, mapFn, reduceFn) // subtree; recurse
         : mapFn
         ? mapFn(value, key, tree)

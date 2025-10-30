@@ -8,7 +8,6 @@ let graphvizLoaded = false;
 /**
  * Render a tree visually in SVG format.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
  *

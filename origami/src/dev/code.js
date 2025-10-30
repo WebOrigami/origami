@@ -2,7 +2,6 @@ import { toString } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
 
 /**
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @param {import("@weborigami/async-tree").Stringlike} input
  */

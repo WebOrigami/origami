@@ -7,7 +7,6 @@ import values from "./values.js";
  * an array of keys).
  *
  * @typedef {import("../../index.ts").Maplike} Maplike
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @param {Maplike} maplike
  * @param {Maplike} keysMaplike

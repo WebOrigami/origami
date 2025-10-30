@@ -18,7 +18,7 @@ let projectGlobals;
  *
  * @param {any} value
  * @param {any} key
- * @param {import("@weborigami/types").AsyncTree} [parent]
+ * @param {import("@weborigami/async-tree").SyncOrAsyncMap} [parent]
  */
 export default async function handleExtension(value, key, parent) {
   projectGlobals ??= await globals();

@@ -1,5 +1,5 @@
 import AsyncMap from "../drivers/AsyncMap.js";
-import isAsyncTree from "./isAsyncTree.js";
+import isMap from "./isMap.js";
 
 /**
  * Return a tree with the indicated keys (if provided).
@@ -48,7 +48,7 @@ export default function match(pattern, resultFn, keys = []) {
 
       if (
         typeof resultFn !== "function" &&
-        !(isAsyncTree(resultFn) && "parent" in resultFn)
+        !(isMap(resultFn) && "parent" in resultFn)
       ) {
         // Simple return value; return as is
         return resultFn;

@@ -7,8 +7,8 @@ import keys from "./keys.js";
  * be provided; by default the keys will be sorted in [natural sort
  * order](https://en.wikipedia.org/wiki/Natural_sort_order).
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {(key: any, tree: AsyncTree) => any} SortKeyFn
+ * @typedef {import("../../index.ts").SyncOrAsyncMap} SyncOrAsyncMap
+ * @typedef {(key: any, map: SyncOrAsyncMap) => any} SortKeyFn
  * @typedef {{ compare?: (a: any, b: any) => number, sortKey?: SortKeyFn }} SortOptions
  * @typedef {import("../../index.ts").Maplike} Maplike
  * @typedef {import("../../index.ts").ValueKeyFn} ValueKeyFn

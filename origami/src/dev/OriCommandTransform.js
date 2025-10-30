@@ -7,11 +7,11 @@ import { projectGlobals } from "@weborigami/language";
  * E.g., asking this tree for `!yaml` will invoke the yaml() builtin function,
  * passing the current tree as the first argument.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("../../index.ts").Constructor<AsyncTree>}
- * AsyncTreeConstructor
+ * @typedef {import("@weborigami/async-tree").AsyncMap} AsyncMap
+ * @typedef {import("../../index.ts").Constructor<Map>} MapConstructor
+ * @typedef {import("../../index.ts").Constructor<AsyncMap>} AsyncMapConstructor
  *
- * @param {AsyncTreeConstructor} Base
+ * @param {MapConstructor|AsyncMapConstructor} Base
  */
 export default function OriCommandTransform(Base) {
   return class OriCommand extends Base {

@@ -5,14 +5,14 @@ import constructHref from "./constructHref.js";
 /**
  * Given a protocol, a host, and a list of keys, construct an href.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/async-tree").SyncOrAsyncMap} SyncOrAsyncMap
  *
  * @param {string} protocol
- * @param {import("../../index.ts").Constructor<AsyncTree>} treeClass
+ * @param {import("../../index.ts").Constructor<SyncOrAsyncMap>} mapClass
  * @param {string} host
  * @param  {string[]} keys
  */
-export default function constructSiteTree(protocol, treeClass, host, ...keys) {
+export default function constructSiteTree(protocol, mapClass, host, ...keys) {
   // If the last key doesn't end in a slash, remove it for now.
   let lastKey;
   if (keys.length > 0 && keys.at(-1) && !trailingSlash.has(keys.at(-1))) {
@@ -20,7 +20,7 @@ export default function constructSiteTree(protocol, treeClass, host, ...keys) {
   }
 
   const href = constructHref(protocol, host, ...keys);
-  let result = new (HandleExtensionsTransform(treeClass))(href);
+  let result = new (HandleExtensionsTransform(mapClass))(href);
 
   return lastKey ? result.get(lastKey) : result;
 }

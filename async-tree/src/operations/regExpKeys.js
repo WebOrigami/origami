@@ -2,7 +2,7 @@ import AsyncMap from "../drivers/AsyncMap.js";
 import SyncMap from "../drivers/SyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
-import isAsyncTree from "./isAsyncTree.js";
+import isMap from "./isMap.js";
 
 /**
  * A tree whose keys are strings interpreted as regular expressions.
@@ -63,7 +63,7 @@ export default async function regExpKeys(maplike) {
     let value = await tree.get(key);
 
     let regExp;
-    if (trailingSlash.has(key) || isAsyncTree(value)) {
+    if (trailingSlash.has(key) || isMap(value)) {
       const baseKey = trailingSlash.remove(key);
       regExp = new RegExp("^" + baseKey + "/?$");
       // Subtree

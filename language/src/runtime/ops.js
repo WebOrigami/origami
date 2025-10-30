@@ -1,9 +1,9 @@
 /**
  * @typedef {import("../../index.ts").AnnotatedCode} AnnotatedCode
- * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
- * @typedef {import("@weborigami/async-tree").Maplike} Maplike
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.ts").RuntimeState} RuntimeState
+ * @typedef {import("@weborigami/async-tree").Maplike} Maplike
+ * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
+ * @typedef {import("@weborigami/async-tree").SyncOrAsyncMap} SyncOrAsyncMap
  */
 
 import { isUnpackable, symbols, Tree } from "@weborigami/async-tree";
@@ -468,7 +468,7 @@ addOpLabel(rootDirectory, "«ops.rootDirectory»");
 /**
  * Return the scope of the current tree
  *
- * @param {AsyncTree} parent
+ * @param {SyncOrAsyncMap} parent
  */
 export async function scope(parent) {
   if (!parent) {

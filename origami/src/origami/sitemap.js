@@ -11,7 +11,6 @@ const templateText = `(urls) => \`<?xml version="1.0" encoding="UTF-8"?>
 `;
 
 /**
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  *
  * @param {Maplike} maplike

@@ -30,7 +30,7 @@ export default async function expressionObject(entries, state = {}) {
   // Create the object and set its parent
   const object = {};
   const parent = state?.object ?? null;
-  if (parent !== null && !Tree.isAsyncTree(parent)) {
+  if (parent !== null && !Tree.isMap(parent)) {
     throw new TypeError(`Parent must be an AsyncTree or null`);
   }
   setParent(object, parent);

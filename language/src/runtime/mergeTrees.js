@@ -3,7 +3,6 @@ import { isPlainObject, isUnpackable, Tree } from "@weborigami/async-tree";
 /**
  * Create a tree that's the result of merging the given trees.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  *
  * @param {(Maplike|null)[]} trees
@@ -27,9 +26,7 @@ export default async function mergeTrees(...trees) {
   );
 
   // If all trees are plain objects, return a plain object.
-  if (
-    unpacked.every((tree) => isPlainObject(tree) && !Tree.isAsyncTree(tree))
-  ) {
+  if (unpacked.every((tree) => isPlainObject(tree) && !Tree.isMap(tree))) {
     // If we do an Object.assign, we'd evaluate getters.
     // To avoid that, we'll merge property descriptors.
     const result = {};

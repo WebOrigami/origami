@@ -8,7 +8,6 @@ import {
 /**
  * Expose .keys.json for a tree.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  *
  * @param {Maplike} maplike

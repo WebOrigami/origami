@@ -1,4 +1,4 @@
-import isAsyncTree from "../operations/isAsyncTree.js";
+import isMap from "../operations/isMap.js";
 import * as symbols from "../symbols.js";
 
 /**
@@ -6,16 +6,16 @@ import * as symbols from "../symbols.js";
  * parent. If the child is an AsyncTree, set the `parent` property. Otherwise,
  * set the `symbols.parent` property.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("../../index.ts").SyncOrAsyncMap} SyncOrAsyncMap
  *
  * @param {*} child
- * @param {AsyncTree|null} parent
+ * @param {SyncOrAsyncMap|null} parent
  */
 export default function setParent(child, parent) {
-  if (isAsyncTree(child)) {
+  if (isMap(child)) {
     // Value is a subtree; set its parent to this tree.
-    if (!child.parent) {
-      child.parent = parent;
+    if ("parent" in child && !child.parent) {
+      /** @type {any} */ (child).parent = parent;
     }
   } else if (Object.isExtensible(child) && !child[symbols.parent]) {
     try {

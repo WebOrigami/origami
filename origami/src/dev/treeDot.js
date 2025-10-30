@@ -67,7 +67,7 @@ async function statements(tree, nodePath, nodeLabel, options) {
     }
 
     const expandable =
-      value instanceof Array || isPlainObject(value) || Tree.isAsyncTree(value);
+      value instanceof Array || isPlainObject(value) || Tree.isMap(value);
     if (expandable) {
       const subtree = Tree.from(value);
       const subStatements = await statements(subtree, destPath, null, options);

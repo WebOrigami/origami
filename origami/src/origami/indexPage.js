@@ -4,7 +4,6 @@ import { getDescriptor } from "../common/utilities.js";
 /**
  * Return a default index.html page for the current tree.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  *
  * @param {Maplike} maplike

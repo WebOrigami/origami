@@ -8,7 +8,6 @@ import keys from "./keys.js";
  * Return a new grouping of the maplike's values into chunks of the specified
  * size.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
  * @param {Maplike} maplike
