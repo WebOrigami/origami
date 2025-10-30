@@ -33,7 +33,7 @@ describe("cache", () => {
 
     assert.equal(await objectCache.get("more"), undefined);
     const more = await fixture.get("more");
-    assert.deepEqual([...(await more.keys())], ["d"]);
+    assert.deepEqual([...(await keys(more))], ["d"]);
     assert.equal(await more.get("d"), 4);
     const moreCache = await objectCache.get("more");
     assert.equal(await moreCache.get("d"), 4);

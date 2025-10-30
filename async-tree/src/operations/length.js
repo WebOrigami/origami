@@ -10,6 +10,7 @@ import keys from "./keys.js";
  * @param {Treelike} treelike
  */
 export default async function length(treelike) {
+  console.warn("Tree.length() is deprecated. Use Tree.size() instead.");
   const tree = await getTreeArgument(treelike, "length");
   const treeKeys = await keys(tree);
   return treeKeys.length;

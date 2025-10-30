@@ -14,9 +14,9 @@ export default async function take(treelike, count) {
   return Object.assign(new AsyncMap(), {
     description: `take ${count}`,
 
-    async keys() {
+    async *keys() {
       const treeKeys = await keys(tree);
-      return treeKeys.slice(0, count);
+      yield* treeKeys.slice(0, count);
     },
 
     async get(key) {

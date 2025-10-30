@@ -24,12 +24,12 @@ export default async function shuffle(treelike, reshuffle = false) {
       return tree.get(key);
     },
 
-    async keys() {
+    async *keys() {
       if (!treeKeys || reshuffle) {
         treeKeys = await keys(tree);
         shuffleArray(treeKeys);
       }
-      return treeKeys;
+      yield* treeKeys;
     },
 
     source: tree,

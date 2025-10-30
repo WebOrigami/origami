@@ -66,9 +66,9 @@ export default async function treeCache(sourceTreelike, cacheTreelike) {
       return value;
     },
 
-    async keys() {
+    async *keys() {
       sourceKeys ??= await keys(source);
-      return sourceKeys;
+      yield* sourceKeys;
     },
   });
 }

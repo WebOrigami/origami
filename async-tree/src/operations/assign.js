@@ -1,4 +1,3 @@
-import SyncMap from "../drivers/SyncMap.js";
 import from from "./from.js";
 import isTreelike from "./isTreelike.js";
 import keys from "./keys.js";
@@ -30,12 +29,7 @@ export default async function assign(target, source) {
       let targetValue = await targetTree.get(key);
       if (targetValue === undefined) {
         // Target key doesn't exist; create empty subtree
-
-        // TODO: Once Tree drivers are removed, drop use of empty object
-        const empty =
-          targetTree instanceof Map
-            ? /** @type {any} */ (targetTree.constructor).EMPTY ?? SyncMap.EMPTY
-            : {};
+        const empty = /** @type {any} */ (targetTree.constructor).EMPTY;
         await targetTree.set(key, empty);
         targetValue = await targetTree.get(key);
       }

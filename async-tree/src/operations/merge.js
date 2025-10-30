@@ -61,7 +61,7 @@ export default async function merge(...treelikes) {
       return undefined;
     },
 
-    async keys() {
+    async *keys() {
       const treeKeys = new Set();
       // Collect keys in the order the trees were provided.
       for (const tree of sources) {
@@ -75,7 +75,7 @@ export default async function merge(...treelikes) {
           treeKeys.add(key);
         }
       }
-      return treeKeys;
+      yield* treeKeys;
     },
 
     sources,

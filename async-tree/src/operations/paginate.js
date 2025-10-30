@@ -51,9 +51,9 @@ export default async function paginate(treelike, size = 10) {
       };
     },
 
-    async keys() {
-      // Return an array from 1..totalPages
-      return Array.from({ length: pageCount }, (_, index) => index + 1);
+    async *keys() {
+      // Return from 1..totalPages
+      yield* Array.from({ length: pageCount }, (_, index) => index + 1);
     },
 
     source: tree,

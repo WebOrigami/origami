@@ -45,7 +45,7 @@ export default async function regExpKeys(treelike) {
       return undefined;
     },
 
-    async keys() {
+    async *keys() {
       return map.keys();
     },
 

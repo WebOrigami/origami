@@ -13,13 +13,13 @@ describe("isAsyncTree", () => {
     assert(!isAsyncTree(missingIterator));
 
     const missingGet = {
-      async keys() {},
+      async *keys() {},
     };
     assert(!isAsyncTree(missingGet));
 
     const hasGetAndKeys = {
       async get() {},
-      async keys() {},
+      async *keys() {},
     };
     assert(isAsyncTree(hasGetAndKeys));
   });

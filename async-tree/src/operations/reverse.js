@@ -21,10 +21,10 @@ export default async function reverse(treelike) {
       return tree.get(key);
     },
 
-    async keys() {
+    async *keys() {
       const treeKeys = await keys(tree);
       treeKeys.reverse();
-      return treeKeys;
+      yield* treeKeys;
     },
 
     source: tree,

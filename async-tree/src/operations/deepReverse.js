@@ -26,10 +26,10 @@ export default async function deepReverse(treelike) {
       return value;
     },
 
-    async keys() {
+    async *keys() {
       const treeKeys = Array.from(await keys(tree));
       treeKeys.reverse();
-      return treeKeys;
+      yield* treeKeys;
     },
 
     source: tree,

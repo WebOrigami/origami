@@ -18,8 +18,10 @@ export default async function invokeFunctions(treelike) {
       return value;
     },
 
-    async keys() {
-      return tree.keys();
+    async *keys() {
+      for await (const key of tree.keys()) {
+        yield key;
+      }
     },
 
     source: tree,

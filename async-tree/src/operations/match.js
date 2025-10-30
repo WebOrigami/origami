@@ -68,8 +68,8 @@ export default function match(pattern, resultFn, keys = []) {
       return value;
     },
 
-    async keys() {
-      return typeof keys === "function" ? await keys() : keys;
+    async *keys() {
+      yield* typeof keys === "function" ? await keys() : keys;
     },
   });
 

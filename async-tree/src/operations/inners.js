@@ -22,10 +22,10 @@ export default async function inners(treelike) {
       return isAsyncTree(value) ? inners(value) : undefined;
     },
 
-    async keys() {
+    async *keys() {
       const treeKeys = await keys(tree);
       const subtreeKeys = treeKeys.filter(trailingSlash.has);
-      return subtreeKeys;
+      yield* subtreeKeys;
     },
   });
 }

@@ -23,8 +23,10 @@ export default async function globKeys(treelike) {
       return value;
     },
 
-    async keys() {
-      return globs.keys();
+    async *keys() {
+      for await (const key of globs.keys()) {
+        yield key;
+      }
     },
   });
 }
@@ -46,7 +48,7 @@ async function matchGlobs(globs, key) {
 
   // Collect all matches
   let matches = [];
-  for (let glob of await globs.keys()) {
+  for await (let glob of globs.keys()) {
     if (glob === globstar || glob === globstarSlash) {
       // Remember for later
       globstarGlobs = await globs.get(glob);

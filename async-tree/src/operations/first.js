@@ -1,5 +1,4 @@
 import getTreeArgument from "../utilities/getTreeArgument.js";
-import keys from "./keys.js";
 
 /**
  * Return the first value in the tree.
@@ -10,10 +9,12 @@ import keys from "./keys.js";
  */
 export default async function first(treelike) {
   const tree = await getTreeArgument(treelike, "first");
-  for (const key of await keys(tree)) {
-    // Just return first value immediately.
-    const value = await tree.get(key);
-    return value;
+  let firstKey;
+  for await (const key of tree.keys()) {
+    // Just needed to get first key
+    firstKey = key;
+    break;
   }
-  return undefined;
+  const value = await tree.get(firstKey);
+  return value;
 }

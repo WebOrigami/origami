@@ -11,6 +11,5 @@ import getTreeArgument from "../utilities/getTreeArgument.js";
  */
 export default async function has(treelike, key) {
   const tree = await getTreeArgument(treelike, "has");
-  const value = await tree.get(key);
-  return value !== undefined;
+  return tree.has(key);
 }

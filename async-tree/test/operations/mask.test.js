@@ -1,5 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import keys from "../../src/operations/keys.js";
 import mask from "../../src/operations/mask.js";
 import plain from "../../src/operations/plain.js";
 
@@ -21,7 +22,7 @@ describe("mask", () => {
         },
       }
     );
-    assert.deepEqual(await result.keys(), ["a", "c/"]);
+    assert.deepEqual(await keys(result), ["a", "c/"]);
     assert.deepEqual(await plain(result), {
       a: 1,
       c: {

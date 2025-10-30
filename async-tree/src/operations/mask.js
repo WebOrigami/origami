@@ -42,7 +42,7 @@ export default async function mask(aTreelike, bTreelike) {
       }
     },
 
-    async keys() {
+    async *keys() {
       // Use a's keys as the basis
       const aKeys = await keys(aTree);
       const bValues = await Promise.all(aKeys.map((key) => bTree.get(key)));
@@ -57,7 +57,7 @@ export default async function mask(aTreelike, bTreelike) {
       const treeKeys = aKeySlashes.filter(
         (key, index) => bValues[index] ?? false
       );
-      return treeKeys;
+      yield* treeKeys;
     },
 
     source: aTree,

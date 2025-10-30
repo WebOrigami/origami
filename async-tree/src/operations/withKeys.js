@@ -28,9 +28,9 @@ export default async function withKeys(treelike, keysTreelike) {
       return tree.get(key);
     },
 
-    async keys() {
+    async *keys() {
       keys ??= await values(keysTree);
-      return keys;
+      yield* keys;
     },
 
     source: tree,

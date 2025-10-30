@@ -19,7 +19,7 @@ export default {
     }
   },
 
-  async keys() {
-    return routes;
+  async *keys() {
+    yield* routes;
   },
 };

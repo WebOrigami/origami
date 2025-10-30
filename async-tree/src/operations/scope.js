@@ -34,7 +34,7 @@ export default async function scope(treelike) {
     },
 
     // Collect all keys for this tree and all parents
-    async keys() {
+    async *keys() {
       const scopeKeys = new Set();
 
       /** @type {AsyncTree|null|undefined} */
@@ -46,7 +46,7 @@ export default async function scope(treelike) {
         current = current.parent;
       }
 
-      return scopeKeys;
+      yield* scopeKeys;
     },
 
     // Collect all keys for this tree and all parents.

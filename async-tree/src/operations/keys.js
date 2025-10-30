@@ -10,7 +10,6 @@ import getTreeArgument from "../utilities/getTreeArgument.js";
 export default async function keys(treelike) {
   const tree = await getTreeArgument(treelike, "keys");
   let keys;
-  /** @type {any} */
   let iterable = tree.keys();
   if (Symbol.asyncIterator in iterable) {
     keys = [];
@@ -18,10 +17,6 @@ export default async function keys(treelike) {
       keys.push(key);
     }
   } else {
-    // TODO: Remove when Tree classes are gone
-    if (iterable instanceof Promise) {
-      iterable = await iterable;
-    }
     keys = Array.from(iterable);
   }
   return keys;
