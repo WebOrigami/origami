@@ -16,15 +16,19 @@ c: Hello, c.`;
     });
   });
 
-  test("toJson() renders a tree as JSON", async () => {
-    const tree = new ObjectMap({ a: "Hello, a." });
-    const json = await serialize.toJson(tree);
+  test("toJson() renders a map as JSON", async () => {
+    const map = new ObjectMap({ a: "Hello, a." });
+    const json = await serialize.toJson(map);
     assert.equal(json, `{\n  "a": "Hello, a."\n}`);
   });
 
-  test("toYaml() renders a tree as YAML", async () => {
-    const tree = new ObjectMap({ a: "Hello, a." });
-    const yaml = await serialize.toYaml(tree);
-    assert.equal(yaml, `a: Hello, a.\n`);
+  test("toYaml() renders a map as YAML", async () => {
+    // Keys out of order to confirm they don't get sorted
+    const map = new Map([
+      [1, "a"],
+      [0, "b"],
+    ]);
+    const yaml = await serialize.toYaml(map);
+    assert.equal(yaml, `1: a\n0: b\n`);
   });
 });
