@@ -11,7 +11,6 @@ import { getBaseUrl } from "./utilities.js";
  * Crawl the indicated tree and return an audit of any broken links to internal
  * pages or other resources.
  *
- * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  *
  * @param {Maplike} maplike

@@ -5,7 +5,6 @@ import keys from "./keys.js";
 /**
  * Return a new tree with the original's keys shuffled
  *
- * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
  * @param {Maplike} maplike

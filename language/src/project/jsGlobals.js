@@ -168,7 +168,11 @@ async function fetchWrapper(resource, options) {
   return response.ok ? await response.arrayBuffer() : undefined;
 }
 
-/** @this {import("@weborigami/types").AsyncTree|null|undefined} */
+/**
+ * @typedef {import("@weborigami/async-tree").AsyncMap} AsyncMap
+ *
+ * @this {AsyncMap|null|undefined}
+ */
 async function importWrapper(modulePath) {
   // Walk up parent tree looking for a FileTree or other object with a `path`
   /** @type {any} */

@@ -5,7 +5,6 @@ import keys from "./keys.js";
 /**
  * Reverse the order of the top-level keys in the tree.
  *
- * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
  * @param {Maplike} maplike

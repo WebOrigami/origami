@@ -4,7 +4,6 @@ const codePromiseMap = new Map();
 /**
  * Evaluate the given function only once and cache the result.
  *
- * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @param {Function} fn
  */

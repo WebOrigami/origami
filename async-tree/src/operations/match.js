@@ -14,7 +14,6 @@ import isMap from "./isMap.js";
  * If a key is requested, match against the given pattern and, if matches,
  * invokes the given function with an object containing the matched values.
  *
- * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.ts").Maplike} Maplike
  * @typedef {import("../../index.ts").Invocable} Invocable
  *

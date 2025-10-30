@@ -27,7 +27,7 @@ describe("evaluate", () => {
   });
 
   test("if function has containerAsTarget, it gets bound to state.container", async () => {
-    /** @this {import("@weborigami/types").AsyncTree} */
+    /** @this {import("@weborigami/async-tree").SyncOrAsyncMap} */
     const fn = function () {
       return this;
     };

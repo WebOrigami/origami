@@ -3,7 +3,7 @@ import * as symbols from "../symbols.js";
 
 /**
  * If the child object doesn't have a parent yet, set it to the indicated
- * parent. If the child is an AsyncTree, set the `parent` property. Otherwise,
+ * parent. If the child is a map, set the `parent` property. Otherwise,
  * set the `symbols.parent` property.
  *
  * @typedef {import("../../index.ts").SyncOrAsyncMap} SyncOrAsyncMap

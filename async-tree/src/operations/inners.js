@@ -7,7 +7,6 @@ import isMap from "./isMap.js";
  * Return the interior nodes of the tree. This relies on subtree keys having
  * trailing slashes.
  *
- * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
  * @param {Maplike} maplike

@@ -44,9 +44,9 @@ async function copyResponse(constructed, response) {
  *
  * @param {import("node:http").IncomingMessage} request
  * @param {ServerResponse} response
- * @param {import("@weborigami/types").AsyncTree} tree
+ * @param {import("@weborigami/async-tree").SyncOrAsyncMap} map
  */
-export async function handleRequest(request, response, tree) {
+export async function handleRequest(request, response, map) {
   // For parsing purposes, we assume HTTPS -- it doesn't affect parsing.
   const url = new URL(request.url ?? "", `https://${request.headers.host}`);
   const keys = keysFromUrl(url);
@@ -56,7 +56,7 @@ export async function handleRequest(request, response, tree) {
   // Ask the tree for the resource with those keys.
   let resource;
   try {
-    resource = await Tree.traverseOrThrow(tree, ...keys);
+    resource = await Tree.traverseOrThrow(map, ...keys);
 
     // If resource is a function, invoke to get the object we want to return.
     // For a POST request, pass the data to the function.

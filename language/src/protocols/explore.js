@@ -4,7 +4,6 @@ import constructSiteTree from "./constructSiteTree.js";
 /**
  * A site tree with JSON Keys via HTTPS.
  *
- * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @param {string} host
  * @param  {...string} keys

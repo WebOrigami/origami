@@ -1,12 +1,12 @@
-/** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
-
 import { evaluate } from "./internal.js";
 
 /**
  * Given parsed Origami code, return a function that executes that code.
  *
+ * @typedef {import("@weborigami/async-tree").SyncOrAsyncMap} SyncOrAsyncMap
+ *
  * @param {import("../../index.js").AnnotatedCode} code - parsed Origami expression
- * @param {AsyncTree} parent - the parent tree in which the code is running
+ * @param {SyncOrAsyncMap} parent - the parent tree in which the code is running
  */
 export function createExpressionFunction(code, parent) {
   async function fn() {

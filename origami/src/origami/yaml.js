@@ -1,4 +1,3 @@
-/** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
 import { isUnpackable, toPlainValue } from "@weborigami/async-tree";
 import YAML from "yaml";
 

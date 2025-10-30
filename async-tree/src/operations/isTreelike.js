@@ -2,14 +2,13 @@ import isPlainObject from "../utilities/isPlainObject.js";
 import isMap from "./isMap.js";
 
 /**
- * Returns true if the indicated object can be directly treated as an
- * asynchronous tree. This includes:
+ * Returns true if the indicated object can be directly treated as map. This
+ * includes:
  *
- * - An object that implements the AsyncTree interface (including
- *   AsyncTree instances)
  * - A function
  * - An `Array` instance
  * - A `Map` instance
+ * - An `AsyncMap` instance
  * - A `Set` instance
  * - A plain object
  *
@@ -26,7 +25,6 @@ export default function isMaplike(obj) {
     isMap(obj) ||
     obj instanceof Array ||
     obj instanceof Function ||
-    obj instanceof Map ||
     obj instanceof Set ||
     isPlainObject(obj)
   );

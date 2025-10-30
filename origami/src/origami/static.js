@@ -9,7 +9,6 @@ import indexPage from "./indexPage.js";
 /**
  * Expose common static keys (index.html, .keys.json) for a tree.
  *
- * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  *
  * @param {Maplike} maplike

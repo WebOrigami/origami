@@ -1,4 +1,3 @@
-/** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
 import { getTreeArgument, Tree } from "@weborigami/async-tree";
 import { Handlers, OrigamiFiles } from "@weborigami/language";
 import path from "node:path";

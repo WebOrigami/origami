@@ -4,7 +4,6 @@ import process from "node:process";
 import OrigamiFiles from "../runtime/OrigamiFiles.js";
 
 /**
- * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @param {string[]} keys
  */
