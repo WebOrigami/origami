@@ -5,20 +5,18 @@ import * as trailingSlash from "../trailingSlash.js";
 import isStringlike from "../utilities/isStringlike.js";
 import naturalOrder from "../utilities/naturalOrder.js";
 import setParent from "../utilities/setParent.js";
+import AsyncMap from "./AsyncMap.js";
 
 const TypedArray = Object.getPrototypeOf(Uint8Array);
 
 /**
- * A tree of files backed by a browser-hosted file system such as the standard
+ * A map of files backed by a browser-hosted file system such as the standard
  * Origin Private File System or the (as of October 2023) experimental File
  * System Access API.
- *
- * @typedef {import("@weborigami/types").AsyncMutableTree} AsyncMutableTree
- * @implements {AsyncMutableTree}
  */
-export default class BrowserFileTree {
+export default class BrowserFileMap extends AsyncMap {
   /**
-   * Construct a tree of files backed by a browser-hosted file system.
+   * Construct a map of files backed by a browser-hosted file system.
    *
    * The directory handle can be obtained via any of the [methods that return a
    * FileSystemDirectoryHandle](https://developer.mozilla.org/en-US/docs/Web/API/FileSystemDirectoryHandle).
@@ -28,9 +26,26 @@ export default class BrowserFileTree {
    * @param {FileSystemDirectoryHandle} [directoryHandle]
    */
   constructor(directoryHandle) {
-    /** @type {FileSystemDirectoryHandle}
-     * @ts-ignore */
+    super();
     this.directory = directoryHandle;
+  }
+
+  async delete(key) {
+    const baseKey = trailingSlash.remove(key);
+    const directory = await this.getDirectory();
+
+    // Delete file.
+    try {
+      await directory.removeEntry(baseKey);
+    } catch (error) {
+      // If the file didn't exist, ignore the error.
+      if (error instanceof DOMException && error.name === "NotFoundError") {
+        return false;
+      }
+      throw error;
+    }
+
+    return true;
   }
 
   async get(key) {
@@ -90,7 +105,7 @@ export default class BrowserFileTree {
     return this.directory;
   }
 
-  async keys() {
+  async *keys() {
     const directory = await this.getDirectory();
     let keys = [];
     // @ts-ignore
@@ -110,27 +125,12 @@ export default class BrowserFileTree {
     keys = keys.filter((key) => !hiddenFileNames.includes(key));
     keys.sort(naturalOrder);
 
-    return keys;
+    yield* keys;
   }
 
   async set(key, value) {
     const baseKey = trailingSlash.remove(key);
     const directory = await this.getDirectory();
-
-    if (value === undefined) {
-      // Delete file.
-      try {
-        await directory.removeEntry(baseKey);
-      } catch (error) {
-        // If the file didn't exist, ignore the error.
-        if (
-          !(error instanceof DOMException && error.name === "NotFoundError")
-        ) {
-          throw error;
-        }
-      }
-      return this;
-    }
 
     // Treat null value as empty string; will create an empty file.
     if (value === null) {
@@ -158,6 +158,11 @@ export default class BrowserFileTree {
       const writable = await fileHandle.createWritable();
       await writable.write(value);
       await writable.close();
+    } else if (value === BrowserFileMap.EMPTY) {
+      // Create empty subtree.
+      await directory.getDirectoryHandle(baseKey, {
+        create: true,
+      });
     } else if (isTreelike(value)) {
       // Treat value as a tree and write it out as a subdirectory.
       const subdirectory = await directory.getDirectoryHandle(baseKey, {

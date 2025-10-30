@@ -1,16 +1,17 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import BrowserFileTree from "../../src/drivers/BrowserFileTree.js";
+import BrowserFileMap from "../../src/drivers/BrowserFileMap.js";
+import keys from "../../src/operations/keys.js";
 import map from "../../src/operations/map.js";
 import plain from "../../src/operations/plain.js";
 
 // Skip these tests if we're not in a browser.
 const isBrowser = typeof window !== "undefined";
 if (isBrowser) {
-  describe.skip("BrowserFileTree", async () => {
+  describe("BrowserFileMap", async () => {
     test("can get the keys of the tree", async () => {
       const fixture = await createFixture();
-      assert.deepEqual(Array.from(await fixture.keys()), [
+      assert.deepEqual(await keys(fixture), [
         "Alice.md",
         "Bob.md",
         "Carol.md",
@@ -58,6 +59,24 @@ if (isBrowser) {
       assert(await fixture.get("subfolder/"));
     });
 
+    test("can delete a value", async () => {
+      const fixture = await createFixture();
+
+      // Delete existing key.
+      const deleted = await fixture.delete("Bob.md");
+      assert.equal(deleted, true);
+
+      // Delete non-existing key.
+      const deletedAgain = await fixture.delete("Bob.md");
+      assert.equal(deletedAgain, false);
+
+      assert.deepEqual(await strings(fixture), {
+        "Alice.md": "Hello, **Alice**.",
+        "Carol.md": "Hello, **Carol**.",
+        subfolder: {},
+      });
+    });
+
     test("can set a value", async () => {
       const fixture = await createFixture();
 
@@ -67,32 +86,31 @@ if (isBrowser) {
       // New key.
       await fixture.set("David.md", "Hello, **David**.");
 
-      // Delete key.
-      await fixture.set("Bob.md", undefined);
-
-      // Delete non-existent key.
-      await fixture.set("xyz", undefined);
-
       assert.deepEqual(await strings(fixture), {
         "Alice.md": "Goodbye, **Alice**.",
+        "Bob.md": "Hello, **Bob**.",
         "Carol.md": "Hello, **Carol**.",
         "David.md": "Hello, **David**.",
         subfolder: {},
       });
     });
 
+    test("can create an empty subfolder", async () => {
+      const fixture = await createFixture();
+      await fixture.set("emptyFolder", BrowserFileMap.EMPTY);
+      assert.deepEqual(await strings(fixture), {
+        "Alice.md": "Hello, **Alice**.",
+        "Bob.md": "Hello, **Bob**.",
+        "Carol.md": "Hello, **Carol**.",
+        emptyFolder: {},
+        subfolder: {},
+      });
+    });
+
     test("can create a subfolder via set", async () => {
       const fixture = await createFixture();
-      const tree = {
-        async get(key) {
-          const name = key.replace(/\.md$/, "");
-          return `Hello, **${name}**.`;
-        },
-        async keys() {
-          return ["Ellen.md"];
-        },
-      };
-      await fixture.set("more", tree);
+      const more = new Map([["Ellen.md", "Hello, **Ellen**."]]);
+      await fixture.set("more", more);
       assert.deepEqual(await strings(fixture), {
         "Alice.md": "Hello, **Alice**.",
         "Bob.md": "Hello, **Bob**.",
@@ -142,12 +160,12 @@ async function createFixture() {
     create: true,
   });
 
-  return new BrowserFileTree(subdirectory);
+  return new BrowserFileMap(subdirectory);
 }
 
 async function strings(tree) {
   return plain(
-    map(tree, {
+    await map(tree, {
       deep: true,
       value: (value) => text(value),
     })
