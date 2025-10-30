@@ -33,6 +33,8 @@ describe("logicalAndExpression - JavaScript", () => {
   assert.strictEqual((true && true) && true, true, "Nested logical ANDs with all true");
   assert.strictEqual(true && (true && false), false, "Nested logical ANDs with false in inner");
   assert.strictEqual((true && (false && true)), false, "Complex nesting with false at inner-most");
+  assert.strictEqual(true && (1 + 1 === 2), true, "Combines logical AND with equality comparison");
+  assert.strictEqual(false && (5 > 2), false, "Logical AND with greater-than comparison");
   assert.strictEqual(true && (3 || 0), 3, "Logical AND with logical OR");
   assert.strictEqual(true && (0 || 3), 3, "Logical AND with logical OR and falsy values");
   assert.strictEqual('' && false, "", "Falsy string and false");
@@ -70,6 +72,8 @@ describe("logicalAndExpression - Origami", async() => {
   assert.strictEqual(await oriEval("(true && true) && true"), true, "Nested logical ANDs with all true");
   assert.strictEqual(await oriEval("true && (true && false)"), false, "Nested logical ANDs with false in inner");
   assert.strictEqual(await oriEval("(true && (false && true))"), false, "Complex nesting with false at inner-most");
+  assert.strictEqual(await oriEval("true && (1 + 1 === 2)"), true, "Combines logical AND with equality comparison");
+  assert.strictEqual(await oriEval("false && (5 > 2)"), false, "Logical AND with greater-than comparison");
   assert.strictEqual(await oriEval("true && (3 || 0)"), 3, "Logical AND with logical OR");
   assert.strictEqual(await oriEval("true && (0 || 3)"), 3, "Logical AND with logical OR and falsy values");
   assert.strictEqual(await oriEval("'' && false"), "", "Falsy string and false");
