@@ -6,6 +6,7 @@ import SetMap from "../drivers/SetMap.js";
 import * as symbols from "../symbols.js";
 import box from "../utilities/box.js";
 import isPlainObject from "../utilities/isPlainObject.js";
+import isMap from "./isMap.js";
 
 /**
  * Attempts to cast the indicated object to a map.
@@ -31,7 +32,7 @@ export default function from(object, options = {}) {
     throw new TypeError(
       "The tree argument was a Promise. Did you mean to use await?"
     );
-  } else if (object instanceof Map || object instanceof AsyncMap) {
+  } else if (isMap(object)) {
     // Already a map
     return object;
   } else if (typeof object === "function") {

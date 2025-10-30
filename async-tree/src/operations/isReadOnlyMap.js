@@ -1,10 +1,14 @@
-import AsyncMap from "../drivers/AsyncMap.js";
+import isMap from "./isMap.js";
 
 /**
  * Return true if the indicated object is an asynchronous mutable tree.
  *
- * @param {import("../../index.ts").SyncOrAsyncMap} object
+ * @param {any} object
  */
 export default function isReadOnlyMap(object) {
-  return object instanceof AsyncMap && object.readOnly;
+  if (!isMap(object)) {
+    return false;
+  }
+  // Respect readOnly if defined, otherwise assume read/write
+  return "readOnly" in object ? object.readOnly : false;
 }

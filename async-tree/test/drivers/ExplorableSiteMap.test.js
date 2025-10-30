@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { beforeEach, describe, mock, test } from "node:test";
-import AsyncMap from "../../src/drivers/AsyncMap.js";
 import ExplorableSiteMap from "../../src/drivers/ExplorableSiteMap.js";
+import isMap from "../../src/operations/isMap.js";
 import map from "../../src/operations/map.js";
 import * as trailingSlash from "../../src/trailingSlash.js";
 
@@ -125,7 +125,7 @@ async function plain(tree) {
   const result = {};
   for await (const [key, value] of tree.entries()) {
     const normalized = trailingSlash.remove(key);
-    result[normalized] = value instanceof AsyncMap ? await plain(value) : value;
+    result[normalized] = isMap(value) ? await plain(value) : value;
   }
   return result;
 }

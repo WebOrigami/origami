@@ -1,5 +1,4 @@
 import * as trailingSlash from "../trailingSlash.js";
-import SyncMap from "./SyncMap.js";
 
 export default class AsyncMap {
   /** @type {AsyncMap|null} */
@@ -34,7 +33,7 @@ export default class AsyncMap {
     throw new Error("delete() not implemented");
   }
 
-  static EMPTY = SyncMap.EMPTY;
+  static EMPTY = Symbol("EMPTY");
 
   /**
    * Returns an async iterable of the map's key-value pairs.
@@ -99,32 +98,6 @@ export default class AsyncMap {
       if (alternateKey && k === alternateKey) {
         return true;
       }
-    }
-    return false;
-  }
-
-  /**
-   * Return true if object is an instance of AsyncMap or Map.
-   *
-   * From an API perspective, Map is a considered subclass of AsyncMap.
-   *
-   * @param {any} object
-   */
-  static [Symbol.hasInstance](object) {
-    if (object instanceof Map) {
-      return true;
-    }
-    if (object == null || typeof object !== "object") {
-      return false;
-    }
-    // Walk up prototype chain looking for this class
-    let classFn = object.constructor;
-    while (classFn && classFn !== Object) {
-      if (classFn === this) {
-        // AsyncMap or a subclass of it
-        return true;
-      }
-      classFn = Object.getPrototypeOf(classFn);
     }
     return false;
   }

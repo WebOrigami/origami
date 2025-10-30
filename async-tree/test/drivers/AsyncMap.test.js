@@ -55,12 +55,6 @@ describe("AsyncMap", () => {
     assert.strictEqual(await map.has("c"), false);
   });
 
-  test("instanceof returns true for both Map and AsyncMap", () => {
-    assert(new Map() instanceof AsyncMap);
-    assert(new AsyncMap() instanceof AsyncMap);
-    assert(!(new Object() instanceof AsyncMap));
-  });
-
   test("readOnly if get() is overridden but not delete() and set()", () => {
     const map1 = new SampleAsyncMap();
     map1.get = async (key) => null;

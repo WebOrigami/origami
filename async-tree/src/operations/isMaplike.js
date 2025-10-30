@@ -1,5 +1,5 @@
-import AsyncMap from "../drivers/AsyncMap.js";
 import isPlainObject from "../utilities/isPlainObject.js";
+import isMap from "./isMap.js";
 
 /**
  * Returns true if the indicated object can be directly treated like a Map. This
@@ -23,10 +23,9 @@ import isPlainObject from "../utilities/isPlainObject.js";
 export default function isMaplike(object) {
   return (
     object instanceof Array ||
-    object instanceof AsyncMap ||
     object instanceof Function ||
-    object instanceof Map ||
     object instanceof Set ||
+    isMap(object) ||
     isPlainObject(object)
   );
 }
