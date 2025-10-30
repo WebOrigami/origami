@@ -44,6 +44,10 @@ assert.deepEqual = (actual, expected) => {
   throw new Error(`Expected ${expected} but got ${actual}`);
 };
 
+// For browser testing purposes we treat these the same
+assert.strictEqual = assert.equal;
+assert.deepStrictEqual = assert.deepEqual;
+
 assert.rejects = async (fn) => {
   try {
     await fn();
@@ -51,4 +55,20 @@ assert.rejects = async (fn) => {
     return;
   }
   throw new Error("Expected promise to reject but it resolved");
+};
+
+assert.throws = (fn, expected) => {
+  try {
+    fn();
+  } catch (/** @type {any} */ error) {
+    if (expected) {
+      if (error.name !== expected.name || error.message !== expected.message) {
+        throw new Error(
+          `Expected error ${expected.name}: ${expected.message} but got ${error.name}: ${error.message}`
+        );
+      }
+    }
+    return;
+  }
+  throw new Error("Expected function to throw but it did not");
 };
