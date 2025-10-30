@@ -6,7 +6,7 @@
  * @typedef {import("@weborigami/async-tree").SyncOrAsyncMap} SyncOrAsyncMap
  */
 
-import { isUnpackable, symbols, Tree } from "@weborigami/async-tree";
+import { getParent, isUnpackable, Tree } from "@weborigami/async-tree";
 import os from "node:os";
 import expressionObject from "./expressionObject.js";
 import { evaluate } from "./internal.js";
@@ -196,7 +196,7 @@ export async function inherited(depth, state) {
         `Origami internal error: Can't find context object`
       );
     }
-    current = current.parent ?? current[symbols.parent];
+    current = getParent(current);
   }
   return current;
 }

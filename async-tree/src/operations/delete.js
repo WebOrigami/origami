@@ -1,7 +1,6 @@
 /**
  * Removes the value for the given key from the specific node of the tree.
  *
- * @typedef {import("@weborigami/types").AsyncMutableTree} AsyncMutableTree
  * @typedef {import("../../index.ts").SyncOrAsyncMap} SyncOrAsyncMap
  *
  * @param {SyncOrAsyncMap} tree

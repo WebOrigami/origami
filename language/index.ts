@@ -1,5 +1,4 @@
-import { UnpackFunction } from "@weborigami/async-tree";
-import { AsyncTree } from "@weborigami/types";
+import { SyncOrAsyncMap, UnpackFunction } from "@weborigami/async-tree";
 
 export * from "./main.js";
 
@@ -59,9 +58,9 @@ export type Position = {
 
 export type RuntimeState = {
   /** The container (e.g., file system) that holds the code */
-  container?: AsyncTree | null;
+  container?: SyncOrAsyncMap | null;
   /** The object to which this code is attached */
-  object?: AsyncTree | null;
+  object?: SyncOrAsyncMap | null;
   /** The current stack of function parameter assignments */
   stack?: Array<Record<string, any>>;
 }
