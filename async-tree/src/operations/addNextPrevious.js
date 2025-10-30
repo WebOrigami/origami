@@ -1,19 +1,18 @@
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import entries from "./entries.js";
-import isTreelike from "./isTreelike.js";
+import isMaplike from "./isMaplike.js";
 import plain from "./plain.js";
 
 /**
  * Add nextKey/previousKey properties to values.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.ts").PlainObject} PlainObject
  *
- * @param {import("../../index.ts").Treelike} treelike
+ * @param {import("../../index.ts").Maplike} maplike
  * @returns {Promise<PlainObject|Array>}
  */
-export default async function addNextPrevious(treelike) {
-  const tree = await getTreeArgument(treelike, "addNextPrevious");
+export default async function addNextPrevious(maplike) {
+  const tree = await getTreeArgument(maplike, "addNextPrevious");
 
   const treeEntries = await entries(tree);
   const keys = treeEntries.map(([key]) => key);
@@ -25,7 +24,7 @@ export default async function addNextPrevious(treelike) {
       let resultValue;
       if (value === undefined) {
         resultValue = undefined;
-      } else if (isTreelike(value)) {
+      } else if (isMaplike(value)) {
         resultValue = await plain(value);
       } else if (typeof value === "object") {
         // Clone value to avoid modifying the original object
@@ -51,7 +50,7 @@ export default async function addNextPrevious(treelike) {
     })
   );
 
-  return treelike instanceof Array
+  return maplike instanceof Array
     ? mappedEntries.map(([_, value]) => value)
     : Object.fromEntries(mappedEntries);
 }

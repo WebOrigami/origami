@@ -8,12 +8,12 @@ import isAsyncTree from "./isAsyncTree.js";
  * trailing slashes.
  *
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  */
-export default async function inners(treelike) {
-  const tree = await getTreeArgument(treelike, "inners");
+export default async function inners(maplike) {
+  const tree = await getTreeArgument(maplike, "inners");
 
   return Object.assign(new AsyncMap(), {
     async get(key) {

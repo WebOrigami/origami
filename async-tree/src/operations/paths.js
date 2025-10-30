@@ -10,13 +10,13 @@ import isAsyncTree from "./isAsyncTree.js";
  * If `assumeSlashes` is true, then keys are assumed to have trailing slashes to
  * indicate subtrees. The default value of this option is false.
  *
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  * @param {{ assumeSlashes?: boolean, base?: string }} options
  */
-export default async function paths(treelike, options = {}) {
-  const tree = from(treelike);
+export default async function paths(maplike, options = {}) {
+  const tree = from(maplike);
   const base = options.base ?? "";
   const assumeSlashes = options.assumeSlashes ?? false;
   const result = [];

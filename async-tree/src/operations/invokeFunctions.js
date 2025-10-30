@@ -2,8 +2,8 @@ import AsyncMap from "../drivers/AsyncMap.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import isAsyncTree from "./isAsyncTree.js";
 
-export default async function invokeFunctions(treelike) {
-  const tree = await getTreeArgument(treelike, "invokeFunctions");
+export default async function invokeFunctions(maplike) {
+  const tree = await getTreeArgument(maplike, "invokeFunctions");
 
   return Object.assign(new AsyncMap(), {
     description: "invokeFunctions",

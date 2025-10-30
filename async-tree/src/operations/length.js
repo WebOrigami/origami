@@ -5,13 +5,13 @@ import keys from "./keys.js";
  * Return the number of keys in the tree.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  */
-export default async function length(treelike) {
+export default async function length(maplike) {
   console.warn("Tree.length() is deprecated. Use Tree.size() instead.");
-  const tree = await getTreeArgument(treelike, "length");
+  const tree = await getTreeArgument(maplike, "length");
   const treeKeys = await keys(tree);
   return treeKeys.length;
 }

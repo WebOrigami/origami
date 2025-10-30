@@ -6,12 +6,12 @@ import isAsyncTree from "./isAsyncTree.js";
 /**
  * Resolve the async tree to a synchronous tree.
  *
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  */
-export default async function sync(treelike) {
-  const tree = await getTreeArgument(treelike, "addNextPrevious");
+export default async function sync(maplike) {
+  const tree = await getTreeArgument(maplike, "addNextPrevious");
   const treeEntries = await entries(tree);
   const resolved = await Promise.all(
     treeEntries.map(async ([key, value]) => {

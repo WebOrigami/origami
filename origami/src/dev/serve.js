@@ -12,13 +12,13 @@ const defaultPort = 5000;
  * Start a local web server for the indicated tree.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  * @param {number} [port]
  */
-export default async function serve(treelike, port) {
-  let tree = await getTreeArgument(treelike, "serve");
+export default async function serve(maplike, port) {
+  let tree = await getTreeArgument(maplike, "serve");
 
   if (!isTransformApplied(ExplorableSiteTransform, tree)) {
     tree = transformObject(ExplorableSiteTransform, tree);

@@ -6,14 +6,14 @@ import keys from "./keys.js";
  * Return a new tree with the original's keys shuffled
  *
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  * @param {boolean?} reshuffle
- * @returns {Promise<AsyncTree>}
+ * @returns {Promise<AsyncMap>}
  */
-export default async function shuffle(treelike, reshuffle = false) {
-  const tree = await getTreeArgument(treelike, "shuffle");
+export default async function shuffle(maplike, reshuffle = false) {
+  const tree = await getTreeArgument(maplike, "shuffle");
 
   let treeKeys;
 

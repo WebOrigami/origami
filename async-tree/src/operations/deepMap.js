@@ -5,17 +5,17 @@ import map from "./map.js";
 /**
  * Shorthand for calling `map` with the `deep: true` option.
  *
- * @typedef {import("../../index.ts").TreeMapOptions} TreeMapOptions
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").MapOptions} MapOptions
+ * @typedef {import("../../index.ts").Maplike} Maplike
  * @typedef {import("../../index.ts").ValueKeyFn} ValueKeyFn
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("../../index.ts").AsyncMap} AsyncMap
  *
- * @param {Treelike} treelike
- * @param {ValueKeyFn|TreeMapOptions} options
- * @returns {Promise<AsyncTree>}
+ * @param {Maplike} maplike
+ * @param {ValueKeyFn|MapOptions} options
+ * @returns {Promise<AsyncMap>}
  */
-export default async function deepMap(treelike, options) {
-  const tree = await getTreeArgument(treelike, "deepMap", { deep: true });
+export default async function deepMap(maplike, options) {
+  const tree = await getTreeArgument(maplike, "deepMap", { deep: true });
   const withDeep = isPlainObject(options)
     ? // Dictionary
       { ...options, deep: true }

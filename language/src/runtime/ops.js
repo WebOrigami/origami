@@ -1,7 +1,7 @@
 /**
  * @typedef {import("../../index.ts").AnnotatedCode} AnnotatedCode
  * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.ts").RuntimeState} RuntimeState
  */
@@ -406,11 +406,11 @@ export async function params(depth, state = {}) {
 addOpLabel(params, "«ops.params»");
 params.needsState = true;
 
-// export function optionalTraverse(treelike, key) {
-//   if (!treelike) {
+// export function optionalTraverse(maplike, key) {
+//   if (!maplike) {
 //     return undefined;
 //   }
-//   return Tree.traverseOrThrow(treelike, key);
+//   return Tree.traverseOrThrow(maplike, key);
 // }
 // addOpLabel(optionalTraverse, "«ops.optionalTraverse");
 

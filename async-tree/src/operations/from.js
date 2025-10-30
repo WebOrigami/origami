@@ -15,9 +15,9 @@ import isPlainObject from "../utilities/isPlainObject.js";
  * DeepObjectMap. The optional `parent` parameter will be used as the default
  * parent of the new tree.
  *
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  *
- * @param {Treelike | Object} object
+ * @param {Maplike | Object} object
  * @param {{ deep?: boolean, parent?: Map|AsyncMap|null }} [options]
  * @returns {Map|AsyncMap}
  */

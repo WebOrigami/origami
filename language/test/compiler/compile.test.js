@@ -130,7 +130,7 @@ async function assertCompile(text, expected, options = {}) {
   const parent = options.target ?? null;
   const fn = compile.expression(text, { globals, mode, parent });
   let result = await fn();
-  if (Tree.isTreelike(result)) {
+  if (Tree.isMaplike(result)) {
     result = await Tree.plain(result);
   }
   assert.deepEqual(result, expected);

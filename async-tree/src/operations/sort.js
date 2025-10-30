@@ -10,14 +10,14 @@ import keys from "./keys.js";
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {(key: any, tree: AsyncTree) => any} SortKeyFn
  * @typedef {{ compare?: (a: any, b: any) => number, sortKey?: SortKeyFn }} SortOptions
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  * @typedef {import("../../index.ts").ValueKeyFn} ValueKeyFn
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  * @param {SortOptions|ValueKeyFn} [options]
  */
-export default async function sort(treelike, options) {
-  const tree = await getTreeArgument(treelike, "sort");
+export default async function sort(maplike, options) {
+  const tree = await getTreeArgument(maplike, "sort");
 
   let sortKey;
   let compare;

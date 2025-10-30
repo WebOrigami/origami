@@ -3,12 +3,12 @@ import getTreeArgument from "../utilities/getTreeArgument.js";
 /**
  * Return the first value in the tree.
  *
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  */
-export default async function first(treelike) {
-  const tree = await getTreeArgument(treelike, "first");
+export default async function first(maplike) {
+  const tree = await getTreeArgument(maplike, "first");
   let firstKey;
   for await (const key of tree.keys()) {
     // Just needed to get first key

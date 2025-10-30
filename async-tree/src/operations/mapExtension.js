@@ -3,48 +3,48 @@ import isUnpackable from "../utilities/isUnpackable.js";
 import map from "./map.js";
 
 /**
- * @typedef {import("../../index.ts").TreeMapExtensionOptions} TreeMapExtensionOptions
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").AsyncMap} AsyncMap
+ * @typedef {import("../../index.ts").MapExtensionOptions} MapExtensionOptions
+ * @typedef {import("../../index.ts").Maplike} Maplike
  * @typedef {import("../../index.ts").ValueKeyFn} ValueKeyFn
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  */
 
 /**
  * @overload
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  * @param {string} extension
  */
 
 /**
  * @overload
- * @param {Treelike} treelike
- * @param {TreeMapExtensionOptions} options
+ * @param {Maplike} maplike
+ * @param {MapExtensionOptions} options
  */
 
 /**
  * @overload
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  * @param {string} extension
  * @param {ValueKeyFn} fn
  */
 
 /**
  * @overload
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  * @param {string} extension
- * @param {TreeMapExtensionOptions} options
+ * @param {MapExtensionOptions} options
  */
 
 /**
  * Shorthand for calling `map` with the `deep: true` option.
  *
- * @param {Treelike} treelike
- * @param {string|TreeMapExtensionOptions} arg2
- * @param {ValueKeyFn|TreeMapExtensionOptions} [arg3]
- * @returns {Promise<AsyncTree>}
+ * @param {Maplike} maplike
+ * @param {string|MapExtensionOptions} arg2
+ * @param {ValueKeyFn|MapExtensionOptions} [arg3]
+ * @returns {Promise<AsyncMap>}
  */
-export default async function mapExtension(treelike, arg2, arg3) {
-  /** @type {TreeMapExtensionOptions} */
+export default async function mapExtension(maplike, arg2, arg3) {
+  /** @type {MapExtensionOptions} */
   // @ts-ignore
   let options = { _noExtensionWarning: true };
   if (arg3 === undefined) {
@@ -82,5 +82,5 @@ export default async function mapExtension(treelike, arg2, arg3) {
     options.description = `mapExtension ${options.extension}`;
   }
 
-  return map(treelike, options);
+  return map(maplike, options);
 }

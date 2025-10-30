@@ -6,14 +6,14 @@ import OriCommandTransform from "./OriCommandTransform.js";
 /**
  * Add debugging features to the indicated tree.
  *
- * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ * @typedef {import("@weborigami/async-tree").AsyncMap} AsyncMap
+ * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  *
- * @param {Treelike} treelike
- * @returns {Promise<AsyncTree>}
+ * @param {Maplike} maplike
+ * @returns {Promise<Map|AsyncMap>}
  */
-export default async function debug(treelike) {
-  let tree = await getTreeArgument(treelike, "debug");
+export default async function debug(maplike) {
+  let tree = await getTreeArgument(maplike, "debug");
 
   if (!isTransformApplied(DebugTransform, tree)) {
     tree = transformObject(DebugTransform, tree);
@@ -26,8 +26,8 @@ export default async function debug(treelike) {
 }
 
 /**
- * @typedef {import("../../index.ts").Constructor<AsyncTree>} AsyncTreeConstructor
- * @param {AsyncTreeConstructor} Base
+ * @typedef {import("../../index.ts").Constructor<AsyncMap>} AsyncMapConstructor
+ * @param {AsyncMapConstructor} Base
  */
 function DebugTransform(Base) {
   return class Debug extends OriCommandTransform(Base) {
@@ -35,11 +35,11 @@ function DebugTransform(Base) {
       let value = await super.get(key);
       const parent = this;
 
-      // Since this transform is for diagnostic purposes, cast any treelike
+      // Since this transform is for diagnostic purposes, cast any maplike
       // result to a tree so we can debug the result too. (Don't do this for
       // functions, as that can be undesirable, e.g., when writing functions
       // that handle POST requests.)
-      if (Tree.isTreelike(value) && typeof value !== "function") {
+      if (Tree.isMaplike(value) && typeof value !== "function") {
         // @ts-ignore
         value = Tree.from(value, { parent });
         if (!isTransformApplied(DebugTransform, value)) {

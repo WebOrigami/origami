@@ -5,12 +5,12 @@ import isAsyncTree from "./isAsyncTree.js";
 /**
  * Return the deep nested entries in the tree as arrays of [key, value] pairs.
  *
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  */
-export default async function deepEntries(treelike) {
-  const tree = await getTreeArgument(treelike, "deepEntries");
+export default async function deepEntries(maplike) {
+  const tree = await getTreeArgument(maplike, "deepEntries");
 
   const treeEntries = await entries(tree);
   const result = await Promise.all(

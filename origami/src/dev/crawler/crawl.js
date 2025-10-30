@@ -16,16 +16,16 @@ import { addValueToObject, getBaseUrl } from "./utilities.js";
  * in-memory. Referenced resources like images will be represented as functions
  * that obtain the requested value from the original site.
  *
- * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ * @typedef {import("@weborigami/async-tree").AsyncMap} AsyncMap
+ * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  * @param {string} [baseHref]
- * @returns {Promise<AsyncTree>}
+ * @returns {Promise<AsyncMap>}
  */
-export default async function crawlBuiltin(treelike, baseHref) {
-  const tree = await getTreeArgument(treelike, "crawl");
-  const baseUrl = getBaseUrl(baseHref, treelike);
+export default async function crawlBuiltin(maplike, baseHref) {
+  const tree = await getTreeArgument(maplike, "crawl");
+  const baseUrl = getBaseUrl(baseHref, maplike);
 
   const cache = {};
   const resources = {};

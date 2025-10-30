@@ -1,5 +1,5 @@
 import from from "../operations/from.js";
-import isTreelike from "../operations/isTreelike.js";
+import isMaplike from "../operations/isMaplike.js";
 import isUnpackable from "./isUnpackable.js";
 
 /**
@@ -29,7 +29,7 @@ export default function toFunction(obj) {
       const fn = await fnPromise;
       return fn(...args);
     };
-  } else if (isTreelike(obj)) {
+  } else if (isMaplike(obj)) {
     // Return a function that invokes the tree's getter.
     const tree = from(obj);
     return tree.get.bind(tree);

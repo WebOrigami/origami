@@ -3,12 +3,12 @@ import getTreeArgument from "../utilities/getTreeArgument.js";
 /**
  * Remove all entries from the tree.
  *
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  */
-export default async function clear(treelike) {
-  const tree = await getTreeArgument(treelike, "clear");
+export default async function clear(maplike) {
+  const tree = await getTreeArgument(maplike, "clear");
   if ("readOnly" in tree && tree.readOnly) {
     throw new TypeError("Target must be a mutable asynchronous tree");
   }

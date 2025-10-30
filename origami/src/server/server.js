@@ -97,11 +97,11 @@ function keysFromUrl(url) {
  * A request listener for use with the node http.createServer and
  * https.createServer calls, letting you serve an async tree as a set of pages.
  *
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
- * @param {Treelike} treelike
+ * @typedef {import("@weborigami/async-tree").Maplike} Maplike
+ * @param {Maplike} maplike
  */
-export function requestListener(treelike) {
-  const tree = Tree.from(treelike);
+export function requestListener(maplike) {
+  const tree = Tree.from(maplike);
   return async function (request, response) {
     console.log(decodeURI(request.url));
     const handled = await handleRequest(request, response, tree);
@@ -142,8 +142,8 @@ ${message}
 }
 
 // Asynchronous tree router as Express middleware.
-export function treeRouter(treelike) {
-  const tree = Tree.from(treelike, { deep: true });
+export function treeRouter(maplike) {
+  const tree = Tree.from(maplike, { deep: true });
   // Return a router for the tree source.
   return async function (request, response, next) {
     const handled = await handleRequest(request, response, tree);

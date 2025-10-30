@@ -1,7 +1,7 @@
 import ObjectMap from "../drivers/ObjectMap.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import from from "./from.js";
-import isTreelike from "./isTreelike.js";
+import isMaplike from "./isMaplike.js";
 import keys from "./keys.js";
 import values from "./values.js";
 
@@ -9,11 +9,11 @@ import values from "./values.js";
  * Given a function that returns a grouping key for a value, returns a transform
  * that applies that grouping function to a tree.
  *
- * @param {import("../../index.ts").Treelike} treelike
+ * @param {import("../../index.ts").Maplike} maplike
  * @param {import("../../index.ts").ValueKeyFn} groupKeyFn
  */
-export default async function groupBy(treelike, groupKeyFn) {
-  const tree = await getTreeArgument(treelike, "groupBy");
+export default async function groupBy(maplike, groupKeyFn) {
+  const tree = await getTreeArgument(maplike, "groupBy");
 
   const treeKeys = await keys(tree);
 
@@ -30,7 +30,7 @@ export default async function groupBy(treelike, groupKeyFn) {
       continue;
     }
 
-    if (!isTreelike(groups)) {
+    if (!isMaplike(groups)) {
       // A single value was returned
       groups = [groups];
     }

@@ -4,13 +4,13 @@ import { isPlainObject, isUnpackable, Tree } from "@weborigami/async-tree";
  * Create a tree that's the result of merging the given trees.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  *
- * @param {(Treelike|null)[]} trees
+ * @param {(Maplike|null)[]} trees
  */
 export default async function mergeTrees(...trees) {
   // Filter out null or undefined trees.
-  /** @type {Treelike[]}
+  /** @type {Maplike[]}
    * @ts-ignore */
   const filtered = trees.filter((tree) => tree);
 

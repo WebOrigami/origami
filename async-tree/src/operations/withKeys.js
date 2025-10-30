@@ -6,16 +6,16 @@ import values from "./values.js";
  * Return a tree whose keys are provided by the _values_ of a second tree (e.g.,
  * an array of keys).
  *
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
- * @param {Treelike} treelike
- * @param {Treelike} keysTreelike
- * @returns {Promise<AsyncTree>}
+ * @param {Maplike} maplike
+ * @param {Maplike} keysMaplike
+ * @returns {Promise<AsyncMap>}
  */
-export default async function withKeys(treelike, keysTreelike) {
-  const tree = await getTreeArgument(treelike, "withKeys", { position: 0 });
-  const keysTree = await getTreeArgument(keysTreelike, "withKeys", {
+export default async function withKeys(maplike, keysMaplike) {
+  const tree = await getTreeArgument(maplike, "withKeys", { position: 0 });
+  const keysTree = await getTreeArgument(keysMaplike, "withKeys", {
     position: 1,
   });
 

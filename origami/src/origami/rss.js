@@ -3,9 +3,9 @@ import jsonFeedToRss from "@weborigami/json-feed-to-rss";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  *
- * @param {Treelike} jsonFeed
+ * @param {Maplike} jsonFeed
  * @param {any} options
  */
 export default async function rss(jsonFeed, options = {}) {

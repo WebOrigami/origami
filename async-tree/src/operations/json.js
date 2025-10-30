@@ -6,10 +6,10 @@ import from from "./from.js";
 /**
  * Render the given tree in JSON format.
  *
- * @param {import("../../index.ts").Treelike} [treelike]
+ * @param {import("../../index.ts").Maplike} [maplike]
  */
-export default async function json(treelike) {
-  let tree = from(treelike);
+export default async function json(maplike) {
+  let tree = from(maplike);
   if (tree === undefined) {
     return undefined;
   }

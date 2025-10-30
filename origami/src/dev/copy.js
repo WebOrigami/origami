@@ -5,10 +5,10 @@ import { transformObject } from "../common/utilities.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  *
- * @param {Treelike} source
- * @param {Treelike} target
+ * @param {Maplike} source
+ * @param {Maplike} target
  */
 export default async function copy(source, target) {
   const sourceTree = await getTreeArgument(source, "copy", { position: 0 });

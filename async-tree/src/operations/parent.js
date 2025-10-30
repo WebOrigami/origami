@@ -3,11 +3,11 @@ import getTreeArgument from "../utilities/getTreeArgument.js";
 /**
  * Returns the parent of the current tree.
  *
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  */
-export default async function parent(treelike) {
-  const tree = await getTreeArgument(treelike, "parent");
+export default async function parent(maplike) {
+  const tree = await getTreeArgument(maplike, "parent");
   return "parent" in tree ? tree.parent : undefined;
 }

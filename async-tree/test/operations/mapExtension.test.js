@@ -5,12 +5,12 @@ import plain from "../../src/operations/plain.js";
 
 describe("mapExtension", () => {
   test("can add an extension to a key", async () => {
-    const treelike = {
+    const maplike = {
       "file0.txt": 1,
       file1: 2,
       file2: 3,
     };
-    const fixture = await mapExtension(treelike, "->.data");
+    const fixture = await mapExtension(maplike, "->.data");
     assert.deepEqual(await plain(fixture), {
       "file0.txt.data": 1,
       "file1.data": 2,
@@ -19,12 +19,12 @@ describe("mapExtension", () => {
   });
 
   test("can change a key's extension", async () => {
-    const treelike = {
+    const maplike = {
       "file1.lower": "will be mapped",
       file2: "won't be mapped",
       "file3.foo": "won't be mapped",
     };
-    const fixture = await mapExtension(treelike, {
+    const fixture = await mapExtension(maplike, {
       extension: ".lower->.upper",
       value: (sourceValue) => sourceValue.toUpperCase(),
     });
@@ -34,13 +34,13 @@ describe("mapExtension", () => {
   });
 
   test("can manipulate extensions deeply", async () => {
-    const treelike = {
+    const maplike = {
       "file1.txt": 1,
       more: {
         "file2.txt": 2,
       },
     };
-    const fixture = await mapExtension(treelike, ".txt->", {
+    const fixture = await mapExtension(maplike, ".txt->", {
       deep: true,
     });
     assert.deepEqual(await plain(fixture), {

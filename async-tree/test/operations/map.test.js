@@ -82,12 +82,12 @@ describe("map", () => {
   });
 
   test("maps keys and values", async () => {
-    const treelike = new ObjectMap([
+    const maplike = new ObjectMap([
       { name: "Alice", age: 1 },
       { name: "Bob", age: 2 },
       { name: "Carol", age: 3 },
     ]);
-    const result = await map(treelike, {
+    const result = await map(maplike, {
       key: (value, key, tree) => value.name,
       value: (value, key, tree) => value.age,
     });

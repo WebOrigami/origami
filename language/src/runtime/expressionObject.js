@@ -152,8 +152,8 @@ export function entryKey(entry, object = null, eagerProperties = []) {
     return key;
   }
 
-  // If eager property value is treelike, add slash to the key
-  if (eagerProperties.includes(key) && Tree.isTreelike(object?.[key])) {
+  // If eager property value is maplike, add slash to the key
+  if (eagerProperties.includes(key) && Tree.isMaplike(object?.[key])) {
     return trailingSlash.add(key);
   }
 

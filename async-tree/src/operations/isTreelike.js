@@ -13,15 +13,15 @@ import isAsyncTree from "./isAsyncTree.js";
  * - A `Set` instance
  * - A plain object
  *
- * Note: the `from()` method accepts any JavaScript object, but `isTreelike`
+ * Note: the `from()` method accepts any JavaScript object, but `isMaplike`
  * returns `false` for an object that isn't one of the above types.
  *
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  *
  * @param {any} obj
- * @returns {obj is Treelike}
+ * @returns {obj is Maplike}
  */
-export default function isTreelike(obj) {
+export default function isMaplike(obj) {
   return (
     isAsyncTree(obj) ||
     obj instanceof Array ||

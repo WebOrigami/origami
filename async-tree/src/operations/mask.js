@@ -2,7 +2,7 @@ import AsyncMap from "../drivers/AsyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import isAsyncTree from "./isAsyncTree.js";
-import isTreelike from "./isTreelike.js";
+import isMaplike from "./isMaplike.js";
 import keys from "./keys.js";
 
 /**
@@ -11,15 +11,15 @@ import keys from "./keys.js";
  * deep: if a value from `a` is a subtree, it will be filtered recursively.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  *
- * @param {Treelike} aTreelike
- * @param {Treelike} bTreelike
- * @returns {Promise<AsyncTree>}
+ * @param {Maplike} aMaplike
+ * @param {Maplike} bMaplike
+ * @returns {Promise<AsyncMap>}
  */
-export default async function mask(aTreelike, bTreelike) {
-  const aTree = await getTreeArgument(aTreelike, "filter", { position: 0 });
-  const bTree = await getTreeArgument(bTreelike, "filter", {
+export default async function mask(aMaplike, bMaplike) {
+  const aTree = await getTreeArgument(aMaplike, "filter", { position: 0 });
+  const bTree = await getTreeArgument(bMaplike, "filter", {
     deep: true,
     position: 1,
   });
@@ -34,7 +34,7 @@ export default async function mask(aTreelike, bTreelike) {
         return undefined;
       }
       let aValue = await aTree.get(key);
-      if (isTreelike(aValue)) {
+      if (isMaplike(aValue)) {
         // Filter the subtree
         return mask(aValue, bValue);
       } else {

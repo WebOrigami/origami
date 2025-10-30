@@ -9,13 +9,13 @@ import {
  * Expose .keys.json for a tree.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  *
- * @param {Treelike} treelike
- * @returns {Promise<AsyncTree>}
+ * @param {Maplike} maplike
+ * @returns {Promise<AsyncMap>}
  */
-export default async function jsonKeysBuiltin(treelike) {
-  const tree = await getTreeArgument(treelike, "jsonKeys");
+export default async function jsonKeysBuiltin(maplike) {
+  const tree = await getTreeArgument(maplike, "jsonKeys");
   return jsonKeysMap(tree);
 }
 
@@ -27,7 +27,7 @@ function jsonKeysMap(tree) {
       let value = await tree.get(key);
       if (value === undefined && key === ".keys.json") {
         value = await jsonKeys.stringify(this);
-      } else if (Tree.isTreelike(value)) {
+      } else if (Tree.isMaplike(value)) {
         const subtree = Tree.from(value, { deep: true, parent: result });
         value = jsonKeysMap(subtree);
       }

@@ -1,6 +1,6 @@
 import groupBy from "./groupBy.js";
 
-export default async function group(treelike, groupKeyFn) {
+export default async function group(maplike, groupKeyFn) {
   console.warn("Tree.group() is deprecated. Use Tree.groupBy() instead.");
-  return groupBy(treelike, groupKeyFn);
+  return groupBy(maplike, groupKeyFn);
 }

@@ -1,4 +1,3 @@
-import type { AsyncTree } from "@weborigami/types";
 import AsyncMap from "./src/drivers/AsyncMap.js";
 
 export * from "./main.js";
@@ -18,28 +17,37 @@ export type HasString = {
   toString(): string;
 };
 
+export type MapExtensionOptions = {
+  deep?: boolean;
+  description?: string;
+  extension?: string;
+  needsSourceValue?: boolean;
+  value?: ValueKeyFn;
+};
+
 export type Maplike =
   any[] |
   Function | 
-  Map<any, any> | 
-  AsyncMap |
+  SyncOrAsyncMap |
   PlainObject | 
   Set<any>;
 
-export type NativeTreelike = 
-  any[] |
-  AsyncTree |
-  Function | 
-  Map<any, any> | 
-  PlainObject | 
-  Set<any>;
+export type MapOptions = {
+  deep?: boolean;
+  description?: string;
+  extension?: string;
+  inverseKey?: KeyFn;
+  key?: ValueKeyFn;
+  keyNeedsSourceValue?: boolean;
+  value?: ValueKeyFn;
+};
 
 /**
  * A packed value is one that can be written to a file via fs.writeFile or into
  * an HTTP response via response.write, or readily converted to such a form.
  */
 export type Packed = (ArrayBuffer | Buffer | ReadableStream | string | String | TypedArray) & {
-  parent?: AsyncTree|null;
+  parent?: SyncOrAsyncMap|null;
   unpack?(): Promise<any>;
 };
 
@@ -52,28 +60,6 @@ export type ReduceFn = (values: any[], keys: any[], map: SyncOrAsyncMap) => Prom
 export type Stringlike = string | HasString;
 
 export type SyncOrAsyncMap = Map<any, any> | AsyncMap;
-
-export type Treelike =
-  NativeTreelike |
-  Unpackable;
-
-export type TreeMapOptions = {
-  deep?: boolean;
-  description?: string;
-  extension?: string;
-  inverseKey?: KeyFn;
-  key?: ValueKeyFn;
-  keyNeedsSourceValue?: boolean;
-  value?: ValueKeyFn;
-};
-
-export type TreeMapExtensionOptions = {
-  deep?: boolean;
-  description?: string;
-  extension?: string;
-  needsSourceValue?: boolean;
-  value?: ValueKeyFn;
-};
 
 export type TypedArray =
   Float32Array |

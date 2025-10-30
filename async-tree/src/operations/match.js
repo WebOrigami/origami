@@ -15,12 +15,12 @@ import isAsyncTree from "./isAsyncTree.js";
  * invokes the given function with an object containing the matched values.
  *
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  * @typedef {import("../../index.ts").Invocable} Invocable
  *
  * @param {string|RegExp} pattern
  * @param {Invocable} resultFn
- * @param {Treelike} [keys]
+ * @param {Maplike} [keys]
  */
 export default function match(pattern, resultFn, keys = []) {
   let regex;

@@ -5,14 +5,13 @@ import getTreeArgument from "../utilities/getTreeArgument.js";
  * A tree's "scope" is the collection of everything in that tree and all of its
  * ancestors.
  *
- * @typedef {import("../../index.ts").AsyncMap} AsyncMap
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  * @returns {Promise<AsyncMap>}
  */
-export default async function scope(treelike) {
-  const tree = await getTreeArgument(treelike, "scope");
+export default async function scope(maplike) {
+  const tree = await getTreeArgument(maplike, "scope");
 
   return Object.assign(new AsyncMap(), {
     description: "scope",

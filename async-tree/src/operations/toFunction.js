@@ -3,12 +3,12 @@ import getTreeArgument from "../utilities/getTreeArgument.js";
 /**
  * Returns a function that invokes the tree's `get` method.
  *
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  * @returns {Promise<Function>}
  */
-export default async function toFunction(treelike) {
-  const tree = await getTreeArgument(treelike, "toFunction");
+export default async function toFunction(maplike) {
+  const tree = await getTreeArgument(maplike, "toFunction");
   return tree.get.bind(tree);
 }

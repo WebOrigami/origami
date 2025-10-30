@@ -11,21 +11,21 @@ import keys from "./keys.js";
  *
  * If no second tree is supplied, an in-memory value cache is used.
  *
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  *
- * @param {Treelike} sourceTreelike
- * @param {Treelike} [cacheTreelike]
+ * @param {Maplike} sourceMaplike
+ * @param {Maplike} [cacheMaplike]
  * @returns {Promise<SyncMap|AsyncMap>}
  */
-export default async function treeCache(sourceTreelike, cacheTreelike) {
-  const source = await getTreeArgument(sourceTreelike, "cache", {
+export default async function treeCache(sourceMaplike, cacheMaplike) {
+  const source = await getTreeArgument(sourceMaplike, "cache", {
     position: 0,
   });
 
   let cache;
-  if (cacheTreelike) {
+  if (cacheMaplike) {
     cache = /** @type {any} */ (
-      await getTreeArgument(cacheTreelike, "cache", { position: 1 })
+      await getTreeArgument(cacheMaplike, "cache", { position: 1 })
     );
     // @ts-ignore
     if (isReadOnlyMap(cache)) {

@@ -5,14 +5,14 @@ import plain from "../../src/operations/plain.js";
 
 describe("paginate", () => {
   test("divides tree keys into fixed-length chunks", async () => {
-    const treelike = {
+    const maplike = {
       a: 1,
       b: 2,
       c: 3,
       d: 4,
       e: 5,
     };
-    const paginated = await paginate(treelike, 2);
+    const paginated = await paginate(maplike, 2);
     const result = await plain(paginated);
     assert.deepEqual(result, {
       1: {

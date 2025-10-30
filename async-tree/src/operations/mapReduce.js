@@ -11,16 +11,16 @@ import isAsyncTree from "./isAsyncTree.js";
  * values have been obtained, all the values and keys will be passed to the
  * reduceFn, which should consolidate those into a single result.
  *
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  * @typedef {import("../../index.ts").ReduceFn} ReduceFn
  * @typedef {import("../../index.ts").ValueKeyFn} ValueKeyFn
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  * @param {ValueKeyFn|null} mapFn
  * @param {ReduceFn} reduceFn
  */
-export default async function mapReduce(treelike, mapFn, reduceFn) {
-  const tree = from(treelike);
+export default async function mapReduce(maplike, mapFn, reduceFn) {
+  const tree = from(maplike);
 
   // We're going to fire off all the get requests in parallel, as quickly as
   // the keys come in. We call the tree's `get` method for each key, but

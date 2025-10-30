@@ -39,7 +39,7 @@ export default class AsyncMap {
   /**
    * Returns an async iterable of the map's key-value pairs.
    *
-   * @returns {AsyncIterableIterator<[any, any][]>}
+   * @returns {AsyncIterableIterator<[any, any]>}
    */
   async *entries() {
     const keys = [];
@@ -113,6 +113,9 @@ export default class AsyncMap {
   static [Symbol.hasInstance](object) {
     if (object instanceof Map) {
       return true;
+    }
+    if (object == null || typeof object !== "object") {
+      return false;
     }
     // Walk up prototype chain looking for this class
     let classFn = object.constructor;

@@ -12,14 +12,14 @@ import { getDescriptor } from "../common/utilities.js";
 /**
  * Render a tree in DOT format.
  *
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  * @param {PlainObject} [options]
  */
-export default async function dot(treelike, options = {}) {
-  const tree = await getTreeArgument(treelike, "treeDot", { deep: true });
+export default async function dot(maplike, options = {}) {
+  const tree = await getTreeArgument(maplike, "treeDot", { deep: true });
   const rootLabel = getDescriptor(tree) ?? "";
   const treeArcs = await statements(tree, "", rootLabel, options);
   return `digraph g {

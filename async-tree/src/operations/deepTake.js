@@ -9,11 +9,11 @@ import isAsyncTree from "./isAsyncTree.js";
  * This is similar to `deepValues`, but it is more efficient for large trees as
  * stops after `count` values.
  *
- * @param {import("../../index.ts").Treelike} treelike
+ * @param {import("../../index.ts").Maplike} maplike
  * @param {number} count
  */
-export default async function deepTake(treelike, count) {
-  const tree = await getTreeArgument(treelike, "deepTake", { deep: true });
+export default async function deepTake(maplike, count) {
+  const tree = await getTreeArgument(maplike, "deepTake", { deep: true });
   const { values } = await traverse(tree, count);
   return from(values, { deep: true });
 }

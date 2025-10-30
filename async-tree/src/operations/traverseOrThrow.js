@@ -6,16 +6,16 @@ import from from "./from.js";
  * Return the value at the corresponding path of keys. Throw if any interior
  * step of the path doesn't lead to a result.
  *
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  * @param  {...any} keys
  */
-export default async function traverseOrThrow(treelike, ...keys) {
+export default async function traverseOrThrow(maplike, ...keys) {
   // Start our traversal at the root of the tree.
   /** @type {any} */
-  let value = treelike;
+  let value = maplike;
   let position = 0;
 
   // Process all the keys.
@@ -24,7 +24,7 @@ export default async function traverseOrThrow(treelike, ...keys) {
   while (remainingKeys.length > 0) {
     if (value == null) {
       throw new TraverseError("A null or undefined value can't be traversed", {
-        tree: treelike,
+        tree: maplike,
         keys,
         position,
       });

@@ -12,13 +12,13 @@ import isAsyncTree from "./isAsyncTree.js";
  * taken to match the entire key -- if they do not already start and end with
  * `^` and `$` respectively, those are added.
  *
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  * @returns {Promise<AsyncMap>}
  */
-export default async function regExpKeys(treelike) {
-  const tree = await getTreeArgument(treelike, "regExpKeys", { deep: true });
+export default async function regExpKeys(maplike) {
+  const tree = await getTreeArgument(maplike, "regExpKeys", { deep: true });
 
   const map = new SyncMap();
 

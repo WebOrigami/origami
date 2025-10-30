@@ -8,8 +8,8 @@ import merge from "./merge.js";
 const globstar = "**";
 const globstarSlash = `${globstar}/`;
 
-export default async function globKeys(treelike) {
-  const globs = await getTreeArgument(treelike, "globKeys", { deep: true });
+export default async function globKeys(maplike) {
+  const globs = await getTreeArgument(maplike, "globKeys", { deep: true });
   return Object.assign(new AsyncMap(), {
     async get(key) {
       if (typeof key !== "string") {

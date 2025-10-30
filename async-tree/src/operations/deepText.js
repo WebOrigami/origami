@@ -5,10 +5,10 @@ import deepValuesIterator from "./deepValuesIterator.js";
 /**
  * Concatenate the deep text values in a tree.
  *
- * @param {import("../../index.ts").Treelike} treelike
+ * @param {import("../../index.ts").Maplike} maplike
  */
-export default async function deepText(treelike) {
-  const tree = await getTreeArgument(treelike, "deepText", { deep: true });
+export default async function deepText(maplike) {
+  const tree = await getTreeArgument(maplike, "deepText", { deep: true });
   const strings = [];
   for await (const value of deepValuesIterator(tree, { expand: true })) {
     let string;

@@ -21,6 +21,6 @@ describe("scope", () => {
     // If tree doesn't have value, finds value from parent
     assert.equal(await innerScope.get("b"), 2);
     assert.equal(await innerScope.get("c"), undefined);
-    assert.deepEqual(innerScope.trees, [inner, outer]);
+    assert.deepEqual(/** @type {any} */ (innerScope).trees, [inner, outer]);
   });
 });

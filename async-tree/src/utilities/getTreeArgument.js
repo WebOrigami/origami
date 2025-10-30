@@ -9,29 +9,29 @@ import isUnpackable from "./isUnpackable.js";
  * the caller can work with a simpler tree instead of a DeferredTree.
  *
  * @typedef {import("../../index.ts").AsyncMap} AsyncMap
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  * @typedef {import("../../index.ts").Unpackable} Unpackable
  *
- * @param {Treelike|Unpackable} treelike
+ * @param {Maplike|Unpackable} maplike
  * @param {string} operation
  * @param {{ deep?: boolean, position?: number }} [options]
  * @returns {Promise<Map|AsyncMap>}
  */
 export default async function getTreeArgument(
-  treelike,
+  maplike,
   operation,
   options = {}
 ) {
   const deep = options.deep;
   const position = options.position ?? 0;
 
-  if (isUnpackable(treelike)) {
-    treelike = await treelike.unpack();
+  if (isUnpackable(maplike)) {
+    maplike = await maplike.unpack();
   }
 
   let tree;
   try {
-    tree = from(treelike, { deep });
+    tree = from(maplike, { deep });
   } catch (/** @type {any} */ error) {
     let message = error.message ?? error;
     message = `${operation}: ${message}`;

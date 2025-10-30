@@ -77,7 +77,7 @@ describe("expressionObject", () => {
       ["getter", [ops.getter, [ops.object, ["b", [ops.literal, 2]]]]],
       ["hasSlash/", "This isn't really a tree but says it is"],
       ["message", "Hello"],
-      // Immediate treelike value, should have a slash
+      // Immediate maplike value, should have a slash
       ["object", [ops.object, ["b", [ops.literal, 2]]]],
     ];
     const object = await expressionObject(entries);

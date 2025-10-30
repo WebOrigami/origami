@@ -1,5 +1,5 @@
 import ObjectMap from "../drivers/ObjectMap.js";
-import isTreelike from "../operations/isTreelike.js";
+import isMaplike from "../operations/isMaplike.js";
 import mapReduce from "../operations/mapReduce.js";
 import * as trailingSlash from "../trailingSlash.js";
 import castArraylike from "./castArraylike.js";
@@ -20,7 +20,7 @@ import TypedArray from "./TypedArray.js";
  * If the input is a promise, it will be resolved and its result will be
  * processed.
  *
- * If the input is treelike, it will be converted to a plain JavaScript object,
+ * If the input is maplike, it will be converted to a plain JavaScript object,
  * recursively traversing the tree and converting all values to plain types.
  *
  * If the input is stringlike, its text will be returned.
@@ -47,7 +47,7 @@ export default async function toPlainValue(input) {
 
   if (isPrimitive(input) || input instanceof Date) {
     return input;
-  } else if (isTreelike(input)) {
+  } else if (isMaplike(input)) {
     // Recursively convert tree to plain object.
     return mapReduce(input, toPlainValue, (values, keys, tree) => {
       // Special case for an empty tree: if based on array, return array.

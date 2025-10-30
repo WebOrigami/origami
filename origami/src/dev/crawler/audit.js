@@ -12,14 +12,14 @@ import { getBaseUrl } from "./utilities.js";
  * pages or other resources.
  *
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  * @param {string} [baseHref]
  */
-export default async function audit(treelike, baseHref) {
-  const tree = await getTreeArgument(treelike, "audit");
-  const baseUrl = getBaseUrl(baseHref, treelike);
+export default async function audit(maplike, baseHref) {
+  const tree = await getTreeArgument(maplike, "audit");
+  const baseUrl = getBaseUrl(baseHref, maplike);
 
   let errors = {};
   let report;

@@ -90,8 +90,8 @@ async function format(result) {
     text = result;
   }
 
-  // If the result is treelike, attach it to the text output.
-  if (Tree.isTreelike(result)) {
+  // If the result is maplike, attach it to the text output.
+  if (Tree.isMaplike(result)) {
     if (typeof text === "string") {
       // @ts-ignore
       text = new String(text);

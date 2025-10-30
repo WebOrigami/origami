@@ -4,17 +4,17 @@ import { getTreeArgument, trailingSlash, Tree } from "@weborigami/async-tree";
  * Given an old tree and a new tree, return a tree of changes indicated
  * by the values: "added", "changed", or "deleted".
  *
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  *
- * @param {Treelike} oldTreelike
- * @param {Treelike} newTreelike
+ * @param {Maplike} oldMaplike
+ * @param {Maplike} newMaplike
  */
-export default async function changes(oldTreelike, newTreelike) {
-  const oldTree = await getTreeArgument(oldTreelike, "changes", {
+export default async function changes(oldMaplike, newMaplike) {
+  const oldTree = await getTreeArgument(oldMaplike, "changes", {
     deep: true,
     position: 0,
   });
-  const newTree = await getTreeArgument(newTreelike, "changes", {
+  const newTree = await getTreeArgument(newMaplike, "changes", {
     deep: true,
     position: 1,
   });

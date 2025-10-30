@@ -3,7 +3,7 @@ import { isUnpackable, toPlainValue } from "@weborigami/async-tree";
 /**
  * Render the object as text in CSV format.
  *
- * The object should a treelike object such as an array. The output will include
+ * The object should a maplike object such as an array. The output will include
  * a header row with field names taken from the first item in the tree/array.
  *
  * @param {any} object

@@ -1,6 +1,6 @@
 import { hiddenFileNames } from "../constants.js";
 import assign from "../operations/assign.js";
-import isTreelike from "../operations/isTreelike.js";
+import isMaplike from "../operations/isMaplike.js";
 import * as trailingSlash from "../trailingSlash.js";
 import isStringlike from "../utilities/isStringlike.js";
 import naturalOrder from "../utilities/naturalOrder.js";
@@ -163,7 +163,7 @@ export default class BrowserFileMap extends AsyncMap {
       await directory.getDirectoryHandle(baseKey, {
         create: true,
       });
-    } else if (isTreelike(value)) {
+    } else if (isMaplike(value)) {
       // Treat value as a tree and write it out as a subdirectory.
       const subdirectory = await directory.getDirectoryHandle(baseKey, {
         create: true,

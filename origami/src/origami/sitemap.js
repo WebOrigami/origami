@@ -12,14 +12,14 @@ const templateText = `(urls) => \`<?xml version="1.0" encoding="UTF-8"?>
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  * @param {{ assumeSlashes?: boolean, base?: string }} options
  * @returns {Promise<string>}
  */
-export default async function sitemap(treelike, options = {}) {
-  const tree = await getTreeArgument(treelike, "sitemap");
+export default async function sitemap(maplike, options = {}) {
+  const tree = await getTreeArgument(maplike, "sitemap");
 
   // We're only interested in keys that end in .html or with no extension.
   const filtered = await Tree.filter(

@@ -4,16 +4,16 @@ import { formatError, moduleCache } from "@weborigami/language";
 /**
  * Let a tree (e.g., of files) respond to changes.
  *
+ * @typedef {import("@weborigami/async-tree").AsyncMap} AsyncMap
  * @typedef {import("@weborigami/async-tree").Invocable} Invocable
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  * @param {Invocable} [fn]
- * @returns {Promise<AsyncTree>}
+ * @returns {Promise<Map|AsyncMap>}
  */
-export default async function watch(treelike, fn) {
-  const container = await getTreeArgument(treelike, "watch");
+export default async function watch(maplike, fn) {
+  const container = await getTreeArgument(maplike, "watch");
 
   // Watch the indicated tree.
   await /** @type {any} */ (container).watch?.();

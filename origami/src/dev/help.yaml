@@ -244,7 +244,7 @@ Tree:
     isTraversable:
       args: (object)
       description: True if object is traversable
-    isTreelike:
+    isMaplike:
       args: (object)
       description: True if object can be coerced to a tree
     json:

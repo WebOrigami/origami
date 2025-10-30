@@ -136,7 +136,7 @@ async function processPath(tree, path, baseUrl) {
     value = await Tree.traverse(tree, ...keys);
     normalizedKeys = keys.slice();
     normalizedPath = path;
-    if (Tree.isTreelike(value)) {
+    if (Tree.isMaplike(value)) {
       // Path is actually a directory. See if we can get the empty string or
       // "index.html".
       value =

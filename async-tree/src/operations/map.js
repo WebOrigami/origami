@@ -14,22 +14,21 @@ import parseExtensions from "./parseExtensions.js";
  * Transform the keys and/or values of a tree.
  *
  * @typedef {import("../../index.ts").KeyFn} KeyFn
- * @typedef {import("../../index.ts").TreeMapOptions} MapOptions
+ * @typedef {import("../../index.ts").MapOptions} MapOptions
  * @typedef {import("../../index.ts").ValueKeyFn} ValueKeyFn
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
- * @param {import("../../index.ts").Treelike} treelike
+ * @param {import("../../index.ts").Maplike} maplike
  * @param {MapOptions|ValueKeyFn} options
- * @returns {Promise<AsyncTree>}
+ * @returns {Promise<AsyncMap>}
  */
-export default async function map(treelike, options = {}) {
+export default async function map(maplike, options = {}) {
   if (isUnpackable(options)) {
     options = await options.unpack();
   }
   const validated = validateOptions(options);
   const mapFn = createMapFn(validated);
 
-  const tree = await getTreeArgument(treelike, "map", { deep: validated.deep });
+  const tree = await getTreeArgument(maplike, "map", { deep: validated.deep });
   return mapFn(tree);
 }
 
@@ -117,8 +116,8 @@ function createKeys(tree, options) {
 // Create a map function for the given options
 function createMapFn(options) {
   /**
-   * @param {AsyncTree} tree
-   * @return {AsyncTree}
+   * @param {Map|AsyncMap} tree
+   * @return {AsyncMap}
    */
   return function mapFn(tree) {
     /** @type {any} */

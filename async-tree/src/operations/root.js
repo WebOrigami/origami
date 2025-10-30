@@ -4,13 +4,13 @@ import from from "./from.js";
 /**
  * Walk up the `parent` chain to find the root of the tree.
  *
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  */
-export default function root(treelike) {
+export default function root(maplike) {
   /** @type {any} */
-  let current = from(treelike);
+  let current = from(maplike);
   while (current.parent || current[symbols.parent]) {
     current = current.parent || current[symbols.parent];
   }

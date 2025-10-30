@@ -3,21 +3,21 @@ import getTreeArgument from "../utilities/getTreeArgument.js";
 /**
  * Returns an array of `[key, value]` for each entry in the map.
  *
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
+ * @returns {Promise<Array<[any, any]>>}
  */
-export default async function entries(treelike) {
-  const tree = await getTreeArgument(treelike, "entries");
-  let result;
-  let iterable = tree.entries();
-  if (Symbol.asyncIterator in iterable) {
-    result = [];
-    for await (const key of iterable) {
-      result.push(key);
-    }
+export default async function entries(maplike) {
+  const tree = await getTreeArgument(maplike, "entries");
+  if (tree instanceof Map) {
+    return Array.from(tree.entries());
   } else {
-    result = Array.from(iterable);
+    // AsyncMap
+    const result = [];
+    for await (const entry of tree) {
+      result.push(entry);
+    }
+    return result;
   }
-  return result;
 }

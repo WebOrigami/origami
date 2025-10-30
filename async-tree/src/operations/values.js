@@ -3,12 +3,12 @@ import from from "./from.js";
 /**
  * Return the values in the specific node of the tree.
  *
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  */
-export default async function values(treelike) {
-  const tree = from(treelike);
+export default async function values(maplike) {
+  const tree = from(maplike);
   let result;
   /** @type {any} */
   let iterable = tree.values();

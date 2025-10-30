@@ -1,7 +1,7 @@
 /**
  * @typedef {import("../../index.ts").JsonValue} JsonValue
  * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  */
 

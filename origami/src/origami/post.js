@@ -18,7 +18,7 @@ export default async function post(url, data) {
   if (isUnpackable(data)) {
     data = await data.unpack();
   }
-  if (Tree.isTreelike(data)) {
+  if (Tree.isMaplike(data)) {
     const value = await toPlainValue(data);
     body = JSON.stringify(value);
     headers = {

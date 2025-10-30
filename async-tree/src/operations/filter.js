@@ -5,14 +5,14 @@ import map from "./map.js";
  * Given a tree an a test function, return a new tree whose keys correspond to
  * the values that pass the test function.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
+ * @typedef {import("../../index.ts").AsyncMap} AsyncMap
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  * @param {function|any} options
- * @returns {Promise<AsyncTree>}
+ * @returns {Promise<AsyncMap>}
  */
-export default async function filter(treelike, options) {
+export default async function filter(maplike, options) {
   let testFn;
   let deep;
   if (typeof options === "function") {
@@ -23,7 +23,7 @@ export default async function filter(treelike, options) {
     deep = options.deep ?? false;
   }
 
-  const tree = await getTreeArgument(treelike, "filter", { deep });
+  const tree = await getTreeArgument(maplike, "filter", { deep });
   return map(tree, {
     deep,
 

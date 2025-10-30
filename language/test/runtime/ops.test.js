@@ -128,7 +128,7 @@ describe("ops", () => {
       assert.deepEqual(await ops.flat(1, 2, [3]), [1, 2, 3]);
     });
 
-    test("flattens treelike objects", async () => {
+    test("flattens maplike objects", async () => {
       const object = {
         a: 1,
         b: 2,

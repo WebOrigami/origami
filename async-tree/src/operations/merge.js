@@ -17,9 +17,9 @@ import keys from "./keys.js";
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.ts").PlainObject} PlainObject
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  *
- * @param {Treelike[]} treelikes
+ * @param {Maplike[]} treelikes
  * @returns {Promise}
  */
 export default async function merge(...treelikes) {
@@ -37,7 +37,7 @@ export default async function merge(...treelikes) {
     return unpacked.reduce((acc, obj) => ({ ...acc, ...obj }), {});
   }
 
-  const sources = unpacked.map((treelike) => from(treelike));
+  const sources = unpacked.map((maplike) => from(maplike));
 
   if (sources.length === 0) {
     throw new TypeError("merge: all trees are null or undefined");

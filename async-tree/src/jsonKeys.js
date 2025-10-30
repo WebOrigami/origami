@@ -12,8 +12,8 @@ import keys from "./operations/keys.js";
  * "index.html" for a specific resource available at the node, or a string with
  * a trailing slash like "about/" for a subtree of that node.
  */
-export async function stringify(treelike) {
-  const tree = from(treelike);
+export async function stringify(maplike) {
+  const tree = from(maplike);
   let treeKeys = await keys(tree);
   // Skip the key `.keys.json` if present.
   treeKeys = treeKeys.filter((key) => key !== ".keys.json");

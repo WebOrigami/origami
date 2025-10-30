@@ -5,17 +5,17 @@ import getTreeArgument from "../utilities/getTreeArgument.js";
 import keys from "./keys.js";
 
 /**
- * Return a new grouping of the treelike's values into chunks of the specified
+ * Return a new grouping of the maplike's values into chunks of the specified
  * size.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  * @param {number} [size=10]
  */
-export default async function paginate(treelike, size = 10) {
-  const tree = await getTreeArgument(treelike, "paginate");
+export default async function paginate(maplike, size = 10) {
+  const tree = await getTreeArgument(maplike, "paginate");
 
   const treeKeys = await keys(tree);
   const pageCount = Math.ceil(treeKeys.length / size);

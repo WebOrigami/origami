@@ -1,5 +1,5 @@
 import getTreeArgument from "../utilities/getTreeArgument.js";
-import isTreelike from "./isTreelike.js";
+import isMaplike from "./isMaplike.js";
 
 /**
  * Apply the key/values pairs from the source tree to the target tree.
@@ -8,10 +8,10 @@ import isTreelike from "./isTreelike.js";
  * subtrees, then the subtrees will be merged recursively. Otherwise, the
  * value from the source tree will overwrite the value in the target tree.
  *
- * @typedef  {import("../../index.ts").Treelike} Treelike
+ * @typedef  {import("../../index.ts").Maplike} Maplike
  *
- * @param {Treelike} target
- * @param {Treelike} source
+ * @param {Maplike} target
+ * @param {Maplike} source
  */
 export default async function assign(target, source) {
   const targetTree = await getTreeArgument(target, "assign", { position: 0 });
@@ -25,7 +25,7 @@ export default async function assign(target, source) {
     const promise = (async () => {
       const sourceValue = await sourceTree.get(key);
 
-      if (isTreelike(sourceValue)) {
+      if (isMaplike(sourceValue)) {
         let targetValue = await targetTree.get(key);
         if (targetValue === undefined) {
           // Target key doesn't exist; create empty subtree

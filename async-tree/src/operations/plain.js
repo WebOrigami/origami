@@ -20,15 +20,15 @@ import toPlainValue from "../utilities/toPlainValue.js";
  * array `["b", "a", "c" ]` because the tree has the keys in that order. The
  * specific values of the keys (0, 1, and 2) are ignored.
  *
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  * @typedef {import("../../index.ts").PlainObject} PlainObject
  *
- * @param {Treelike} treelike
+ * @param {Maplike} maplike
  */
-export default async function plain(treelike) {
-  if (treelike instanceof Function) {
+export default async function plain(maplike) {
+  if (maplike instanceof Function) {
     throw new TypeError("plain: can't convert a function to a plain object");
   }
-  const tree = await getTreeArgument(treelike, "plain");
+  const tree = await getTreeArgument(maplike, "plain");
   return toPlainValue(tree);
 }

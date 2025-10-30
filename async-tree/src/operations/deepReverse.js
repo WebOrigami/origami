@@ -7,13 +7,13 @@ import keys from "./keys.js";
  * Reverse the order of keys at all levels of the tree.
  *
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  *
- * @param {Treelike} treelike
- * @returns {Promise<AsyncTree>}
+ * @param {Maplike} maplike
+ * @returns {Promise<AsyncMap>}
  */
-export default async function deepReverse(treelike) {
-  const tree = await getTreeArgument(treelike, "deepReverse", { deep: true });
+export default async function deepReverse(maplike) {
+  const tree = await getTreeArgument(maplike, "deepReverse", { deep: true });
 
   return Object.assign(new AsyncMap(), {
     description: "deepReverse",

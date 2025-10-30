@@ -1,3 +1,4 @@
+import AsyncMap from "../drivers/AsyncMap.js";
 import isPlainObject from "../utilities/isPlainObject.js";
 
 /**
@@ -6,6 +7,7 @@ import isPlainObject from "../utilities/isPlainObject.js";
  *
  * - A function
  * - An `Array` instance
+ * - An `AsyncMap` instance
  * - A `Map` instance
  * - A `Set` instance
  * - A plain object
@@ -21,6 +23,7 @@ import isPlainObject from "../utilities/isPlainObject.js";
 export default function isMaplike(object) {
   return (
     object instanceof Array ||
+    object instanceof AsyncMap ||
     object instanceof Function ||
     object instanceof Map ||
     object instanceof Set ||
