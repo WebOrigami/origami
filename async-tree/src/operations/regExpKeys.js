@@ -13,7 +13,6 @@ import keys from "./keys.js";
  * taken to match the entire key -- if they do not already start and end with
  * `^` and `$` respectively, those are added.
  *
- * @typedef {import("../../index.ts").AsyncMap} AsyncMap
  * @typedef {import("../../index.ts").Treelike} Treelike
  *
  * @param {Treelike} treelike

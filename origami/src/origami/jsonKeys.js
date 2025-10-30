@@ -16,11 +16,11 @@ import {
  */
 export default async function jsonKeysBuiltin(treelike) {
   const tree = await getTreeArgument(treelike, "jsonKeys");
-  return jsonKeysTree(tree);
+  return jsonKeysMap(tree);
 }
 
-function jsonKeysTree(tree) {
-  return Object.assign(new AsyncMap(), {
+function jsonKeysMap(tree) {
+  const result = Object.assign(new AsyncMap(), {
     description: "jsonKeys",
 
     async get(key) {
@@ -28,8 +28,8 @@ function jsonKeysTree(tree) {
       if (value === undefined && key === ".keys.json") {
         value = await jsonKeys.stringify(this);
       } else if (Tree.isTreelike(value)) {
-        const subtree = Tree.from(value, { deep: true, parent: this });
-        value = jsonKeysTree(subtree);
+        const subtree = Tree.from(value, { deep: true, parent: result });
+        value = jsonKeysMap(subtree);
       }
       return value;
     },
@@ -42,4 +42,5 @@ function jsonKeysTree(tree) {
 
     source: tree,
   });
+  return result;
 }

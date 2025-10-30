@@ -14,11 +14,7 @@ export default async function clear(treelike) {
     throw new TypeError("Target must be a mutable asynchronous tree");
   }
   const treeKeys = await keys(tree);
-  const promises = treeKeys.map((key) =>
-    "delete" in tree
-      ? /** @type {any} */ (tree).delete(key)
-      : tree.set(key, undefined)
-  );
+  const promises = treeKeys.map((key) => tree.delete(key));
   await Promise.all(promises);
   return tree;
 }

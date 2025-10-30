@@ -17,14 +17,14 @@ import indexPage from "./indexPage.js";
  */
 export default async function staticBuiltin(treelike) {
   const tree = await getTreeArgument(treelike, "static");
-  return staticTree(tree);
+  return staticMap(tree);
 }
 
 // The name we'll register as a builtin
 staticBuiltin.key = "static";
 
-function staticTree(tree) {
-  return Object.assign(new AsyncMap(), {
+function staticMap(tree) {
+  const result = Object.assign(new AsyncMap(), {
     description: "static",
 
     async get(key) {
@@ -34,8 +34,8 @@ function staticTree(tree) {
       } else if (value === undefined && key === ".keys.json") {
         value = await jsonKeys.stringify(this);
       } else if (Tree.isTreelike(value)) {
-        const subtree = Tree.from(value, { parent: this });
-        value = staticTree(subtree);
+        const subtree = Tree.from(value, { parent: result });
+        value = staticMap(subtree);
       }
       return value;
     },
@@ -48,4 +48,6 @@ function staticTree(tree) {
 
     source: tree,
   });
+
+  return result;
 }

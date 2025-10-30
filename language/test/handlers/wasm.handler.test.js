@@ -1,11 +1,11 @@
-import { FileTree } from "@weborigami/async-tree";
+import { FileMap } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import wasm_handler from "../../src/handlers/wasm_handler.js";
 import ImportModulesMixin from "../../src/runtime/ImportModulesMixin.js";
 
 const fixturesUrl = new URL("fixtures", import.meta.url);
-const fixturesTree = new (ImportModulesMixin(FileTree))(fixturesUrl);
+const fixturesTree = new (ImportModulesMixin(FileMap))(fixturesUrl);
 
 describe(".wasm handler", () => {
   test("loads .wasm file that exports a function", async () => {

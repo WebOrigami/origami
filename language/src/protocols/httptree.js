@@ -1,4 +1,4 @@
-import { SiteTree } from "@weborigami/async-tree";
+import { SiteMap } from "@weborigami/async-tree";
 import constructSiteTree from "./constructSiteTree.js";
 
 /**
@@ -10,5 +10,5 @@ import constructSiteTree from "./constructSiteTree.js";
  * @param  {...string} keys
  */
 export default function httptree(host, ...keys) {
-  return constructSiteTree("http:", SiteTree, host, ...keys);
+  return constructSiteTree("http:", SiteMap, host, ...keys);
 }

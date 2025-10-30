@@ -8,14 +8,14 @@ import isUnpackable from "./isUnpackable.js";
  * helpful error messages. This also unpacks a unpackable tree argument so that
  * the caller can work with a simpler tree instead of a DeferredTree.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("../../index.ts").AsyncMap} AsyncMap
  * @typedef {import("../../index.ts").Treelike} Treelike
  * @typedef {import("../../index.ts").Unpackable} Unpackable
  *
  * @param {Treelike|Unpackable} treelike
  * @param {string} operation
  * @param {{ deep?: boolean, position?: number }} [options]
- * @returns {Promise<AsyncTree>}
+ * @returns {Promise<Map|AsyncMap>}
  */
 export default async function getTreeArgument(
   treelike,

@@ -9,6 +9,7 @@ import from from "./from.js";
  * @param {Treelike} treelike
  */
 export default function root(treelike) {
+  /** @type {any} */
   let current = from(treelike);
   while (current.parent || current[symbols.parent]) {
     current = current.parent || current[symbols.parent];

@@ -11,7 +11,6 @@ import keys from "./keys.js";
  *
  * If no second tree is supplied, an in-memory value cache is used.
  *
- * @typedef {import("../../index.ts").AsyncMap} AsyncMap
  * @typedef {import("../../index.ts").Treelike} Treelike
  *
  * @param {Treelike} sourceTreelike

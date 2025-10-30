@@ -1,4 +1,4 @@
-import { FileTree, toString } from "@weborigami/async-tree";
+import { FileMap, toString } from "@weborigami/async-tree";
 import ori_handler from "../handlers/ori_handler.js";
 import coreGlobals from "./coreGlobals.js";
 import projectRoot from "./projectRoot.js";
@@ -14,9 +14,9 @@ export default async function config(dir = process.cwd()) {
     return cached;
   }
 
-  // Use a plain FileTree to avoid loading extension handlers
-  const rootFileTree = new FileTree(rootPath);
-  const configBuffer = await rootFileTree.get("config.ori");
+  // Use a plain FileMap to avoid loading extension handlers
+  const rootFileMap = new FileMap(rootPath);
+  const configBuffer = await rootFileMap.get("config.ori");
   let configObject = {};
   if (configBuffer) {
     const configText = toString(configBuffer);

@@ -1,5 +1,4 @@
 import ObjectMap from "../drivers/ObjectMap.js";
-import ObjectTree from "../drivers/ObjectTree.js";
 import isTreelike from "../operations/isTreelike.js";
 import mapReduce from "../operations/mapReduce.js";
 import * as trailingSlash from "../trailingSlash.js";
@@ -52,10 +51,7 @@ export default async function toPlainValue(input) {
     // Recursively convert tree to plain object.
     return mapReduce(input, toPlainValue, (values, keys, tree) => {
       // Special case for an empty tree: if based on array, return array.
-      if (
-        (tree instanceof ObjectTree || tree instanceof ObjectMap) &&
-        keys.length === 0
-      ) {
+      if (tree instanceof ObjectMap && keys.length === 0) {
         return /** @type {any} */ (tree).object instanceof Array ? [] : {};
       }
       // Normalize slashes in keys.

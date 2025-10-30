@@ -40,6 +40,7 @@ function DebugTransform(Base) {
       // functions, as that can be undesirable, e.g., when writing functions
       // that handle POST requests.)
       if (Tree.isTreelike(value) && typeof value !== "function") {
+        // @ts-ignore
         value = Tree.from(value, { parent });
         if (!isTransformApplied(DebugTransform, value)) {
           value = transformObject(DebugTransform, value);
@@ -54,6 +55,7 @@ function DebugTransform(Base) {
             return content;
           }
           /** @type {any} */
+          // @ts-ignore
           let tree = Tree.from(content, { parent });
           if (!isTransformApplied(DebugTransform, tree)) {
             tree = transformObject(DebugTransform, tree);

@@ -3,7 +3,7 @@ import {
   isPacked,
   isPlainObject,
   isStringlike,
-  SiteTree,
+  SiteMap,
   toString,
   Tree,
 } from "@weborigami/async-tree";
@@ -91,7 +91,7 @@ export default async function constructResponse(request, resource) {
       mediaType = "text/html";
       body = text;
     }
-  } else if (mediaType && SiteTree.mediaTypeIsText(mediaType)) {
+  } else if (mediaType && SiteMap.mediaTypeIsText(mediaType)) {
     // Assume text is encoded in UTF-8.
     body = toString(resource);
     mediaType += "; charset=utf-8";

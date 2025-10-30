@@ -1,4 +1,4 @@
-import { ExplorableSiteTree } from "@weborigami/async-tree";
+import { ExplorableSiteMap } from "@weborigami/async-tree";
 import constructSiteTree from "./constructSiteTree.js";
 
 /**
@@ -10,5 +10,5 @@ import constructSiteTree from "./constructSiteTree.js";
  * @param  {...string} keys
  */
 export default function explore(host, ...keys) {
-  return constructSiteTree("https:", ExplorableSiteTree, host, ...keys);
+  return constructSiteTree("https:", ExplorableSiteMap, host, ...keys);
 }

@@ -8,7 +8,7 @@ import box from "../utilities/box.js";
 import isPlainObject from "../utilities/isPlainObject.js";
 
 /**
- * Attempts to cast the indicated object to an asynchronous tree.
+ * Attempts to cast the indicated object to a map.
  *
  * If the object is a plain object, it will be converted to an ObjectMap. The
  * optional `deep` option can be set to `true` to convert a plain object to a
@@ -52,7 +52,7 @@ export default function from(object, options = {}) {
     const boxed = box(object);
     tree = new ObjectMap(boxed);
   } else {
-    throw new TypeError("Couldn't convert argument to an async tree");
+    throw new TypeError("Couldn't convert argument to a map");
   }
 
   if ("parent" in tree && !tree.parent && options.parent) {

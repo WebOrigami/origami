@@ -9,5 +9,5 @@ import getTreeArgument from "../utilities/getTreeArgument.js";
  */
 export default async function parent(treelike) {
   const tree = await getTreeArgument(treelike, "parent");
-  return tree.parent;
+  return "parent" in tree ? tree.parent : undefined;
 }
