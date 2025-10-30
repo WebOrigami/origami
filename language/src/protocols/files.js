@@ -1,7 +1,7 @@
 import os from "node:os";
 import path from "node:path";
 import process from "node:process";
-import OrigamiFiles from "../runtime/OrigamiFiles.js";
+import OrigamiFileMap from "../runtime/OrigamiFileMap.js";
 
 /**
  *
@@ -20,6 +20,6 @@ export default async function files(...keys) {
   }
   const resolved = path.resolve(basePath, relativePath);
 
-  const result = new OrigamiFiles(resolved);
+  const result = new OrigamiFileMap(resolved);
   return result;
 }

@@ -1,5 +1,5 @@
 import { getTreeArgument, Tree } from "@weborigami/async-tree";
-import { Handlers, OrigamiFiles } from "@weborigami/language";
+import { Handlers, OrigamiFileMap } from "@weborigami/language";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { getDescriptor } from "../common/utilities.js";
@@ -43,7 +43,7 @@ async function getScopeData(scope) {
 
 async function loadTemplate() {
   const folderPath = path.resolve(fileURLToPath(import.meta.url), "..");
-  const folder = new OrigamiFiles(folderPath);
+  const folder = new OrigamiFileMap(folderPath);
   const templateFile = await folder.get("explore.ori");
   const template = await Handlers.ori_handler.unpack(templateFile, {
     parent: folder,

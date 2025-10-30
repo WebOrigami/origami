@@ -4,6 +4,6 @@ import HandleExtensionsTransform from "./HandleExtensionsTransform.js";
 import ImportModulesMixin from "./ImportModulesMixin.js";
 import WatchFilesMixin from "./WatchFilesMixin.js";
 
-export default class OrigamiFiles extends HandleExtensionsTransform(
+export default class OrigamiFileMap extends HandleExtensionsTransform(
   ImportModulesMixin(WatchFilesMixin(EventTargetMixin(FileMap)))
 ) {}

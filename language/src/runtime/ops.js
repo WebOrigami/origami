@@ -11,7 +11,7 @@ import os from "node:os";
 import expressionObject from "./expressionObject.js";
 import { evaluate } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
-import OrigamiFiles from "./OrigamiFiles.js";
+import OrigamiFileMap from "./OrigamiFileMap.js";
 import { codeSymbol } from "./symbols.js";
 
 function addOpLabel(op, label) {
@@ -176,7 +176,7 @@ addOpLabel(greaterThanOrEqual, "«ops.greaterThanOrEqual»");
  * Files tree for the user's home directory.
  */
 export async function homeDirectory(...keys) {
-  const tree = new OrigamiFiles(os.homedir());
+  const tree = new OrigamiFileMap(os.homedir());
   return keys.length > 0 ? Tree.traverse(tree, ...keys) : tree;
 }
 addOpLabel(homeDirectory, "«ops.homeDirectory»");
@@ -460,7 +460,7 @@ addOpLabel(remainder, "«ops.remainder»");
  * Files tree for the filesystem root.
  */
 export async function rootDirectory(...keys) {
-  const tree = new OrigamiFiles("/");
+  const tree = new OrigamiFileMap("/");
   return keys.length > 0 ? Tree.traverse(tree, ...keys) : tree;
 }
 addOpLabel(rootDirectory, "«ops.rootDirectory»");

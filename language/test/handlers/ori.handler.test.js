@@ -2,10 +2,10 @@ import { ObjectMap, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import ori_handler from "../../src/handlers/ori_handler.js";
-import OrigamiFiles from "../../src/runtime/OrigamiFiles.js";
+import OrigamiFileMap from "../../src/runtime/OrigamiFileMap.js";
 
 const fixturesUrl = new URL("fixtures", import.meta.url);
-const fixtures = new OrigamiFiles(fixturesUrl);
+const fixtures = new OrigamiFileMap(fixturesUrl);
 
 describe(".ori handler", async () => {
   test("loads a string expression", async () => {

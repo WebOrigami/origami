@@ -14,7 +14,7 @@ async function main(...args) {
   const expression = args.join(" ");
 
   // Need to initialize builtins before calling projectRoot, which instantiates
-  // an OrigamiFiles object that handles extensions, which requires builtins.
+  // an OrigamiFileMap object that handles extensions, which requires builtins.
   initializeBuiltins();
 
   // Find the project root.

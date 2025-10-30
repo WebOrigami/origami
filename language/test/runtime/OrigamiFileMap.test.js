@@ -3,16 +3,16 @@ import * as fs from "node:fs";
 import path from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
-import OrigamiFiles from "../../src/runtime/OrigamiFiles.js";
+import OrigamiFileMap from "../../src/runtime/OrigamiFileMap.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
-const tempDirectory = path.join(dirname, "fixtures/temp/OrigamiFiles");
+const tempDirectory = path.join(dirname, "fixtures/temp/OrigamiFileMap");
 
-describe("OrigamiFiles", () => {
+describe("OrigamiFileMap", () => {
   test.skip("can watch its folder for changes", { timeout: 2000 }, async () => {
     createTempDirectory();
 
-    const tempFiles = new OrigamiFiles(tempDirectory);
+    const tempFiles = new OrigamiFileMap(tempDirectory);
     const changedFileName = await new Promise(async (resolve) => {
       tempFiles.addEventListener("change", (event) => {
         resolve(/** @type {any} */ (event).options.key);
