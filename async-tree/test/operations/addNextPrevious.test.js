@@ -1,6 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import addNextPrevious from "../../src/operations/addNextPrevious.js";
+import plain from "../../src/operations/plain.js";
 
 describe("addNextPrevious", () => {
   test("adds next/previous properties to values", async () => {
@@ -16,7 +17,7 @@ describe("addNextPrevious", () => {
       },
     };
     const result = await addNextPrevious(tree);
-    assert.deepEqual(result, {
+    assert.deepEqual(await plain(result), {
       alice: {
         name: "Alice",
         nextKey: "bob",
@@ -36,7 +37,7 @@ describe("addNextPrevious", () => {
   test("returns a non-object value as a 'value' property", async () => {
     const array = ["Alice", "Bob", "Carol"];
     const result = await addNextPrevious(array);
-    assert.deepEqual(result, [
+    assert.deepEqual(await plain(result), [
       {
         value: "Alice",
         nextKey: "1",

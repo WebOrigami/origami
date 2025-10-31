@@ -1,56 +1,50 @@
+import AsyncMap from "../drivers/AsyncMap.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
-import entries from "./entries.js";
-import isMaplike from "./isMaplike.js";
-import plain from "./plain.js";
+import keys from "./keys.js";
 
 /**
- * Add nextKey/previousKey properties to values.
- *
- * @typedef {import("../../index.ts").PlainObject} PlainObject
+ * Return a map that adds nextKey/previousKey properties to values.
  *
  * @param {import("../../index.ts").Maplike} maplike
- * @returns {Promise<PlainObject|Array>}
+ * @returns {Promise<AsyncMap>}
  */
 export default async function addNextPrevious(maplike) {
-  const tree = await getTreeArgument(maplike, "addNextPrevious");
+  const source = await getTreeArgument(maplike, "addNextPrevious");
+  let sourceKeys;
 
-  const treeEntries = await entries(tree);
-  const keys = treeEntries.map(([key]) => key);
-
-  // Map to an array of [key, result] pairs, where the result includes
-  // nextKey/previousKey properties.
-  const mappedEntries = await Promise.all(
-    treeEntries.map(async ([key, value], index) => {
-      let resultValue;
-      if (value === undefined) {
-        resultValue = undefined;
-      } else if (isMaplike(value)) {
-        resultValue = await plain(value);
-      } else if (typeof value === "object") {
-        // Clone value to avoid modifying the original object
-        resultValue = { ...value };
+  return Object.assign(new AsyncMap(), {
+    async get(key) {
+      const sourceValue = await source.get(key);
+      const resultValue = {};
+      if (typeof sourceValue === "object") {
+        // Copy to avoid modifying the original object
+        Object.assign(resultValue, sourceValue);
       } else {
         // Take the object as the `value` property
-        resultValue = { value };
+        resultValue.value = sourceValue;
       }
 
-      if (resultValue) {
+      // Find the index of the current key
+      sourceKeys ??= await keys(source);
+      const index = sourceKeys.indexOf(key);
+      if (index >= 0) {
         // Extend result with nextKey/previousKey properties.
-        const nextKey = keys[index + 1];
+        const nextKey = sourceKeys[index + 1];
         if (nextKey) {
           resultValue.nextKey = nextKey;
         }
-        const previousKey = keys[index - 1];
+        const previousKey = sourceKeys[index - 1];
         if (previousKey) {
           resultValue.previousKey = previousKey;
         }
       }
 
-      return [key, resultValue];
-    })
-  );
+      return resultValue;
+    },
 
-  return maplike instanceof Array
-    ? mappedEntries.map(([_, value]) => value)
-    : Object.fromEntries(mappedEntries);
+    async *keys() {
+      sourceKeys ??= await keys(source);
+      yield* sourceKeys;
+    },
+  });
 }
