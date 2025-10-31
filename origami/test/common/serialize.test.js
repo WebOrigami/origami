@@ -23,12 +23,14 @@ c: Hello, c.`;
   });
 
   test("toYaml() renders a map as YAML", async () => {
-    // Keys out of order to confirm they don't get sorted
+    // Confirm integer keys don't get sorted
+    // @ts-ignore
     const map = new Map([
+      ["x", "y"],
       [1, "a"],
       [0, "b"],
     ]);
     const yaml = await serialize.toYaml(map);
-    assert.equal(yaml, `1: a\n0: b\n`);
+    assert.equal(yaml, `x: y\n1: a\n0: b\n`);
   });
 });

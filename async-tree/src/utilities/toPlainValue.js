@@ -9,10 +9,8 @@ import toString from "./toString.js";
 import TypedArray from "./TypedArray.js";
 
 /**
- * Convert the given input to the plainest possible JavaScript value. This
- * helper is intended for functions that want to accept an argument from the ori
- * CLI, which could a string, a stream of data, or some other kind of JavaScript
- * object.
+ * Convert the given input to the plainest possible JavaScript value. This is
+ * useful for rendering data for display or serialization.
  *
  * If the input is a function, it will be invoked and its result will be
  * processed.
@@ -33,9 +31,13 @@ import TypedArray from "./TypedArray.js";
  * returned as a plain object.
  *
  * @param {any} input
+ * @param {import("../../index.ts").ReduceFn} [reduceFn]
  * @returns {Promise<any>}
  */
-export default async function toPlainValue(input) {
+export default async function toPlainValue(
+  input,
+  reduceFn = reduceToPlainObject
+) {
   if (input instanceof Function) {
     // Invoke function
     input = input();
@@ -49,15 +51,7 @@ export default async function toPlainValue(input) {
     return input;
   } else if (isMaplike(input)) {
     // Recursively convert tree to plain object.
-    return mapReduce(input, toPlainValue, (values, keys, tree) => {
-      // Special case for an empty tree: if based on array, return array.
-      if (tree instanceof ObjectMap && keys.length === 0) {
-        return /** @type {any} */ (tree).object instanceof Array ? [] : {};
-      }
-      // Normalize slashes in keys.
-      keys = keys.map(trailingSlash.remove);
-      return castArraylike(keys, values);
-    });
+    return mapReduce(input, (value) => toPlainValue(value, reduceFn), reduceFn);
   } else if (input instanceof ArrayBuffer || input instanceof TypedArray) {
     // Try to interpret the buffer as UTF-8 text, otherwise use base64.
     const text = toString(input);
@@ -76,6 +70,16 @@ export default async function toPlainValue(input) {
     }
     return plain;
   }
+}
+
+function reduceToPlainObject(values, keys, map) {
+  // Special case for an empty tree: if based on array, return array.
+  if (map instanceof ObjectMap && keys.length === 0) {
+    return /** @type {any} */ (map).object instanceof Array ? [] : {};
+  }
+  // Normalize slashes in keys.
+  keys = keys.map(trailingSlash.remove);
+  return castArraylike(keys, values);
 }
 
 function toBase64(object) {

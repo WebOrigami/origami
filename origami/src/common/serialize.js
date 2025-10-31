@@ -5,7 +5,12 @@
  * @typedef {import("@weborigami/async-tree").SyncOrAsyncMap} SyncOrAsyncMap
  */
 
-import { toPlainValue } from "@weborigami/async-tree";
+import {
+  castArraylike,
+  SyncMap,
+  toPlainValue,
+  trailingSlash,
+} from "@weborigami/async-tree";
 import * as YAMLModule from "yaml";
 
 // The "yaml" package doesn't seem to provide a default export that the browser can
@@ -21,23 +26,29 @@ export function parseYaml(text) {
   return YAML.parse(text);
 }
 
+function reduceToMap(values, keys, map) {
+  // Normalize slashes in keys.
+  keys = keys.map(trailingSlash.remove);
+  return castArraylike(keys, values, (entries) => new SyncMap(entries));
+}
+
 /**
  * Serializes an object as a JSON string.
  *
- * @param {any} obj
+ * @param {any} object
  */
-export async function toJson(obj) {
-  const serializable = await toPlainValue(obj);
+export async function toJson(object) {
+  const serializable = await toPlainValue(object);
   return JSON.stringify(serializable, null, 2);
 }
 
 /**
  * Serializes an object as a JSON string.
  *
- * @param {any} obj
+ * @param {any} object
  * @returns {Promise<string>}
  */
-export async function toYaml(obj) {
-  const serializable = await toPlainValue(obj);
+export async function toYaml(object) {
+  const serializable = await toPlainValue(object, reduceToMap);
   return YAML.stringify(serializable);
 }

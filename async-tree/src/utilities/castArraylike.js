@@ -9,7 +9,11 @@
  * @param {any[]} keys
  * @param {any[]} values
  */
-export default function castArraylike(keys, values) {
+export default function castArraylike(
+  keys,
+  values,
+  createFn = Object.fromEntries
+) {
   if (keys.length === 0) {
     // Empty keys/values means an empty object, not an empty array
     return {};
@@ -33,6 +37,10 @@ export default function castArraylike(keys, values) {
     return values;
   } else {
     // Return a plain object with the (key, value) pairs
-    return Object.fromEntries(keys.map((key, i) => [key, values[i]]));
+    const entries = [];
+    for (let i = 0; i < keys.length; i++) {
+      entries.push([keys[i], values[i]]);
+    }
+    return createFn(entries);
   }
 }
