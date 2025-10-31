@@ -44,6 +44,12 @@ describe("from", () => {
     assert.deepEqual(await values(map), ["a", "b", "c"]);
   });
 
+  test.only("returns an array for an Iterator", async () => {
+    const set = new Set(["a", "b", "c"]);
+    const map = from(set.values());
+    assert.deepEqual(await values(map), ["a", "b", "c"]);
+  });
+
   test("autoboxes primitive values", async () => {
     const tree = from("Hello, world.");
     const slice = await tree.get("slice");

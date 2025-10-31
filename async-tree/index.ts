@@ -27,6 +27,7 @@ export type MapExtensionOptions = {
 
 export type Maplike =
   any[] |
+  Iterator<any> |
   Function | 
   SyncOrAsyncMap |
   PlainObject | 

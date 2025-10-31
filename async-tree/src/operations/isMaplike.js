@@ -8,6 +8,7 @@ import isMap from "./isMap.js";
  * - A function
  * - An `Array` instance
  * - An `AsyncMap` instance
+ * - An `Iterator` instance
  * - A `Map` instance
  * - A `Set` instance
  * - A plain object
@@ -24,6 +25,8 @@ export default function isMaplike(object) {
   return (
     object instanceof Array ||
     object instanceof Function ||
+    // @ts-ignore
+    object instanceof Iterator ||
     object instanceof Set ||
     isMap(object) ||
     isPlainObject(object)

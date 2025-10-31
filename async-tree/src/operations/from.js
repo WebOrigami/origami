@@ -41,6 +41,10 @@ export default function from(object, options = {}) {
     tree = new SetMap(object);
   } else if (isPlainObject(object) || object instanceof Array) {
     tree = deep ? new DeepObjectMap(object) : new ObjectMap(object);
+    // @ts-ignore
+  } else if (object instanceof Iterator) {
+    const array = Array.from(object);
+    tree = new ObjectMap(array);
   } else if (object && typeof object === "object") {
     // An instance of some class.
     tree = new ObjectMap(object);

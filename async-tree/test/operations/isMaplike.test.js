@@ -9,6 +9,7 @@ describe("isMaplike", () => {
     assert(isMaplike({}));
     assert(isMaplike([]));
     assert(isMaplike(new Map()));
+    assert(isMaplike(new Map().keys())); // Iterator
     assert(isMaplike(new Set()));
   });
 });
