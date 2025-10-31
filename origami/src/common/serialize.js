@@ -5,29 +5,13 @@
  * @typedef {import("@weborigami/async-tree").SyncOrAsyncMap} SyncOrAsyncMap
  */
 
-import { Tree, toPlainValue } from "@weborigami/async-tree";
+import { toPlainValue } from "@weborigami/async-tree";
 import * as YAMLModule from "yaml";
 
 // The "yaml" package doesn't seem to provide a default export that the browser can
 // recognize, so we have to handle two ways to accommodate Node and the browser.
 // @ts-ignore
 const YAML = YAMLModule.default ?? YAMLModule.YAML;
-
-/**
- * @param {string} text
- * @param {SyncOrAsyncMap|null} [parent]
- */
-export async function evaluateYaml(text, parent) {
-  const data = parseYaml(String(text));
-  if (Tree.isMap(data)) {
-    if ("parent" in data && data.parent !== undefined) {
-      /** @type {any} */ (data).parent = parent;
-    }
-    return Tree.plain(data);
-  } else {
-    return data;
-  }
-}
 
 /**
  * @param {string} text
