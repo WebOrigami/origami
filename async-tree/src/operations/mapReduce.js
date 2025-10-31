@@ -20,21 +20,21 @@ import isMap from "./isMap.js";
  * @param {ReduceFn} reduceFn
  */
 export default async function mapReduce(maplike, mapFn, reduceFn) {
-  const tree = from(maplike);
+  const map = from(maplike);
 
   // We're going to fire off all the get requests in parallel, as quickly as
   // the keys come in. We call the tree's `get` method for each key, but
   // *don't* wait for it yet.
   const treeKeys = [];
   const promises = [];
-  for await (const key of tree.keys()) {
+  for await (const key of map.keys()) {
     treeKeys.push(key);
     const promise = (async () => {
-      const value = await tree.get(key);
+      const value = await map.get(key);
       return isMap(value)
         ? mapReduce(value, mapFn, reduceFn) // subtree; recurse
         : mapFn
-        ? mapFn(value, key, tree)
+        ? mapFn(value, key, map)
         : value;
     })();
     promises.push(promise);
@@ -45,5 +45,5 @@ export default async function mapReduce(maplike, mapFn, reduceFn) {
   const values = await Promise.all(promises);
 
   // Reduce the values to a single result.
-  return reduceFn(values, treeKeys, tree);
+  return reduceFn(values, treeKeys, map);
 }

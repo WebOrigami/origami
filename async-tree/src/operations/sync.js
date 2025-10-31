@@ -1,7 +1,6 @@
 import SyncMap from "../drivers/SyncMap.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
-import entries from "./entries.js";
-import isMap from "./isMap.js";
+import mapReduce from "./mapReduce.js";
 
 /**
  * Resolve the async tree to a synchronous tree.
@@ -12,12 +11,11 @@ import isMap from "./isMap.js";
  */
 export default async function sync(maplike) {
   const tree = await getTreeArgument(maplike, "addNextPrevious");
-  const treeEntries = await entries(tree);
-  const resolved = await Promise.all(
-    treeEntries.map(async ([key, value]) => {
-      const resolvedValue = isMap(value) ? await sync(value) : value;
-      return [key, resolvedValue];
-    })
-  );
-  return new SyncMap(resolved);
+  return mapReduce(tree, null, (values, keys) => {
+    const entries = [];
+    for (let i = 0; i < keys.length; i++) {
+      entries.push([keys[i], values[i]]);
+    }
+    return new SyncMap(entries);
+  });
 }
