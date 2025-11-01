@@ -1,5 +1,5 @@
 import SyncMap from "../drivers/SyncMap.js";
-import getTreeArgument from "../utilities/getTreeArgument.js";
+import getMapArgument from "../utilities/getMapArgument.js";
 import mapReduce from "./mapReduce.js";
 
 /**
@@ -10,7 +10,7 @@ import mapReduce from "./mapReduce.js";
  * @param {Maplike} maplike
  */
 export default async function sync(maplike) {
-  const tree = await getTreeArgument(maplike, "addNextPrevious");
+  const tree = await getMapArgument(maplike, "addNextPrevious");
   return mapReduce(tree, null, (values, keys) => {
     const entries = [];
     for (let i = 0; i < keys.length; i++) {

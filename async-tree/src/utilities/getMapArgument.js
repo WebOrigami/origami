@@ -2,11 +2,10 @@ import from from "../operations/from.js";
 import isUnpackable from "./isUnpackable.js";
 
 /**
- * Convert the indicated argument to a tree, or throw an exception.
+ * Convert the indicated argument to a map, or throw an exception.
  *
- * Tree operations can use this to validate the tree argument and provide more
- * helpful error messages. This also unpacks a unpackable tree argument so that
- * the caller can work with a simpler tree instead of a DeferredTree.
+ * Tree operations can use this to validate the map argument and provide more
+ * helpful error messages. This also unpacks a unpackable map argument.
  *
  * @typedef {import("../../index.ts").AsyncMap} AsyncMap
  * @typedef {import("../../index.ts").Maplike} Maplike
@@ -17,11 +16,7 @@ import isUnpackable from "./isUnpackable.js";
  * @param {{ deep?: boolean, position?: number }} [options]
  * @returns {Promise<Map|AsyncMap>}
  */
-export default async function getTreeArgument(
-  maplike,
-  operation,
-  options = {}
-) {
+export default async function getMapArgument(maplike, operation, options = {}) {
   const deep = options.deep;
   const position = options.position ?? 0;
 
@@ -29,9 +24,9 @@ export default async function getTreeArgument(
     maplike = await maplike.unpack();
   }
 
-  let tree;
+  let map;
   try {
-    tree = from(maplike, { deep });
+    map = from(maplike, { deep });
   } catch (/** @type {any} */ error) {
     let message = error.message ?? error;
     message = `${operation}: ${message}`;
@@ -39,5 +34,5 @@ export default async function getTreeArgument(
     /** @type {any} */ (newError).position = position;
     throw newError;
   }
-  return tree;
+  return map;
 }

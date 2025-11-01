@@ -1,4 +1,4 @@
-import getTreeArgument from "../utilities/getTreeArgument.js";
+import getMapArgument from "../utilities/getMapArgument.js";
 import isMaplike from "./isMaplike.js";
 
 /**
@@ -14,8 +14,8 @@ import isMaplike from "./isMaplike.js";
  * @param {Maplike} source
  */
 export default async function assign(target, source) {
-  const targetTree = await getTreeArgument(target, "assign", { position: 0 });
-  const sourceTree = await getTreeArgument(source, "assign", { position: 1 });
+  const targetTree = await getMapArgument(target, "assign", { position: 0 });
+  const sourceTree = await getMapArgument(source, "assign", { position: 1 });
   if ("readOnly" in targetTree && targetTree.readOnly) {
     throw new TypeError("Target must be a mutable asynchronous tree");
   }

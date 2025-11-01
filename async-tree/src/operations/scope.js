@@ -1,8 +1,8 @@
 import AsyncMap from "../drivers/AsyncMap.js";
-import getTreeArgument from "../utilities/getTreeArgument.js";
+import getMapArgument from "../utilities/getMapArgument.js";
 
 /**
- * A tree's "scope" is the collection of everything in that tree and all of its
+ * A map's "scope" is the collection of everything in that map and all of its
  * ancestors.
  *
  * @typedef {import("../../index.ts").Maplike} Maplike
@@ -11,15 +11,15 @@ import getTreeArgument from "../utilities/getTreeArgument.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function scope(maplike) {
-  const tree = await getTreeArgument(maplike, "scope");
+  const map = await getMapArgument(maplike, "scope");
 
   return Object.assign(new AsyncMap(), {
     description: "scope",
 
-    // Starting with this tree, search up the parent hierarchy.
+    // Starting with this map, search up the parent hierarchy.
     async get(key) {
       /** @type {Map|AsyncMap|null} */
-      let current = tree;
+      let current = map;
       let value;
       while (current) {
         value = await current.get(key);
@@ -35,7 +35,7 @@ export default async function scope(maplike) {
     async *keys() {
       const scopeKeys = new Set();
       /** @type {Map|AsyncMap|null} */
-      let current = tree;
+      let current = map;
       while (current) {
         for await (const key of current.keys()) {
           scopeKeys.add(key);
@@ -54,7 +54,7 @@ export default async function scope(maplike) {
       const result = [];
 
       /** @type {Map|AsyncMap|null} */
-      let current = tree;
+      let current = map;
       while (current) {
         result.push(current);
         current = "parent" in current ? current.parent : null;
@@ -63,6 +63,6 @@ export default async function scope(maplike) {
       return result;
     },
 
-    source: tree,
+    source: map,
   });
 }

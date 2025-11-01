@@ -1,11 +1,11 @@
 import AsyncMap from "../drivers/AsyncMap.js";
 import SyncMap from "../drivers/SyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
-import getTreeArgument from "../utilities/getTreeArgument.js";
+import getMapArgument from "../utilities/getMapArgument.js";
 import keys from "./keys.js";
 
 /**
- * Return a new grouping of the maplike's values into chunks of the specified
+ * Return a new grouping of the map's values into chunks of the specified
  * size.
  *
  * @typedef {import("../../index.ts").Maplike} Maplike
@@ -14,9 +14,9 @@ import keys from "./keys.js";
  * @param {number} [size=10]
  */
 export default async function paginate(maplike, size = 10) {
-  const tree = await getTreeArgument(maplike, "paginate");
+  const map = await getMapArgument(maplike, "paginate");
 
-  const treeKeys = await keys(tree);
+  const treeKeys = await keys(map);
   const pageCount = Math.ceil(treeKeys.length / size);
 
   const paginated = Object.assign(new AsyncMap(), {
@@ -38,7 +38,7 @@ export default async function paginate(maplike, size = 10) {
         index++
       ) {
         const key = treeKeys[index];
-        items.set(key, await tree.get(treeKeys[index]));
+        items.set(key, await map.get(treeKeys[index]));
       }
 
       return {
@@ -55,7 +55,7 @@ export default async function paginate(maplike, size = 10) {
       yield* Array.from({ length: pageCount }, (_, index) => index + 1);
     },
 
-    source: tree,
+    source: map,
   });
 
   return paginated;

@@ -1,20 +1,13 @@
-import isUnpackable from "../utilities/isUnpackable.js";
+import getMapArgument from "../utilities/getMapArgument.js";
 import toPlainValue from "../utilities/toPlainValue.js";
-import from from "./from.js";
 
 /**
  * Render the given tree in JSON format.
  *
- * @param {import("../../index.ts").Maplike} [maplike]
+ * @param {import("../../index.ts").Maplike} maplike
  */
 export default async function json(maplike) {
-  let tree = from(maplike);
-  if (tree === undefined) {
-    return undefined;
-  }
-  if (isUnpackable(tree)) {
-    tree = await tree.unpack();
-  }
+  const tree = await getMapArgument(maplike, "json");
   const value = await toPlainValue(tree);
   return JSON.stringify(value, null, 2);
 }

@@ -1,6 +1,6 @@
 import AsyncMap from "../drivers/AsyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
-import getTreeArgument from "../utilities/getTreeArgument.js";
+import getMapArgument from "../utilities/getMapArgument.js";
 import isMap from "./isMap.js";
 import isMaplike from "./isMaplike.js";
 import keys from "./keys.js";
@@ -17,8 +17,8 @@ import keys from "./keys.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function mask(aMaplike, bMaplike) {
-  const aTree = await getTreeArgument(aMaplike, "filter", { position: 0 });
-  const bTree = await getTreeArgument(bMaplike, "filter", {
+  const aMap = await getMapArgument(aMaplike, "filter", { position: 0 });
+  const bMap = await getMapArgument(bMaplike, "filter", {
     deep: true,
     position: 1,
   });
@@ -28,11 +28,11 @@ export default async function mask(aMaplike, bMaplike) {
 
     async get(key) {
       // The key must exist in b and return a truthy value
-      const bValue = await bTree.get(key);
+      const bValue = await bMap.get(key);
       if (!bValue) {
         return undefined;
       }
-      let aValue = await aTree.get(key);
+      let aValue = await aMap.get(key);
       if (isMaplike(aValue)) {
         // Filter the subtree
         return mask(aValue, bValue);
@@ -43,8 +43,8 @@ export default async function mask(aMaplike, bMaplike) {
 
     async *keys() {
       // Use a's keys as the basis
-      const aKeys = await keys(aTree);
-      const bValues = await Promise.all(aKeys.map((key) => bTree.get(key)));
+      const aKeys = await keys(aMap);
+      const bValues = await Promise.all(aKeys.map((key) => bMap.get(key)));
       // An async tree value in b implies that the a key should have a slash
       const aKeySlashes = aKeys.map((key, index) =>
         trailingSlash.toggle(
@@ -59,6 +59,6 @@ export default async function mask(aMaplike, bMaplike) {
       yield* treeKeys;
     },
 
-    source: aTree,
+    source: aMap,
   });
 }

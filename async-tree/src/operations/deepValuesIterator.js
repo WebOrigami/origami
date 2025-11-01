@@ -1,4 +1,4 @@
-import getTreeArgument from "../utilities/getTreeArgument.js";
+import getMapArgument from "../utilities/getMapArgument.js";
 import isMap from "./isMap.js";
 import isMaplike from "./isMaplike.js";
 
@@ -16,7 +16,7 @@ export default async function* deepValuesIterator(
   maplike,
   options = { expand: false }
 ) {
-  const tree = await getTreeArgument(maplike, "deepValuesIterator", {
+  const tree = await getMapArgument(maplike, "deepValuesIterator", {
     deep: true,
   });
 

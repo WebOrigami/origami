@@ -1,4 +1,4 @@
-import getTreeArgument from "../utilities/getTreeArgument.js";
+import getMapArgument from "../utilities/getMapArgument.js";
 
 /**
  * Return the first value in the tree.
@@ -8,13 +8,13 @@ import getTreeArgument from "../utilities/getTreeArgument.js";
  * @param {Maplike} maplike
  */
 export default async function first(maplike) {
-  const tree = await getTreeArgument(maplike, "first");
+  const map = await getMapArgument(maplike, "first");
   let firstKey;
-  for await (const key of tree.keys()) {
+  for await (const key of map.keys()) {
     // Just needed to get first key
     firstKey = key;
     break;
   }
-  const value = await tree.get(firstKey);
+  const value = firstKey ? await map.get(firstKey) : undefined;
   return value;
 }

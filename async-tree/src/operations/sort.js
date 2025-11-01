@@ -1,9 +1,9 @@
 import AsyncMap from "../drivers/AsyncMap.js";
-import getTreeArgument from "../utilities/getTreeArgument.js";
+import getMapArgument from "../utilities/getMapArgument.js";
 import keys from "./keys.js";
 
 /**
- * Return a new tree with the original's keys sorted. A comparison function can
+ * Return a new map with the original's keys sorted. A comparison function can
  * be provided; by default the keys will be sorted in [natural sort
  * order](https://en.wikipedia.org/wiki/Natural_sort_order).
  *
@@ -17,7 +17,7 @@ import keys from "./keys.js";
  * @param {SortOptions|ValueKeyFn} [options]
  */
 export default async function sort(maplike, options) {
-  const tree = await getTreeArgument(maplike, "sort");
+  const source = await getMapArgument(maplike, "sort");
 
   let sortKey;
   let compare;
@@ -33,11 +33,11 @@ export default async function sort(maplike, options) {
     descriptor: "sort",
 
     async get(key) {
-      return tree.get(key);
+      return source.get(key);
     },
 
     async *keys() {
-      const treeKeys = await keys(tree);
+      const treeKeys = await keys(source);
 
       let resultKeys;
       if (sortKey) {
@@ -45,8 +45,8 @@ export default async function sort(maplike, options) {
         // Create { key, sortKey } tuples.
         const tuples = await Promise.all(
           treeKeys.map(async (key) => {
-            const value = await tree.get(key);
-            const sort = await sortKey(value, key, tree);
+            const value = await source.get(key);
+            const sort = await sortKey(value, key, source);
             if (sort === undefined) {
               throw new Error(
                 `sortKey function returned undefined for key ${key}`
@@ -71,7 +71,7 @@ export default async function sort(maplike, options) {
       yield* resultKeys;
     },
 
-    source: tree,
+    source,
   });
 
   return transformed;

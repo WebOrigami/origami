@@ -1,10 +1,10 @@
 import AsyncMap from "../drivers/AsyncMap.js";
-import getTreeArgument from "../utilities/getTreeArgument.js";
+import getMapArgument from "../utilities/getMapArgument.js";
 import isMap from "./isMap.js";
 
 export default async function invokeFunctions(maplike, options = {}) {
   const deep = options.deep ?? false;
-  const tree = await getTreeArgument(maplike, "invokeFunctions", { deep });
+  const tree = await getMapArgument(maplike, "invokeFunctions", { deep });
 
   return Object.assign(new AsyncMap(), {
     description: "invokeFunctions",

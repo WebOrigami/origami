@@ -1,4 +1,4 @@
-import getTreeArgument from "../utilities/getTreeArgument.js";
+import getMapArgument from "../utilities/getMapArgument.js";
 import from from "./from.js";
 import isMap from "./isMap.js";
 
@@ -13,7 +13,7 @@ import isMap from "./isMap.js";
  * @param {number} count
  */
 export default async function deepTake(maplike, count) {
-  const tree = await getTreeArgument(maplike, "deepTake", { deep: true });
+  const tree = await getMapArgument(maplike, "deepTake", { deep: true });
   const { values } = await traverse(tree, count);
   return from(values, { deep: true });
 }

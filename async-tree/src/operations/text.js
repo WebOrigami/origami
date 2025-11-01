@@ -3,8 +3,8 @@ import deepText from "./deepText.js";
 import isMaplike from "./isMaplike.js";
 
 /**
- * A tagged template literal function that concatenate the deep text values in a
- * tree. Any maplike values will be concatenated using `deepText`.
+ * A tagged template literal function that concatenate the deep text values in
+ * any trees using `deepText`.
  *
  * @param {TemplateStringsArray} strings
  * @param  {...any} values

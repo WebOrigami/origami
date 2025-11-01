@@ -1,8 +1,7 @@
-import getTreeArgument from "../utilities/getTreeArgument.js";
+import getMapArgument from "../utilities/getMapArgument.js";
 
 /**
- * Returns a boolean indicating whether the specific node of the tree has a
- * value for the given `key`.
+ * Returns true if the map has the given key, false otherwise.
  *
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
@@ -10,6 +9,6 @@ import getTreeArgument from "../utilities/getTreeArgument.js";
  * @param {any} key
  */
 export default async function has(maplike, key) {
-  const tree = await getTreeArgument(maplike, "has");
-  return tree.has(key);
+  const map = await getMapArgument(maplike, "has");
+  return map.has(key);
 }

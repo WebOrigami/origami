@@ -1,16 +1,16 @@
-import getTreeArgument from "../utilities/getTreeArgument.js";
+import getMapArgument from "../utilities/getMapArgument.js";
 
 /**
- * Return the top-level keys in the tree as an array.
+ * Return the keys of the map.
  *
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
  * @param {Maplike} maplike
  */
 export default async function keys(maplike) {
-  const tree = await getTreeArgument(maplike, "keys");
+  const map = await getMapArgument(maplike, "keys");
   let keys;
-  let iterable = tree.keys();
+  let iterable = map.keys();
   if (Symbol.asyncIterator in iterable) {
     keys = [];
     for await (const key of iterable) {

@@ -1,5 +1,5 @@
 import AsyncMap from "../drivers/AsyncMap.js";
-import getTreeArgument from "../utilities/getTreeArgument.js";
+import getMapArgument from "../utilities/getMapArgument.js";
 import keys from "./keys.js";
 
 /**
@@ -12,26 +12,26 @@ import keys from "./keys.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function shuffle(maplike, reshuffle = false) {
-  const tree = await getTreeArgument(maplike, "shuffle");
+  const source = await getMapArgument(maplike, "shuffle");
 
-  let treeKeys;
+  let mapKeys;
 
   return Object.assign(new AsyncMap(), {
     description: "shuffle",
 
     async get(key) {
-      return tree.get(key);
+      return source.get(key);
     },
 
     async *keys() {
-      if (!treeKeys || reshuffle) {
-        treeKeys = await keys(tree);
-        shuffleArray(treeKeys);
+      if (!mapKeys || reshuffle) {
+        mapKeys = await keys(source);
+        shuffleArray(mapKeys);
       }
-      yield* treeKeys;
+      yield* mapKeys;
     },
 
-    source: tree,
+    source,
   });
 }
 

@@ -1,5 +1,5 @@
 import * as trailingSlash from "../trailingSlash.js";
-import from from "./from.js";
+import getMapArgument from "../utilities/getMapArgument.js";
 import isMap from "./isMap.js";
 
 /**
@@ -16,7 +16,7 @@ import isMap from "./isMap.js";
  * @param {{ assumeSlashes?: boolean, base?: string }} options
  */
 export default async function paths(maplike, options = {}) {
-  const tree = from(maplike);
+  const tree = await getMapArgument(maplike, "paths");
   const base = options.base ?? "";
   const assumeSlashes = options.assumeSlashes ?? false;
   const result = [];

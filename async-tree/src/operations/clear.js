@@ -1,21 +1,21 @@
-import getTreeArgument from "../utilities/getTreeArgument.js";
+import getMapArgument from "../utilities/getMapArgument.js";
 
 /**
- * Remove all entries from the tree.
+ * Remove all entries from the map.
  *
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
  * @param {Maplike} maplike
  */
 export default async function clear(maplike) {
-  const tree = await getTreeArgument(maplike, "clear");
-  if ("readOnly" in tree && tree.readOnly) {
-    throw new TypeError("Target must be a mutable asynchronous tree");
+  const map = await getMapArgument(maplike, "clear");
+  if ("readOnly" in map && map.readOnly) {
+    throw new TypeError("clear: target map is read-only");
   }
   const promises = [];
-  for await (const key of tree.keys()) {
-    promises.push(tree.delete(key));
+  for await (const key of map.keys()) {
+    promises.push(map.delete(key));
   }
   await Promise.all(promises);
-  return tree;
+  return map;
 }

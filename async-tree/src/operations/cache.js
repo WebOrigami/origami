@@ -1,6 +1,6 @@
 import AsyncMap from "../drivers/AsyncMap.js";
 import SyncMap from "../drivers/SyncMap.js";
-import getTreeArgument from "../utilities/getTreeArgument.js";
+import getMapArgument from "../utilities/getMapArgument.js";
 import isMap from "./isMap.js";
 import isReadOnlyMap from "./isReadOnlyMap.js";
 import keys from "./keys.js";
@@ -18,14 +18,14 @@ import keys from "./keys.js";
  * @returns {Promise<SyncMap|AsyncMap>}
  */
 export default async function treeCache(sourceMaplike, cacheMaplike) {
-  const source = await getTreeArgument(sourceMaplike, "cache", {
+  const source = await getMapArgument(sourceMaplike, "cache", {
     position: 0,
   });
 
   let cache;
   if (cacheMaplike) {
     cache = /** @type {any} */ (
-      await getTreeArgument(cacheMaplike, "cache", { position: 1 })
+      await getMapArgument(cacheMaplike, "cache", { position: 1 })
     );
     // @ts-ignore
     if (isReadOnlyMap(cache)) {

@@ -11,11 +11,11 @@ import keys from "./keys.js";
  *
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
- * @param {Maplike[]} treelikes
+ * @param {Maplike[]} maplikes
  * @returns {Promise<AsyncMap>}
  */
-export default async function deepMerge(...treelikes) {
-  const filtered = treelikes.filter((source) => source);
+export default async function deepMerge(...maplikes) {
+  const filtered = maplikes.filter((source) => source);
   const unpacked = await Promise.all(
     filtered.map(async (source) =>
       isUnpackable(source) ? await source.unpack() : source

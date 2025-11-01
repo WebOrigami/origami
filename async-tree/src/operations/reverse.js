@@ -1,9 +1,9 @@
 import AsyncMap from "../drivers/AsyncMap.js";
-import getTreeArgument from "../utilities/getTreeArgument.js";
+import getMapArgument from "../utilities/getMapArgument.js";
 import keys from "./keys.js";
 
 /**
- * Reverse the order of the top-level keys in the tree.
+ * Return a new map with the keys reversed.
  *
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
@@ -11,21 +11,20 @@ import keys from "./keys.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function reverse(maplike) {
-  const tree = await getTreeArgument(maplike, "reverse");
-
+  const source = await getMapArgument(maplike, "reverse");
   return Object.assign(new AsyncMap(), {
     description: "reverse",
 
     async get(key) {
-      return tree.get(key);
+      return source.get(key);
     },
 
     async *keys() {
-      const treeKeys = await keys(tree);
+      const treeKeys = await keys(source);
       treeKeys.reverse();
       yield* treeKeys;
     },
 
-    source: tree,
+    source,
   });
 }

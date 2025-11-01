@@ -1,4 +1,4 @@
-import getTreeArgument from "../utilities/getTreeArgument.js";
+import getMapArgument from "../utilities/getMapArgument.js";
 import entries from "./entries.js";
 import isMap from "./isMap.js";
 
@@ -10,7 +10,7 @@ import isMap from "./isMap.js";
  * @param {Maplike} maplike
  */
 export default async function deepEntries(maplike) {
-  const tree = await getTreeArgument(maplike, "deepEntries");
+  const tree = await getMapArgument(maplike, "deepEntries");
 
   const treeEntries = await entries(tree);
   const result = await Promise.all(

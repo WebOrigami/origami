@@ -1,9 +1,9 @@
 import AsyncMap from "../drivers/AsyncMap.js";
-import getTreeArgument from "../utilities/getTreeArgument.js";
+import getMapArgument from "../utilities/getMapArgument.js";
 import values from "./values.js";
 
 /**
- * Return a tree whose keys are provided by the _values_ of a second tree (e.g.,
+ * Return a map whose keys are provided by the _values_ of a second map (e.g.,
  * an array of keys).
  *
  * @typedef {import("../../index.ts").Maplike} Maplike
@@ -13,8 +13,8 @@ import values from "./values.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function withKeys(maplike, keysMaplike) {
-  const tree = await getTreeArgument(maplike, "withKeys", { position: 0 });
-  const keysTree = await getTreeArgument(keysMaplike, "withKeys", {
+  const sourceMap = await getMapArgument(maplike, "withKeys", { position: 0 });
+  const keysMap = await getMapArgument(keysMaplike, "withKeys", {
     position: 1,
   });
 
@@ -24,14 +24,14 @@ export default async function withKeys(maplike, keysMaplike) {
     description: "withKeys",
 
     async get(key) {
-      return tree.get(key);
+      return sourceMap.get(key);
     },
 
     async *keys() {
-      keys ??= await values(keysTree);
+      keys ??= await values(keysMap);
       yield* keys;
     },
 
-    source: tree,
+    source: sourceMap,
   });
 }

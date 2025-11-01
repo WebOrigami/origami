@@ -6,6 +6,7 @@ import SetMap from "../drivers/SetMap.js";
 import * as symbols from "../symbols.js";
 import box from "../utilities/box.js";
 import isPlainObject from "../utilities/isPlainObject.js";
+import setParent from "../utilities/setParent.js";
 import isMap from "./isMap.js";
 
 /**
@@ -24,7 +25,7 @@ import isMap from "./isMap.js";
  */
 export default function from(object, options = {}) {
   const deep = options.deep ?? object[symbols.deep];
-  let tree;
+  let map;
   if (object == null) {
     throw new TypeError("The tree argument wasn't defined.");
   } else if (object instanceof Promise) {
@@ -36,18 +37,18 @@ export default function from(object, options = {}) {
     // Already a map
     return object;
   } else if (typeof object === "function") {
-    tree = new FunctionMap(object);
+    map = new FunctionMap(object);
   } else if (object instanceof Set) {
-    tree = new SetMap(object);
+    map = new SetMap(object);
   } else if (isPlainObject(object) || object instanceof Array) {
-    tree = deep ? new DeepObjectMap(object) : new ObjectMap(object);
+    map = deep ? new DeepObjectMap(object) : new ObjectMap(object);
     // @ts-ignore
   } else if (object instanceof Iterator) {
     const array = Array.from(object);
-    tree = new ObjectMap(array);
+    map = new ObjectMap(array);
   } else if (object && typeof object === "object") {
     // An instance of some class.
-    tree = new ObjectMap(object);
+    map = new ObjectMap(object);
   } else if (
     typeof object === "string" ||
     typeof object === "number" ||
@@ -55,13 +56,14 @@ export default function from(object, options = {}) {
   ) {
     // A primitive value; box it into an object and construct a tree.
     const boxed = box(object);
-    tree = new ObjectMap(boxed);
+    map = new ObjectMap(boxed);
   } else {
     throw new TypeError("Couldn't convert argument to a map");
   }
 
-  if ("parent" in tree && !tree.parent && options.parent) {
-    tree.parent = options.parent;
+  if (options.parent) {
+    setParent(map, options.parent);
   }
-  return tree;
+
+  return map;
 }

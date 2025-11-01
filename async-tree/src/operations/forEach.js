@@ -1,8 +1,7 @@
-import getTreeArgument from "../utilities/getTreeArgument.js";
+import getMapArgument from "../utilities/getMapArgument.js";
 
 /**
- * Calls callbackFn once for each key-value pair present in the specific node of
- * the tree.
+ * Calls callbackFn once for each key-value pair present in the map.
  *
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
@@ -10,9 +9,9 @@ import getTreeArgument from "../utilities/getTreeArgument.js";
  * @param {Function} callbackFn
  */
 export default async function forEach(maplike, callbackFn) {
-  const tree = await getTreeArgument(maplike, "forEach");
-  for await (const key of tree.keys()) {
-    const value = await tree.get(key);
-    await callbackFn(value, key, tree);
+  const map = await getMapArgument(maplike, "forEach");
+  for await (const key of map.keys()) {
+    const value = await map.get(key);
+    await callbackFn(value, key, map);
   }
 }
