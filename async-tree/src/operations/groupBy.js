@@ -1,8 +1,7 @@
-import ObjectMap from "../drivers/ObjectMap.js";
+import SyncMap from "../drivers/SyncMap.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
-import from from "./from.js";
+import entries from "./entries.js";
 import isMaplike from "./isMaplike.js";
-import keys from "./keys.js";
 import values from "./values.js";
 
 /**
@@ -13,19 +12,19 @@ import values from "./values.js";
  * @param {import("../../index.ts").ValueKeyFn} groupKeyFn
  */
 export default async function groupBy(maplike, groupKeyFn) {
-  const tree = await getTreeArgument(maplike, "groupBy");
+  const source = await getTreeArgument(maplike, "groupBy");
 
-  const treeKeys = await keys(tree);
+  const result = new SyncMap();
+  const sourceEntries = await entries(source);
 
   // Are all the keys integers?
-  const isArray = treeKeys.every((key) => !Number.isNaN(parseInt(key)));
+  const integerKeys = sourceEntries.every(
+    ([key]) => !Number.isNaN(parseInt(key))
+  );
 
-  const result = {};
-  for (const key of treeKeys) {
-    const value = await tree.get(key);
-
+  for (const [key, value] of sourceEntries) {
     // Get the groups for this value.
-    let groups = await groupKeyFn(value, key, tree);
+    let groups = await groupKeyFn(value, key, source);
     if (!groups) {
       continue;
     }
@@ -34,19 +33,21 @@ export default async function groupBy(maplike, groupKeyFn) {
       // A single value was returned
       groups = [groups];
     }
-    groups = from(groups);
 
     // Add the value to each group.
     for (const group of await values(groups)) {
-      if (isArray) {
-        result[group] ??= [];
-        result[group].push(value);
+      let grouped = await result.get(group);
+      if (!grouped) {
+        grouped = integerKeys ? [] : new SyncMap();
+        result.set(group, grouped);
+      }
+      if (integerKeys) {
+        grouped.push(value);
       } else {
-        result[group] ??= {};
-        result[group][key] = value;
+        grouped.set(key, value);
       }
     }
   }
 
-  return new ObjectMap(result);
+  return result;
 }
