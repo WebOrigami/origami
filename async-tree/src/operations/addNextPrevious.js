@@ -15,6 +15,10 @@ export default async function addNextPrevious(maplike) {
   return Object.assign(new AsyncMap(), {
     async get(key) {
       const sourceValue = await source.get(key);
+      if (sourceValue === undefined) {
+        return undefined;
+      }
+
       const resultValue = {};
       if (typeof sourceValue === "object") {
         // Copy to avoid modifying the original object
