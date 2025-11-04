@@ -1,6 +1,5 @@
 import * as symbols from "../symbols.js";
 import * as trailingSlash from "../trailingSlash.js";
-import getRealmObjectPrototype from "../utilities/getRealmObjectPrototype.js";
 import setParent from "../utilities/setParent.js";
 import SyncMap from "./SyncMap.js";
 
@@ -66,27 +65,27 @@ export default class ObjectMap extends SyncMap {
       return this.object[symbols.keys]();
     }
 
-    // Walk up the prototype chain to realm's Object.prototype.
     let object = this.object;
-    const objectPrototype = getRealmObjectPrototype(object);
 
     const result = new Set();
-    while (object && object !== objectPrototype) {
-      // Get the enumerable instance properties and the get/set properties.
+
+    // Walk up the prototype chain
+    while (object !== null) {
       const descriptors = Object.getOwnPropertyDescriptors(object);
       const propertyNames = Object.entries(descriptors)
+        // Get the enumerable instance properties and the get/set properties
         .filter(
           ([name, descriptor]) =>
             name !== "constructor" &&
+            name !== "__proto__" &&
             (descriptor.enumerable ||
               (descriptor.get !== undefined && descriptor.set !== undefined))
         )
+        // Preserve existing slash; add slash for subtrees
         .map(([name, descriptor]) =>
           trailingSlash.has(name)
-            ? // Preserve existing slash
-              name
-            : // Add a slash if the value is a plain property and a subtree
-              trailingSlash.toggle(
+            ? name
+            : trailingSlash.toggle(
                 name,
                 descriptor.value !== undefined &&
                   this.isSubtree(descriptor.value)
