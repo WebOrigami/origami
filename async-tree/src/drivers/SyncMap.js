@@ -24,23 +24,22 @@ export default class SyncMap extends Map {
   constructor(iterable) {
     super(iterable);
 
-    // To support the `iterable` argument, we have to allow set() to be called
-    // during initialization; i.e., during construction. After initialization,
-    // calling set() on a read-only subclass will throw.
-    this._initialized = true;
-
     /** @type {SyncMap|null} */
     this._parent = null;
 
-    // Record self-reference for use in Map method calls, which insist on the
+    // Record self-reference for use in Map method calls that insist on the
     // receiver being a Map instance. This allows method calls to work even when
     // the prototype chain is extended via Object.create().
+    //
+    // We separately use this member to determine whether the constructor has
+    // been called to initialize the instance. See set().
     this._self = this;
   }
 
+  // Override clear() to call overridden keys() and delete().
   clear() {
     if (this.readOnly) {
-      throw new Error("clear() can't be called on a read-only map");
+      throw new TypeError("clear() can't be called on a read-only map");
     }
     for (const key of this.keys()) {
       this.delete(key);
@@ -49,7 +48,7 @@ export default class SyncMap extends Map {
 
   delete(key) {
     if (this.readOnly) {
-      throw new Error("delete() can't be called on a read-only map");
+      throw new TypeError("delete() can't be called on a read-only map");
     }
     return super.delete.call(this._self, key);
   }
@@ -137,8 +136,14 @@ export default class SyncMap extends Map {
   }
 
   set(key, value) {
-    if (this._initialized && this.readOnly) {
-      throw new Error("set() can't be called on a read-only map");
+    // The Map constructor takes an optional `iterable` argument. If specified,
+    // then set() will be called during construction. We want to allow this to
+    // work even for read-only subclasses, so we allow set() to be called during
+    // initialization. Once the `_self` member is set, we know initialization is
+    // complete; after that point, calling set() on a read-only subclass will
+    // throw.
+    if (this._self !== undefined && this.readOnly) {
+      throw new TypeError("set() can't be called on a read-only map");
     }
     // If _self is not set, use the current instance as the receiver. This is
     // necessary to let the constructor call `super()`.

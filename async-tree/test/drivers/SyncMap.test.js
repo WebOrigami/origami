@@ -73,7 +73,7 @@ describe("SyncMap", () => {
       ["b", 2],
     ]);
     assert.throws(() => map.delete("a"), {
-      name: "Error",
+      name: "TypeError",
       message: "delete() can't be called on a read-only map",
     });
   });
@@ -233,7 +233,7 @@ describe("SyncMap", () => {
     }
     const map = new Fixture();
     assert.throws(() => map.set("a", 1), {
-      name: "Error",
+      name: "TypeError",
       message: "set() can't be called on a read-only map",
     });
   });
