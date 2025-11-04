@@ -78,6 +78,28 @@ export default class AsyncMap {
   }
 
   /**
+   * Groups items from an async iterable into an AsyncMap according to
+   * the keys returned by the given function.
+   *
+   * @param {Iterable<any>|AsyncIterable<any>} iterable
+   * @param {(element: any, index: any) => Promise<any>} keyFn
+   * @returns {Promise<Map>}
+   */
+  static async groupBy(iterable, keyFn) {
+    const map = new Map();
+    let index = 0;
+    for await (const element of iterable) {
+      const key = await keyFn(element, index);
+      if (!map.has(key)) {
+        map.set(key, []);
+      }
+      map.get(key).push(element);
+      index++;
+    }
+    return map;
+  }
+
+  /**
    * Returns true if the given key appears in the set returned by keys().
    *
    * It doesn't matter whether the value returned by get() is defined or not.
@@ -122,36 +144,15 @@ export default class AsyncMap {
   }
 
   /**
-   * True if the object is read-only.
-   *
-   * The default implementation of this uses a heuristic: if an instance defines
-   * get() on a more specific level of the prototype chain than set() and
-   * delete(), it is considered read-only.
-   *
-   * @returns {boolean}
+   * True if the object is read-only. This will be true if get() has been
+   * overridden but set() and delete() have not.
    */
   get readOnly() {
-    if (this._readOnly === undefined) {
-      // Walk up prototype chain. If we encounter get() before set() and
-      // delete(), the object is read-only.
-      let hasSet, hasDelete;
-      let current = this;
-      while (true) {
-        if (!hasSet && current.hasOwnProperty("set")) {
-          hasSet = true;
-        }
-        if (!hasDelete && current.hasOwnProperty("delete")) {
-          hasDelete = true;
-        }
-        // This will be true of the AsyncMap prototype, ending the loop.
-        if (current.hasOwnProperty("get")) {
-          this._readOnly = !(hasSet && hasDelete);
-          break;
-        }
-        current = Object.getPrototypeOf(current);
-      }
-    }
-    return this._readOnly;
+    return (
+      this.get !== AsyncMap.prototype.get &&
+      (this.set === AsyncMap.prototype.set ||
+        this.delete === AsyncMap.prototype.delete)
+    );
   }
 
   /**

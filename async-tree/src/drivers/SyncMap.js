@@ -125,8 +125,10 @@ export default class SyncMap extends Map {
     this._parent = parent;
   }
 
-  // True if the object is read-only. This will be true if get() has been
-  // overridden but set() and delete() have not.
+  /**
+   * True if the object is read-only. This will be true if get() has been
+   * overridden but set() and delete() have not.
+   */
   get readOnly() {
     return (
       this.get !== SyncMap.prototype.get &&

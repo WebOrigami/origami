@@ -44,6 +44,28 @@ describe("AsyncMap", () => {
     ]);
   });
 
+  test("static groupBy", async () => {
+    const items = [
+      { name: "apple", type: "fruit" },
+      { name: "beet", type: "vegetable" },
+      { name: "cherry", type: "fruit" },
+    ];
+    const map = await AsyncMap.groupBy(
+      items,
+      async (element, index) => element.type
+    );
+    assert.deepStrictEqual(Array.from(map.entries()), [
+      [
+        "fruit",
+        [
+          { name: "apple", type: "fruit" },
+          { name: "cherry", type: "fruit" },
+        ],
+      ],
+      ["vegetable", [{ name: "beet", type: "vegetable" }]],
+    ]);
+  });
+
   test("has returns true if key exists in keys()", async () => {
     const map = new AsyncMap();
     map.keys = async function* () {
@@ -56,12 +78,18 @@ describe("AsyncMap", () => {
   });
 
   test("readOnly if get() is overridden but not delete() and set()", () => {
-    const map1 = new SampleAsyncMap();
-    map1.get = async (key) => null;
-    assert.strictEqual(map1.readOnly, true);
+    const map1 = new AsyncMap();
+    assert.strictEqual(map1.readOnly, false);
 
-    const map2 = new SampleAsyncMap();
-    assert.strictEqual(map2.readOnly, false);
+    const map2 = new AsyncMap();
+    map2.get = async (key) => null;
+    assert.strictEqual(map2.readOnly, true);
+
+    const map3 = new AsyncMap();
+    map3.delete = async (key) => false;
+    map3.get = async (key) => null;
+    map3.set = async (key, value) => map3;
+    assert.strictEqual(map3.readOnly, false);
   });
 
   test("size", async () => {
