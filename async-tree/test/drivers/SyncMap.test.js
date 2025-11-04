@@ -289,4 +289,25 @@ describe("SyncMap", () => {
       ["b", 2, map2],
     ]);
   });
+
+  if ("groupBy" in Map) {
+    test("acceptable to Map.groupBy", () => {
+      const map = new SyncMap([
+        ["a", 1],
+        ["b", 2],
+        ["c", 3],
+      ]);
+      // @ts-ignore
+      const grouped = Map.groupBy(map, ([key, value]) =>
+        value % 2 === 0 ? "even" : "odd"
+      );
+      assert(grouped instanceof Map);
+      assert.strictEqual(grouped.size, 2);
+      assert.deepStrictEqual(grouped.get("odd"), [
+        ["a", 1],
+        ["c", 3],
+      ]);
+      assert.deepStrictEqual(grouped.get("even"), [["b", 2]]);
+    });
+  }
 });
