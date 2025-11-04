@@ -20,7 +20,6 @@ const previewSymbol = Symbol("preview");
  */
 export default class SyncMap extends Map {
   _initialized = false;
-  _readOnly;
 
   constructor(iterable) {
     super(iterable);
@@ -37,6 +36,15 @@ export default class SyncMap extends Map {
     // receiver being a Map instance. This allows method calls to work even when
     // the prototype chain is extended via Object.create().
     this._self = this;
+  }
+
+  clear() {
+    if (this.readOnly) {
+      throw new Error("clear() can't be called on a read-only map");
+    }
+    for (const key of this.keys()) {
+      this.delete(key);
+    }
   }
 
   delete(key) {
@@ -118,31 +126,14 @@ export default class SyncMap extends Map {
     this._parent = parent;
   }
 
-  // True if the object is read-only. This will be true if get() is overridden
-  // but not set() and delete().
-  /** @returns {boolean} */
+  // True if the object is read-only. This will be true if get() has been
+  // overridden but set() and delete() have not.
   get readOnly() {
-    if (this._readOnly === undefined) {
-      // Walk up prototype chain. If we encounter get() before set() and
-      // delete(), the object is read-only.
-      let hasSet, hasDelete;
-      let current = this;
-      while (true) {
-        if (!hasSet && current.hasOwnProperty("set")) {
-          hasSet = true;
-        }
-        if (!hasDelete && current.hasOwnProperty("delete")) {
-          hasDelete = true;
-        }
-        // At latest, this will be true of the SyncMap prototype
-        if (current.hasOwnProperty("get")) {
-          this._readOnly = !(hasSet && hasDelete);
-          break;
-        }
-        current = Object.getPrototypeOf(current);
-      }
-    }
-    return this._readOnly;
+    return (
+      this.get !== SyncMap.prototype.get &&
+      (this.set === SyncMap.prototype.set ||
+        this.delete === SyncMap.prototype.delete)
+    );
   }
 
   set(key, value) {

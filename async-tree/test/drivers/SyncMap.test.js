@@ -31,14 +31,22 @@ describe("SyncMap", () => {
     ]);
   });
 
-  test("clear", () => {
-    const map = new SyncMap([
-      ["a", 1],
-      ["b", 2],
-    ]);
-    assert.strictEqual(map.size, 2);
+  test("clear calls delete for each key", () => {
+    const deletedKeys = [];
+    const keys = ["a", "b", "c"];
+    class Fixture extends SyncMap {
+      delete(key) {
+        deletedKeys.push(key);
+        return keys.includes(key);
+      }
+
+      keys() {
+        return keys[Symbol.iterator]();
+      }
+    }
+    const map = new Fixture();
     map.clear();
-    assert.strictEqual(map.size, 0);
+    assert.deepStrictEqual(deletedKeys, ["a", "b", "c"]);
   });
 
   test("delete", () => {
