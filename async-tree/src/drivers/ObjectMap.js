@@ -65,36 +65,37 @@ export default class ObjectMap extends SyncMap {
       return this.object[symbols.keys]();
     }
 
-    let object = this.object;
-
     const result = new Set();
 
     // Walk up the prototype chain
-    while (object !== null) {
-      const descriptors = Object.getOwnPropertyDescriptors(object);
-      const propertyNames = Object.entries(descriptors)
-        // Get the enumerable instance properties and the get/set properties
-        .filter(
-          ([name, descriptor]) =>
-            name !== "constructor" &&
-            name !== "__proto__" &&
-            (descriptor.enumerable ||
-              (descriptor.get !== undefined && descriptor.set !== undefined))
-        )
+    for (
+      let current = this.object;
+      current !== null;
+      current = Object.getPrototypeOf(current)
+    ) {
+      // Look at all the properties at this level of the prototype chain
+      const descriptors = Object.getOwnPropertyDescriptors(current);
+      for (const [name, descriptor] of Object.entries(descriptors)) {
+        if (name === "constructor" || name === "__proto__") {
+          continue; // Uninteresting property
+        }
+        // Skip non-enumerable properties unless they have get/set
+        if (
+          !descriptor.enumerable &&
+          descriptor.get === undefined &&
+          descriptor.set === undefined
+        ) {
+          continue;
+        }
         // Preserve existing slash; add slash for subtrees
-        .map(([name, descriptor]) =>
-          trailingSlash.has(name)
-            ? name
-            : trailingSlash.toggle(
-                name,
-                descriptor.value !== undefined &&
-                  this.isSubtree(descriptor.value)
-              )
-        );
-      for (const name of propertyNames) {
-        result.add(name);
+        const key = trailingSlash.has(name)
+          ? name
+          : trailingSlash.toggle(
+              name,
+              descriptor.value !== undefined && this.isSubtree(descriptor.value)
+            );
+        result.add(key);
       }
-      object = Object.getPrototypeOf(object);
     }
 
     return result[Symbol.iterator]();
