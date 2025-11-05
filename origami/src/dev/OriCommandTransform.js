@@ -1,4 +1,4 @@
-import { scope, trailingSlash } from "@weborigami/async-tree";
+import { isUnpackable, scope, trailingSlash } from "@weborigami/async-tree";
 import { projectGlobals } from "@weborigami/language";
 
 /**
@@ -39,6 +39,10 @@ export default function OriCommandTransform(Base) {
           // Look for command in scope
           const parentScope = await scope(this);
           value = await parentScope.get(commandName);
+        }
+
+        if (trailingSlash.has(key) && isUnpackable(value)) {
+          value = await value.unpack();
         }
 
         if (value === undefined) {

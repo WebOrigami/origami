@@ -16,12 +16,12 @@
       <button id="buttonSVG">SVG</button>
       <button id="buttonYAML">YAML</button>
     </div>
-    ${ Tree.map(scope, (scopeTree) => `
+    ${ Tree.map(scope, (scopeTree, index) => `
       <ul>
         <h2>${ scopeTree.name ?? "" }</h2>
         ${ Tree.map(scopeTree.keys, (key) => `
         <li>
-          <a href="./!explore/${ key }" target="frame">${ key }</a>
+          <a href="./!explore/${ index > 0 ? "!" : "" }${ key }" target="frame">${ key }</a>
         </li>
         `) }
       </ul>

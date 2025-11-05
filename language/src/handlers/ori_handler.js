@@ -1,4 +1,4 @@
-import { getParent, toString } from "@weborigami/async-tree";
+import { getParent, setParent, toString } from "@weborigami/async-tree";
 import * as compile from "../compiler/compile.js";
 import projectGlobals from "../project/projectGlobals.js";
 
@@ -42,6 +42,11 @@ export default {
     });
 
     const result = await fn();
+
+    if (parent) {
+      setParent(result, parent);
+    }
+
     return result;
   },
 };
