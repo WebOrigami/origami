@@ -1,5 +1,5 @@
 import { toString } from "@weborigami/async-tree";
-import { exec } from "node:child_process";
+import { spawn } from "node:child_process";
 
 /**
  * Shell script file extension handler
@@ -9,23 +9,66 @@ export default {
 
   /** @type {import("@weborigami/async-tree").UnpackFunction} */
   async unpack(packed) {
-    const text = toString(packed);
+    const scriptText = toString(packed);
 
-    return new Promise((resolve, reject) => {
-      const child = exec("sh", (error, stdout, stderr) => {
-        if (error) {
-          // Include stderr in the error for easier debugging
-          error.stderr = stderr;
-          reject(error);
-          return;
+    if (scriptText === null) {
+      throw new Error(".sh handler: input isn't text");
+    }
+
+    return async (input) => {
+      let inputText;
+      if (input) {
+        inputText = toString(input);
+        if (inputText === null) {
+          throw new Error(".sh handler: input isn't text");
         }
-        resolve(stdout);
-      });
-
-      if (child?.stdin) {
-        child.stdin.write(text);
-        child.stdin.end();
+      } else {
+        inputText = "";
       }
-    });
+      return runShellScript(scriptText, inputText);
+    };
   },
 };
+
+/**
+ * Run arbitrary shell script text in /bin/sh and feed it stdin.
+ * Supports multiple commands, pipelines, redirects, etc.
+ *
+ * @param {string} scriptText - Shell code (may contain newlines/side effects)
+ * @param {string} inputText  - Text to pipe to the script's stdin
+ * @returns {Promise<string>}
+ */
+function runShellScript(scriptText, inputText) {
+  return new Promise((resolve, reject) => {
+    // Use sh -c "<scriptText>" so stdin is free for inputText
+    const child = spawn("sh", ["-c", scriptText], {
+      env: { ...process.env },
+      stdio: ["pipe", "pipe", "pipe"],
+    });
+
+    let stdout = "";
+    let stderr = "";
+
+    child.stdout.on("data", (c) => (stdout += c));
+    child.stderr.on("data", (c) => (stderr += c));
+
+    child.on("error", reject);
+
+    child.on("close", (code) => {
+      if (code !== 0) {
+        /** @type {any} */
+        const err = new Error(
+          `Shell exited with code ${code}${stderr ? `: ${stderr}` : ""}`
+        );
+        err.code = code;
+        err.stdout = stdout;
+        err.stderr = stderr;
+        return reject(err);
+      }
+      resolve(stdout);
+    });
+
+    // Feed the input to the script's stdin and close it
+    child.stdin.end(inputText);
+  });
+}
