@@ -9,16 +9,16 @@ describe("tsv", () => {
       { name: "Bob", age: 25, city: "Los Angeles" },
       { name: "Carol", age: 22, city: "Chicago" },
     ];
-    const result = await tsv(data);
+    const actual = await tsv(data);
 
     const expected = `name\tage\tcity
 Alice\t30\tNew York, NY
 Bob\t25\tLos Angeles
 Carol\t22\tChicago
 `;
-    const normalized = expected.replace(/\n/g, "\r\n");
+    const normalized = actual.replace(/\r\n/g, "\n");
 
-    assert.strictEqual(result, normalized);
+    assert.strictEqual(normalized, expected);
   });
 
   test("returns an empty string for empty array input", async () => {
