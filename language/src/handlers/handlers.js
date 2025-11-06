@@ -28,6 +28,7 @@ export { default as json_handler } from "./json_handler.js";
 export { default as md_handler } from "./md_handler.js";
 export { default as mjs_handler } from "./mjs_handler.js";
 export { default as sh_handler } from "./sh_handler.js";
+export { default as tsv_handler } from "./tsv_handler.js";
 export { default as wasm_handler } from "./wasm_handler.js";
 export { default as xhtml_handler } from "./xhtml_handler.js";
 export { default as yaml_handler } from "./yaml_handler.js";
