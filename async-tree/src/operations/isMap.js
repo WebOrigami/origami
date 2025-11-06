@@ -17,6 +17,7 @@ export default function isMap(object) {
 
   // Check for Map-like interface
   if (
+    object &&
     object.clear instanceof Function &&
     object.delete instanceof Function &&
     object.entries instanceof Function &&
