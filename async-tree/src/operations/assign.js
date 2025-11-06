@@ -29,7 +29,9 @@ export default async function assign(target, source) {
         let targetValue = await targetTree.get(key);
         if (targetValue === undefined) {
           // Target key doesn't exist; create empty subtree
-          const empty = /** @type {any} */ (targetTree.constructor).EMPTY;
+          /** @type {any} */
+          const targetClass = targetTree.constructor;
+          const empty = targetClass.EMPTY ?? new targetClass();
           await targetTree.set(key, empty);
           targetValue = await targetTree.get(key);
         }
