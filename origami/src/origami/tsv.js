@@ -12,8 +12,8 @@ import { EOL } from "node:os";
  * @param {any} object
  */
 export default async function tsv(object) {
-  if (object === undefined) {
-    return undefined;
+  if (object == null) {
+    return "";
   }
   if (isUnpackable(object)) {
     object = await object.unpack();
