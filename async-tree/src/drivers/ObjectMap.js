@@ -109,7 +109,7 @@ export default class ObjectMap extends SyncMap {
       delete this.object[existingKey];
     }
 
-    if (value === ObjectMap.EMPTY) {
+    if (value === this.constructor.EMPTY) {
       // Create empty subtree
       value = Reflect.construct(this.constructor, []);
     }

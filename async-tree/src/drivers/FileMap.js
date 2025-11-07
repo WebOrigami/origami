@@ -54,10 +54,10 @@ export default class FileMap extends SyncMap {
       fs.rmSync(destPath, { recursive: true });
       return true;
     } catch (/** @type {any} */ error) {
-      if (error.code !== "ENOENT") {
-        throw error;
+      if (error.code === "ENOENT") {
+        return false; // File or directory didn't exist
       }
-      return false;
+      throw error;
     }
   }
 
