@@ -131,7 +131,8 @@ describe("FileMap", () => {
     const tempFile = path.join(tempDirectory, "file");
     fs.writeFileSync(tempFile, "");
     const tempFiles = new FileMap(tempDirectory);
-    tempFiles.delete("file");
+    const deleted = tempFiles.delete("file");
+    assert(deleted);
     let stats;
     try {
       stats = fs.statSync(tempFile);
@@ -141,6 +142,14 @@ describe("FileMap", () => {
       }
     }
     assert(stats === undefined);
+    removeTempDirectory();
+  });
+
+  test("delete returns false if file does not exist", () => {
+    createTempDirectory();
+    const tempFiles = new FileMap(tempDirectory);
+    const deleted = tempFiles.delete("nonexistent-file");
+    assert(!deleted);
     removeTempDirectory();
   });
 

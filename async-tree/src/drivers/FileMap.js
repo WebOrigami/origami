@@ -50,9 +50,15 @@ export default class FileMap extends SyncMap {
     const baseKey = trailingSlash.remove(stringKey);
     const destPath = path.resolve(this.dirname, baseKey);
 
-    fs.rmSync(destPath, { force: true, recursive: true });
-
-    return true;
+    try {
+      fs.rmSync(destPath, { recursive: true });
+      return true;
+    } catch (/** @type {any} */ error) {
+      if (error.code !== "ENOENT") {
+        throw error;
+      }
+      return false;
+    }
   }
 
   get(key) {
