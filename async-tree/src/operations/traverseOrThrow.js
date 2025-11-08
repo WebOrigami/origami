@@ -1,3 +1,4 @@
+import * as trailingSlash from "../trailingSlash.js";
 import TraverseError from "../TraverseError.js";
 import isUnpackable from "../utilities/isUnpackable.js";
 import from from "./from.js";
@@ -47,8 +48,12 @@ export default async function traverseOrThrow(maplike, ...keys) {
       const tree = from(value);
       // Get the next key.
       key = remainingKeys.shift();
+      // Remove trailing slash if not supported
+      const normalized = tree.trailingSlashKeys
+        ? key
+        : trailingSlash.remove(key);
       // Get the value for the key.
-      value = await tree.get(key);
+      value = await tree.get(normalized);
     }
 
     position++;

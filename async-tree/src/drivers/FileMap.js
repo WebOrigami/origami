@@ -192,6 +192,10 @@ export default class FileMap extends SyncMap {
 
     return this;
   }
+
+  get trailingSlashKeys() {
+    return true;
+  }
 }
 
 // Create the indicated directory.

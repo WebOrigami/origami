@@ -23,4 +23,8 @@ export default class ConstantTree extends SyncMap {
   keys() {
     return [][Symbol.iterator]();
   }
+
+  get trailingSlashKeys() {
+    return true;
+  }
 }

@@ -177,4 +177,8 @@ export default class BrowserFileMap extends AsyncMap {
 
     return this;
   }
+
+  get trailingSlashKeys() {
+    return true;
+  }
 }

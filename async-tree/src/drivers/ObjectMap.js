@@ -119,6 +119,10 @@ export default class ObjectMap extends SyncMap {
 
     return this;
   }
+
+  get trailingSlashKeys() {
+    return true;
+  }
 }
 
 function findExistingKey(object, key) {

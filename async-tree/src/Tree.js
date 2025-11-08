@@ -50,6 +50,7 @@ export { default as reverse } from "./operations/reverse.js";
 export { default as root } from "./operations/root.js";
 export { default as scope } from "./operations/scope.js";
 export { default as shuffle } from "./operations/shuffle.js";
+export { default as size } from "./operations/size.js";
 export { default as sort } from "./operations/sort.js";
 export { default as sync } from "./operations/sync.js";
 export { default as take } from "./operations/take.js";
