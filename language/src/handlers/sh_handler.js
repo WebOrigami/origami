@@ -16,16 +16,7 @@ export default {
     }
 
     return async (input) => {
-      let inputText;
-      if (input) {
-        inputText = toString(input);
-        if (inputText === null) {
-          throw new Error(".sh handler: input isn't text");
-        }
-      } else {
-        inputText = "";
-      }
-      return runShellScript(scriptText, inputText);
+      return runShellScript(scriptText, input);
     };
   },
 };
