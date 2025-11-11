@@ -43,11 +43,6 @@ export default class SiteMap extends AsyncMap {
       return value;
     }
 
-    // HACK: For now we don't allow lookup of Origami extension handlers.
-    if (key.endsWith(".handler")) {
-      return undefined;
-    }
-
     const href = new URL(key, this.href).href;
 
     // Fetch the data at the given route.
