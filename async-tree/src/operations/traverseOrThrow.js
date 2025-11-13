@@ -44,16 +44,16 @@ export default async function traverseOrThrow(maplike, ...keys) {
       key = null;
       value = await fn(...args);
     } else {
-      // Cast value to a tree.
-      const tree = from(value);
+      // Cast value to a map.
+      const map = from(value);
       // Get the next key.
       key = remainingKeys.shift();
       // Remove trailing slash if not supported
-      const normalized = tree.trailingSlashKeys
+      const normalized = map.trailingSlashKeys
         ? key
         : trailingSlash.remove(key);
       // Get the value for the key.
-      value = await tree.get(normalized);
+      value = await map.get(normalized);
     }
 
     position++;
