@@ -68,5 +68,7 @@ export default async function deepMerge(...maplikes) {
     },
 
     sources,
+
+    trailingSlashKeys: true,
   });
 }
