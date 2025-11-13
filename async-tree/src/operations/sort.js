@@ -72,6 +72,8 @@ export default async function sort(maplike, options) {
     },
 
     source,
+
+    trailingSlashKeys: source.trailingSlashKeys,
   });
 
   return transformed;

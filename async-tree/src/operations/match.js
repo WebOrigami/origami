@@ -70,6 +70,8 @@ export default function match(pattern, resultFn, keys = []) {
     async *keys() {
       yield* typeof keys === "function" ? await keys() : keys;
     },
+
+    trailingSlashKeys: false,
   });
 
   return result;

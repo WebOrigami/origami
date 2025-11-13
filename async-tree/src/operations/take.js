@@ -28,5 +28,7 @@ export default async function take(maplike, count) {
     },
 
     source: source,
+
+    trailingSlashKeys: source.trailingSlashKeys,
   });
 }

@@ -15,19 +15,19 @@ import indexPage from "./indexPage.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function staticBuiltin(maplike) {
-  const tree = await getTreeArgument(maplike, "static");
-  return staticMap(tree);
+  const source = await getTreeArgument(maplike, "static");
+  return staticMap(source);
 }
 
 // The name we'll register as a builtin
 staticBuiltin.key = "static";
 
-function staticMap(tree) {
+function staticMap(source) {
   const result = Object.assign(new AsyncMap(), {
     description: "static",
 
     async get(key) {
-      let value = await tree.get(key);
+      let value = await source.get(key);
       if (value === undefined && key === "index.html") {
         value = await indexPage(this);
       } else if (value === undefined && key === ".keys.json") {
@@ -40,12 +40,14 @@ function staticMap(tree) {
     },
 
     async *keys() {
-      yield* tree.keys();
+      yield* source.keys();
       yield "index.html";
       yield ".keys.json";
     },
 
-    source: tree,
+    source: source,
+
+    trailingSlashKeys: source.trailingSlashKeys,
   });
 
   return result;

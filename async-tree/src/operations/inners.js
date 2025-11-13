@@ -12,20 +12,22 @@ import isMap from "./isMap.js";
  * @param {Maplike} maplike
  */
 export default async function inners(maplike) {
-  const tree = await getMapArgument(maplike, "inners");
+  const source = await getMapArgument(maplike, "inners");
 
   return Object.assign(new AsyncMap(), {
     async get(key) {
-      const value = await tree.get(key);
+      const value = await source.get(key);
       return isMap(value) ? inners(value) : undefined;
     },
 
     async *keys() {
-      for await (const key of tree.keys()) {
+      for await (const key of source.keys()) {
         if (trailingSlash.has(key)) {
           yield key;
         }
       }
     },
+
+    trailingSlashKeys: source.trailingSlashKeys,
   });
 }

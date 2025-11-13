@@ -18,7 +18,7 @@ import isMap from "./isMap.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function regExpKeys(maplike) {
-  const tree = await getMapArgument(maplike, "regExpKeys", { deep: true });
+  const source = await getMapArgument(maplike, "regExpKeys", { deep: true });
 
   const map = new SyncMap();
 
@@ -48,19 +48,21 @@ export default async function regExpKeys(maplike) {
       return map.keys();
     },
 
-    source: tree,
+    source: source,
+
+    trailingSlashKeys: false,
   });
 
   // Turn the input tree's string keys into regular expressions, then map those
   // to the corresponding values.
-  for await (const key of tree.keys()) {
+  for await (const key of source.keys()) {
     if (typeof key !== "string") {
       // Skip non-string keys.
       continue;
     }
 
     // Get value.
-    let value = await tree.get(key);
+    let value = await source.get(key);
 
     let regExp;
     if (trailingSlash.has(key) || isMap(value)) {

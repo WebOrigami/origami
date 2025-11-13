@@ -4,13 +4,13 @@ import isMap from "./isMap.js";
 
 export default async function invokeFunctions(maplike, options = {}) {
   const deep = options.deep ?? false;
-  const tree = await getMapArgument(maplike, "invokeFunctions", { deep });
+  const source = await getMapArgument(maplike, "invokeFunctions", { deep });
 
   return Object.assign(new AsyncMap(), {
     description: "invokeFunctions",
 
     async get(key) {
-      let value = await tree.get(key);
+      let value = await source.get(key);
       if (typeof value === "function") {
         value = value();
       } else if (isMap(value)) {
@@ -20,11 +20,13 @@ export default async function invokeFunctions(maplike, options = {}) {
     },
 
     async *keys() {
-      for await (const key of tree.keys()) {
+      for await (const key of source.keys()) {
         yield key;
       }
     },
 
-    source: tree,
+    source: source,
+
+    trailingSlashKeys: source.trailingSlashKeys,
   });
 }

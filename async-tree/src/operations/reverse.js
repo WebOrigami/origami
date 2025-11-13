@@ -26,5 +26,7 @@ export default async function reverse(maplike) {
     },
 
     source,
+
+    trailingSlashKeys: source.trailingSlashKeys,
   });
 }

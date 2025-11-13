@@ -70,5 +70,7 @@ export default async function treeCache(sourceMaplike, cacheMaplike) {
       sourceKeys ??= await keys(source);
       yield* sourceKeys;
     },
+
+    trailingSlashKeys: source.trailingSlashKeys,
   });
 }

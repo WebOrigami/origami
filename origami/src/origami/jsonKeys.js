@@ -14,16 +14,16 @@ import {
  * @returns {Promise<AsyncMap>}
  */
 export default async function jsonKeysBuiltin(maplike) {
-  const tree = await getTreeArgument(maplike, "jsonKeys");
-  return jsonKeysMap(tree);
+  const source = await getTreeArgument(maplike, "jsonKeys");
+  return jsonKeysMap(source);
 }
 
-function jsonKeysMap(tree) {
+function jsonKeysMap(source) {
   const result = Object.assign(new AsyncMap(), {
     description: "jsonKeys",
 
     async get(key) {
-      let value = await tree.get(key);
+      let value = await source.get(key);
       if (value === undefined && key === ".keys.json") {
         value = await jsonKeys.stringify(this);
       } else if (Tree.isMaplike(value)) {
@@ -34,12 +34,14 @@ function jsonKeysMap(tree) {
     },
 
     async *keys() {
-      const treeKeys = new Set(await Tree.keys(tree));
+      const treeKeys = new Set(await Tree.keys(source));
       treeKeys.add(".keys.json");
       yield* treeKeys;
     },
 
-    source: tree,
+    source: source,
+
+    trailingSlashKeys: source.trailingSlashKeys,
   });
   return result;
 }

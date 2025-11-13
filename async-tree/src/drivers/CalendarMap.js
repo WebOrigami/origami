@@ -80,6 +80,8 @@ export default class CalendarMap extends SyncMap {
       (_, i) => this.start.year + i
     )[Symbol.iterator]();
   }
+
+  trailingSlashKeys = false;
 }
 
 function dateParts(date) {
@@ -141,6 +143,8 @@ function daysForMonthMap(year, month, start, end, valueFn) {
         .filter((day) => this.inRange(day))
         .map((day) => twoDigits(day));
     },
+
+    trailingSlashKeys: false,
   });
 }
 
@@ -179,6 +183,8 @@ function monthsForYearMap(year, start, end, valueFn) {
         .filter((month) => this.inRange(month))
         .map((month) => twoDigits(month));
     },
+
+    trailingSlashKeys: false,
   });
 }
 

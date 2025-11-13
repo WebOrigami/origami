@@ -12,13 +12,13 @@ import keys from "./keys.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function deepReverse(maplike) {
-  const tree = await getMapArgument(maplike, "deepReverse", { deep: true });
+  const source = await getMapArgument(maplike, "deepReverse", { deep: true });
 
   return Object.assign(new AsyncMap(), {
     description: "deepReverse",
 
     async get(key) {
-      let value = await tree.get(key);
+      let value = await source.get(key);
       if (isMap(value)) {
         value = deepReverse(value);
       }
@@ -26,11 +26,13 @@ export default async function deepReverse(maplike) {
     },
 
     async *keys() {
-      const treeKeys = await keys(tree);
+      const treeKeys = await keys(source);
       treeKeys.reverse();
       yield* treeKeys;
     },
 
-    source: tree,
+    source,
+
+    trailingSlashKeys: source.trailingSlashKeys,
   });
 }

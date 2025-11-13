@@ -13,7 +13,7 @@ import values from "./values.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function withKeys(maplike, keysMaplike) {
-  const sourceMap = await getMapArgument(maplike, "withKeys", { position: 0 });
+  const source = await getMapArgument(maplike, "withKeys", { position: 0 });
   const keysMap = await getMapArgument(keysMaplike, "withKeys", {
     position: 1,
   });
@@ -24,7 +24,7 @@ export default async function withKeys(maplike, keysMaplike) {
     description: "withKeys",
 
     async get(key) {
-      return sourceMap.get(key);
+      return source.get(key);
     },
 
     async *keys() {
@@ -32,6 +32,8 @@ export default async function withKeys(maplike, keysMaplike) {
       yield* keys;
     },
 
-    source: sourceMap,
+    source: source,
+
+    trailingSlashKeys: source.trailingSlashKeys,
   });
 }

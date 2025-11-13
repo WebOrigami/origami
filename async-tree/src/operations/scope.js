@@ -11,7 +11,7 @@ import getMapArgument from "../utilities/getMapArgument.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function scope(maplike) {
-  const map = await getMapArgument(maplike, "scope");
+  const source = await getMapArgument(maplike, "scope");
 
   return Object.assign(new AsyncMap(), {
     description: "scope",
@@ -19,7 +19,7 @@ export default async function scope(maplike) {
     // Starting with this map, search up the parent hierarchy.
     async get(key) {
       /** @type {Map|AsyncMap|null} */
-      let current = map;
+      let current = source;
       let value;
       while (current) {
         value = await current.get(key);
@@ -35,7 +35,7 @@ export default async function scope(maplike) {
     async *keys() {
       const scopeKeys = new Set();
       /** @type {Map|AsyncMap|null} */
-      let current = map;
+      let current = source;
       while (current) {
         for await (const key of current.keys()) {
           scopeKeys.add(key);
@@ -54,7 +54,7 @@ export default async function scope(maplike) {
       const result = [];
 
       /** @type {Map|AsyncMap|null} */
-      let current = map;
+      let current = source;
       while (current) {
         result.push(current);
         current = "parent" in current ? current.parent : null;
@@ -63,6 +63,8 @@ export default async function scope(maplike) {
       return result;
     },
 
-    source: map,
+    source: source,
+
+    trailingSlashKeys: source.trailingSlashKeys,
   });
 }

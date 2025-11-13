@@ -14,9 +14,9 @@ import keys from "./keys.js";
  * @param {number} [size=10]
  */
 export default async function paginate(maplike, size = 10) {
-  const map = await getMapArgument(maplike, "paginate");
+  const source = await getMapArgument(maplike, "paginate");
 
-  const treeKeys = await keys(map);
+  const treeKeys = await keys(source);
   const pageCount = Math.ceil(treeKeys.length / size);
 
   const paginated = Object.assign(new AsyncMap(), {
@@ -38,7 +38,7 @@ export default async function paginate(maplike, size = 10) {
         index++
       ) {
         const key = treeKeys[index];
-        items.set(key, await map.get(treeKeys[index]));
+        items.set(key, await source.get(treeKeys[index]));
       }
 
       return {
@@ -55,7 +55,9 @@ export default async function paginate(maplike, size = 10) {
       yield* Array.from({ length: pageCount }, (_, index) => index + 1);
     },
 
-    source: map,
+    source: source,
+
+    trailingSlashKeys: false,
   });
 
   return paginated;

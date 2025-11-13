@@ -49,8 +49,11 @@ export default async function merge(...treelikes) {
     async get(key) {
       // Check trees for the indicated key in reverse order.
       for (let index = sources.length - 1; index >= 0; index--) {
-        const tree = sources[index];
-        const value = await tree.get(key);
+        const source = sources[index];
+        const normalized = source.trailingSlashKeys
+          ? key
+          : trailingSlash.remove(key);
+        const value = await source.get(normalized);
         if (value !== undefined) {
           return value;
         }
@@ -76,5 +79,7 @@ export default async function merge(...treelikes) {
     },
 
     sources,
+
+    trailingSlashKeys: true,
   });
 }

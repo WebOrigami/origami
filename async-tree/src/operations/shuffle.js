@@ -32,6 +32,8 @@ export default async function shuffle(maplike, reshuffle = false) {
     },
 
     source,
+
+    trailingSlashKeys: source.trailingSlashKeys,
   });
 }
 

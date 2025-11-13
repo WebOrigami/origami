@@ -9,14 +9,14 @@ const globstar = "**";
 const globstarSlash = `${globstar}/`;
 
 export default async function globKeys(maplike) {
-  const globs = await getMapArgument(maplike, "globKeys", { deep: true });
+  const source = await getMapArgument(maplike, "globKeys", { deep: true });
   return Object.assign(new AsyncMap(), {
     async get(key) {
       if (typeof key !== "string") {
         return undefined;
       }
 
-      let value = await matchGlobs(globs, key);
+      let value = await matchGlobs(source, key);
       if (isMap(value)) {
         value = globKeys(value);
       }
@@ -24,10 +24,12 @@ export default async function globKeys(maplike) {
     },
 
     async *keys() {
-      for await (const key of globs.keys()) {
+      for await (const key of source.keys()) {
         yield key;
       }
     },
+
+    trailingSlashKeys: source.trailingSlashKeys,
   });
 }
 

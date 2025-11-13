@@ -31,8 +31,11 @@ export default async function deepMerge(...maplikes) {
 
       // Check trees for the indicated key in reverse order.
       for (let index = sources.length - 1; index >= 0; index--) {
-        const tree = sources[index];
-        const value = await tree.get(key);
+        const source = sources[index];
+        const normalized = source.trailingSlashKeys
+          ? key
+          : trailingSlash.remove(key);
+        const value = await source.get(normalized);
         if (isMap(value) || (isMaplike(value) && trailingSlash.has(key))) {
           subtrees.unshift(value);
         } else if (value !== undefined) {

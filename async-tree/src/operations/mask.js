@@ -60,5 +60,7 @@ export default async function mask(aMaplike, bMaplike) {
     },
 
     source: aMap,
+
+    trailingSlashKeys: aMap.trailingSlashKeys,
   });
 }
