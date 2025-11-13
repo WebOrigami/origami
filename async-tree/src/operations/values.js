@@ -1,4 +1,4 @@
-import from from "./from.js";
+import getMapArgument from "../utilities/getMapArgument.js";
 
 /**
  * Return the values in the map.
@@ -8,7 +8,7 @@ import from from "./from.js";
  * @param {Maplike} maplike
  */
 export default async function values(maplike) {
-  const map = from(maplike);
+  const map = await getMapArgument(maplike, "values");
   let result;
   /** @type {any} */
   let iterable = map.values();

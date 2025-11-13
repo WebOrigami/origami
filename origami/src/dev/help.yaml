@@ -167,8 +167,8 @@ Tree:
   description: Work with trees of files and data
   commands:
     addNextPrevious:
-      args: (tree)
-      description: Add next/previous fields to the tree's values
+      args: (map)
+      description: Add next/previous fields to the map's values
     assign:
       args: (target, source)
       description: Apply key/values from source to target
@@ -179,11 +179,14 @@ Tree:
       args: (options)
       description: Return a tree structure for years/months/days
     clear:
-      args: (tree)
-      description: Remove all values from the tree
+      args: (map)
+      description: Remove all values from the map
     constant:
       args: (value)
       description: Return a deep tree with a single constant value
+    deepEntries:
+      args: (tree)
+      description: The tree's in-order [key, value] pairs
     deepMap:
       args: (tree, options)
       description: Map the keys and values of a deep tree
@@ -203,68 +206,68 @@ Tree:
       args: (tree)
       description: The in-order leaf values of the tree
     delete:
-      args: (tree, key)
-      description: Delete the value for the key from tree
+      args: (map, key)
+      description: Delete the value for the key from map
     entries:
-      args: (tree)
-      description: The tree's [key, value] pairs
+      args: (map)
+      description: The map's [key, value] pairs
     filter:
-      args: (source, options)
-      description: Filter the source tree
+      args: (tree, options)
+      description: Filter a tree by a condition
     first:
-      args: (tree)
-      description: The first value in the tree
+      args: (map)
+      description: The first value in the map
     forEach:
-      args: (tree, fn)
+      args: (map, fn)
       description: Apply fn to each (value, key)
     from:
       args: (object, options)
-      description: Create a tree from an object
+      description: Create a map from an object
     globKeys:
       args: (patterns)
       description: A tree whose keys can include glob wildcard patterns
     groupBy:
-      args: (tree, fn)
-      description: A new tree with values grouped by the function
+      args: (map, fn)
+      description: A new map with values grouped by the function
     has:
-      args: (tree, key)
-      description: True if key exists in tree
+      args: (map, key)
+      description: True if key exists in map
     indent:
       args: "`…`"
       description: Tagged template literal for normalizing indentation
     inners:
       args: (tree)
       description: The tree's interior nodes
-    isAsyncMutableTree:
-      args: (object)
-      description: True if object is an async mutable tree
+    invokeFunctions:
+      args: (tree)
+      description: Invoke any functions found in the tree
     isMap:
       args: (object)
-      description: True if object is an async tree
-    isTraversable:
-      args: (object)
-      description: True if object is traversable
+      description: True if object is a map
     isMaplike:
       args: (object)
       description: True if object can be coerced to a tree
+    isReadOnlyMap:
+      args: (object)
+      description: True if object is a read-only map
+    isTraversable:
+      args: (object)
+      description: True if object is traversable
     json:
       args: (tree)
       description: Render the tree in JSON format
     keys:
-      args: (tree)
-      description: The keys of the tree
-    length:
-      args: (tree)
-      description: The tree's size (number of keys)
+      args: (map)
+      description: The keys of the map
     map:
-      args: (tree, options)
-      description: Create a new tree by mapping keys and/or values
+      args: (source, options)
+      description: Create a new map by transforming keys and/or values
     mapExtension:
-      args: (tree, ext, options)
-      description: Map extensions and values
+      args: (source, ext, options)
+      description: Create a new map by transforming extensions
     mapReduce:
       args: (tree, mapFn, reduceFn)
-      description: Map values and reduce them
+      description: Map the keys and/or values in a tree and reduce them
     mask:
       args: (source, mask)
       description: Return the source tree with only the keys in the mask
@@ -272,11 +275,11 @@ Tree:
       args: (pattern, fn, [keys])
       description: Matches simple patterns or regular expressions
     merge:
-      args: (...trees)
-      description: Return a new tree merging the given trees
+      args: (...maps)
+      description: Return a new tree merging the given maps
     paginate:
-      args: (tree, [n])
-      description: Group the tree's values into fixed-size sets
+      args: (map, [n])
+      description: Group the map's values into fixed-size sets
     parent:
       args: (tree)
       description: The parent of the given tree node
@@ -290,23 +293,29 @@ Tree:
       args: (tree)
       description: A tree whose keys are regular expression strings
     reverse:
-      args: (tree)
-      description: Reverse the order of the tree's keys
+      args: (map)
+      description: Reverse the order of the map's keys
     root:
       args: (tree)
       description: The root node of the given tree
-    setDeep:
-      args: (target, source)
-      description: Applies the source tree to the target
-    shuffle:
+    scope:
       args: (tree)
-      description: Shuffle the keys of the tree
+      description: A merged view of the tree and its ancestors
+    shuffle:
+      args: (map)
+      description: Shuffle the keys of the map
+    size:
+      args: (map)
+      description: The map's size (number of keys)
     sort:
-      args: (tree, options)
-      description: A new tree with its keys sorted
+      args: (map, options)
+      description: A new map with its keys sorted
+    sync:
+      args: (tree)
+      description: Awaits all asynchronous values in the tree
     take:
-      args: (tree, n)
-      description: The first n values in the tree
+      args: (map, n)
+      description: The first n values in the map
     text:
       args: "`…`"
       description: Tagged template literal for rendering trees
@@ -320,8 +329,8 @@ Tree:
       args: (tree, path)
       description: Traverse a slash-separated path
     values:
-      args: (tree)
-      description: The tree's values
+      args: (map)
+      description: The map's values
     withKeys:
-      args: (tree, keys)
-      description: Use the given keys for the tree
+      args: (map, keys)
+      description: Use the given keys for the map
