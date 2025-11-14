@@ -1,13 +1,16 @@
 // Exports for both Node.js and browser
 
+import { default as DeepObjectMap } from "./src/drivers/DeepObjectMap.js";
+import { default as ExplorableSiteMap } from "./src/drivers/ExplorableSiteMap.js";
+import { default as FileMap } from "./src/drivers/FileMap.js";
+import { default as FunctionMap } from "./src/drivers/FunctionMap.js";
+import { default as ObjectMap } from "./src/drivers/ObjectMap.js";
+import { default as SetMap } from "./src/drivers/SetMap.js";
+import { default as SiteMap } from "./src/drivers/SiteMap.js";
+
 export { default as AsyncMap } from "./src/drivers/AsyncMap.js";
 export { default as CalendarMap } from "./src/drivers/CalendarMap.js";
 export { default as ConstantMap } from "./src/drivers/ConstantMap.js";
-export { default as DeepObjectMap } from "./src/drivers/DeepObjectMap.js";
-export { default as ExplorableSiteMap } from "./src/drivers/ExplorableSiteMap.js";
-export { default as FunctionMap } from "./src/drivers/FunctionMap.js";
-export { default as ObjectMap } from "./src/drivers/ObjectMap.js";
-export { default as SiteMap } from "./src/drivers/SiteMap.js";
 export { default as SyncMap } from "./src/drivers/SyncMap.js";
 export * as extension from "./src/extension.js";
 export * as jsonKeys from "./src/jsonKeys.js";
@@ -31,3 +34,66 @@ export { default as pathFromKeys } from "./src/utilities/pathFromKeys.js";
 export { default as setParent } from "./src/utilities/setParent.js";
 export { default as toPlainValue } from "./src/utilities/toPlainValue.js";
 export { default as toString } from "./src/utilities/toString.js";
+
+export {
+  DeepObjectMap,
+  ExplorableSiteMap,
+  FileMap,
+  FunctionMap,
+  ObjectMap,
+  SetMap,
+  SiteMap,
+};
+
+export class ObjectTree extends ObjectMap {
+  constructor(...args) {
+    super(...args);
+    console.warn("ObjectTree is deprecated. Please use ObjectMap instead.");
+  }
+}
+
+export class DeepObjectTree extends DeepObjectMap {
+  constructor(...args) {
+    super(...args);
+    console.warn(
+      "DeepObjectTree is deprecated. Please use DeepObjectMap instead."
+    );
+  }
+}
+
+export class ExplorableSiteTree extends ExplorableSiteMap {
+  constructor(...args) {
+    super(...args);
+    console.warn(
+      "ExplorableSiteTree is deprecated. Please use ExplorableSiteMap instead."
+    );
+  }
+}
+
+export class FileTree extends FileMap {
+  constructor(...args) {
+    super(...args);
+    console.warn("FileTree is deprecated. Please use FileMap instead.");
+  }
+}
+
+export class FunctionTree extends FunctionMap {
+  constructor(...args) {
+    super(...args);
+    console.warn("FunctionTree is deprecated. Please use FunctionMap instead.");
+  }
+}
+
+export class SetTree extends SetMap {
+  constructor(...args) {
+    super(...args);
+    console.warn("SetTree is deprecated. Please use SetMap instead.");
+  }
+}
+
+export class SiteTree extends SiteMap {
+  constructor(...args) {
+    super(...args);
+    console.warn("SiteTree is deprecated. Please use SiteMap instead.");
+  }
+}
