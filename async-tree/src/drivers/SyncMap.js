@@ -152,7 +152,7 @@ export default class SyncMap extends Map {
     const target = this._self ?? this;
 
     // Support EMPTY symbol to create empty subtrees
-    if (value === SyncMap.EMPTY) {
+    if (value === /** @type {any} */ (this.constructor).EMPTY) {
       value = Reflect.construct(this.constructor, []);
     }
 

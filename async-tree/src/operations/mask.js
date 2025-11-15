@@ -61,6 +61,6 @@ export default async function mask(aMaplike, bMaplike) {
 
     source: aMap,
 
-    trailingSlashKeys: aMap.trailingSlashKeys,
+    trailingSlashKeys: /** @type {any} */ (aMap).trailingSlashKeys,
   });
 }

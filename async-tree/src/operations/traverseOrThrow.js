@@ -49,7 +49,7 @@ export default async function traverseOrThrow(maplike, ...keys) {
       // Get the next key.
       key = remainingKeys.shift();
       // Remove trailing slash if not supported
-      const normalized = map.trailingSlashKeys
+      const normalized = /** @type {any} */ (map).trailingSlashKeys
         ? key
         : trailingSlash.remove(key);
       // Get the value for the key.

@@ -62,8 +62,8 @@ export class DeepObjectTree extends DeepObjectMap {
 }
 
 export class ExplorableSiteTree extends ExplorableSiteMap {
-  constructor(...args) {
-    super(...args);
+  constructor(href) {
+    super(href);
     console.warn(
       "ExplorableSiteTree is deprecated. Please use ExplorableSiteMap instead."
     );
@@ -85,8 +85,8 @@ export class FunctionTree extends FunctionMap {
 }
 
 export class SetTree extends SetMap {
-  constructor(...args) {
-    super(...args);
+  constructor(set) {
+    super(set);
     console.warn("SetTree is deprecated. Please use SetMap instead.");
   }
 }

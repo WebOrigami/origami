@@ -29,7 +29,7 @@ export default async function globKeys(maplike) {
       }
     },
 
-    trailingSlashKeys: source.trailingSlashKeys,
+    trailingSlashKeys: /** @type {any} */ (source).trailingSlashKeys,
   });
 }
 

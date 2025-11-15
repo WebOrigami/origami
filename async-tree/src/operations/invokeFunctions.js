@@ -28,6 +28,6 @@ export default async function invokeFunctions(maplike) {
 
     source: source,
 
-    trailingSlashKeys: source.trailingSlashKeys,
+    trailingSlashKeys: /** @type {any} */ (source).trailingSlashKeys,
   });
 }

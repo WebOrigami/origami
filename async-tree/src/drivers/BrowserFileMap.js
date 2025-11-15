@@ -158,7 +158,7 @@ export default class BrowserFileMap extends AsyncMap {
       const writable = await fileHandle.createWritable();
       await writable.write(value);
       await writable.close();
-    } else if (value === this.constructor.EMPTY) {
+    } else if (value === /** @type {any} */ (this.constructor).EMPTY) {
       // Create empty subtree.
       await directory.getDirectoryHandle(baseKey, {
         create: true,

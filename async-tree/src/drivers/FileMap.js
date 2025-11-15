@@ -179,7 +179,7 @@ export default class FileMap extends SyncMap {
 
     if (packed) {
       writeFile(value, destPath);
-    } else if (value === FileMap.EMPTY) {
+    } else if (value === /** @type {any} */ (this.constructor).EMPTY) {
       clearDirectory(destPath, this);
     } else if (isMaplike(value)) {
       writeDirectory(value, destPath, this);

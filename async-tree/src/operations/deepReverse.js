@@ -33,6 +33,6 @@ export default async function deepReverse(maplike) {
 
     source,
 
-    trailingSlashKeys: source.trailingSlashKeys,
+    trailingSlashKeys: /** @type {any} */ (source).trailingSlashKeys,
   });
 }

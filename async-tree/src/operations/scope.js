@@ -65,6 +65,6 @@ export default async function scope(maplike) {
 
     source: source,
 
-    trailingSlashKeys: source.trailingSlashKeys,
+    trailingSlashKeys: /** @type {any} */ (source).trailingSlashKeys,
   });
 }

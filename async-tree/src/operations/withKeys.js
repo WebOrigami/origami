@@ -34,6 +34,6 @@ export default async function withKeys(maplike, keysMaplike) {
 
     source: source,
 
-    trailingSlashKeys: source.trailingSlashKeys,
+    trailingSlashKeys: /** @type {any} */ (source).trailingSlashKeys,
   });
 }

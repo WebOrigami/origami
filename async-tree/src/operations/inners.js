@@ -28,6 +28,6 @@ export default async function inners(maplike) {
       }
     },
 
-    trailingSlashKeys: source.trailingSlashKeys,
+    trailingSlashKeys: /** @type {any} */ (source).trailingSlashKeys,
   });
 }

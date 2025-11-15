@@ -71,6 +71,6 @@ export default async function treeCache(sourceMaplike, cacheMaplike) {
       yield* sourceKeys;
     },
 
-    trailingSlashKeys: source.trailingSlashKeys,
+    trailingSlashKeys: /** @type {any} */ (source).trailingSlashKeys,
   });
 }

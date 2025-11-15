@@ -50,7 +50,7 @@ export default async function merge(...treelikes) {
       // Check trees for the indicated key in reverse order.
       for (let index = sources.length - 1; index >= 0; index--) {
         const source = sources[index];
-        const normalized = source.trailingSlashKeys
+        const normalized = /** @type {any} */ (source).trailingSlashKeys
           ? key
           : trailingSlash.remove(key);
         const value = await source.get(normalized);

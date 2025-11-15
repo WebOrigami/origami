@@ -73,7 +73,7 @@ export default async function sort(maplike, options) {
 
     source,
 
-    trailingSlashKeys: source.trailingSlashKeys,
+    trailingSlashKeys: /** @type {any} */ (source).trailingSlashKeys,
   });
 
   return transformed;
