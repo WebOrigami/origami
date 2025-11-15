@@ -1,7 +1,7 @@
 import isMap from "./isMap.js";
 
 /**
- * Return true if the indicated object is an asynchronous mutable map.
+ * Return true if the indicated object is a read-only map.
  *
  * @param {any} object
  */

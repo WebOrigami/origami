@@ -54,7 +54,7 @@ export default async function crawlBuiltin(maplike, baseHref) {
   // value.
   const result = Tree.deepMerge(
     new DeepObjectMap(cache),
-    await Tree.invokeFunctions(resources, { deep: true })
+    await Tree.invokeFunctions(resources)
   );
   return result;
 }

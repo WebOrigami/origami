@@ -1,5 +1,5 @@
 import * as symbols from "../symbols.js";
-import from from "./from.js";
+import getMapArgument from "../utilities/getMapArgument.js";
 
 /**
  * Walk up the `parent` chain to find the root of the tree.
@@ -10,7 +10,7 @@ import from from "./from.js";
  */
 export default function root(maplike) {
   /** @type {any} */
-  let current = from(maplike);
+  let current = getMapArgument(maplike, "root");
   while (current.parent || current[symbols.parent]) {
     current = current.parent || current[symbols.parent];
   }

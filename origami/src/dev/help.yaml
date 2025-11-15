@@ -184,9 +184,6 @@ Tree:
     constant:
       args: (value)
       description: Return a deep tree with a single constant value
-    deepEntries:
-      args: (tree)
-      description: The tree's in-order [key, value] pairs
     deepMap:
       args: (tree, options)
       description: Map the keys and values of a deep tree
@@ -238,9 +235,6 @@ Tree:
     inners:
       args: (tree)
       description: The tree's interior nodes
-    invokeFunctions:
-      args: (tree)
-      description: Invoke any functions found in the tree
     isMap:
       args: (object)
       description: True if object is a map

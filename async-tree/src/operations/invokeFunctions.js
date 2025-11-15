@@ -2,9 +2,10 @@ import AsyncMap from "../drivers/AsyncMap.js";
 import getMapArgument from "../utilities/getMapArgument.js";
 import isMap from "./isMap.js";
 
-export default async function invokeFunctions(maplike, options = {}) {
-  const deep = options.deep ?? false;
-  const source = await getMapArgument(maplike, "invokeFunctions", { deep });
+export default async function invokeFunctions(maplike) {
+  const source = await getMapArgument(maplike, "invokeFunctions", {
+    deep: true,
+  });
 
   return Object.assign(new AsyncMap(), {
     description: "invokeFunctions",
