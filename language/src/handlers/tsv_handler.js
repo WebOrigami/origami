@@ -45,7 +45,16 @@ function tsvParse(text) {
     const values = lines[i].split("\t");
     const entry = {};
     for (let j = 0; j < headers.length; j++) {
-      entry[headers[j]] = values[j] ?? "";
+      /** @type {string|number} */
+      let value = values[j];
+      if (value !== undefined) {
+        // Attempt to convert to number if possible
+        const n = Number(value);
+        if (!isNaN(n)) {
+          value = n;
+        }
+      }
+      entry[headers[j]] = value ?? "";
     }
     data.push(entry);
   }

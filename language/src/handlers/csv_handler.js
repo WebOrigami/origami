@@ -34,11 +34,21 @@ function csvParse(text) {
   const rows = [];
   let currentRow = [];
   let currentField = "";
+  let wasQuoted = false; // True if the current field was quoted
 
   const pushField = () => {
-    // Push the completed field and reset for the next field.
-    currentRow.push(currentField);
+    /** @type {string|number} */
+    let parsedField = currentField;
+    if (!wasQuoted) {
+      // Field wasn't quoted: if it's a valid number, convert it
+      const n = Number(currentField);
+      if (!isNaN(n)) {
+        parsedField = n;
+      }
+    }
+    currentRow.push(parsedField);
     currentField = "";
+    wasQuoted = false; // Reset the flag for the next field
   };
 
   const pushRow = () => {
@@ -54,29 +64,24 @@ function csvParse(text) {
     const char = text[i];
 
     if (inQuotes) {
-      // In a quoted field
       if (char === '"') {
-        // Check if next character is also a quote
         if (i + 1 < text.length && text[i + 1] === '"') {
-          // Append a literal double quote and skip the next character
           currentField += '"';
           i += 2;
           continue;
         } else {
-          // End of the quoted field
           inQuotes = false;
           i++;
           continue;
         }
       } else {
-        // All other characters within quotes are taken literally.
         currentField += char;
         i++;
         continue;
       }
     } else if (char === '"') {
-      // Start of a quoted field
       inQuotes = true;
+      wasQuoted = true; // Mark the field as quoted
       i++;
       continue;
     } else if (char === ",") {
