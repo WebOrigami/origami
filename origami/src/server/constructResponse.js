@@ -87,8 +87,8 @@ export default async function constructResponse(request, resource) {
   if (!mediaType) {
     // Maybe it's HTML?
     const text = toString(resource);
-    if (text && maybeHtml(text)) {
-      mediaType = "text/html";
+    if (text) {
+      mediaType = maybeHtml(text) ? "text/html" : "text/plain";
       body = text;
     }
   } else if (mediaType && SiteTree.mediaTypeIsText(mediaType)) {
