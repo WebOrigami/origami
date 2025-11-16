@@ -10,17 +10,17 @@ Bob,25,Los Angeles
 "Carol ""CJ""",22,Chicago`;
     const result = csv_handler.unpack(csvText);
     assert.deepStrictEqual(result, [
-      { name: "Alice", age: "30", city: "New York, NY" },
-      { name: "Bob", age: "25", city: "Los Angeles" },
-      { name: 'Carol "CJ"', age: "22", city: "Chicago" },
+      { name: "Alice", age: 30, city: "New York, NY" },
+      { name: "Bob", age: 25, city: "Los Angeles" },
+      { name: 'Carol "CJ"', age: 22, city: "Chicago" },
     ]);
   });
 
   test("handles CRLF line endings", () => {
     const textCRLF = `name,age,city\r\nAlice,30,"New York, NY"\r\nBob,25,Los Angeles\r\n`;
     const expected = [
-      { name: "Alice", age: "30", city: "New York, NY" },
-      { name: "Bob", age: "25", city: "Los Angeles" },
+      { name: "Alice", age: 30, city: "New York, NY" },
+      { name: "Bob", age: 25, city: "Los Angeles" },
     ];
     const result = csv_handler.unpack(textCRLF);
     assert.deepStrictEqual(result, expected);
