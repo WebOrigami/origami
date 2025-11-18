@@ -1,7 +1,11 @@
-import { getTreeArgument, Tree } from "@weborigami/async-tree";
+import {
+  AsyncMap,
+  getTreeArgument,
+  SyncMap,
+  Tree,
+} from "@weborigami/async-tree";
 import { formatError } from "@weborigami/language";
 import process, { stdout } from "node:process";
-import { transformObject } from "../common/utilities.js";
 
 /**
  * @typedef {import("@weborigami/async-tree").Maplike} Maplike
@@ -14,13 +18,10 @@ export default async function copy(source, target) {
   let targetTree = await getTreeArgument(target, "copy", { position: 1 });
 
   if (stdout.isTTY) {
-    targetTree =
-      targetTree instanceof Map
-        ? transformObject(SyncProgressTransform, targetTree)
-        : transformObject(AsyncProgressTransform, targetTree);
-    copyRoot = targetTree;
-    countFiles = 0;
-    countCopied = 0;
+    targetTree = showSetProgress(targetTree, {
+      copied: 0,
+      total: 0,
+    });
   }
 
   await Tree.assign(targetTree, sourceTree);
@@ -28,60 +29,59 @@ export default async function copy(source, target) {
   if (stdout.isTTY) {
     process.stdout.clearLine(0);
     process.stdout.cursorTo(0);
-    copyRoot = null;
-    countFiles = null;
-    countCopied = null;
   }
 }
 
-let countFiles;
-let countCopied;
-let copyRoot;
+// Wrap the source tree to show progress on set() operations. Handle both sync
+// and async trees. All child trees will share the same counts object.
+function showSetProgress(source, counts) {
+  function showProgress() {
+    process.stdout.clearLine(0);
+    process.stdout.cursorTo(0);
+    process.stdout.write(`Copied ${counts.copied} of ${counts.total}`);
+  }
 
-function AsyncProgressTransform(Base) {
-  return class Progress extends Base {
-    async set(...args) {
-      countFiles++;
-      copyRoot.showProgress();
-      let result;
+  const isSync = source instanceof Map;
+  const MapClass = isSync ? SyncMap : AsyncMap;
+  const iteratorKey = isSync ? Symbol.iterator : Symbol.asyncIterator;
+
+  const progressTree = Object.assign(new MapClass(), {
+    // Delegate these methods to source tree
+    delete: source.delete.bind(source),
+    keys: source.keys.bind(source),
+    [iteratorKey]: source[iteratorKey].bind(source),
+
+    // Wrap get() to apply progress tracking
+    get(key) {
+      return awaitIfPromise(source.get(key), (value) => {
+        return Tree.isMap(value) ? showSetProgress(value, counts) : value;
+      });
+    },
+
+    // Wrap set() to show progress
+    set(key, value) {
+      counts.total++;
+      showProgress();
       try {
-        result = await super.set(...args);
-        countCopied++;
+        const setResult = source.set(key, value);
+        return awaitIfPromise(setResult, () => {
+          counts.copied++;
+          showProgress();
+          return progressTree;
+        });
       } catch (/** @type {any} */ error) {
         console.error(formatError(error));
+        return progressTree;
       }
-      copyRoot.showProgress();
-      return result;
-    }
+    },
+  });
 
-    showProgress() {
-      process.stdout.clearLine(0);
-      process.stdout.cursorTo(0);
-      process.stdout.write(`Copied ${countCopied} of ${countFiles}`);
-    }
-  };
+  return progressTree;
 }
 
-function SyncProgressTransform(Base) {
-  return class Progress extends Base {
-    set(...args) {
-      countFiles++;
-      copyRoot.showProgress();
-      let result;
-      try {
-        result = super.set(...args);
-        countCopied++;
-      } catch (/** @type {any} */ error) {
-        console.error(formatError(error));
-      }
-      copyRoot.showProgress();
-      return result;
-    }
-
-    showProgress() {
-      process.stdout.clearLine(0);
-      process.stdout.cursorTo(0);
-      process.stdout.write(`Copied ${countCopied} of ${countFiles}`);
-    }
-  };
+// Helper function that awaits a value if it's a Promise, then gives it to the
+// function; otherwise calls the function directly. This helps us write code
+// that can handle both sync and async values.
+function awaitIfPromise(value, fn) {
+  return value instanceof Promise ? value.then(fn) : fn(value);
 }
