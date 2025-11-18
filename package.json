@@ -1,11 +1,10 @@
 {
   "name": "@weborigami/monorepo",
-  "version": "0.5.8",
+  "version": "0.6.0",
   "workspaces": [
     "async-tree",
     "language",
-    "origami",
-    "types"
+    "origami"
   ],
   "scripts": {
     "build": "cd language; npm run build",

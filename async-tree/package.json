@@ -1,18 +1,15 @@
 {
   "name": "@weborigami/async-tree",
-  "version": "0.5.8",
+  "version": "0.6.0",
   "description": "Asynchronous tree drivers based on standard JavaScript classes",
   "type": "module",
   "main": "./main.js",
   "browser": "./browser.js",
   "types": "./index.ts",
-  "dependencies": {
-    "@weborigami/types": "0.5.8"
-  },
   "devDependencies": {
-    "@types/node": "24.3.0",
-    "puppeteer": "24.17.0",
-    "typescript": "5.9.2"
+    "@types/node": "24.10.1",
+    "puppeteer": "24.30.0",
+    "typescript": "5.9.3"
   },
   "scripts": {
     "headlessTest": "node test/browser/headlessTest.js",

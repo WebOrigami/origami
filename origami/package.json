@@ -1,6 +1,6 @@
 {
   "name": "@weborigami/origami",
-  "version": "0.5.8",
+  "version": "0.6.0",
   "description": "Web Origami language, CLI, framework, and server",
   "type": "module",
   "repository": {
@@ -13,23 +13,22 @@
   "main": "./main.js",
   "types": "./index.ts",
   "devDependencies": {
-    "@types/node": "24.3.0",
-    "typescript": "5.9.2"
+    "@types/node": "24.10.1",
+    "typescript": "5.9.3"
   },
   "dependencies": {
-    "@weborigami/async-tree": "0.5.8",
+    "@weborigami/async-tree": "0.6.0",
     "@weborigami/json-feed-to-rss": "1.0.0",
-    "@weborigami/language": "0.5.8",
-    "@weborigami/types": "0.5.8",
+    "@weborigami/language": "0.6.0",
     "css-tree": "3.1.0",
     "graphviz-wasm": "3.0.2",
     "highlight.js": "11.11.1",
-    "jsdom": "26.1.0",
-    "marked": "16.2.0",
-    "marked-gfm-heading-id": "4.1.2",
-    "marked-highlight": "2.2.2",
-    "marked-smartypants": "1.1.10",
-    "sharp": "0.34.3",
+    "jsdom": "27.2.0",
+    "marked": "17.0.0",
+    "marked-gfm-heading-id": "4.1.3",
+    "marked-highlight": "2.2.3",
+    "marked-smartypants": "1.1.11",
+    "sharp": "0.34.5",
     "yaml": "2.8.1"
   },
   "scripts": {
