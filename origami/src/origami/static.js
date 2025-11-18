@@ -40,9 +40,23 @@ function staticMap(source) {
     },
 
     async *keys() {
-      yield* source.keys();
-      yield "index.html";
-      yield ".keys.json";
+      let needsIndex = true;
+      let needsKeysJson = true;
+      for await (const key of source.keys()) {
+        if (key === "index.html") {
+          needsIndex = false;
+        }
+        if (key === ".keys.json") {
+          needsKeysJson = false;
+        }
+        yield key;
+      }
+      if (needsIndex) {
+        yield "index.html";
+      }
+      if (needsKeysJson) {
+        yield ".keys.json";
+      }
     },
 
     source: source,
