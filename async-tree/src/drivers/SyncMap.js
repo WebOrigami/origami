@@ -36,7 +36,15 @@ export default class SyncMap extends Map {
     this._self = this;
   }
 
-  // Override clear() to call overridden keys() and delete().
+  /**
+   * Removes all key/value entries from the map.
+   *
+   * Unlike the standard `Map.prototype.clear()`, this method invokes an
+   * overridden `keys()` and `delete()` to ensure proper behavior in subclasses.
+   *
+   * If the `readOnly` property is true, calling this method throws a
+   * `TypeError`.
+   */
   clear() {
     if (this.readOnly) {
       throw new TypeError("clear() can't be called on a read-only map");
@@ -46,6 +54,13 @@ export default class SyncMap extends Map {
     }
   }
 
+  /**
+   * Removes the entry for the given key, return true if an entry was removed
+   * and false if there was no entry for the key.
+   *
+   * If the `readOnly` property is true, calling this method throws a
+   * `TypeError`.
+   */
   delete(key) {
     if (this.readOnly) {
       throw new TypeError("delete() can't be called on a read-only map");
@@ -55,7 +70,13 @@ export default class SyncMap extends Map {
 
   static EMPTY = Symbol("EMPTY");
 
-  // Override entries() method to call overridden get() and keys().
+  /**
+   * Returns a new `Iterator` object that contains a two-member array of [key,
+   * value] for each element in the map in insertion order.
+   *
+   * Unlike the standard `Map.prototype.clear()`, this method invokes an
+   * overridden `keys()` and `get()` to ensure proper behavior in subclasses.
+   */
   entries() {
     // We'd like to just define entries() as a generator but TypeScript
     // complains that it doesn't match the Map interface. We define the
@@ -69,12 +90,24 @@ export default class SyncMap extends Map {
     return /** @type {MapIterator<[any, any]>} */ (gen());
   }
 
+  /**
+   * Calls `callback` once for each key/value pair in the map, in insertion order.
+   *
+   * Unlike the standard `Map.prototype.forEach()`, this method invokes an
+   * overridden `entries()` to ensure proper behavior in subclasses.
+   *
+   * @param {(value: any, key: any, thisArg: any) => void} callback
+   * @param {any?} thisArg
+   */
   forEach(callback, thisArg = this) {
     for (const [key, value] of this.entries()) {
       callback(value, key, thisArg);
     }
   }
 
+  /**
+   * Returns the value associated with the key, or undefined if there is none.
+   */
   get(key) {
     let value = super.get.call(this._self, key);
     if (value === undefined) {
@@ -93,8 +126,8 @@ export default class SyncMap extends Map {
    *
    * It doesn't matter whether the value returned by get() is defined or not.
    *
-   * If the key with a trailing slash doesn't appear, but the alternate form
-   * with a slash does appear, this returns true.
+   * If the requested key has a trailing slash but has no associated value, but
+   * the alternate form with a slash does appear, this returns true.
    *
    * @param {any} key
    */
@@ -107,7 +140,8 @@ export default class SyncMap extends Map {
   }
 
   /**
-   * The keys of the map
+   * Returns a new `Iterator` object that contains the keys for each element in
+   * the map in insertion order.
    *
    * @returns {MapIterator<any>}
    */
@@ -126,8 +160,8 @@ export default class SyncMap extends Map {
   }
 
   /**
-   * True if the object is read-only. This will be true if get() has been
-   * overridden but set() and delete() have not.
+   * True if the object is read-only. This will be true if the `get()` method has
+   * been overridden but `set()` and `delete()` have not.
    */
   get readOnly() {
     return (
@@ -137,6 +171,12 @@ export default class SyncMap extends Map {
     );
   }
 
+  /**
+   * Adds a new entry with a specified key and value to this Map, or updates an
+   * existing entry if the key already exists.
+   *
+   * If the `readOnly` property is true, calling this method throws a `TypeError`.
+   */
   set(key, value) {
     // The Map constructor takes an optional `iterable` argument. If specified,
     // then set() will be called during construction. We want to allow this to
@@ -159,16 +199,30 @@ export default class SyncMap extends Map {
     return super.set.call(target, key, value);
   }
 
-  // We define the size to be the number of keys
+  /**
+   * Returns the number of keys in the map.
+   *
+   * The `size` property invokes an overridden `keys()` to ensure proper
+   * behavior in subclasses. Because a subclass may not enforce a direct
+   * correspondence between `keys()` and `get()`, the size may not reflect the
+   * number of values that can be retrieved.
+   */
   get size() {
     const keys = Array.from(this.keys());
     return keys.length;
   }
 
+  /**
+   * Returns the map's `entries()`.
+   */
   [Symbol.iterator]() {
     return this.entries();
   }
 
+  /**
+   * Returns a new `Iterator` object that contains the values for each element
+   * in the map in insertion order.
+   */
   values() {
     // See notes at entries()
     const self = this;

@@ -11,9 +11,9 @@ export default class AsyncMap {
   }
 
   /**
-   * Remove all entries from the map.
+   * Remove all key/value entries from the map.
    *
-   * This requires that the subclass implement delete().
+   * This method invokes the `keys()` and `delete()` methods.
    */
   async clear() {
     for await (const key of this.keys()) {
@@ -22,9 +22,8 @@ export default class AsyncMap {
   }
 
   /**
-   * Deletes the given key from the map.
-   *
-   * Returns true if the key was present and deleted, false if not.
+   * Removes the entry for the given key, return true if an entry was removed
+   * and false if there was no entry for the key.
    *
    * @param {any} key
    * @returns {Promise<boolean>}
@@ -36,7 +35,10 @@ export default class AsyncMap {
   static EMPTY = Symbol("EMPTY");
 
   /**
-   * Returns an async iterable of the map's key-value pairs.
+   * Returns a new `AsyncIterator` object that contains a two-member array of
+   * [key, value] for each element in the map in insertion order.
+   *
+   * This method invokes the `keys()` and `get()` methods.
    *
    * @returns {AsyncIterableIterator<[any, any]>}
    */
@@ -56,7 +58,9 @@ export default class AsyncMap {
   }
 
   /**
-   * Invokes a callback for each key-value pair in the map.
+   * Calls `callback` once for each key/value pair in the map, in insertion order.
+   *
+   * This method invokes the `entries()` method.
    *
    * @param {(value: any, key: any, thisArg: any) => Promise<void>} callback
    * @param {any?} thisArg
@@ -68,7 +72,7 @@ export default class AsyncMap {
   }
 
   /**
-   * Returns the value for the given key.
+   * Returns the value associated with the key, or undefined if there is none.
    *
    * @param {any} key
    * @returns {Promise<any>}
@@ -78,8 +82,8 @@ export default class AsyncMap {
   }
 
   /**
-   * Groups items from an async iterable into an AsyncMap according to
-   * the keys returned by the given function.
+   * Groups items from an async iterable into an AsyncMap according to the keys
+   * returned by the given function.
    *
    * @param {Iterable<any>|AsyncIterable<any>} iterable
    * @param {(element: any, index: any) => Promise<any>} keyFn
@@ -104,8 +108,8 @@ export default class AsyncMap {
    *
    * It doesn't matter whether the value returned by get() is defined or not.
    *
-   * If the key with a trailing slash doesn't appear, but the alternate form
-   * with a slash does appear, this returns true.
+   * If the requested key has a trailing slash but has no associated value, but
+   * the alternate form with a slash does appear, this returns true.
    *
    * @param {any} key
    */
@@ -125,7 +129,8 @@ export default class AsyncMap {
   }
 
   /**
-   * Returns an async iterable of the map's keys.
+   * Returns a new `AsyncIterator` object that contains the keys for each
+   * element in the map in insertion order.
    *
    * @returns {AsyncIterableIterator<any>}
    */
@@ -144,8 +149,8 @@ export default class AsyncMap {
   }
 
   /**
-   * True if the object is read-only. This will be true if get() has been
-   * overridden but set() and delete() have not.
+   * True if the object is read-only. This will be true if `get()` has been
+   * overridden but `set()` and `delete()` have not.
    */
   get readOnly() {
     return (
@@ -167,7 +172,12 @@ export default class AsyncMap {
   }
 
   /**
-   * The number of keys in the map.
+   * Returns the number of keys in the map.
+   *
+   * The `size` property invokes an overridden `keys()` to ensure proper
+   * behavior in subclasses. Because a subclass may not enforce a direct
+   * correspondence between `keys()` and `get()`, the size may not reflect the
+   * number of values that can be retrieved.
    *
    * @type {Promise<number>}
    */
@@ -182,7 +192,8 @@ export default class AsyncMap {
   }
 
   /**
-   * Returns an async iterable of the map's values.
+   * Returns a new `AsyncIterator` object that contains the values for each
+   * element in the map in insertion order.
    *
    * @returns {AsyncIterableIterator<any>}
    */
