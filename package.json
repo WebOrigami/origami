@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "build": "cd language; npm run build",
-    "publish-all": "cd types; npm publish; cd ../async-tree; npm publish; cd ../language; npm publish; cd ../origami; npm publish",
+    "publish-all": "cd async-tree; npm publish; cd ../language; npm publish; cd ../origami; npm publish",
     "test": "node --test --test-reporter=spec",
     "typecheck": "tsc"
   }
