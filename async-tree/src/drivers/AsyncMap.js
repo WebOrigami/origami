@@ -16,9 +16,11 @@ export default class AsyncMap {
    * This method invokes the `keys()` and `delete()` methods.
    */
   async clear() {
+    const promises = [];
     for await (const key of this.keys()) {
-      await this.delete(key);
+      promises.push(this.delete(key));
     }
+    await Promise.all(promises);
   }
 
   /**
