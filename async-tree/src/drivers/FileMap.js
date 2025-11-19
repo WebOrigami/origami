@@ -76,14 +76,9 @@ export default class FileMap extends SyncMap {
     key = trailingSlash.remove(key); // normalize key
     const filePath = path.resolve(this.dirname, key);
 
-    let stats;
-    try {
-      stats = fs.statSync(filePath);
-    } catch (/** @type {any} */ error) {
-      if (error.code === "ENOENT" /* File not found */) {
-        return undefined;
-      }
-      throw error;
+    const stats = getStats(filePath);
+    if (stats === null) {
+      return undefined; // File or directory doesn't exist
     }
 
     let value;
@@ -211,12 +206,32 @@ function clearDirectory(destPath, parent) {
   return destTree;
 }
 
+// Return stats for the path, or null if it doesn't exist.
+function getStats(filePath) {
+  let stats;
+  try {
+    stats = fs.statSync(filePath);
+  } catch (/** @type {any} */ error) {
+    if (error.code === "ENOENT" /* File not found */) {
+      return null;
+    }
+    throw error;
+  }
+  return stats;
+}
+
 /**
  * Treat value as a subtree and write it out as a subdirectory.
  *
  * @param {import("../../index.ts").Maplike} value
  */
 function writeDirectory(value, destPath, parent) {
+  // If path exists and it's a file, delete the file first.
+  const stats = getStats(destPath);
+  if (stats !== null && stats.isFile()) {
+    fs.rmSync(destPath);
+  }
+
   // Since value is Maplike, result will be a Map
   /** @type {Map} */
   // @ts-ignore
@@ -232,14 +247,12 @@ function writeDirectory(value, destPath, parent) {
 
 // Write a value to a file.
 function writeFile(value, destPath) {
-  // Write out the value as the contents of a file.
-  try {
-    fs.writeFileSync(destPath, value);
-  } catch (/** @type {any} */ error) {
-    if (error.code === "EISDIR" /* Is a directory */) {
-      throw new Error(
-        `Tried to overwrite a directory with a single file: ${destPath}`
-      );
-    }
+  // If path exists and it's a directory, delete the directory first.
+  const stats = getStats(destPath);
+  if (stats !== null && stats.isDirectory()) {
+    fs.rmSync(destPath, { recursive: true });
   }
+
+  // Write out the value as the contents of a file.
+  fs.writeFileSync(destPath, value);
 }
