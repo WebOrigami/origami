@@ -295,6 +295,9 @@ Tree:
     scope:
       args: (tree)
       description: A merged view of the tree and its ancestors
+    set:
+      args: (map, key, value)
+      description: Set the value for the key in the map
     shuffle:
       args: (map)
       description: Shuffle the keys of the map
