@@ -1,6 +1,5 @@
 import { hiddenFileNames } from "../constants.js";
-import assign from "../operations/assign.js";
-import isMaplike from "../operations/isMaplike.js";
+import isMap from "../operations/isMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import isStringlike from "../utilities/isStringlike.js";
 import naturalOrder from "../utilities/naturalOrder.js";
@@ -30,13 +29,35 @@ export default class BrowserFileMap extends AsyncMap {
     this.directory = directoryHandle;
   }
 
+  async child(key) {
+    const normalized = trailingSlash.remove(key);
+    let result = await this.get(normalized);
+
+    // If child is already a map we can use it as is
+    if (!isMap(result)) {
+      // Create subfolder
+      const directory = await this.getDirectory();
+      if (result) {
+        // Delete existing file with same name
+        await directory.removeEntry(normalized);
+      }
+      const subfolderHandle = await directory.getDirectoryHandle(normalized, {
+        create: true,
+      });
+      result = Reflect.construct(this.constructor, [subfolderHandle]);
+      setParent(result, this);
+    }
+
+    return result;
+  }
+
   async delete(key) {
-    const baseKey = trailingSlash.remove(key);
+    const normalized = trailingSlash.remove(key);
     const directory = await this.getDirectory();
 
     // Delete file.
     try {
-      await directory.removeEntry(baseKey);
+      await directory.removeEntry(normalized);
     } catch (error) {
       // If the file didn't exist, ignore the error.
       if (error instanceof DOMException && error.name === "NotFoundError") {
@@ -111,9 +132,9 @@ export default class BrowserFileMap extends AsyncMap {
     // @ts-ignore
     for await (const entryKey of directory.keys()) {
       // Check if the entry is a subfolder
-      const baseKey = trailingSlash.remove(entryKey);
+      const normalized = trailingSlash.remove(entryKey);
       const subfolderHandle = await directory
-        .getDirectoryHandle(baseKey)
+        .getDirectoryHandle(normalized)
         .catch(() => null);
       const isSubfolder = subfolderHandle !== null;
 
@@ -129,7 +150,7 @@ export default class BrowserFileMap extends AsyncMap {
   }
 
   async set(key, value) {
-    const baseKey = trailingSlash.remove(key);
+    const normalized = trailingSlash.remove(key);
     const directory = await this.getDirectory();
 
     // Treat null value as empty string; will create an empty file.
@@ -152,24 +173,12 @@ export default class BrowserFileMap extends AsyncMap {
 
     if (isWriteable) {
       // Write file.
-      const fileHandle = await directory.getFileHandle(baseKey, {
+      const fileHandle = await directory.getFileHandle(normalized, {
         create: true,
       });
       const writable = await fileHandle.createWritable();
       await writable.write(value);
       await writable.close();
-    } else if (value === /** @type {any} */ (this.constructor).EMPTY) {
-      // Create empty subtree.
-      await directory.getDirectoryHandle(baseKey, {
-        create: true,
-      });
-    } else if (isMaplike(value)) {
-      // Treat value as a tree and write it out as a subdirectory.
-      const subdirectory = await directory.getDirectoryHandle(baseKey, {
-        create: true,
-      });
-      const destTree = Reflect.construct(this.constructor, [subdirectory]);
-      await assign(destTree, value);
     } else {
       const typeName = value?.constructor?.name ?? "unknown";
       throw new TypeError(`Cannot write a value of type ${typeName} as ${key}`);

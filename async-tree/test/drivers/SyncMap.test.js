@@ -217,12 +217,26 @@ describe("SyncMap", () => {
     assert.strictEqual(map.get("b"), 3);
   });
 
-  test("set with EMPTY value creates empty subtree", () => {
+  test("child creates new map when not present", () => {
+    // Create child when not present
     const map = new SyncMap();
-    map.set("subtree", SyncMap.EMPTY);
-    const subtree = map.get("subtree");
-    assert(subtree instanceof SyncMap);
-    assert.strictEqual(subtree.size, 0);
+    const child1 = map.child("sub");
+    assert(child1 instanceof SyncMap);
+    const stored1 = map.get("sub");
+    assert.strictEqual(stored1, child1);
+
+    // Return existing child
+    const child2 = map.child("sub");
+    assert.strictEqual(child2, child1);
+  });
+
+  test("child overwrites non-map value", () => {
+    const map = new SyncMap();
+    map.set("sub", 123);
+    const child = map.child("sub");
+    assert(child instanceof SyncMap);
+    const stored = map.get("sub");
+    assert.strictEqual(stored, child);
   });
 
   test("set on read-only map throws", () => {

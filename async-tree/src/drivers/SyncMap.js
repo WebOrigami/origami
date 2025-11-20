@@ -36,6 +36,23 @@ export default class SyncMap extends Map {
     this._self = this;
   }
 
+  // Return the child map for the given key, creating it if necessary. This is
+  // the same as the child() operation's default behavior but is synchronous, so
+  // it will be preferred by the child() operation over the default behavior.
+  child(key) {
+    let result = this.get(key);
+
+    // If child is already a map we can use it as is
+    if (!(result instanceof Map)) {
+      // Create new child node using no-arg constructor
+      result = new /** @type {any} */ (this.constructor)();
+      this.set(key, result);
+    }
+
+    setParent(result, this);
+    return result;
+  }
+
   /**
    * Removes all key/value entries from the map.
    *
@@ -67,8 +84,6 @@ export default class SyncMap extends Map {
     }
     return super.delete.call(this._self, key);
   }
-
-  static EMPTY = Symbol("EMPTY");
 
   /**
    * Returns a new `Iterator` object that contains a two-member array of [key,
@@ -190,11 +205,6 @@ export default class SyncMap extends Map {
     // If _self is not set, use the current instance as the receiver. This is
     // necessary to let the constructor call `super()`.
     const target = this._self ?? this;
-
-    // Support EMPTY symbol to create empty subtrees
-    if (value === /** @type {any} */ (this.constructor).EMPTY) {
-      value = Reflect.construct(this.constructor, []);
-    }
 
     return super.set.call(target, key, value);
   }

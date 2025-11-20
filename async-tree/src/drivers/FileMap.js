@@ -2,8 +2,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { hiddenFileNames } from "../constants.js";
-import from from "../operations/from.js";
-import isMaplike from "../operations/isMaplike.js";
 import * as trailingSlash from "../trailingSlash.js";
 import isPacked from "../utilities/isPacked.js";
 import isStringlike from "../utilities/isStringlike.js";
@@ -37,6 +35,26 @@ export default class FileMap extends SyncMap {
     this.dirname = location.startsWith("file://")
       ? fileURLToPath(location)
       : path.resolve(process.cwd(), location);
+  }
+
+  // Return the (possibly new) subdirectory with the given key.
+  child(key) {
+    const stringKey = key != null ? String(key) : "";
+    const baseKey = trailingSlash.remove(stringKey);
+    const destPath = path.resolve(this.dirname, baseKey);
+    const destTree = Reflect.construct(this.constructor, [destPath]);
+
+    const stats = getStats(destPath);
+    if (stats === null || !stats.isDirectory()) {
+      if (stats !== null) {
+        // File with the same name exists; delete it.
+        fs.rmSync(destPath);
+      }
+      // Ensure the directory exists.
+      fs.mkdirSync(destPath, { recursive: true });
+    }
+
+    return destTree;
   }
 
   delete(key) {
@@ -174,10 +192,6 @@ export default class FileMap extends SyncMap {
 
     if (packed) {
       writeFile(value, destPath);
-    } else if (value === /** @type {any} */ (this.constructor).EMPTY) {
-      clearDirectory(destPath, this);
-    } else if (isMaplike(value)) {
-      writeDirectory(value, destPath, this);
     } else {
       const typeName = value?.constructor?.name ?? "unknown";
       throw new TypeError(
@@ -193,19 +207,6 @@ export default class FileMap extends SyncMap {
   }
 }
 
-// Create the indicated directory.
-function clearDirectory(destPath, parent) {
-  const destTree = Reflect.construct(parent.constructor, [destPath]);
-
-  // Ensure the directory exists.
-  fs.mkdirSync(destPath, { recursive: true });
-
-  // Clear any existing files
-  destTree.clear();
-
-  return destTree;
-}
-
 // Return stats for the path, or null if it doesn't exist.
 function getStats(filePath) {
   let stats;
@@ -218,31 +219,6 @@ function getStats(filePath) {
     throw error;
   }
   return stats;
-}
-
-/**
- * Treat value as a subtree and write it out as a subdirectory.
- *
- * @param {import("../../index.ts").Maplike} value
- */
-function writeDirectory(value, destPath, parent) {
-  // If path exists and it's a file, delete the file first.
-  const stats = getStats(destPath);
-  if (stats !== null && stats.isFile()) {
-    fs.rmSync(destPath);
-  }
-
-  // Since value is Maplike, result will be a Map
-  /** @type {Map} */
-  // @ts-ignore
-  const valueMap = from(value);
-  const destTree = clearDirectory(destPath, parent);
-
-  // Write out the subtree.
-  for (const key of valueMap.keys()) {
-    const childValue = valueMap.get(key);
-    destTree.set(key, childValue);
-  }
 }
 
 // Write a value to a file.

@@ -4,8 +4,6 @@ import path from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import FileMap from "../../src/drivers/FileMap.js";
-import map from "../../src/operations/map.js";
-import plain from "../../src/operations/plain.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const tempDirectory = path.join(dirname, "fixtures/temp");
@@ -82,12 +80,12 @@ describe("FileMap", () => {
     removeTempDirectory();
   });
 
-  test("create subfolder via set() with EMPTY", () => {
+  test("create subfolder via child()", () => {
     createTempDirectory();
 
     // Write out new, empty folder called "empty".
     const tempFiles = new FileMap(tempDirectory);
-    tempFiles.set("empty", FileMap.EMPTY);
+    tempFiles.child("empty");
 
     // Verify folder exists and has no contents.
     const folderPath = path.join(tempDirectory, "empty");
@@ -95,33 +93,6 @@ describe("FileMap", () => {
     assert(stats.isDirectory());
     const files = fs.readdirSync(folderPath);
     assert.deepEqual(files, []);
-
-    removeTempDirectory();
-  });
-
-  test("can write out subfolder via set()", async () => {
-    createTempDirectory();
-
-    // Create a tiny set of "files".
-    // @ts-ignore
-    const files = new Map([
-      ["file1", "This is the first file."],
-      ["subfolder", new Map([["file2", "This is the second file."]])],
-    ]);
-    const object = await plain(files);
-
-    // Write out files as a new folder called "folder".
-    const tempFiles = new FileMap(tempDirectory);
-    tempFiles.set("folder", files);
-
-    // Read them back in.
-    const actualFiles = tempFiles.get("folder");
-    const strings = await map(actualFiles, {
-      deep: true,
-      value: (buffer) => textDecoder.decode(buffer),
-    });
-    const result = await plain(strings);
-    assert.deepEqual(result, object);
 
     removeTempDirectory();
   });

@@ -34,8 +34,6 @@ export default class AsyncMap {
     throw new Error("delete() not implemented");
   }
 
-  static EMPTY = Symbol("EMPTY");
-
   /**
    * Returns a new `AsyncIterator` object that contains a two-member array of
    * [key, value] for each element in the map in insertion order.

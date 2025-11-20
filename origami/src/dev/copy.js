@@ -17,14 +17,17 @@ export default async function copy(source, target) {
   const sourceTree = await getTreeArgument(source, "copy", { position: 0 });
   let targetTree = await getTreeArgument(target, "copy", { position: 1 });
 
+  let progressTree;
   if (stdout.isTTY) {
-    targetTree = showSetProgress(targetTree, {
+    progressTree = showSetProgress(targetTree, {
       copied: 0,
       total: 0,
     });
+  } else {
+    progressTree = targetTree;
   }
 
-  await Tree.assign(targetTree, sourceTree);
+  await Tree.assign(progressTree, sourceTree);
 
   if (stdout.isTTY) {
     process.stdout.clearLine(0);
@@ -46,7 +49,6 @@ function showSetProgress(source, counts) {
   const iteratorKey = isSync ? Symbol.iterator : Symbol.asyncIterator;
 
   const progressTree = Object.assign(new MapClass(), {
-    // Delegate these methods to source tree
     delete: source.delete.bind(source),
     keys: source.keys.bind(source),
     [iteratorKey]: source[iteratorKey].bind(source),
@@ -75,6 +77,20 @@ function showSetProgress(source, counts) {
       }
     },
   });
+
+  if (typeof source.child === "function") {
+    // @ts-ignore
+    progressTree.child = async function (key) {
+      counts.total++;
+      showProgress();
+      const childResult = source.child(key);
+      return awaitIfPromise(childResult, (child) => {
+        counts.copied++;
+        showProgress();
+        return showSetProgress(child, counts);
+      });
+    };
+  }
 
   return progressTree;
 }

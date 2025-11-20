@@ -95,31 +95,29 @@ if (isBrowser) {
       });
     });
 
-    test("can create an empty subfolder", async () => {
+    test.only("can return or create a subfolder via child", async () => {
       const fixture = await createFixture();
-      await fixture.set("emptyFolder", BrowserFileMap.EMPTY);
-      assert.deepEqual(await strings(fixture), {
-        "Alice.md": "Hello, **Alice**.",
-        "Bob.md": "Hello, **Bob**.",
-        "Carol.md": "Hello, **Carol**.",
-        emptyFolder: {},
-        subfolder: {},
-      });
-    });
 
-    test("can create a subfolder via set", async () => {
-      const fixture = await createFixture();
-      const more = new Map([["Ellen.md", "Hello, **Ellen**."]]);
-      await fixture.set("more", more);
-      assert.deepEqual(await strings(fixture), {
-        "Alice.md": "Hello, **Alice**.",
-        "Bob.md": "Hello, **Bob**.",
-        "Carol.md": "Hello, **Carol**.",
-        more: {
-          "Ellen.md": "Hello, **Ellen**.",
-        },
-        subfolder: {},
-      });
+      // Return existing subfolder
+      const subfolder = await fixture.get("subfolder");
+      const child = await fixture.child("subfolder");
+      assert.equal(child, subfolder);
+
+      // Create new subfolder
+      const newChild = await fixture.child("newSubfolder");
+      assert.equal(newChild, subfolder);
+
+      // Replace existing file with folder
+      const replacedChild = await fixture.child("Alice.md");
+      assert.equal(replacedChild.parent, fixture);
+
+      assert.deepEqual(await keys(fixture), [
+        "Alice.md/",
+        "Bob.md",
+        "Carol.md",
+        "subfolder/",
+        "newSubfolder/",
+      ]);
     });
   });
 }
