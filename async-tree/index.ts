@@ -43,6 +43,18 @@ export type MapOptions = {
   value?: ValueKeyFn;
 };
 
+export interface SyncTree<MapType> {
+  child(key: any): MapType;
+  parent: MapType | null;
+  trailingSlashKeys: boolean;
+}
+
+export interface AsyncTree<MapType> {
+  child(key: any): Promise<MapType>;
+  parent: MapType | null;
+  trailingSlashKeys: boolean;
+}
+
 /**
  * A packed value is one that can be written to a file via fs.writeFile or into
  * an HTTP response via response.write, or readily converted to such a form.

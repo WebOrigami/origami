@@ -8,6 +8,9 @@ describe("child", () => {
       child(key) {
         return `child-${key}`;
       }
+
+      parent = null;
+      trailingSlashKeys = false;
     }
     const map = new CustomMap();
     const result = await child(map, "test");

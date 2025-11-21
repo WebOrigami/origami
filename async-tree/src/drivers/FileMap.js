@@ -202,9 +202,7 @@ export default class FileMap extends SyncMap {
     return this;
   }
 
-  get trailingSlashKeys() {
-    return true;
-  }
+  trailingSlashKeys = true;
 }
 
 // Return stats for the path, or null if it doesn't exist.

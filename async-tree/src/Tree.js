@@ -35,6 +35,7 @@ export { default as isMap } from "./operations/isMap.js";
 export { default as isMaplike } from "./operations/isMaplike.js";
 export { default as isReadOnlyMap } from "./operations/isReadOnlyMap.js";
 export { default as isTraversable } from "./operations/isTraversable.js";
+export { default as isTree } from "./operations/isTree.js";
 export { default as isTreelike } from "./operations/isTreelike.js";
 export { default as json } from "./operations/json.js";
 export { default as keys } from "./operations/keys.js";

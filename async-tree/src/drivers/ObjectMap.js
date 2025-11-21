@@ -3,6 +3,9 @@ import * as trailingSlash from "../trailingSlash.js";
 import setParent from "../utilities/setParent.js";
 import SyncMap from "./SyncMap.js";
 
+/**
+ * Map wrapper for a JavaScript object or array
+ */
 export default class ObjectMap extends SyncMap {
   constructor(object = {}) {
     super();
@@ -115,9 +118,7 @@ export default class ObjectMap extends SyncMap {
     return this;
   }
 
-  get trailingSlashKeys() {
-    return true;
-  }
+  trailingSlashKeys = true;
 }
 
 function findExistingKey(object, key) {

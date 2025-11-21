@@ -80,8 +80,6 @@ export default class CalendarMap extends SyncMap {
       (_, i) => this.start.year + i
     )[Symbol.iterator]();
   }
-
-  trailingSlashKeys = false;
 }
 
 function dateParts(date) {

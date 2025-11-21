@@ -1,5 +1,13 @@
+import isMap from "../operations/isMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 
+/**
+ * Base class for asynchronous maps. These have the same interface as Map but the methods
+ * are asynchronous.
+ *
+ * @typedef {import("../../index.ts").AsyncTree<AsyncMap>} AsyncTree
+ * @implements {AsyncTree}
+ */
 export default class AsyncMap {
   /** @type {AsyncMap|null} */
   _parent = null;
@@ -8,6 +16,23 @@ export default class AsyncMap {
 
   [Symbol.asyncIterator]() {
     return this.entries();
+  }
+
+  /**
+   * Return the child node for the given key, creating it if necessary.
+   */
+  async child(key) {
+    let result = await this.get(key);
+
+    // If child is already a map we can use it as is
+    if (!isMap(result)) {
+      // Create new child node using no-arg constructor
+      result = new /** @type {any} */ (this.constructor)();
+      await this.set(key, result);
+    }
+
+    result.parent = this;
+    return result;
   }
 
   /**
@@ -190,6 +215,8 @@ export default class AsyncMap {
       return count;
     })();
   }
+
+  trailingSlashKeys = false;
 
   /**
    * Returns a new `AsyncIterator` object that contains the values for each

@@ -1,14 +1,15 @@
 import getMapArgument from "../utilities/getMapArgument.js";
 import setParent from "../utilities/setParent.js";
 import isMap from "./isMap.js";
+import isTree from "./isTree.js";
 
 export default async function child(maplike, key) {
   const map = await getMapArgument(maplike, "assign", { position: 0 });
 
   let result;
-  if (typeof (/** @type {any} */ (map).child) === "function") {
+  if (isTree(map)) {
     // Use tree's own child() method
-    result = /** @type {any} */ (map).child(key);
+    result = map.child(key);
   } else {
     // Default implementation
     result = await map.get(key);

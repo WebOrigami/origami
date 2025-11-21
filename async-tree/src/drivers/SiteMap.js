@@ -112,9 +112,7 @@ export default class SiteMap extends AsyncMap {
     }
   }
 
-  get trailingSlashKeys() {
-    return true;
-  }
+  trailingSlashKeys = true;
 
   get url() {
     return new URL(this.href);

@@ -17,6 +17,9 @@ const previewSymbol = Symbol("preview");
  * also indicate children subtrees using the trailing slash convention: a key
  * for a subtree may optionally end with a slash. The get() and has() methods
  * support optional trailing slashes on keys.
+ *
+ * @typedef {import("../../index.ts").SyncTree<SyncMap>} SyncTree
+ * @implements {SyncTree}
  */
 export default class SyncMap extends Map {
   _initialized = false;
@@ -36,9 +39,9 @@ export default class SyncMap extends Map {
     this._self = this;
   }
 
-  // Return the child map for the given key, creating it if necessary. This is
-  // the same as the child() operation's default behavior but is synchronous, so
-  // it will be preferred by the child() operation over the default behavior.
+  /**
+   * Return the child node for the given key, creating it if necessary.
+   */
   child(key) {
     let result = this.get(key);
 
@@ -49,7 +52,7 @@ export default class SyncMap extends Map {
       this.set(key, result);
     }
 
-    setParent(result, this);
+    result.parent = this;
     return result;
   }
 
@@ -228,6 +231,8 @@ export default class SyncMap extends Map {
   [Symbol.iterator]() {
     return this.entries();
   }
+
+  trailingSlashKeys = false;
 
   /**
    * Returns a new `Iterator` object that contains the values for each element

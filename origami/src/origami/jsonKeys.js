@@ -41,7 +41,9 @@ function jsonKeysMap(source) {
 
     source: source,
 
-    trailingSlashKeys: source.trailingSlashKeys,
+    get trailingSlashKeys() {
+      return source.trailingSlashKeys;
+    },
   });
   return result;
 }
