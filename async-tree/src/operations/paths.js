@@ -18,17 +18,15 @@ import isMap from "./isMap.js";
 export default async function paths(maplike, options = {}) {
   const tree = await getMapArgument(maplike, "paths");
   const base = options.base ?? "";
-  const assumeSlashes = options.assumeSlashes ?? false;
   const result = [];
   for await (const key of tree.keys()) {
     const separator = trailingSlash.has(base) ? "" : "/";
     const valuePath = base ? `${base}${separator}${key}` : key;
     let isSubtree;
     let value;
-    if (assumeSlashes) {
+    if (/** @type {any} */ (tree).trailingSlashKeys) {
       // Subtree needs to have a trailing slash
-      isSubtree = trailingSlash.has(key);
-      if (isSubtree) {
+      if (trailingSlash.has(key)) {
         // We'll need the value to recurse
         value = await tree.get(key);
       }
@@ -41,7 +39,7 @@ export default async function paths(maplike, options = {}) {
       isSubtree = isMap(value);
     }
     if (isSubtree) {
-      const subPaths = await paths(value, { assumeSlashes, base: valuePath });
+      const subPaths = await paths(value, { base: valuePath });
       result.push(...subPaths);
     } else {
       result.push(valuePath);
