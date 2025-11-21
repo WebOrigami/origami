@@ -32,7 +32,10 @@ export default async function mask(aMaplike, bMaplike) {
       if (!bValue) {
         return undefined;
       }
-      let aValue = await aMap.get(key);
+      const normalized = /** @type {any} */ (aMap).trailingSlashKeys
+        ? key
+        : trailingSlash.remove(key);
+      let aValue = await aMap.get(normalized);
       if (isMaplike(aValue)) {
         // Filter the subtree
         return mask(aValue, bValue);
@@ -61,6 +64,6 @@ export default async function mask(aMaplike, bMaplike) {
 
     source: aMap,
 
-    trailingSlashKeys: /** @type {any} */ (aMap).trailingSlashKeys,
+    trailingSlashKeys: true,
   });
 }
