@@ -124,6 +124,7 @@ function createMapFn(options) {
     transformed.source = tree;
     transformed.get = createGet(tree, options, mapFn);
     transformed.keys = createKeys(tree, options);
+    transformed.trailingSlashKeys = /** @type {any} */ (tree).trailingSlashKeys;
     return transformed;
   };
 }

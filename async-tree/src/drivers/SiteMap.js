@@ -34,9 +34,9 @@ export default class SiteMap extends AsyncMap {
       );
     }
 
-    // A key with a trailing slash and no extension is for a folder; return a
-    // subtree without making a network request.
-    if (trailingSlash.has(key) && !key.includes(".")) {
+    // A key with a trailing slash is for a folder; return a subtree without
+    // making a network request.
+    if (trailingSlash.has(key)) {
       const href = new URL(key, this.href).href;
       const value = Reflect.construct(this.constructor, [href]);
       setParent(value, this);
