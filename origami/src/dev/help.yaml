@@ -178,6 +178,9 @@ Tree:
     calendar:
       args: (options)
       description: Return a tree structure for years/months/days
+    child:
+      args: (tree, key)
+      description: Returns the indicated child node, creating it if necessary
     clear:
       args: (map)
       description: Remove all values from the map
