@@ -30,4 +30,16 @@ describe("mask", () => {
       },
     });
   });
+
+  test("can pull from a functional map", async () => {
+    const result = await mask((key) => key.toUpperCase(), {
+      a: true,
+      b: false,
+      c: true,
+    });
+    assert.deepEqual(await plain(result), {
+      a: "A",
+      c: "C",
+    });
+  });
 });

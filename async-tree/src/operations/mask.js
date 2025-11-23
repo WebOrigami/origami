@@ -1,7 +1,6 @@
 import AsyncMap from "../drivers/AsyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import getMapArgument from "../utilities/getMapArgument.js";
-import isMap from "./isMap.js";
 import isMaplike from "./isMaplike.js";
 import keys from "./keys.js";
 
@@ -17,7 +16,10 @@ import keys from "./keys.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function mask(aMaplike, bMaplike) {
-  const aMap = await getMapArgument(aMaplike, "filter", { position: 0 });
+  const aMap = await getMapArgument(aMaplike, "filter", {
+    deep: true,
+    position: 0,
+  });
   const bMap = await getMapArgument(bMaplike, "filter", {
     deep: true,
     position: 1,
@@ -45,21 +47,32 @@ export default async function mask(aMaplike, bMaplike) {
     },
 
     async *keys() {
-      // Use a's keys as the basis
-      const aKeys = await keys(aMap);
-      const bValues = await Promise.all(aKeys.map((key) => bMap.get(key)));
-      // An async tree value in b implies that the a key should have a slash
-      const aKeySlashes = aKeys.map((key, index) =>
-        trailingSlash.toggle(
+      // Get keys from a and b
+      const [aKeys, bKeys] = await Promise.all([keys(aMap), keys(bMap)]);
+
+      const combined = Array.from(new Set([...aKeys, ...bKeys]));
+
+      // Get all the values from b. Because a and b may be defined by functions,
+      // they might have values that are not represented in their own keys.
+      const bValues = await Promise.all(combined.map((key) => bMap.get(key)));
+
+      // Find keys that have truthy values in b. While we're at it, we can add
+      // slashes even if a or b didn't have them.
+      const withSlashes = combined.map((key, index) => {
+        const bValue = bValues[index];
+        if (!bValue) {
+          // Mark for removal
+          return undefined;
+        }
+        return trailingSlash.toggle(
           key,
-          trailingSlash.has(key) || isMap(bValues[index])
-        )
-      );
-      // Remove keys that don't have values in b
-      const treeKeys = aKeySlashes.filter(
-        (key, index) => bValues[index] ?? false
-      );
-      yield* treeKeys;
+          trailingSlash.has(key) || isMaplike(bValue)
+        );
+      });
+
+      // Yield only the keys that have truthy values in b
+      const filtered = withSlashes.filter((value) => value !== undefined);
+      yield* new Set(filtered);
     },
 
     source: aMap,
