@@ -153,12 +153,18 @@ export default class FileMap extends SyncMap {
   set(key, value) {
     // Where are we going to write this value?
     const stringKey = key != null ? String(key) : "";
-    const baseKey = trailingSlash.remove(stringKey);
-    const destPath = path.resolve(this.dirname, baseKey);
+    const normalized = trailingSlash.remove(stringKey);
+    const destPath = path.resolve(this.dirname, normalized);
 
     // Ensure this directory exists.
     const dirname = path.dirname(destPath);
     fs.mkdirSync(dirname, { recursive: true });
+
+    if (value === undefined) {
+      // Special case: undefined value is equivalent to delete()
+      this.delete(normalized);
+      return this;
+    }
 
     if (typeof value === "function") {
       // Invoke function; write out the result.
