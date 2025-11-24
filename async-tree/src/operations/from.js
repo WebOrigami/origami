@@ -43,7 +43,7 @@ export default function from(object, options = {}) {
   } else if (isPlainObject(object) || object instanceof Array) {
     map = deep ? new DeepObjectMap(object) : new ObjectMap(object);
     // @ts-ignore
-  } else if (object instanceof Iterator) {
+  } else if (globalThis.Iterator && object instanceof Iterator) {
     const array = Array.from(object);
     map = new ObjectMap(array);
   } else if (object && typeof object === "object") {

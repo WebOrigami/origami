@@ -26,7 +26,7 @@ export default function isMaplike(object) {
     object instanceof Array ||
     object instanceof Function ||
     // @ts-ignore
-    object instanceof Iterator ||
+    (globalThis.Iterator && object instanceof Iterator) ||
     object instanceof Set ||
     isMap(object) ||
     isPlainObject(object)
