@@ -95,7 +95,7 @@ if (isBrowser) {
       });
     });
 
-    test.only("can return or create a subfolder via child", async () => {
+    test("can return or create a subfolder via child", async () => {
       const fixture = await createFixture();
 
       // Return existing subfolder

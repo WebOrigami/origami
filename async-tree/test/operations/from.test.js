@@ -44,7 +44,7 @@ describe("from", () => {
     assert.deepEqual(await values(map), ["a", "b", "c"]);
   });
 
-  test.only("returns an array for an Iterator", async () => {
+  test("returns an array for an Iterator", async () => {
     const set = new Set(["a", "b", "c"]);
     const map = from(set.values());
     assert.deepEqual(await values(map), ["a", "b", "c"]);
