@@ -2,7 +2,7 @@ import { pathFromKeys, trailingSlash } from "@weborigami/async-tree";
 import jsGlobals from "../project/jsGlobals.js";
 import { entryKey } from "../runtime/expressionObject.js";
 import { ops } from "../runtime/internal.js";
-import { annotate, markers } from "./parserHelpers.js";
+import { annotate, markers, spanLocations } from "./parserHelpers.js";
 
 export const REFERENCE_PARAM = 1;
 export const REFERENCE_INHERITED = 2;
@@ -334,6 +334,8 @@ function resolvePath(code, globals, parent, locals, cache) {
         result[0][0] === ops.inherited);
     if (extendResult) {
       result.push(...tail);
+      result.location = spanLocations(args);
+      result.source = code.source;
     } else {
       result = annotate([result, ...tail], code.location);
     }

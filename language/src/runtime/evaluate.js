@@ -36,7 +36,7 @@ export default async function evaluate(code, state = {}) {
     const error = ReferenceError(
       `${codeFragment(code[0].location)} is not defined`
     );
-    /** @type {any} */ (error).location = code.location;
+    /** @type {any} */ (error).location = code[0].location;
     throw error;
   }
 

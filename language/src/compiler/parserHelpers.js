@@ -518,7 +518,7 @@ export function makeYamlObject(text, location) {
 
 // Create a locations that spans those in the array. This assumes the locations
 // are in order and non-overlapping.
-function spanLocations(code) {
+export function spanLocations(code) {
   const first = code.find((item) => item.location).location;
   const last = code[code.findLastIndex((item) => item.location)].location;
   return {
