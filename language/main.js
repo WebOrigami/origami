@@ -8,7 +8,7 @@ export { default as jsGlobals } from "./src/project/jsGlobals.js";
 export { default as projectGlobals } from "./src/project/projectGlobals.js";
 export { default as projectRoot } from "./src/project/projectRoot.js";
 export * as Protocols from "./src/protocols/protocols.js";
-export { formatError } from "./src/runtime/errors.js";
+export { formatError, highlightError } from "./src/runtime/errors.js";
 export { default as evaluate } from "./src/runtime/evaluate.js";
 export { default as EventTargetMixin } from "./src/runtime/EventTargetMixin.js";
 export * as expressionFunction from "./src/runtime/expressionFunction.js";

@@ -110,7 +110,7 @@ export function formatError(error) {
   // Add location
   if (location) {
     if (!fragmentInMessage) {
-      message += `\nevaluating: ${fragment}`;
+      message += `\nevaluating: ${highlightError(fragment)}`;
     }
     message += lineInfo(location);
   }
@@ -128,6 +128,11 @@ export async function formatScopeTypos(scope, key) {
   const quoted = filtered.map((key) => `"${key}"`);
   const list = quoted.join(", ");
   return `Maybe you meant ${list}?`;
+}
+
+export function highlightError(text) {
+  // ANSI escape sequence to highlight text in red
+  return `\x1b[31m${text}\x1b[0m`;
 }
 
 export function maybeOrigamiSourceCode(text) {

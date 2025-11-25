@@ -4,7 +4,7 @@ import {
   isStringlike,
   toString,
 } from "@weborigami/async-tree";
-import { compile } from "@weborigami/language";
+import { compile, highlightError, ops } from "@weborigami/language";
 import projectGlobals from "@weborigami/language/src/project/projectGlobals.js";
 import { toYaml } from "../common/serialize.js";
 import * as dev from "../dev/dev.js";
@@ -47,6 +47,17 @@ export default async function ori(expression, options = {}) {
 
   // Execute
   let result = await fn();
+
+  if (result === undefined) {
+    // Was the code a path traversal?
+    const wasTraversal =
+      fn.code[0] === ops.unpack ||
+      (fn.code[0] instanceof Array && fn.code[0][0] === ops.scope);
+    if (wasTraversal) {
+      // Yes, probably an error
+      console.warn(`ori: undefined: ${highlightError(expression)}`);
+    }
+  }
 
   // If result was a function, execute it.
   if (typeof result === "function") {
