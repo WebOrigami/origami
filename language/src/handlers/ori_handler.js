@@ -17,12 +17,21 @@ export default {
     // Construct an object to represent the source code.
     const sourceName = options.key;
     let url;
-    if (sourceName && /** @type {any} */ (parent)?.url) {
-      let parentHref = /** @type {any} */ (parent).url.href;
-      if (!parentHref.endsWith("/")) {
-        parentHref += "/";
+    if (sourceName) {
+      if (/** @type {any} */ (parent)?.url) {
+        let parentHref = /** @type {any} */ (parent).url.href;
+        if (!parentHref.endsWith("/")) {
+          parentHref += "/";
+        }
+        url = new URL(sourceName, parentHref);
+      } else if (/** @type {any} */ (parent)?.path) {
+        let parentHref = new URL(/** @type {any} */ (parent).path, "file:///")
+          .href;
+        if (!parentHref.endsWith("/")) {
+          parentHref += "/";
+        }
+        url = new URL(sourceName, parentHref);
       }
-      url = new URL(sourceName, parentHref);
     }
 
     const source = {
