@@ -32,7 +32,9 @@ export default {
     const parent = getParent(packed);
     const oriCallTag = await oriCallTagForParent(parent);
     const oriTag = await oriTagForParent(parent);
-    const data = YAML.parse(yaml, {
+    // YAML parser is sync, but top-level !ori or !ori.call tags will return a
+    // promise.
+    const data = await YAML.parse(yaml, {
       customTags: [oriCallTag, oriTag],
     });
     if (data && typeof data === "object" && Object.isExtensible(data)) {
