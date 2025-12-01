@@ -1,4 +1,3 @@
-import SyncMap from "../drivers/SyncMap.js";
 import getMapArgument from "../utilities/getMapArgument.js";
 import isMap from "./isMap.js";
 
@@ -29,7 +28,7 @@ export default async function mapReduce(source, valueFn, reduceFn) {
   // We're going to fire off all the get requests in parallel, as quickly as
   // the keys come in. We call the tree's `get` method for each key, but
   // *don't* wait for it yet.
-  const mapped = new SyncMap();
+  const mapped = new Map();
   const promises = [];
   for await (const key of sourceMap.keys()) {
     mapped.set(key, null); // placeholder

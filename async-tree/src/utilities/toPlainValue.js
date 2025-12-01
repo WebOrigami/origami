@@ -1,7 +1,6 @@
 import ObjectMap from "../drivers/ObjectMap.js";
 import isMaplike from "../operations/isMaplike.js";
 import mapReduce from "../operations/mapReduce.js";
-import * as trailingSlash from "../trailingSlash.js";
 import castArraylike from "./castArraylike.js";
 import isPrimitive from "./isPrimitive.js";
 import isStringlike from "./isStringlike.js";
@@ -74,12 +73,11 @@ export default async function toPlainValue(
 
 function reduceToPlainObject(mapped, source) {
   // Normalize slashes in keys.
-  const keys = Array.from(mapped.keys()).map(trailingSlash.remove);
-  // Special case for an empty tree: if based on array, return array.
-  if (source instanceof ObjectMap && keys.length === 0) {
+  // Special case for an empty map: if based on array, return array.
+  if (mapped.size === 0 && source instanceof ObjectMap) {
     return /** @type {any} */ (source).object instanceof Array ? [] : {};
   }
-  return castArraylike(keys, Array.from(mapped.values()));
+  return castArraylike(mapped);
 }
 
 function toBase64(object) {
