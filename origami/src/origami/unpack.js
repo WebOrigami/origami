@@ -5,5 +5,8 @@
  * @param {any} obj
  */
 export default function unpack(obj) {
-  return obj?.unpack?.() ?? obj;
+  if (obj == null) {
+    throw new ReferenceError("Cannot unpack null or undefined value");
+  }
+  return obj.unpack?.() ?? obj;
 }
