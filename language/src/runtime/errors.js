@@ -95,7 +95,9 @@ export function formatError(error) {
         error.message === "A null or undefined value can't be traversed"
       ) {
         // Provide more meaningful message for TraverseError
-        line = `TraverseError: This part of the path is null or undefined: ${fragment}`;
+        line = `TraverseError: This part of the path is null or undefined: ${highlightError(
+          fragment
+        )}`;
         fragmentInMessage = true;
       }
       if (message) {
