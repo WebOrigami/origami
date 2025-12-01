@@ -72,14 +72,14 @@ export default async function toPlainValue(
   }
 }
 
-function reduceToPlainObject(values, keys, map) {
-  // Special case for an empty tree: if based on array, return array.
-  if (map instanceof ObjectMap && keys.length === 0) {
-    return /** @type {any} */ (map).object instanceof Array ? [] : {};
-  }
+function reduceToPlainObject(mapped, source) {
   // Normalize slashes in keys.
-  keys = keys.map(trailingSlash.remove);
-  return castArraylike(keys, values);
+  const keys = Array.from(mapped.keys()).map(trailingSlash.remove);
+  // Special case for an empty tree: if based on array, return array.
+  if (source instanceof ObjectMap && keys.length === 0) {
+    return /** @type {any} */ (source).object instanceof Array ? [] : {};
+  }
+  return castArraylike(keys, Array.from(mapped.values()));
 }
 
 function toBase64(object) {

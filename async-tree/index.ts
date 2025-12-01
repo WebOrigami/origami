@@ -68,7 +68,7 @@ export type PlainObject = {
   [key: string]: any;
 };
 
-export type ReduceFn = (values: any[], keys: any[], map: SyncOrAsyncMap) => any | Promise<any>;
+export type ReduceFn = (mapped: Map<any, any>, source: SyncOrAsyncMap) => any | Promise<any>;
 
 export type Stringlike = string | HasString;
 
