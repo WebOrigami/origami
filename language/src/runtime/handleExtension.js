@@ -41,11 +41,6 @@ export default async function handleExtension(value, key, parent) {
           handler = await handler.unpack();
         }
 
-        // if (hasSlash && handler.unpack) {
-        //   // Key like `data.json/` ends in slash -- unpack immediately
-        //   return handler.unpack(value, { key, parent });
-        // }
-
         // If the value is a primitive, box it so we can attach data to it.
         value = box(value);
 
