@@ -15,6 +15,9 @@ import getSource from "./getSource.js";
 // @ts-ignore
 const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
+// The source of the last Origami line parsed in a YAML file, used for errors
+let source;
+
 /**
  * A YAML file
  *
@@ -33,12 +36,51 @@ export default {
     const parent = getParent(packed, options);
     const oriCallTag = await oriCallTagForParent(parent, options);
     const oriTag = await oriTagForParent(parent, options);
+
+    let data;
     // YAML parser is sync, but top-level !ori or !ori.call tags will return a
     // promise.
-    // @ts-ignore TypeScript complains customTags isn't valid here but it is.
-    const data = await YAML.parse(yaml, {
-      customTags: [oriCallTag, oriTag],
-    });
+    try {
+      // @ts-ignore TypeScript complains customTags isn't valid here but it is.
+      data = await YAML.parse(yaml, {
+        customTags: [oriCallTag, oriTag],
+      });
+    } catch (/** @type {any} */ error) {
+      const errorText = yaml.slice(error.pos[0], error.pos[1]);
+      const isOriError = errorText === "!ori" || errorText === "!ori.call";
+      if (isOriError && source) {
+        // Error is in an Origami tag. Strip down error message to recover our
+        // error message, convert YAML error location to Origami source location
+        // and throw our own compiler error.
+        const position = error.message.indexOf(" at line ");
+        const message =
+          position !== -1 ? error.message.slice(0, position) : error.message;
+        const compilerError = new Error(
+          `Couldn't parse Origami code in YAML: ${message}`
+        );
+        /** @type {any} */ (compilerError).location = {
+          end: {
+            column: error.linePos[1].col,
+            line: error.linePos[1].line,
+            offset: error.pos[1],
+          },
+          source: {
+            ...source,
+            text: yaml,
+          },
+          start: {
+            column: error.linePos[0].col,
+            line: error.linePos[0].line,
+            offset: error.pos[0],
+          },
+        };
+        throw compilerError;
+      } else {
+        // Some other YAML parsing error
+        throw error;
+      }
+    }
+
     if (data && typeof data === "object" && Object.isExtensible(data)) {
       Object.defineProperty(data, symbols.deep, {
         enumerable: false,
@@ -64,7 +106,7 @@ async function oriCallTagForParent(parent, options) {
 
       // First arg is Origami source
       const text = args.shift();
-      const source = getSource(text, options);
+      source = getSource(text, options);
 
       const codeFn = compile.expression(source, {
         globals,
@@ -92,7 +134,7 @@ async function oriTagForParent(parent, options) {
     identify: expressionFunction.isExpressionFunction,
 
     resolve(text) {
-      const source = getSource(text, options);
+      source = getSource(text, options);
       const fn = compile.expression(source, {
         globals,
         parent,
