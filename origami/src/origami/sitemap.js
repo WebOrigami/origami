@@ -14,7 +14,7 @@ const templateText = `(urls) => \`<?xml version="1.0" encoding="UTF-8"?>
  * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  *
  * @param {Maplike} maplike
- * @param {{ assumeSlashes?: boolean, base?: string }} options
+ * @param {{ base?: string }} options
  * @returns {Promise<string>}
  */
 export default async function sitemap(maplike, options = {}) {

@@ -8,6 +8,12 @@ import SyncMap from "./SyncMap.js";
  * Map wrapper for a JavaScript object or array
  */
 export default class ObjectMap extends SyncMap {
+  /**
+   * Wrap the given object in a `Map`.
+   *
+   * @param {any} object
+   * @param {{ deep?: boolean }} [options]
+   */
   constructor(object = {}, options = {}) {
     super();
     // Note: we use `typeof` here instead of `instanceof Object` to allow for
