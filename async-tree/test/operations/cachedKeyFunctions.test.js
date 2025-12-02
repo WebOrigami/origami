@@ -1,6 +1,5 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import DeepObjectMap from "../../src/drivers/DeepObjectMap.js";
 import ObjectMap from "../../src/drivers/ObjectMap.js";
 import cachedKeyFunctions from "../../src/operations/cachedKeyFunctions.js";
 import * as trailingSlash from "../../src/trailingSlash.js";
@@ -42,12 +41,15 @@ describe("cachedKeyFunctions", () => {
   });
 
   test("maps keys with caching and deep option", async () => {
-    const tree = new DeepObjectMap({
-      a: "letter a",
-      b: {
-        c: "letter c",
+    const tree = new ObjectMap(
+      {
+        a: "letter a",
+        b: {
+          c: "letter c",
+        },
       },
-    });
+      { deep: true }
+    );
 
     let callCount = 0;
     const addUnderscore = async (sourceValue, sourceKey, tree) => {

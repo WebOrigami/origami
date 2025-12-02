@@ -1,4 +1,4 @@
-import { DeepObjectMap, Tree, isStringlike } from "@weborigami/async-tree";
+import { ObjectMap, Tree, isStringlike } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as utilities from "../../src/common/utilities.js";
@@ -56,15 +56,18 @@ describe("utilities", () => {
         }
       };
     }
-    const tree = new DeepObjectMap({
-      a: "a",
-      more: {
-        b: "b",
-        sub: {
-          c: "c",
+    const tree = new ObjectMap(
+      {
+        a: "a",
+        more: {
+          b: "b",
+          sub: {
+            c: "c",
+          },
         },
       },
-    });
+      { deep: true }
+    );
     const mixed = utilities.transformObject(UppercaseTransform, tree);
     assert.equal(await mixed.get("a"), "A");
     const mixedMore = await mixed.get("more");

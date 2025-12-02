@@ -1,17 +1,20 @@
-import { DeepObjectMap, Tree } from "@weborigami/async-tree";
+import { ObjectMap, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import jsonKeys from "../../src/origami/jsonKeys.js";
 
 describe("jsonKeys", () => {
   test("adds .keys.json entries to tree", async () => {
-    const tree = new DeepObjectMap({
-      about: {
-        "Alice.html": "Hello, Alice!",
-        "Bob.html": "Hello, Bob!",
-        "Carol.html": "Hello, Carol!",
+    const tree = new ObjectMap(
+      {
+        about: {
+          "Alice.html": "Hello, Alice!",
+          "Bob.html": "Hello, Bob!",
+          "Carol.html": "Hello, Carol!",
+        },
       },
-    });
+      { deep: true }
+    );
     const result = await jsonKeys(tree);
     assert.deepEqual(await Tree.plain(result), {
       ".keys.json": `["about/"]`,

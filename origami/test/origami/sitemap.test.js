@@ -1,4 +1,4 @@
-import { DeepObjectMap } from "@weborigami/async-tree";
+import { ObjectMap } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { before, describe, test } from "node:test";
 import initializeBuiltins from "../../src/initializeBuiltins.js";
@@ -10,13 +10,16 @@ describe("sitemap", () => {
   });
 
   test("returns a sitemap for a tree", async () => {
-    const tree = new DeepObjectMap({
-      "a.html": "A",
-      b: {
-        "index.html": "Index",
-        "c.html": "C",
+    const tree = new ObjectMap(
+      {
+        "a.html": "A",
+        b: {
+          "index.html": "Index",
+          "c.html": "C",
+        },
       },
-    });
+      { deep: true }
+    );
     const result = await sitemap(tree, {
       base: "https://example.com",
     });

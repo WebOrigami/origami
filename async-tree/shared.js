@@ -1,6 +1,5 @@
 // Exports for both Node.js and browser
 
-import { default as DeepObjectMap } from "./src/drivers/DeepObjectMap.js";
 import { default as ExplorableSiteMap } from "./src/drivers/ExplorableSiteMap.js";
 import { default as FileMap } from "./src/drivers/FileMap.js";
 import { default as FunctionMap } from "./src/drivers/FunctionMap.js";
@@ -35,15 +34,14 @@ export { default as setParent } from "./src/utilities/setParent.js";
 export { default as toPlainValue } from "./src/utilities/toPlainValue.js";
 export { default as toString } from "./src/utilities/toString.js";
 
-export {
-  DeepObjectMap,
-  ExplorableSiteMap,
-  FileMap,
-  FunctionMap,
-  ObjectMap,
-  SetMap,
-  SiteMap,
-};
+export { ExplorableSiteMap, FileMap, FunctionMap, ObjectMap, SetMap, SiteMap };
+
+export class DeepObjectMap extends ObjectMap {
+  constructor(object) {
+    super(object, { deep: true });
+    console.warn("DeepObjectMap is deprecated. Please use ObjectMap instead.");
+  }
+}
 
 export class ObjectTree extends ObjectMap {
   constructor(...args) {
@@ -52,12 +50,10 @@ export class ObjectTree extends ObjectMap {
   }
 }
 
-export class DeepObjectTree extends DeepObjectMap {
-  constructor(...args) {
-    super(...args);
-    console.warn(
-      "DeepObjectTree is deprecated. Please use DeepObjectMap instead."
-    );
+export class DeepObjectTree extends ObjectMap {
+  constructor(object) {
+    super(object, { deep: true });
+    console.warn("DeepObjectTree is deprecated. Please use ObjectMap instead.");
   }
 }
 

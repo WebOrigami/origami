@@ -1,5 +1,4 @@
 import AsyncMap from "../drivers/AsyncMap.js";
-import DeepObjectMap from "../drivers/DeepObjectMap.js";
 import FunctionMap from "../drivers/FunctionMap.js";
 import ObjectMap from "../drivers/ObjectMap.js";
 import SetMap from "../drivers/SetMap.js";
@@ -14,7 +13,7 @@ import isMap from "./isMap.js";
  *
  * If the object is a plain object, it will be converted to an ObjectMap. The
  * optional `deep` option can be set to `true` to convert a plain object to a
- * DeepObjectMap. The optional `parent` parameter will be used as the default
+ * deep ObjectMap. The optional `parent` parameter will be used as the default
  * parent of the new tree.
  *
  * @typedef {import("../../index.ts").Maplike} Maplike
@@ -41,14 +40,14 @@ export default function from(object, options = {}) {
   } else if (object instanceof Set) {
     map = new SetMap(object);
   } else if (isPlainObject(object) || object instanceof Array) {
-    map = deep ? new DeepObjectMap(object) : new ObjectMap(object);
+    map = new ObjectMap(object, { deep });
     // @ts-ignore
   } else if (globalThis.Iterator && object instanceof Iterator) {
     const array = Array.from(object);
-    map = new ObjectMap(array);
+    map = new ObjectMap(array, { deep });
   } else if (object && typeof object === "object") {
     // An instance of some class.
-    map = new ObjectMap(object);
+    map = new ObjectMap(object, { deep });
   } else if (
     typeof object === "string" ||
     typeof object === "number" ||

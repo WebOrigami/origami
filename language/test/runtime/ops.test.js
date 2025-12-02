@@ -1,4 +1,4 @@
-import { DeepObjectMap, ObjectMap, Tree } from "@weborigami/async-tree";
+import { ObjectMap, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 
@@ -156,11 +156,14 @@ describe("ops", () => {
   });
 
   test("ops.inherited walks up the object parent chain", async () => {
-    const tree = new DeepObjectMap({
-      a: {
-        b: {},
+    const tree = new ObjectMap(
+      {
+        a: {
+          b: {},
+        },
       },
-    });
+      { deep: true }
+    );
     const b = await Tree.traverse(tree, "a", "b");
     assert.equal(await ops.inherited(2, { object: b }), tree);
   });
@@ -368,12 +371,15 @@ describe("ops", () => {
 
   describe("ops.scope", () => {
     test("returns the scope of the given tree", async () => {
-      const tree = new DeepObjectMap({
-        a: {
-          b: {},
+      const tree = new ObjectMap(
+        {
+          a: {
+            b: {},
+          },
+          c: 1,
         },
-        c: 1,
-      });
+        { deep: true }
+      );
       const a = await tree.get("a");
       const b = await a.get("b");
       const scope = await ops.scope(b);

@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import DeepObjectMap from "../../src/drivers/DeepObjectMap.js";
+import ObjectMap from "../../src/drivers/ObjectMap.js";
 import SetMap from "../../src/drivers/SetMap.js";
 import from from "../../src/operations/from.js";
 import values from "../../src/operations/values.js";
@@ -23,7 +23,8 @@ describe("from", () => {
       },
     };
     const tree = from(obj, { deep: true });
-    assert(tree instanceof DeepObjectMap);
+    assert(tree instanceof ObjectMap);
+    assert(tree.deep);
   });
 
   test("returns a deep object map if object has [deep] symbol set", async () => {
@@ -34,7 +35,8 @@ describe("from", () => {
     };
     Object.defineProperty(obj, symbols.deep, { value: true });
     const tree = from(obj);
-    assert(tree instanceof DeepObjectMap);
+    assert(tree instanceof ObjectMap);
+    assert(tree.deep);
   });
 
   test("returns a SetMap for Set objects", async () => {

@@ -1,6 +1,5 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import DeepObjectMap from "../../src/drivers/DeepObjectMap.js";
 import ObjectMap from "../../src/drivers/ObjectMap.js";
 import map from "../../src/operations/map.js";
 import plain from "../../src/operations/plain.js";
@@ -132,12 +131,15 @@ describe("map", () => {
   });
 
   test("deep maps values", async () => {
-    const tree = new DeepObjectMap({
-      a: "letter a",
-      more: {
-        b: "letter b",
+    const tree = new ObjectMap(
+      {
+        a: "letter a",
+        more: {
+          b: "letter b",
+        },
       },
-    });
+      { deep: true }
+    );
     const uppercaseValues = await map(tree, {
       deep: true,
       value: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
@@ -151,12 +153,15 @@ describe("map", () => {
   });
 
   test("deep maps leaf keys", async () => {
-    const tree = new DeepObjectMap({
-      a: "letter a",
-      more: {
-        b: "letter b",
+    const tree = new ObjectMap(
+      {
+        a: "letter a",
+        more: {
+          b: "letter b",
+        },
       },
-    });
+      { deep: true }
+    );
     const underscoreKeys = await map(tree, {
       deep: true,
       key: addUnderscore,
@@ -171,12 +176,15 @@ describe("map", () => {
   });
 
   test("deep maps leaf keys and values", async () => {
-    const tree = new DeepObjectMap({
-      a: "letter a",
-      more: {
-        b: "letter b",
+    const tree = new ObjectMap(
+      {
+        a: "letter a",
+        more: {
+          b: "letter b",
+        },
       },
-    });
+      { deep: true }
+    );
     const underscoreKeysUppercaseValues = await map(tree, {
       deep: true,
       key: addUnderscore,

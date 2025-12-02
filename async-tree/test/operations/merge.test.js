@@ -1,6 +1,5 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import DeepObjectMap from "../../src/drivers/DeepObjectMap.js";
 import ObjectMap from "../../src/drivers/ObjectMap.js";
 import keys from "../../src/operations/keys.js";
 import merge from "../../src/operations/merge.js";
@@ -47,11 +46,14 @@ describe("merge", () => {
       new ObjectMap({
         a: 1,
       }),
-      new DeepObjectMap({
-        a: {
-          b: 2,
+      new ObjectMap(
+        {
+          a: {
+            b: 2,
+          },
         },
-      })
+        { deep: true }
+      )
     );
     assert.deepEqual(await keys(fixture), ["a/"]);
     assert.deepEqual(await plain(fixture), {
