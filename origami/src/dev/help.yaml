@@ -238,6 +238,9 @@ Tree:
     inners:
       args: (tree)
       description: The tree's interior nodes
+    invokeFunctions:
+      args: (map)
+      description: Getting a map value invokes it if it's a function
     isMap:
       args: (object)
       description: True if object is a map
