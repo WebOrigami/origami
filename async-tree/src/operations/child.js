@@ -1,13 +1,21 @@
 import getMapArgument from "../utilities/getMapArgument.js";
 import setParent from "../utilities/setParent.js";
 import isMap from "./isMap.js";
-import isTree from "./isTree.js";
 
+/**
+ * Return the child node with the indicated key, creating it if necessary.
+ *
+ * @typedef {import("../../index.ts").Maplike} Maplike
+ *
+ * @param {Maplike} maplike
+ */
 export default async function child(maplike, key) {
   const map = await getMapArgument(maplike, "assign", { position: 0 });
 
   let result;
-  if (isTree(map)) {
+
+  const hasChildMethod = "child" in map && typeof map.child === "function";
+  if (hasChildMethod) {
     // Use tree's own child() method
     result = map.child(key);
   } else {
