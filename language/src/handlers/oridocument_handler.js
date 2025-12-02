@@ -1,11 +1,7 @@
-import {
-  extension,
-  getParent,
-  toString,
-  trailingSlash,
-} from "@weborigami/async-tree";
+import { extension, getParent, trailingSlash } from "@weborigami/async-tree";
 import * as compile from "../compiler/compile.js";
 import projectGlobals from "../project/projectGlobals.js";
+import getSource from "./getSource.js";
 
 /**
  * An Origami template document: a plain text file that contains Origami
@@ -17,30 +13,10 @@ export default {
   /** @type {import("@weborigami/async-tree").UnpackFunction} */
   async unpack(packed, options = {}) {
     const parent = getParent(packed, options);
+    const source = getSource(packed, options);
 
-    // Unpack as a text document
-    const text = toString(packed);
-
-    // See if we can construct a URL to use in error messages
-    const key = options.key;
-    let url;
-    if (key && /** @type {any} */ (parent)?.url) {
-      let parentHref = /** @type {any} */ (parent).url.href;
-      if (!parentHref.endsWith("/")) {
-        parentHref += "/";
-      }
-      url = new URL(key, parentHref);
-    }
-
-    // Compile the text as an Origami template document
-    const source = {
-      name: key,
-      text,
-      url,
-    };
-
+    // Compile the source code as an Origami template document
     const globals = options.globals ?? (await projectGlobals());
-
     const defineFn = compile.templateDocument(source, {
       front: options.front,
       globals,
@@ -51,6 +27,7 @@ export default {
     // Invoke the definition to get back the template function
     const result = await defineFn();
 
+    const key = options.key;
     const resultExtension = key ? extension.extname(key) : null;
     if (resultExtension && Object.isExtensible(result)) {
       // Add sidecar function so this template can be used in a map.
