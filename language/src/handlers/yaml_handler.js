@@ -34,6 +34,7 @@ export default {
     const oriTag = await oriTagForParent(parent);
     // YAML parser is sync, but top-level !ori or !ori.call tags will return a
     // promise.
+    // @ts-ignore TypeScript complains customTags isn't valid here but it is.
     const data = await YAML.parse(yaml, {
       customTags: [oriCallTag, oriTag],
     });
