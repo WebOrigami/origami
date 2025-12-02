@@ -1,6 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import ObjectMap from "../../src/drivers/ObjectMap.js";
+import plain from "../../src/operations/plain.js";
 import * as symbols from "../../src/symbols.js";
 
 describe("ObjectMap", () => {
@@ -154,6 +155,33 @@ describe("ObjectMap", () => {
       [symbols.keys]: () => ["a", "b", "c"],
     });
     assert.deepEqual(Array.from(map.keys()), ["a", "b", "c"]);
+  });
+
+  test("deep option treats sub-objects and sub-arrays as child nodes", async () => {
+    const map = new ObjectMap(
+      {
+        a: 1,
+        object: {
+          b: 2,
+        },
+        array: [3],
+      },
+      { deep: true }
+    );
+
+    // Adds trailing slashes to keys for sub-objects and sub-arrays
+    const keys = Array.from(await map.keys());
+    assert.deepEqual(keys, ["a", "object/", "array/"]);
+
+    const object = await map.get("object");
+    assert.equal(object instanceof ObjectMap, true);
+    assert.deepEqual(await plain(object), { b: 2 });
+    assert.equal(object.parent, map);
+
+    const array = await map.get("array");
+    assert.equal(array instanceof ObjectMap, true);
+    assert.deepEqual(await plain(array), [3]);
+    assert.equal(array.parent, map);
   });
 });
 

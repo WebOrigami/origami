@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import DeepObjectMap from "../src/drivers/DeepObjectMap.js";
+import ObjectMap from "../src/drivers/ObjectMap.js";
 import * as jsonKeys from "../src/jsonKeys.js";
 
 describe("jsonKeys", () => {
@@ -14,10 +14,13 @@ describe("jsonKeys", () => {
   });
 
   test("creates JSON keys for a map that supports trailing slashes", async () => {
-    const tree = new DeepObjectMap({
-      about: {},
-      "index.html": "Home",
-    });
+    const tree = new ObjectMap(
+      {
+        about: {},
+        "index.html": "Home",
+      },
+      { deep: true }
+    );
     const json = await jsonKeys.stringify(tree);
     assert.strictEqual(json, '["about/","index.html"]');
   });

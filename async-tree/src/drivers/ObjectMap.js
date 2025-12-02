@@ -1,5 +1,6 @@
 import * as symbols from "../symbols.js";
 import * as trailingSlash from "../trailingSlash.js";
+import isPlainObject from "../utilities/isPlainObject.js";
 import setParent from "../utilities/setParent.js";
 import SyncMap from "./SyncMap.js";
 
@@ -7,7 +8,7 @@ import SyncMap from "./SyncMap.js";
  * Map wrapper for a JavaScript object or array
  */
 export default class ObjectMap extends SyncMap {
-  constructor(object = {}) {
+  constructor(object = {}, options = {}) {
     super();
     // Note: we use `typeof` here instead of `instanceof Object` to allow for
     // objects such as Node's `Module` class for representing an ES module.
@@ -18,6 +19,7 @@ export default class ObjectMap extends SyncMap {
     }
     this.object = object;
     this.parent = object[symbols.parent] ?? null;
+    this.deep = options.deep === true;
   }
 
   delete(key) {
@@ -54,12 +56,20 @@ export default class ObjectMap extends SyncMap {
       value = value.bind(this.object);
     }
 
+    if (this.deep && (value instanceof Array || isPlainObject(value))) {
+      // Construct submap for sub-objects and sub-arrays
+      value = Reflect.construct(this.constructor, [value, { deep: true }]);
+    }
+
     return value;
   }
 
   /** @returns {boolean} */
   isSubtree(value) {
-    return value instanceof Map;
+    if (value instanceof Map) {
+      return true;
+    }
+    return this.deep && (value instanceof Array || isPlainObject(value));
   }
 
   keys() {
