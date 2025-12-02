@@ -289,6 +289,9 @@ Tree:
     plain:
       args: (tree)
       description: Render the tree as a plain JavaScript object
+    reduce:
+      args: (tree, reduceFn)
+      description: Reduce the tree to a single value
     regExpKeys:
       args: (tree)
       description: A tree whose keys are regular expression strings

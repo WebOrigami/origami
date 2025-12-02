@@ -13,6 +13,7 @@ export { default as ConstantMap } from "./src/drivers/ConstantMap.js";
 export { default as SyncMap } from "./src/drivers/SyncMap.js";
 export * as extension from "./src/extension.js";
 export * as jsonKeys from "./src/jsonKeys.js";
+export { default as reduce } from "./src/operations/reduce.js";
 export { default as scope } from "./src/operations/scope.js";
 export * as symbols from "./src/symbols.js";
 export * as trailingSlash from "./src/trailingSlash.js";

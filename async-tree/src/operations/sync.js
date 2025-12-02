@@ -1,5 +1,5 @@
 import getMapArgument from "../utilities/getMapArgument.js";
-import mapReduce from "./mapReduce.js";
+import reduce from "./reduce.js";
 
 /**
  * Resolve the async tree to a synchronous tree.
@@ -10,5 +10,5 @@ import mapReduce from "./mapReduce.js";
  */
 export default async function sync(source) {
   const tree = await getMapArgument(source, "sync");
-  return mapReduce(tree, null, (mapped) => mapped);
+  return reduce(tree, (mapped) => mapped);
 }
