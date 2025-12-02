@@ -1,4 +1,3 @@
-import { trailingSlash } from "@weborigami/async-tree";
 import * as YAMLModule from "yaml";
 import codeFragment from "../runtime/codeFragment.js";
 import * as ops from "../runtime/ops.js";
@@ -379,11 +378,6 @@ export function makePath(keys) {
   let code = [markers.traverse, reference, ...tail];
   const location = spanLocations(code);
   code = annotate(code, location);
-
-  // Last key has trailing slash implies unpack operation
-  if (trailingSlash.has(args.at(-1)[1])) {
-    code = annotate([ops.unpack, code], location);
-  }
 
   return code;
 }

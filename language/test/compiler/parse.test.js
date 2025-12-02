@@ -233,8 +233,8 @@ describe("Origami parser", () => {
 
     test("with paths", () => {
       assertParse("callExpression", "tree/", [
-        ops.unpack,
-        [markers.traverse, [markers.reference, "tree/"]],
+        markers.traverse,
+        [markers.reference, "tree/"],
       ]);
       assertParse("callExpression", "tree/foo/bar", [
         markers.traverse,
@@ -243,13 +243,10 @@ describe("Origami parser", () => {
         [ops.literal, "bar"],
       ]);
       assertParse("callExpression", "tree/foo/bar/", [
-        ops.unpack,
-        [
-          markers.traverse,
-          [markers.reference, "tree/"],
-          [ops.literal, "foo/"],
-          [ops.literal, "bar/"],
-        ],
+        markers.traverse,
+        [markers.reference, "tree/"],
+        [ops.literal, "foo/"],
+        [ops.literal, "bar/"],
       ]);
       // Consecutive slahes in a path are removed
       assertParse("callExpression", "tree//key", [
@@ -1032,7 +1029,7 @@ Body`,
       ]);
       assertParse("objectEntry", "folder/", [
         "folder/",
-        [ops.unpack, [markers.traverse, [markers.reference, "folder/"]]],
+        [markers.traverse, [markers.reference, "folder/"]],
       ]);
       assertParse("objectEntry", "path/to/file.txt", [
         "file.txt",
@@ -1202,8 +1199,8 @@ Body`,
       [markers.reference, "tree"],
     ]);
     assertParse("pathLiteral", "tree/", [
-      ops.unpack,
-      [markers.traverse, [markers.reference, "tree/"]],
+      markers.traverse,
+      [markers.reference, "tree/"],
     ]);
     assertParse("pathLiteral", "month/12", [
       markers.traverse,
@@ -1211,13 +1208,10 @@ Body`,
       [ops.literal, "12"],
     ]);
     assertParse("pathLiteral", "a/b/c/", [
-      ops.unpack,
-      [
-        markers.traverse,
-        [markers.reference, "a/"],
-        [ops.literal, "b/"],
-        [ops.literal, "c/"],
-      ],
+      markers.traverse,
+      [markers.reference, "a/"],
+      [ops.literal, "b/"],
+      [ops.literal, "c/"],
     ]);
     assertParse("pathLiteral", "~/.cshrc", [
       markers.traverse,

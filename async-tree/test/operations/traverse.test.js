@@ -39,4 +39,17 @@ describe("traverse", () => {
     });
     assert.equal(await traverse(tree, "a", "b", "c"), "Hello");
   });
+
+  test("unpacks last value if key ends in a slash", async () => {
+    const tree = new ObjectMap({
+      a: {
+        b: Object.assign(new String("packed"), {
+          unpack() {
+            return "unpacked";
+          },
+        }),
+      },
+    });
+    assert.equal(await traverse(tree, "a/", "b/"), "unpacked");
+  });
 });

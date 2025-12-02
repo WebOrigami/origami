@@ -59,5 +59,10 @@ export default async function traverseOrThrow(maplike, ...keys) {
     position++;
   }
 
+  // If last key ended in a slash and value is unpackable, unpack it.
+  if (key && trailingSlash.has(key) && isUnpackable(value)) {
+    value = await value.unpack();
+  }
+
   return value;
 }
