@@ -24,9 +24,8 @@ export default async function globKeys(maplike) {
     },
 
     async *keys() {
-      for await (const key of source.keys()) {
-        yield key;
-      }
+      // Don't return globstar keys. When used, e.g., with a Tree.mask, we don't
+      // want the globstar keys to appear in the result.
     },
 
     trailingSlashKeys: /** @type {any} */ (source).trailingSlashKeys,
