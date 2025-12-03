@@ -68,6 +68,9 @@ Origami:
     fetch:
       args: (url, options)
       description: Fetch a resource from a URL with support for extensions
+    htmlEscape:
+      args: (text)
+      description: Escape HTML entities in the text
     image:
       description: Collection of functions for working with images
     indexPage:
