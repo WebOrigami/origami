@@ -144,9 +144,22 @@ export function maybeOrigamiSourceCode(text) {
 // Return user-friendly line information for the error location
 function lineInfo(location) {
   let { source, start } = location;
-  // Adjust line number with offset if present (for example, if the code is in
-  // an Origami template document with front matter that was stripped)
-  let line = start.line + (source.offset ?? 0);
+
+  let line;
+  let column;
+  if (source.offset && source.context) {
+    // Account for source code that was offset within a larger document
+    const offset = source.offset + start.offset;
+    // Calculate line and column from offset
+    const textUpToOffset = source.context.slice(0, offset);
+    const lines = textUpToOffset.split("\n");
+    line = lines.length;
+    column = lines[lines.length - 1].length + 1;
+  } else {
+    // Use indicated start location as is
+    line = start.line;
+    column = start.column;
+  }
 
   if (typeof source === "object" && source.url) {
     const { url } = source;
@@ -162,10 +175,10 @@ function lineInfo(location) {
       // Not a file: URL, use as is
       fileRef = url.href;
     }
-    return `\n    at ${fileRef}:${line}:${start.column}`;
+    return `\n    at ${fileRef}:${line}:${column}`;
   } else if (source.text.includes("\n")) {
     // Don't know the URL, but has multiple lines so add line number
-    return `\n    at line ${line}, column ${start.column}`;
+    return `\n    at line ${line}, column ${column}`;
   } else {
     return "";
   }
