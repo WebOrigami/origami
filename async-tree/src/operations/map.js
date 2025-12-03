@@ -167,9 +167,17 @@ function validateOptions(options) {
     valueFn = validateOption(options, "value");
 
     // Cast function options to functions
-    inverseKeyFn &&= toFunction(inverseKeyFn);
-    keyFn &&= toFunction(keyFn);
-    valueFn &&= toFunction(valueFn);
+    inverseKeyFn &&= castToFunction(inverseKeyFn, "inverseKey");
+    if (
+      typeof keyFn === "string" &&
+      (keyFn.includes("=>") || keyFn.includes("→"))
+    ) {
+      throw new TypeError(
+        `map: The key option appears to be an extension mapping. Did you mean to call Tree.mapExtension() ?`
+      );
+    }
+    keyFn &&= castToFunction(keyFn, "key");
+    valueFn &&= castToFunction(valueFn, "value");
   } else if (options === undefined) {
     /** @type {any} */
     const error = new TypeError(`map: The second parameter was undefined.`);
@@ -248,4 +256,14 @@ function validateOptions(options) {
     keyNeedsSourceValue,
     valueFn,
   };
+}
+
+function castToFunction(object, name) {
+  const fn = toFunction(object);
+  if (!fn) {
+    throw new TypeError(
+      `map: The ${name} option must be a function but couldn't be treated as one.`
+    );
+  }
+  return fn;
 }
