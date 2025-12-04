@@ -2,6 +2,7 @@ import * as protocols from "./protocols.js";
 
 export default {
   "explore:": protocols.explore,
+  "explorehttp:": protocols.explorehttp,
   "files:": protocols.files,
   "http:": protocols.http,
   "https:": protocols.https,

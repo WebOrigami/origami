@@ -1,4 +1,5 @@
 export { default as explore } from "./explore.js";
+export { default as explorehttp } from "./explorehttp.js";
 export { default as files } from "./files.js";
 export { default as http } from "./http.js";
 export { default as https } from "./https.js";

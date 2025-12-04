@@ -9,6 +9,9 @@ import { pathFromKeys } from "@weborigami/async-tree";
  */
 export default function constructHref(protocol, host, ...keys) {
   const path = pathFromKeys(keys);
+  if (host.endsWith("/")) {
+    host = host.slice(0, -1);
+  }
   let href = [host, path].join("/");
   if (!href.startsWith(protocol)) {
     if (!href.startsWith("//")) {
