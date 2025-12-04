@@ -8,9 +8,9 @@ import getMapArgument from "../utilities/getMapArgument.js";
  *
  * @param {Maplike} maplike
  */
-export default function root(maplike) {
+export default async function root(maplike) {
   /** @type {any} */
-  let current = getMapArgument(maplike, "root");
+  let current = await getMapArgument(maplike, "root");
   while (current.parent || current[symbols.parent]) {
     current = current.parent || current[symbols.parent];
   }
