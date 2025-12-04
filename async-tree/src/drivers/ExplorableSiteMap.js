@@ -53,4 +53,6 @@ export default class ExplorableSiteMap extends SiteMap {
 
     return super.processResponse(response);
   }
+
+  trailingSlashKeys = true;
 }
