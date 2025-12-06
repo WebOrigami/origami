@@ -181,6 +181,11 @@ export async function homeDirectory(...keys) {
 }
 addOpLabel(homeDirectory, "«ops.homeDirectory»");
 
+export function inOperator(a, b) {
+  return a in b;
+}
+addOpLabel(inOperator, "«ops.inOperator»");
+
 /**
  * Given the tree currently be using as the context for the runtime, walk up the
  * parent chain `depth` levels and return that tree.
@@ -202,6 +207,11 @@ export async function inherited(depth, state) {
 }
 addOpLabel(inherited, "«ops.inherited»");
 inherited.needsState = true;
+
+export function instanceOf(a, b) {
+  return a instanceof b;
+}
+addOpLabel(instanceOf, "«ops.instanceOf»");
 
 /**
  * Return a function that will invoke the given code.

@@ -142,6 +142,8 @@ export function makeBinaryOperation(left, [operatorToken, right]) {
     ">>>": ops.shiftRightUnsigned,
     "^": ops.bitwiseXor,
     "|": ops.bitwiseOr,
+    instanceof: ops.instanceOf,
+    in: ops.inOperator,
   };
   const op = operators[operatorToken];
 

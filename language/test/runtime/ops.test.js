@@ -155,6 +155,14 @@ describe("ops", () => {
     assert(ops.greaterThanOrEqual("ab", "aa"));
   });
 
+  test("ops.inOperator returns true if a is in object b", () => {
+    assert.strictEqual(ops.inOperator("a", { a: 1, b: 2 }), true);
+    assert.strictEqual(ops.inOperator("c", { a: 1, b: 2 }), false);
+    const arr = [0, 0, 0];
+    assert.strictEqual(ops.inOperator(1, arr), true);
+    assert.strictEqual(ops.inOperator(3, arr), false);
+  });
+
   test("ops.inherited walks up the object parent chain", async () => {
     const tree = new ObjectMap(
       {
@@ -166,6 +174,16 @@ describe("ops", () => {
     );
     const b = await Tree.traverse(tree, "a", "b");
     assert.equal(await ops.inherited(2, { object: b }), tree);
+  });
+
+  test("ops.instanceOf checks prototype chain", () => {
+    class Parent {}
+    class Child extends Parent {}
+    const child = new Child();
+    assert.strictEqual(ops.instanceOf(child, Child), true);
+    assert.strictEqual(ops.instanceOf(child, Parent), true);
+    assert.strictEqual(ops.instanceOf(child, Object), true);
+    assert.strictEqual(ops.instanceOf(child, Array), false);
   });
 
   test("ops.lambda defines a function with no inputs", async () => {

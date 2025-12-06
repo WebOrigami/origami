@@ -690,6 +690,8 @@ relationalOperator
   / "<"
   / ">="
   / ">"
+  / "instanceof"
+  / "in"
 
 separator
   = __ "," __
