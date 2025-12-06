@@ -9,7 +9,7 @@ import documentObject from "../common/documentObject.js";
  *
  * @param {any} input
  */
-export default async function inline(input) {
+export default async function inline(input, options = {}) {
   // Get the input text and any attached front matter.
   if (isUnpackable(input)) {
     input = await input.unpack();
@@ -21,6 +21,7 @@ export default async function inline(input) {
   }
 
   const parent =
+    options.parent ??
     /** @type {any} */ (input).parent ??
     /** @type {any} */ (input)[symbols.parent];
 
