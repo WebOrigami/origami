@@ -3,6 +3,7 @@ import {
   isUnpackable,
   symbols,
   toString,
+  Tree,
 } from "@weborigami/async-tree";
 import * as YAMLModule from "yaml";
 import * as compile from "../compiler/compile.js";
@@ -13,6 +14,9 @@ import getSource from "./getSource.js";
 // recognize, so we have to handle two ways to accommodate Node and the browser.
 // @ts-ignore
 const YAML = YAMLModule.default ?? YAMLModule.YAML;
+
+// True if we encountered !ori or !ori.call tags while parsing
+let hasOriTags = false;
 
 // When processing the !ori tag, the YAML parser will convert our compiler
 // errors into YAML syntax errors. We track the last compiler error so we can
@@ -40,6 +44,7 @@ export default {
     const parent = getParent(packed, options);
     const oriCallTag = await oriCallTagForParent(parent, options, yaml);
     const oriTag = await oriTagForParent(parent, options, yaml);
+    hasOriTags = false; // Haven't seen any yet
 
     let data;
     // YAML parser is sync, but top-level !ori or !ori.call tags will return a
@@ -71,12 +76,18 @@ export default {
       }
     }
 
+    if (hasOriTags) {
+      // Resolve any promises in the data.
+      data = await Tree.plain(data);
+    }
+
     if (data && typeof data === "object" && Object.isExtensible(data)) {
       Object.defineProperty(data, symbols.deep, {
         enumerable: false,
         value: true,
       });
     }
+
     return data;
   },
 };
@@ -89,6 +100,7 @@ async function oriCallTagForParent(parent, options, yaml) {
     tag: "!ori.call",
 
     resolve(value) {
+      hasOriTags = true;
       /** @type {any[]} */
       const args = typeof value?.toJSON === "function" ? value.toJSON() : value;
 
@@ -132,7 +144,10 @@ async function oriCallTagForParent(parent, options, yaml) {
           fn = await fn.unpack();
         }
 
-        const result = await fn.call(null, ...args);
+        // Resolve any promise args
+        const resolvedArgs = await Promise.all(args);
+
+        const result = await fn.call(null, ...resolvedArgs);
         resolve(result);
       });
     },
@@ -145,6 +160,7 @@ async function oriTagForParent(parent, options, yaml) {
   const globals = await projectGlobals();
   return {
     resolve(text) {
+      hasOriTags = true;
       source = getSource(text, options);
       source.context = yaml;
 

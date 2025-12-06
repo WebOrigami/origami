@@ -1,4 +1,3 @@
-import { Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import yaml_handler from "../../src/handlers/yaml_handler.js";
@@ -22,8 +21,7 @@ message: Hello
 answer: !ori 1 + 1
 `;
     const data = await yaml_handler.unpack(text);
-    const plain = await Tree.plain(data);
-    assert.deepEqual(plain, {
+    assert.deepEqual(data, {
       message: "Hello",
       answer: 2,
     });
@@ -38,8 +36,7 @@ answer: !ori.call
   - 3
 `;
     const data = await yaml_handler.unpack(text);
-    const plain = await Tree.plain(data);
-    assert.deepEqual(plain, {
+    assert.deepEqual(data, {
       message: "Hello",
       answer: 5,
     });
