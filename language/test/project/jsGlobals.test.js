@@ -3,19 +3,25 @@ import { describe, test } from "node:test";
 import jsGlobals from "../../src/project/jsGlobals.js";
 
 describe("jsGlobals", () => {
-  test("can invoke static methods", async () => {
-    const { Promise } = jsGlobals;
-    const { all } = Promise;
-    const result = (
-      await all(["fruit", "computer", "park"].map((item) => `Apple ${item}`))
-    ).join(", ");
-    assert.equal(result, "Apple fruit, Apple computer, Apple park");
+  test("can invoke finicky methods like Promise.all that check their receiver", async () => {
+    const value = await jsGlobals.Promise.all([Promise.resolve("hi")]);
+    assert.equal(value, "hi");
   });
 
-  test("can invoke a method on a static method", () => {
+  test("can invoke a static method on a global", () => {
     const { Math } = jsGlobals;
     const a = [1, 3, 2];
     const b = Math.max.apply(null, a);
     assert.equal(b, 3);
+  });
+
+  test("can invoke a global constructor", async () => {
+    const { Number: fixture } = jsGlobals;
+    // Without `new`
+    const instance1 = fixture(5);
+    assert.equal(instance1, 5);
+    // With `new`
+    const instance = new fixture();
+    assert(instance instanceof Number);
   });
 });

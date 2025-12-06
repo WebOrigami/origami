@@ -12,7 +12,7 @@ import path from "node:path";
  * Fetch API
  * URL API
  */
-const globals = bindStaticMethodsForGlobals({
+const globals = {
   AbortController,
   AbortSignal,
   AggregateError,
@@ -152,7 +152,7 @@ const globals = bindStaticMethodsForGlobals({
   // Special cases
   fetch: fetchWrapper,
   import: importWrapper,
-});
+};
 
 // Give access to our own custom globals as `globalThis`
 Object.defineProperty(globals, "globalThis", {
@@ -189,65 +189,5 @@ async function importWrapper(modulePath) {
   return import(filePath);
 }
 importWrapper.containerAsTarget = true;
-
-/**
- * Some JavaScript globals like Promise have static methods like Promise.all
- * verify that the call target is the class. This creates an issue because the
- * Origami evaluate() function calls all functions with the evaluation context
- * -- the tree in which the code is running -- as the call target.
- *
- * This function works around the problem. If the indicated object has no static
- * methods, it's returned as is. If it does have static methods, this returns an
- * extension of the object that overrides the static methods with ones that are
- * bound to the object.
- */
-function bindStaticMethods(obj) {
-  if (typeof obj !== "function" && (typeof obj !== "object" || obj === null)) {
-    // Something like `NaN` or `null`
-    return obj;
-  }
-
-  const staticMethodDescriptors = Object.entries(
-    Object.getOwnPropertyDescriptors(obj)
-  )
-    .filter(([key, descriptor]) => descriptor.value instanceof Function)
-    .map(([key, descriptor]) => [
-      key,
-      {
-        ...descriptor,
-        value: descriptor.value.bind(obj),
-      },
-    ]);
-  if (staticMethodDescriptors.length === 0) {
-    // No static methods
-    return obj;
-  }
-
-  let extended;
-  if (typeof obj === "object" || !obj.prototype) {
-    // A regular object or an oddball like Proxy with no prototype
-    extended = Object.create(obj);
-  } else {
-    // A function, possibly a constructor called with or without `new`
-    /** @this {any} */
-    extended = function (...args) {
-      const calledWithNew = this instanceof extended;
-      return calledWithNew ? new obj(...args) : obj(...args);
-    };
-  }
-
-  Object.defineProperties(
-    extended,
-    Object.fromEntries(staticMethodDescriptors)
-  );
-
-  return extended;
-}
-
-function bindStaticMethodsForGlobals(objects) {
-  const entries = Object.entries(objects);
-  const bound = entries.map(([key, value]) => [key, bindStaticMethods(value)]);
-  return Object.fromEntries(bound);
-}
 
 export default globals;
