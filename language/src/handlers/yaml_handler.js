@@ -76,6 +76,11 @@ export default {
       }
     }
 
+    if (data instanceof Promise) {
+      // Top-level !ori or !ori.call tag returned a promise
+      data = await data;
+    }
+
     if (hasOriTags) {
       // Resolve any promises in the data.
       data = await Tree.plain(data);

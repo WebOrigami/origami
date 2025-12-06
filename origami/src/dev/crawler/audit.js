@@ -1,10 +1,6 @@
-import {
-  getTreeArgument,
-  pathFromKeys,
-  symbols,
-  Tree,
-} from "@weborigami/async-tree";
+import { pathFromKeys, symbols, Tree } from "@weborigami/async-tree";
 import crawlResources from "./crawlResources.js";
+import getSiteArgument from "./getSiteArgument.js";
 import { getBaseUrl } from "./utilities.js";
 
 /**
@@ -17,7 +13,7 @@ import { getBaseUrl } from "./utilities.js";
  * @param {string} [baseHref]
  */
 export default async function audit(maplike, baseHref) {
-  const tree = await getTreeArgument(maplike, "audit");
+  const tree = await getSiteArgument(maplike, "audit");
   const baseUrl = getBaseUrl(baseHref, maplike);
 
   let errors = {};

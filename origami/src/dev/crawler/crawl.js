@@ -1,10 +1,6 @@
-import {
-  ObjectMap,
-  Tree,
-  getTreeArgument,
-  keysFromPath,
-} from "@weborigami/async-tree";
+import { ObjectMap, Tree, keysFromPath } from "@weborigami/async-tree";
 import crawlResources from "./crawlResources.js";
+import getSiteArgument from "./getSiteArgument.js";
 import { addValueToObject, getBaseUrl } from "./utilities.js";
 
 /**
@@ -23,7 +19,7 @@ import { addValueToObject, getBaseUrl } from "./utilities.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function crawlBuiltin(maplike, baseHref) {
-  const tree = await getTreeArgument(maplike, "crawl");
+  const tree = await getSiteArgument(maplike, "crawl");
   const baseUrl = getBaseUrl(baseHref, maplike);
 
   const cache = {};
