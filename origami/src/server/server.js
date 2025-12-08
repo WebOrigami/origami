@@ -121,6 +121,8 @@ export function requestListener(maplike) {
  */
 function respondWithError(response, error) {
   let message = formatError(error);
+  // Remove ANSI escape codes from the message.
+  message = message.replace(/\x1b\[[0-9;]*m/g, "");
   // Prevent HTML in the error message from being interpreted as HTML.
   message = message.replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const html = `<!DOCTYPE html>
