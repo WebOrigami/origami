@@ -26,6 +26,7 @@ export { default as once } from "./once.js";
 export { default as ori } from "./ori.js";
 export { default as pack } from "./pack.js";
 export { default as post } from "./post.js";
+export { default as project } from "./project.js";
 export { default as repeat } from "./repeat.js";
 export { default as shell } from "./shell.js";
 export { default as slash } from "./slash.js";
