@@ -67,4 +67,5 @@ export { default as traverse } from "./operations/traverse.js";
 export { default as traverseOrThrow } from "./operations/traverseOrThrow.js";
 export { default as traversePath } from "./operations/traversePath.js";
 export { default as values } from "./operations/values.js";
+export { default as visit } from "./operations/visit.js";
 export { default as withKeys } from "./operations/withKeys.js";
