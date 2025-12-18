@@ -304,10 +304,20 @@ describe("ops", () => {
     assert.strictEqual(ops.multiplication("foo", 2), NaN);
   });
 
-  // test("ops.optionalTraverse", async () => {
-  //   assert.equal(await ops.optionalTraverse(null, "a"), undefined);
-  //   assert.equal(await ops.optionalTraverse({ a: 1 }, "a"), 1);
-  // });
+  test("ops.optional", async () => {
+    assert.equal(
+      ops.optional(null, (x) => x.a),
+      undefined
+    );
+    assert.equal(
+      ops.optional(undefined, (x) => x.a),
+      undefined
+    );
+    assert.equal(
+      ops.optional({ a: 1 }, (x) => x.a),
+      1
+    );
+  });
 
   test("ops.notEqual", () => {
     assert(!ops.notEqual(1, 1));

@@ -187,7 +187,112 @@ describe("Origami parser", () => {
   });
 
   describe("callExpression", () => {
-    test("with parentheses arguments", () => {
+    test("call chains", () => {
+      assertParse("callExpression", "(foo.js())('arg')", [
+        [[markers.traverse, [markers.reference, "foo.js"]], undefined],
+        [ops.literal, "arg"],
+      ]);
+      assertParse("callExpression", "fn('a')('b')", [
+        [
+          [markers.traverse, [markers.reference, "fn"]],
+          [ops.literal, "a"],
+        ],
+        [ops.literal, "b"],
+      ]);
+      assertParse("callExpression", "(foo.js())(a, b)", [
+        [[markers.traverse, [markers.reference, "foo.js"]], undefined],
+        [markers.traverse, [markers.reference, "a"]],
+        [markers.traverse, [markers.reference, "b"]],
+      ]);
+      assertParse("callExpression", "fn (x) (y) (z)", [
+        [
+          [
+            [markers.traverse, [markers.reference, "fn"]],
+            [markers.traverse, [markers.reference, "x"]],
+          ],
+          [markers.traverse, [markers.reference, "y"]],
+        ],
+        [markers.traverse, [markers.reference, "z"]],
+      ]);
+    });
+
+    test("optional property access", () => {
+      assertParse("callExpression", "a?.b.c", [
+        ops.optional,
+        [markers.traverse, [markers.reference, "a"]],
+        [
+          ops.lambda,
+          [[ops.literal, "__optional__"]],
+          [
+            ops.property,
+            [
+              ops.property,
+              [markers.traverse, [markers.reference, "__optional__"]],
+              [ops.literal, "b"],
+            ],
+            [ops.literal, "c"],
+          ],
+        ],
+      ]);
+      assertParse("callExpression", "a?.b?.c", [
+        ops.optional,
+        [markers.traverse, [markers.reference, "a"]],
+        [
+          ops.lambda,
+          [[ops.literal, "__optional__"]],
+          [
+            ops.optional,
+            [
+              ops.property,
+              [markers.traverse, [markers.reference, "__optional__"]],
+              [ops.literal, "b"],
+            ],
+            [
+              ops.lambda,
+              [[ops.literal, "__optional__"]],
+              [
+                ops.property,
+                [markers.traverse, [markers.reference, "__optional__"]],
+                [ops.literal, "c"],
+              ],
+            ],
+          ],
+        ],
+      ]);
+    });
+
+    test("optional computed property access", () => {
+      assertParse("callExpression", "a?.[key]", [
+        ops.optional,
+        [markers.traverse, [markers.reference, "a"]],
+        [
+          ops.lambda,
+          [[ops.literal, "__optional__"]],
+          [
+            ops.property,
+            [markers.traverse, [markers.reference, "__optional__"]],
+            [markers.traverse, [markers.reference, "key"]],
+          ],
+        ],
+      ]);
+    });
+
+    test("optional parentheses call", () => {
+      assertParse("callExpression", "fn?.(0)", [
+        ops.optional,
+        [markers.traverse, [markers.reference, "fn"]],
+        [
+          ops.lambda,
+          [[ops.literal, "__optional__"]],
+          [
+            [markers.traverse, [markers.reference, "__optional__"]],
+            [ops.literal, 0],
+          ],
+        ],
+      ]);
+    });
+
+    test("parentheses arguments", () => {
       assertParse("callExpression", "fn()", [
         [markers.traverse, [markers.reference, "fn"]],
         undefined,
@@ -212,26 +317,7 @@ describe("Origami parser", () => {
       ]);
     });
 
-    test("call chains", () => {
-      assertParse("callExpression", "(foo.js())('arg')", [
-        [[markers.traverse, [markers.reference, "foo.js"]], undefined],
-        [ops.literal, "arg"],
-      ]);
-      assertParse("callExpression", "fn('a')('b')", [
-        [
-          [markers.traverse, [markers.reference, "fn"]],
-          [ops.literal, "a"],
-        ],
-        [ops.literal, "b"],
-      ]);
-      assertParse("callExpression", "(foo.js())(a, b)", [
-        [[markers.traverse, [markers.reference, "foo.js"]], undefined],
-        [markers.traverse, [markers.reference, "a"]],
-        [markers.traverse, [markers.reference, "b"]],
-      ]);
-    });
-
-    test("with paths", () => {
+    test("paths", () => {
       assertParse("callExpression", "tree/", [
         markers.traverse,
         [markers.reference, "tree/"],
@@ -292,17 +378,6 @@ describe("Origami parser", () => {
       ]);
     });
 
-    test("tagged templates", () => {
-      assertParse("callExpression", "indent`hello`", [
-        [markers.traverse, [markers.reference, "indent"]],
-        [ops.literal, ["hello"]],
-      ]);
-      assertParse("callExpression", "fn.js`Hello, world.`", [
-        [markers.traverse, [markers.reference, "fn.js"]],
-        [ops.literal, ["Hello, world."]],
-      ]);
-    });
-
     test("protocols", () => {
       assertParse("callExpression", "files:src/assets", [
         [markers.global, "files:"],
@@ -316,6 +391,17 @@ describe("Origami parser", () => {
           [ops.literal, "process"],
         ],
         [ops.literal, "env"],
+      ]);
+    });
+
+    test("tagged templates", () => {
+      assertParse("callExpression", "indent`hello`", [
+        [markers.traverse, [markers.reference, "indent"]],
+        [ops.literal, ["hello"]],
+      ]);
+      assertParse("callExpression", "fn.js`Hello, world.`", [
+        [markers.traverse, [markers.reference, "fn.js"]],
+        [ops.literal, ["Hello, world."]],
       ]);
     });
   });
@@ -898,7 +984,7 @@ Body`,
   });
 
   describe("objectLiteral", () => {
-    describe("basic objects", () => {
+    test("basic objects", () => {
       assertParse("objectLiteral", "{}", [ops.object]);
       assertParse("objectLiteral", "{ a: 1, b }", [
         ops.object,
@@ -991,7 +1077,7 @@ Body`,
       ]);
     });
 
-    describe("spreads", () => {
+    test("spreads", () => {
       assertParse("objectLiteral", "{ ...x }", [
         ops.unpack,
         [markers.traverse, [markers.reference, "x"]],
@@ -1122,12 +1208,17 @@ Body`,
     assertParse("objectPublicKey", `"foo bar"`, "foo bar", "shell", false);
   });
 
-  // test.skip("optionalChaining", () => {
-  //   assertParse("optionalChaining", "?.key", [
-  //     ops.optionalTraverse,
-  //     [ops.literal, "key"],
-  //   ]);
-  // });
+  test("optional", () => {
+    assertParse("optional", "?.key", [
+      ops.optional,
+      [markers.property, [ops.literal, "key"]],
+    ]);
+    assertParse("optional", "?.[index]", [
+      ops.optional,
+      [markers.property, [markers.traverse, [markers.reference, "index"]]],
+    ]);
+    assertParse("optional", "?.(0)", [ops.optional, [[ops.literal, 0]]]);
+  });
 
   test("parenthesesArguments", () => {
     assertParse("parenthesesArguments", "()", [undefined]);

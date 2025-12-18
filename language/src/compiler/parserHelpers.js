@@ -171,25 +171,58 @@ export function makeCall(target, args, location) {
 
   let fnCall;
   const op = args[0];
-  if (op === markers.traverse /* || op === ops.optionalTraverse */) {
-    // Traverse
-    const keys = args.slice(1);
-    fnCall = [target, ...keys];
-  } else if (op === markers.property) {
-    // Property access
-    const property = args[1];
-    fnCall = [ops.property, target, property];
-  } else if (op === ops.templateText) {
-    // Tagged template
-    const strings = args[1];
-    const values = args.slice(2);
-    fnCall = makeTaggedTemplateCall(target, strings, ...values);
-  } else {
-    // Function call with explicit or implicit parentheses
-    fnCall = [target, ...args];
+  switch (op) {
+    case markers.property:
+      // Property access
+      const property = args[1];
+      fnCall = [ops.property, target, property];
+      break;
+
+    case ops.templateText:
+      // Tagged template
+      const strings = args[1];
+      const values = args.slice(2);
+      fnCall = makeTaggedTemplateCall(target, strings, ...values);
+      break;
+
+    case markers.traverse:
+      // Traverse
+      const keys = args.slice(1);
+      fnCall = [target, ...keys];
+      break;
+
+    default:
+      // Function call with explicit or implicit parentheses
+      fnCall = [target, ...args];
+      break;
   }
 
   return annotate(fnCall, location);
+}
+
+/**
+ * Create a chain of function calls, property accesses, or traversals.
+ *
+ * @param {AnnotatedCode} target
+ * @param {AnnotatedCode[]} chain
+ * @param {CodeLocation} location
+ */
+export function makeCallChain(target, chain, location) {
+  let result = target;
+  let args = chain.shift();
+  while (args) {
+    const op = args[0];
+    if (op === ops.optional) {
+      // Optional chaining short-circuits the rest of the call chain
+      const optionalChain = [args[1], ...chain];
+      return makeOptionalCall(result, optionalChain, location);
+    } else {
+      // Extend normal call chain
+      result = makeCall(result, args, location);
+    }
+    args = chain.shift();
+  }
+  return result;
 }
 
 /**
@@ -359,6 +392,39 @@ export function makeObject(entries, location) {
   }
 
   return annotate(code, location);
+}
+
+/**
+ * Make an optional call: if the target is null or undefined, return undefined;
+ * otherwise, make the call.
+ *
+ * @param {AnnotatedCode} target
+ * @param {AnnotatedCode[]} chain
+ * @param {CodeLocation} location
+ */
+function makeOptionalCall(target, chain, location) {
+  const optionalKey = "__optional__";
+  // Create a reference to the __optional__ parameter
+  const optionalReference = annotate(
+    [markers.reference, optionalKey],
+    location
+  );
+  const optionalTraverse = annotate(
+    [markers.traverse, optionalReference],
+    location
+  );
+
+  // Create the call to be made if the target is not null/undefined
+  const call = makeCallChain(optionalTraverse, chain, location);
+
+  // Create a function that takes __optional__ and makes the call
+  const optionalLiteral = annotate([ops.literal, optionalKey], location);
+  const lambdaParameters = annotate([optionalLiteral], location);
+  const lambda = annotate([ops.lambda, lambdaParameters, call], location);
+
+  // Create the call to ops.optional
+  const optionalCall = annotate([ops.optional, target, lambda], location);
+  return optionalCall;
 }
 
 /**

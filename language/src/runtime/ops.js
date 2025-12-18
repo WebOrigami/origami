@@ -416,13 +416,20 @@ export async function params(depth, state = {}) {
 addOpLabel(params, "«ops.params»");
 params.needsState = true;
 
-// export function optionalTraverse(maplike, key) {
-//   if (!maplike) {
-//     return undefined;
-//   }
-//   return Tree.traverseOrThrow(maplike, key);
-// }
-// addOpLabel(optionalTraverse, "«ops.optionalTraverse");
+/**
+ * If the value is null or undefined, return undefined; otherwise, invoke the
+ * given function with the value.
+ *
+ * @param {any} value
+ * @param {Function} fn
+ */
+export function optional(value, fn) {
+  if (value == null) {
+    return undefined;
+  }
+  return fn(value);
+}
+addOpLabel(optional, "«ops.optional»");
 
 /**
  * Return the indicated property

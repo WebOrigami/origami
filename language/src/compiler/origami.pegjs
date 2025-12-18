@@ -18,6 +18,7 @@ import {
   makeArray,
   makeBinaryOperation,
   makeCall,
+  makeCallChain,
   makeDeferredArguments,
   makeDocument,
   makeObject,
@@ -83,7 +84,7 @@ arguments "function arguments"
   / pathArguments
   / propertyAccess
   / computedPropertyAccess
-  // / optionalChaining
+  / optional
   / templateLiteral
 
 arrayLiteral "array"
@@ -143,10 +144,7 @@ bitwiseXorOperator
 // `fn(arg1)(arg2)(arg3)`.
 callExpression "function call"
   = head:uriExpression tail:arguments* {
-      return tail.reduce(
-        (target, args) => makeCall(target, args, location()),
-        head
-      );
+      return makeCallChain(head, tail, location());
     }
 
 // A comma-separated list of expressions: `x, y, z`
@@ -168,9 +166,9 @@ computedPropertyAccess
       return annotate([markers.property, expression], location());
     }
 
-// A space before a computed property access. This is allowed when in not in
-// shell mode, but not in shell mode. In shell mode `foo [bar]` should parse as
-// a function call with a single argument of an array, not as a property access.
+// A space before a computed property access. This is allowed when not in shell
+// mode. In shell mode `foo [bar]` should parse as a function call with a single
+// argument of an array, not as a property access.
 computedPropertySpace
   = shellMode
   / !shellMode __
@@ -569,12 +567,20 @@ objectPublicKey
       return string[1];
     }
 
-optionalChaining
-  = __ "?." __ property:identifier {
-      return annotate([ops.optionalTraverse, property], location());
+// Optional chaining
+optional
+  = __ "?." args:parenthesesArguments {
+      return annotate([ops.optional, args], location());
+    }
+  / __ "?." access:computedPropertyAccess {
+      return annotate([ops.optional, access], location());
+    }
+  / __ "?." whitespaceOptionalForProgram property:identifierLiteral {
+      const propertyAccess = annotate([markers.property, property], location());
+      return annotate([ops.optional, propertyAccess], location());
     }
 
-// Name of a unction parameter
+// Name of a function parameter
 parameter
   = key:key {
       return annotate([ops.literal, key], location());
@@ -593,7 +599,7 @@ parameterSingleton
 
 // Function arguments in parentheses
 parenthesesArguments "function arguments in parentheses"
-  = "(" __ list:list? __ expectClosingParenthesis {
+  = __ "(" __ list:list? __ expectClosingParenthesis {
       return annotate(list ?? [undefined], location());
     }
 
