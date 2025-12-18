@@ -512,17 +512,6 @@ export function shiftRightUnsigned(a, b) {
 }
 addOpLabel(shiftRightUnsigned, "«ops.shiftRightUnsigned»");
 
-/**
- * The spread operator is a placeholder during parsing. It should be replaced
- * with an object merge.
- */
-export function spread(arg) {
-  throw new Error(
-    "Internal error: a spread operation wasn't compiled correctly."
-  );
-}
-addOpLabel(spread, "«ops.spread»");
-
 export function strictEqual(a, b) {
   return a === b;
 }

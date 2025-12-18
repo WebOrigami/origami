@@ -20,6 +20,7 @@ export const markers = {
   external: Symbol("external"), // External reference
   property: Symbol("property"), // Property access
   reference: Symbol("reference"), // Reference to local, scope, or global
+  spread: Symbol("spread"), // Spread operator
   traverse: Symbol("traverse"), // Path traversal
 };
 
@@ -79,7 +80,7 @@ export function makeArray(entries, location) {
   const spreads = [];
 
   for (const value of entries) {
-    if (Array.isArray(value) && value[0] === ops.spread) {
+    if (Array.isArray(value) && value[0] === markers.spread) {
       if (currentEntries.length > 0) {
         const location = { ...currentEntries[0].location };
         location.end = currentEntries[currentEntries.length - 1].location.end;
@@ -95,22 +96,20 @@ export function makeArray(entries, location) {
     }
   }
 
-  // Finish any current entries.
+  if (spreads.length === 0) {
+    // No spreads, simple array
+    return annotate([ops.array, ...currentEntries], location);
+  }
+
+  // Finish any current entries, add to spreads
   if (currentEntries.length > 0) {
     spreads.push([ops.array, ...currentEntries]);
     currentEntries = [];
   }
 
-  let result;
-  if (spreads.length > 1) {
-    result = [ops.flat, ...spreads];
-  } else if (spreads.length === 1) {
-    result = spreads[0];
-  } else {
-    result = [ops.array];
-  }
-
-  return annotate(result, location);
+  // We don't optimize for the single-spread case here because the object
+  // being spread might be a tree and we want ops.flat to handle that.
+  return annotate([ops.flat, ...spreads], location);
 }
 
 /**
@@ -193,7 +192,7 @@ export function makeCall(target, args, location) {
 
     default:
       // Function call with explicit or implicit parentheses
-      fnCall = [target, ...args];
+      fnCall = makePossibleSpreadCall(target, args, location);
       break;
   }
 
@@ -334,7 +333,7 @@ export function makeObject(entries, location) {
 
   for (let entry of entries) {
     const [key, value] = entry;
-    if (key === ops.spread) {
+    if (key === markers.spread) {
       if (value[0] === ops.object) {
         // Spread of an object; fold into current object
         currentEntries.push(...value.slice(1));
@@ -462,6 +461,28 @@ export function makePipeline(arg, fn, location) {
   let start = arg.location.start;
   let end = fn.location.end;
   return annotate(result, { start, source, end });
+}
+
+function makePossibleSpreadCall(target, args, location) {
+  const hasSpread = args.some(
+    (arg) => Array.isArray(arg) && arg[0] === markers.spread
+  );
+  if (!hasSpread) {
+    // No spreads, simple call
+    return [target, ...args];
+  }
+
+  // Get function's apply method
+  const applyMethod = annotate([ops.property, target, "apply"], location);
+  const wrappedArgs = args.map((arg) => {
+    if (arg[0] === markers.spread) {
+      return arg[1];
+    } else {
+      return annotate([ops.array, arg], arg.location);
+    }
+  });
+  const flatCall = annotate([ops.flat, ...wrappedArgs], location);
+  return [applyMethod, null, flatCall];
 }
 
 /**

@@ -317,6 +317,19 @@ describe("Origami parser", () => {
       ]);
     });
 
+    test("parentheses arguments with spreads", () => {
+      assertParse("callExpression", "fn(a, ...b, ...c)", [
+        [ops.property, [markers.traverse, [markers.reference, "fn"]], "apply"],
+        null,
+        [
+          ops.flat,
+          [ops.array, [markers.traverse, [markers.reference, "a"]]],
+          [markers.traverse, [markers.reference, "b"]],
+          [markers.traverse, [markers.reference, "c"]],
+        ],
+      ]);
+    });
+
     test("paths", () => {
       assertParse("callExpression", "tree/", [
         markers.traverse,
@@ -854,6 +867,24 @@ Body`,
         [ops.literal, "arg"],
       ],
     ]);
+    assertParse(
+      "implicitParenthesesCallExpression",
+      "concat a.json, ...b.json, c.json",
+      [
+        [
+          ops.property,
+          [markers.traverse, [markers.reference, "concat"]],
+          "apply",
+        ],
+        null,
+        [
+          ops.flat,
+          [ops.array, [markers.traverse, [markers.reference, "a.json"]]],
+          [markers.traverse, [markers.reference, "b.json"]],
+          [ops.array, [markers.traverse, [markers.reference, "c.json"]]],
+        ],
+      ]
+    );
   });
 
   test("key", () => {
@@ -866,35 +897,6 @@ Body`,
     assertParse("key", "a~b", "a~b");
     assertParse("key", "foo-bar", "foo-bar");
     assertParse("key", "package-lock.json", "package-lock.json");
-  });
-
-  test("list", () => {
-    assertParse("list", "1", [[ops.literal, 1]]);
-    assertParse("list", "1,2,3", [
-      [ops.literal, 1],
-      [ops.literal, 2],
-      [ops.literal, 3],
-    ]);
-    assertParse("list", "1, 2, 3,", [
-      [ops.literal, 1],
-      [ops.literal, 2],
-      [ops.literal, 3],
-    ]);
-    assertParse("list", "1 , 2 , 3", [
-      [ops.literal, 1],
-      [ops.literal, 2],
-      [ops.literal, 3],
-    ]);
-    assertParse("list", "1\n2\n3", [
-      [ops.literal, 1],
-      [ops.literal, 2],
-      [ops.literal, 3],
-    ]);
-    assertParse("list", "'a' , 'b' , 'c'", [
-      [ops.literal, "a"],
-      [ops.literal, "b"],
-      [ops.literal, "c"],
-    ]);
   });
 
   test("logicalAndExpression", () => {
@@ -1229,6 +1231,40 @@ Body`,
     ]);
   });
 
+  test("parenthesesArgumentList", () => {
+    assertParse("parenthesesArgumentList", "1", [[ops.literal, 1]]);
+    assertParse("parenthesesArgumentList", "1,2,3", [
+      [ops.literal, 1],
+      [ops.literal, 2],
+      [ops.literal, 3],
+    ]);
+    assertParse("parenthesesArgumentList", "1, 2, 3,", [
+      [ops.literal, 1],
+      [ops.literal, 2],
+      [ops.literal, 3],
+    ]);
+    assertParse("parenthesesArgumentList", "1 , 2 , 3", [
+      [ops.literal, 1],
+      [ops.literal, 2],
+      [ops.literal, 3],
+    ]);
+    assertParse("parenthesesArgumentList", "1\n2\n3", [
+      [ops.literal, 1],
+      [ops.literal, 2],
+      [ops.literal, 3],
+    ]);
+    assertParse("parenthesesArgumentList", "'a' , 'b' , 'c'", [
+      [ops.literal, "a"],
+      [ops.literal, "b"],
+      [ops.literal, "c"],
+    ]);
+    assertParse("parenthesesArgumentList", "a, ...b, c", [
+      [markers.traverse, [markers.reference, "a"]],
+      [markers.spread, [markers.traverse, [markers.reference, "b"]]],
+      [markers.traverse, [markers.reference, "c"]],
+    ]);
+  });
+
   test("pathKeys", () => {
     assertParse(
       "pathKeys",
@@ -1451,7 +1487,7 @@ Body`,
 
   test("spreadElement", () => {
     assertParse("spreadElement", "...a", [
-      ops.spread,
+      markers.spread,
       [markers.traverse, [markers.reference, "a"]],
     ]);
   });

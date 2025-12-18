@@ -5,6 +5,7 @@ import * as compile from "../../src/compiler/compile.js";
 import { assertCodeEqual } from "./codeHelpers.js";
 
 const globals = {
+  concat: (...args) => args.join(""),
   greet: (name) => `Hello, ${name}!`,
   name: "Alice",
 };
@@ -20,6 +21,13 @@ describe("compile", () => {
     await assertCompile("greet()", "Hello, undefined!");
     await assertCompile("greet(name)", "Hello, Alice!");
     await assertCompile("greet 'world'", "Hello, world!", { mode: "shell" });
+  });
+
+  test("function call with spread", async () => {
+    await assertCompile(
+      `concat("Hello", ...[", ", name], "!")`,
+      "Hello, Alice!"
+    );
   });
 
   test("angle bracket path", async () => {

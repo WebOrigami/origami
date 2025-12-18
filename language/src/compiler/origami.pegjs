@@ -381,16 +381,27 @@ identifierPart "JavaScript identifier continuation"
 identifierStart "JavaScript identifier start"
   = char:. &{ return char.match(/[$_\p{ID_Start}]/u) }
 
-implicitParenthesesCallExpression "function call with implicit parentheses"
-  = head:arrowFunction args:(inlineSpace+ @implicitParensthesesArguments)? {
-      return args ? makeCall(head, args, location()) : head;
+// A single argument for an implicit parens call. This differs from
+// `parenthesesArgument` in that the term can't be a pipeline.
+implicitParenthesesArgument
+  = "..." arg:shorthandFunction {
+      return annotate([markers.spread, arg], location());
+    }
+  / shorthandFunction
+
+// A separated list of arguments for an implicit parens call.
+implicitParenthesesArgumentList "list"
+  = args:implicitParenthesesArgument|1.., separator| separator? {
+      return annotate(args, location());
     }
     
-// A separated list of values for an implicit parens call. This differs from
-// `list` in that the value term can't be a pipeline.
-implicitParensthesesArguments
-  = shellMode values:shorthandFunction|1.., separator| separator? {
-      return annotate(values, location());
+// A separated list of values for an implicit parens call. 
+implicitParenthesesArguments
+  = shellMode inlineSpace+ @implicitParenthesesArgumentList
+
+implicitParenthesesCallExpression "function call with implicit parentheses"
+  = head:arrowFunction args:implicitParenthesesArguments? {
+      return args ? makeCall(head, args, location()) : head;
     }
 
 inlineSpace
@@ -427,12 +438,6 @@ keyCharStart
   / "."
   / "@"
   / "~"
-
-// A separated list of values
-list "list"
-  = values:pipelineExpression|1.., separator| separator? {
-      return annotate(values, location());
-    }
 
 logicalAndExpression
   = head:bitwiseOrExpression tail:(__ "&&" __ @bitwiseOrExpression)* {
@@ -597,9 +602,22 @@ parameterSingleton
       return annotate([param], location());
     }
 
+// A single argument inside parentheses
+parenthesesArgument
+  = "..." arg:pipelineExpression {
+      return annotate([markers.spread, arg], location());
+    }
+  / pipelineExpression
+
+// A separated list of arguments inside parentheses
+parenthesesArgumentList "list"
+  = args:parenthesesArgument|1.., separator| separator? {
+      return annotate(args, location());
+    }
+
 // Function arguments in parentheses
 parenthesesArguments "function arguments in parentheses"
-  = __ "(" __ list:list? __ expectClosingParenthesis {
+  = __ "(" __ list:parenthesesArgumentList? __ expectClosingParenthesis {
       return annotate(list ?? [undefined], location());
     }
 
@@ -770,7 +788,7 @@ slashFollows
 
 spreadElement
   = ellipsis __ value:expectPipelineExpression {
-      return annotate([ops.spread, value], location());
+      return annotate([markers.spread, value], location());
     }
 
 stringLiteral "string"
