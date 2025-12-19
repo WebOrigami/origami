@@ -173,7 +173,7 @@ async function fetchWrapper(resource, options) {
  *
  * @this {AsyncMap|null|undefined}
  */
-async function importWrapper(modulePath) {
+async function importWrapper(modulePath, options = {}) {
   // Walk up parent tree looking for a FileTree or other object with a `path`
   /** @type {any} */
   let current = this;
@@ -186,7 +186,7 @@ async function importWrapper(modulePath) {
     );
   }
   const filePath = path.resolve(current.path, modulePath);
-  return import(filePath);
+  return import(filePath, options);
 }
 importWrapper.containerAsTarget = true;
 
