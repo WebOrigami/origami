@@ -52,6 +52,14 @@ describe("expressionObject", () => {
     assert.equal(object[symbols.parent], context);
   });
 
+  test.only("can compute a property key", async () => {
+    const entries = [[[ops.concat, "data", ".json"], 1]];
+    const context = new SyncMap();
+    const object = await expressionObject(entries, { object: context });
+    assert.equal(await object["data.json"], 1);
+    assert.deepEqual(object[symbols.keys](), ["data.json"]);
+  });
+
   test("returned object values can be unpacked", async () => {
     const entries = [["data.json", `{ "a": 1 }`]];
     const context = new SyncMap();

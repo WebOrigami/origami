@@ -35,11 +35,21 @@ export default async function expressionObject(entries, state = {}) {
   }
   setParent(object, parent);
 
+  // Get the keys, which might included computed keys
+  const keys = await Promise.all(
+    entries.map(async ([key]) =>
+      key instanceof Array ? await evaluate(key, state) : key
+    )
+  );
+
   let tree;
   const eagerProperties = [];
   const propertyIsEnumerable = {};
   let hasLazyProperties = false;
-  for (let [key, value] of entries) {
+  for (let i = 0; i < entries.length; i++) {
+    let key = keys[i];
+    let value = entries[i][1];
+
     // Determine if we need to define a getter or a regular property. If the key
     // has an extension, we need to define a getter. If the value is code (an
     // array), we need to define a getter -- but if that code takes the form
@@ -107,7 +117,8 @@ export default async function expressionObject(entries, state = {}) {
   Object.defineProperty(object, symbols.keys, {
     configurable: true,
     enumerable: false,
-    value: () => keys(object, eagerProperties, propertyIsEnumerable, entries),
+    value: () =>
+      objectKeys(object, keys, eagerProperties, propertyIsEnumerable, entries),
     writable: true,
   });
 
@@ -139,6 +150,11 @@ export default async function expressionObject(entries, state = {}) {
 
 export function entryKey(entry, object = null, eagerProperties = []) {
   let [key, value] = entry;
+
+  if (typeof key !== "string") {
+    // Computed property key
+    return null;
+  }
 
   if (key[0] === "(" && key[key.length - 1] === ")") {
     // Non-enumerable property, remove parentheses. This doesn't come up in the
@@ -182,8 +198,16 @@ export function entryKey(entry, object = null, eagerProperties = []) {
   return key;
 }
 
-function keys(object, eagerProperties, propertyIsEnumerable, entries) {
-  return entries
-    .filter(([key]) => propertyIsEnumerable[key])
-    .map((entry) => entryKey(entry, object, eagerProperties));
+function objectKeys(
+  object,
+  keys,
+  eagerProperties,
+  propertyIsEnumerable,
+  entries
+) {
+  return keys
+    .filter((key) => propertyIsEnumerable[key])
+    .map(
+      (key, index) => entryKey(entries[index], object, eagerProperties) ?? key
+    );
 }

@@ -564,7 +564,8 @@ objectShorthandProperty "object identifier"
     }
 
 objectPublicKey
-  = key:key slash:"/"? {
+  = "[" __ @pipelineExpression __ expectClosingBracket
+  / key:key slash:"/"? {
       return text();
     }
   / string:stringLiteral {

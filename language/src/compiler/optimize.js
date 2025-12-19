@@ -62,7 +62,10 @@ export default function optimize(code, options = {}) {
 
     case ops.object:
       const entries = args;
-      const propertyNames = entries.map((entry) => entryKey(entry));
+      // Filter out computed property keys when determining local variables
+      const propertyNames = entries
+        .map((entry) => entryKey(entry))
+        .filter((key) => key !== null);
       locals.push({
         type: REFERENCE_INHERITED,
         names: propertyNames,
@@ -79,16 +82,18 @@ export default function optimize(code, options = {}) {
       } else if (op === ops.object && index > 0) {
         const [key, value] = child;
         const adjustedLocals = avoidLocalRecursion(locals, key);
-        return annotate(
-          [
-            key,
-            optimize(/** @type {AnnotatedCode} */ (value), {
-              ...options,
-              locals: adjustedLocals,
-            }),
-          ],
-          child.location
-        );
+        const optimizedKey =
+          typeof key === "string"
+            ? key
+            : optimize(/** @type {AnnotatedCode} */ (key), {
+                ...options,
+                locals: adjustedLocals,
+              });
+        const optimizedValue = optimize(/** @type {AnnotatedCode} */ (value), {
+          ...options,
+          locals: adjustedLocals,
+        });
+        return annotate([optimizedKey, optimizedValue], child.location);
       } else if (Array.isArray(child) && "location" in child) {
         // Review: Aside from ops.object (above), what non-instruction arrays
         // does this descend into?

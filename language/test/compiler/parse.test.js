@@ -1107,6 +1107,16 @@ Body`,
         ["b", [ops.literal, 2]],
       ]);
     });
+
+    test("computed property keys", () => {
+      assertParse("objectLiteral", "{ [key]: value }", [
+        ops.object,
+        [
+          [markers.traverse, [markers.reference, "key"]],
+          [markers.traverse, [markers.reference, "value"]],
+        ],
+      ]);
+    });
   });
 
   describe("objectEntry", () => {

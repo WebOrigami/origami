@@ -51,6 +51,12 @@ describe("compile", () => {
     );
   });
 
+  test("object with computed property key", async () => {
+    await assertCompile("{ [name] = greet(name) }", {
+      Alice: "Hello, Alice!",
+    });
+  });
+
   test("merge", async () => {
     {
       const globals = {
