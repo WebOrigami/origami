@@ -618,7 +618,7 @@ parenthesesArgumentList "list"
 
 // Function arguments in parentheses
 parenthesesArguments "function arguments in parentheses"
-  = __ "(" __ list:parenthesesArgumentList? __ expectClosingParenthesis {
+  = inlineSpace* "(" __ list:parenthesesArgumentList? __ expectClosingParenthesis {
       return annotate(list ?? [undefined], location());
     }
 

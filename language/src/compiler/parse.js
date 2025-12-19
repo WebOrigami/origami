@@ -4885,7 +4885,12 @@ function peg$parse(input, options) {
 
     peg$silentFails++;
     s0 = peg$currPos;
-    s1 = peg$parse__();
+    s1 = [];
+    s2 = peg$parseinlineSpace();
+    while (s2 !== peg$FAILED) {
+      s1.push(s2);
+      s2 = peg$parseinlineSpace();
+    }
     if (input.charCodeAt(peg$currPos) === 40) {
       s2 = peg$c9;
       peg$currPos++;
