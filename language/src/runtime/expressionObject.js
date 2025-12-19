@@ -36,7 +36,7 @@ export default async function expressionObject(entries, state = {}) {
   setParent(object, parent);
 
   // Get the keys, which might included computed keys
-  const keys = await Promise.all(
+  const computedKeys = await Promise.all(
     entries.map(async ([key]) =>
       key instanceof Array ? await evaluate(key, state) : key
     )
@@ -47,7 +47,7 @@ export default async function expressionObject(entries, state = {}) {
   const propertyIsEnumerable = {};
   let hasLazyProperties = false;
   for (let i = 0; i < entries.length; i++) {
-    let key = keys[i];
+    let key = computedKeys[i];
     let value = entries[i][1];
 
     // Determine if we need to define a getter or a regular property. If the key
@@ -118,7 +118,13 @@ export default async function expressionObject(entries, state = {}) {
     configurable: true,
     enumerable: false,
     value: () =>
-      objectKeys(object, keys, eagerProperties, propertyIsEnumerable, entries),
+      objectKeys(
+        object,
+        computedKeys,
+        eagerProperties,
+        propertyIsEnumerable,
+        entries
+      ),
     writable: true,
   });
 
@@ -200,14 +206,20 @@ export function entryKey(entry, object = null, eagerProperties = []) {
 
 function objectKeys(
   object,
-  keys,
+  computedKeys,
   eagerProperties,
   propertyIsEnumerable,
   entries
 ) {
-  return keys
-    .filter((key) => propertyIsEnumerable[key])
-    .map(
-      (key, index) => entryKey(entries[index], object, eagerProperties) ?? key
-    );
+  // If the key is a simple string key and it's enumerable, get the friendly
+  // version of it; if it's a computed key used that.
+  const keys = entries.map((entry, index) =>
+    typeof entry[0] !== "string"
+      ? computedKeys[index]
+      : propertyIsEnumerable[entry[0]]
+      ? entryKey(entry, object, eagerProperties)
+      : null
+  );
+  // Return the enumerable keys
+  return keys.filter((key) => key !== null);
 }

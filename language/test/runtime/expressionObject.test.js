@@ -52,7 +52,7 @@ describe("expressionObject", () => {
     assert.equal(object[symbols.parent], context);
   });
 
-  test.only("can compute a property key", async () => {
+  test("can compute a property key", async () => {
     const entries = [[[ops.concat, "data", ".json"], 1]];
     const context = new SyncMap();
     const object = await expressionObject(entries, { object: context });
@@ -87,6 +87,8 @@ describe("expressionObject", () => {
       ["message", "Hello"],
       // Immediate maplike value, should have a slash
       ["object", [ops.object, ["b", [ops.literal, 2]]]],
+      // Computed key
+      [[ops.concat, [ops.array, "data", ".json"]], 1],
     ];
     const object = await expressionObject(entries);
     assert.deepEqual(object[symbols.keys](), [
@@ -94,6 +96,7 @@ describe("expressionObject", () => {
       "hasSlash/",
       "message",
       "object/",
+      "data.json",
     ]);
   });
 
