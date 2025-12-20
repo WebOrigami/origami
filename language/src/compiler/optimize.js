@@ -49,7 +49,7 @@ export default function optimize(code, options = {}) {
     case ops.lambda:
       const parameters = args[0];
       if (parameters.length > 0) {
-        const paramNames = parameters.map((param) => param[1]);
+        const paramNames = parameters.map((param) => param[0]);
         locals.push({
           type: REFERENCE_PARAM,
           names: paramNames,

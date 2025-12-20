@@ -236,10 +236,7 @@ export function makeDeferredArguments(args) {
     if (arg instanceof Array && arg[0] === ops.literal) {
       return arg;
     }
-    const lambdaParameters = annotate([], arg.location);
-    /** @type {AnnotatedCodeItem} */
-    const fn = [ops.lambda, lambdaParameters, arg];
-    return annotate(fn, arg.location);
+    return makeLambda([], arg, arg.location);
   });
 }
 
@@ -260,13 +257,26 @@ export function makeDocument(front, body, location) {
 /**
  * Create a lambda function with the given parameters.
  *
- * @param {AnnotatedCode[]} parameters
+ * @param {AnnotatedCode[]} parameterNames
  * @param {AnnotatedCode} body
  * @param {CodeLocation} location
  */
-export function makeLambda(parameters, body, location) {
-  const paramsArray = annotate(parameters ?? [], location);
-  return annotate([ops.lambda, paramsArray, body], location);
+export function makeLambda(parameterNames, body, location) {
+  parameterNames ??= [];
+  const entries = parameterNames.map((literal, index) =>
+    annotate(
+      [
+        literal[1],
+        annotate(
+          [annotate([ops.params, 0], literal.location), index],
+          literal.location
+        ),
+      ],
+      literal.location
+    )
+  );
+  const annotatedEntries = annotate(entries, location);
+  return annotate([ops.lambda, annotatedEntries, body], location);
 }
 
 /**
@@ -425,13 +435,12 @@ function makeOptionalCall(target, chain, location) {
     location
   );
 
-  // Create the call to be made if the target is not null/undefined
-  const call = makeCallChain(optionalTraverse, chain, location);
+  // Create the call body to be made if the target is not null/undefined
+  const body = makeCallChain(optionalTraverse, chain, location);
 
   // Create a function that takes __optional__ and makes the call
   const optionalLiteral = annotate([ops.literal, optionalKey], location);
-  const lambdaParameters = annotate([optionalLiteral], location);
-  const lambda = annotate([ops.lambda, lambdaParameters, call], location);
+  const lambda = makeLambda([optionalLiteral], body, location);
 
   // Create the call to ops.optional
   const optionalCall = annotate([ops.optional, target, lambda], location);

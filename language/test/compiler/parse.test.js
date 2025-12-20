@@ -125,15 +125,15 @@ describe("Origami parser", () => {
     ]);
     assertParse("arrowFunction", "x => y", [
       ops.lambda,
-      [[ops.literal, "x"]],
+      [["x", [[ops.params, 0], 0]]],
       [markers.traverse, [markers.reference, "y"]],
     ]);
     assertParse("arrowFunction", "(a, b, c) ⇒ fn(a, b, c)", [
       ops.lambda,
       [
-        [ops.literal, "a"],
-        [ops.literal, "b"],
-        [ops.literal, "c"],
+        ["a", [[ops.params, 0], 0]],
+        ["b", [[ops.params, 0], 1]],
+        ["c", [[ops.params, 0], 2]],
       ],
       [
         [markers.traverse, [markers.reference, "fn"]],
@@ -144,10 +144,10 @@ describe("Origami parser", () => {
     ]);
     assertParse("arrowFunction", "a => b => fn(a, b)", [
       ops.lambda,
-      [[ops.literal, "a"]],
+      [["a", [[ops.params, 0], 0]]],
       [
         ops.lambda,
-        [[ops.literal, "b"]],
+        [["b", [[ops.params, 0], 0]]],
         [
           [markers.traverse, [markers.reference, "fn"]],
           [markers.traverse, [markers.reference, "a"]],
@@ -157,7 +157,7 @@ describe("Origami parser", () => {
     ]);
     assertParse("arrowFunction", "async (x) => x", [
       ops.lambda,
-      [[ops.literal, "x"]],
+      [["x", [[ops.params, 0], 0]]],
       [markers.traverse, [markers.reference, "x"]],
     ]);
   });
@@ -222,7 +222,7 @@ describe("Origami parser", () => {
         [markers.traverse, [markers.reference, "a"]],
         [
           ops.lambda,
-          [[ops.literal, "__optional__"]],
+          [["__optional__", [[ops.params, 0], 0]]],
           [
             ops.property,
             [
@@ -239,7 +239,7 @@ describe("Origami parser", () => {
         [markers.traverse, [markers.reference, "a"]],
         [
           ops.lambda,
-          [[ops.literal, "__optional__"]],
+          [["__optional__", [[ops.params, 0], 0]]],
           [
             ops.optional,
             [
@@ -249,7 +249,7 @@ describe("Origami parser", () => {
             ],
             [
               ops.lambda,
-              [[ops.literal, "__optional__"]],
+              [["__optional__", [[ops.params, 0], 0]]],
               [
                 ops.property,
                 [markers.traverse, [markers.reference, "__optional__"]],
@@ -267,7 +267,7 @@ describe("Origami parser", () => {
         [markers.traverse, [markers.reference, "a"]],
         [
           ops.lambda,
-          [[ops.literal, "__optional__"]],
+          [["__optional__", [[ops.params, 0], 0]]],
           [
             ops.property,
             [markers.traverse, [markers.reference, "__optional__"]],
@@ -283,7 +283,7 @@ describe("Origami parser", () => {
         [markers.traverse, [markers.reference, "fn"]],
         [
           ops.lambda,
-          [[ops.literal, "__optional__"]],
+          [["__optional__", [[ops.params, 0], 0]]],
           [
             [markers.traverse, [markers.reference, "__optional__"]],
             [ops.literal, 0],
@@ -657,7 +657,7 @@ Body`,
         [markers.traverse, [markers.reference, "fn"]],
         [
           ops.lambda,
-          [[ops.literal, "_"]],
+          [["_", [[ops.params, 0], 0]]],
           [ops.templateText, [ops.literal, ["x"]]],
         ],
       ]);
@@ -676,7 +676,7 @@ Body`,
         [markers.traverse, [markers.reference, "map"]],
         [
           ops.lambda,
-          [[ops.literal, "_"]],
+          [["_", [[ops.params, 0], 0]]],
           [
             ops.templateText,
             [ops.literal, ["<li>", "</li>"]],
@@ -696,7 +696,7 @@ Body`,
       ]);
       assertParse("expression", "=tag`Hello, ${_}!`", [
         ops.lambda,
-        [[ops.literal, "_"]],
+        [["_", [[ops.params, 0], 0]]],
         [
           [markers.traverse, [markers.reference, "tag"]],
           [ops.literal, ["Hello, ", "!"]],
@@ -706,8 +706,8 @@ Body`,
       assertParse("expression", "(post, slug) => fn.js(post, slug)", [
         ops.lambda,
         [
-          [ops.literal, "post"],
-          [ops.literal, "slug"],
+          ["post", [[ops.params, 0], 0]],
+          ["slug", [[ops.params, 0], 1]],
         ],
         [
           [markers.traverse, [markers.reference, "fn.js"]],
@@ -777,7 +777,7 @@ Body`,
 `,
       [
         ops.lambda,
-        [[ops.literal, "name"]],
+        [["name", [[ops.params, 0], 0]]],
         [[markers.traverse, [markers.reference, "_template"]], undefined],
       ],
       "program",
@@ -1166,7 +1166,7 @@ Body`,
         "a",
         [
           ops.lambda,
-          [[ops.literal, "a"]],
+          [["a", [[ops.params, 0], 0]]],
           [markers.traverse, [markers.reference, "a"]],
         ],
       ]);
@@ -1463,12 +1463,12 @@ Body`,
   test("shorthandFunction", () => {
     assertParse("shorthandFunction", "=message", [
       ops.lambda,
-      [[ops.literal, "_"]],
+      [["_", [[ops.params, 0], 0]]],
       [markers.traverse, [markers.reference, "message"]],
     ]);
     assertParse("shorthandFunction", "=`Hello, ${name}.`", [
       ops.lambda,
-      [[ops.literal, "_"]],
+      [["_", [[ops.params, 0], 0]]],
       [
         ops.templateText,
         [ops.literal, ["Hello, ", "."]],
@@ -1477,7 +1477,7 @@ Body`,
     ]);
     assertParse("shorthandFunction", "=indent`hello`", [
       ops.lambda,
-      [[ops.literal, "_"]],
+      [["_", [[ops.params, 0], 0]]],
       [
         [markers.traverse, [markers.reference, "indent"]],
         [ops.literal, ["hello"]],
@@ -1531,7 +1531,7 @@ Body`,
   test("templateDocument with no front matter", () => {
     assertParse("templateDocument", "Hello, world!", [
       ops.lambda,
-      [[ops.literal, "_"]],
+      [["_", [[ops.params, 0], 0]]],
       [ops.templateIndent, [ops.literal, ["Hello, world!"]]],
     ]);
   });
@@ -1578,32 +1578,6 @@ Body text`,
     );
   });
 
-  test.skip("templateDocument with Origami front matter", () => {
-    assertParse(
-      "templateDocument",
-      `---
-{
-  title: "Title"
-  _body: _template()
-}
----
-<h1>\${ title }</h1>
-`,
-      [
-        ops.object,
-        ["title", [ops.literal, "Title"]],
-        [
-          "_body",
-          [
-            ops.templateIndent,
-            [ops.literal, ["<h1>", "</h1>\n"]],
-            [markers.traverse, [markers.reference, "title"]],
-          ],
-        ],
-      ]
-    );
-  });
-
   test("templateLiteral", () => {
     assertParse("templateLiteral", "`Hello, world.`", [
       ops.templateText,
@@ -1631,7 +1605,7 @@ Body text`,
         [markers.traverse, [markers.reference, "people"]],
         [
           ops.lambda,
-          [[ops.literal, "_"]],
+          [["_", [[ops.params, 0], 0]]],
           [
             ops.templateText,
             [ops.literal, ["", ""]],

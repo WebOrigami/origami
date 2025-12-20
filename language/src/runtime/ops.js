@@ -228,12 +228,11 @@ export function lambda(parameters, code, state = {}) {
       // No parameters
       newState = state;
     } else {
-      // Create a stack frame for the parameters
-      const frame = {};
-      for (const parameter of parameters) {
-        const parameterName = parameter[1];
-        frame[parameterName] = args.shift();
-      }
+      // Create a stack frame for the parameters. Add the arguments as an
+      // interim stack frame.
+      const interimStack = stack.slice();
+      interimStack.push(args);
+      const frame = await expressionObject(parameters, { stack: interimStack });
       // Record which code this stack frame is associated with
       Object.defineProperty(frame, codeSymbol, {
         value: code,

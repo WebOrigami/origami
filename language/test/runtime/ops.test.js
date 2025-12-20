@@ -200,7 +200,7 @@ describe("ops", () => {
 
     const code = createCode([
       ops.lambda,
-      ["_"],
+      [["_", [[ops.params, 0], 0]]],
       [[ops.scope, container], "message"],
     ]);
 
@@ -213,8 +213,8 @@ describe("ops", () => {
     const code = createCode([
       ops.lambda,
       [
-        [ops.literal, "a"],
-        [ops.literal, "b"],
+        ["a", [[ops.params, 0], 0]],
+        ["b", [[ops.params, 0], 1]],
       ],
       [ops.concat, [[ops.params, 0], "b"], [[ops.params, 0], "a"]],
     ]);
