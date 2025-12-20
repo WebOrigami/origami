@@ -189,9 +189,6 @@ conditionalExpression
         deferred[1]
       ], location());
     }
-  
-digits
-  = @[0-9]+
 
 doubleArrow = "⇒" / "=>"
 
@@ -303,11 +300,6 @@ exponentiationExpression
 expression
   = __ @commaExpression __
 
-floatLiteral "floating-point number"
-  = digits? "." digits {
-      return annotate([ops.literal, parseFloat(text())], location());
-    }
-
 // Marker for the beginning or end of front matter
 frontDelimiter
   = "---\n"
@@ -347,8 +339,8 @@ guillemetStringChar
 // This is used as a special case at the head of a path, where we want to
 // interpret a colon as part of a text identifier.
 host "HTTP/HTTPS host"
-  = name:hostname port:(":" @integerLiteral)? slashFollows:slashFollows? {
-      const portText = port ? `:${port[1]}` : "";
+  = name:hostname port:port? slashFollows:slashFollows? {
+      const portText = port ?? "";
       const slashText = slashFollows ? "/" : "";
       const host = name + portText + slashText;
       return annotate([ops.literal, host], location());
@@ -406,11 +398,6 @@ implicitParenthesesCallExpression "function call with implicit parentheses"
 
 inlineSpace
   = [ \t]
-
-integerLiteral "integer"
-  = digits {
-      return annotate([ops.literal, parseInt(text())], location());
-    }
 
 // A key in a path or an expression that looks like one
 key
@@ -494,10 +481,52 @@ newLine
   / "\r\n"
   / "\r"
 
+number
+  = numberBigInt
+  / numberStandard {
+      const stripped = text().replace("_", ""); // remove underscores
+      return Number(stripped);
+    }
+
+numberBigInt
+  = digits:numberDecimalDigits "n"  {
+      const stripped = digits.replace("_", ""); // remove underscores
+      return BigInt(stripped);
+    }
+
+numberBinary
+  = "0" [bB] digits:[01_]+
+
+numberDecimal
+  = numberDecimalDigits? "." numberDecimalDigits numberExponent?
+  / numberDecimalDigits numberExponent?
+
+numberDecimalDigits
+  = [0-9]([_]*[0-9])* {
+    return text();
+  }
+
+numberExponent
+  = [eE] [+\-]? digits:numberDecimalDigits
+
+numberHex
+  = "0" [xX] digits:[0-9a-fA-F_]+
+
 // A number
-numericLiteral "number"
-  = floatLiteral
-  / integerLiteral
+numberLiteral "number"
+  = number:number {
+      return annotate([ops.literal, number], location());
+    }
+
+numberOctal
+  = "0" [oO] digits:[0-7]+
+
+// Any number that can be parsed with Number(); i.e., not a bigint
+numberStandard
+  = numberBinary
+  / numberOctal
+  / numberHex
+  / numberDecimal
 
 nullishCoalescingExpression
   = head:logicalAndExpression tail:(__ "??" __ @logicalAndExpression)* {
@@ -660,6 +689,11 @@ pipelineExpression
       );
     }
 
+port
+  = ":" [0-9]+ {
+    return text();
+  }
+
 primary
   // The following start with distinct characters
   = stringLiteral
@@ -671,7 +705,7 @@ primary
   / templateLiteral
 
   // These are more ambiguous
-  / @numericLiteral !keyChar // numbers + chars would be a key
+  / @numberLiteral !keyChar // numbers + chars would be a key
   / pathLiteral
 
 // Top-level Origami progam with possible shebang directive (which is ignored)

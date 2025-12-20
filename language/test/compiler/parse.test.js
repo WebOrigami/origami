@@ -979,10 +979,24 @@ Body`,
     ]);
   });
 
-  test("numericLiteral", () => {
-    assertParse("numericLiteral", "123", [ops.literal, 123]);
-    assertParse("numericLiteral", ".5", [ops.literal, 0.5]);
-    assertParse("numericLiteral", "123.45", [ops.literal, 123.45]);
+  test("numberLiteral", () => {
+    assertParse("numberLiteral", "123", [ops.literal, 123]);
+  });
+
+  test("number", () => {
+    assertParse("number", "123", 123, undefined, false);
+    assertParse("number", ".5", 0.5, undefined, false);
+    assertParse("number", "123.45", 123.45, undefined, false);
+    assertParse("number", "123_456", 123456, undefined, false);
+    assertParse("number", "0e-5", 0e-5, undefined, false);
+    assertParse("number", "175e-2", 175e-2, undefined, false);
+    assertParse("number", "1e-3", 1e-3, undefined, false);
+    assertParse("number", "123n", 123n, undefined, false);
+    assertParse("number", "0b1010", 0b1010, undefined, false);
+    assertParse("number", "0b100_100", 0b100100, undefined, false);
+    assertParse("number", "0o755", 0o755, undefined, false);
+    assertParse("number", "0x1A3F", 0x1a3f, undefined, false);
+    assertParse("number", "0x1a_3f", 0x1a3f, undefined, false);
   });
 
   describe("objectLiteral", () => {
