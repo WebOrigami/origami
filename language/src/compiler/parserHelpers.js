@@ -258,6 +258,18 @@ export function makeDocument(front, body, location) {
 }
 
 /**
+ * Create a lambda function with the given parameters.
+ *
+ * @param {AnnotatedCode[]} parameters
+ * @param {AnnotatedCode} body
+ * @param {CodeLocation} location
+ */
+export function makeLambda(parameters, body, location) {
+  const paramsArray = annotate(parameters ?? [], location);
+  return annotate([ops.lambda, paramsArray, body], location);
+}
+
+/**
  * From the given spreads within an object spread, return the merge.
  *
  * Example:

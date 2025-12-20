@@ -21,6 +21,7 @@ import {
   makeCallChain,
   makeDeferredArguments,
   makeDocument,
+  makeLambda,
   makeObject,
   makePath,
   makePipeline,
@@ -107,12 +108,11 @@ arrayEntry
     }
 
 arrowFunction
-  = ("async" __)? "(" __ parameters:parameterList? __ ")" __ doubleArrow __ pipeline:expectPipelineExpression {
-      const lambdaParameters = parameters ?? annotate([], location());
-      return annotate([ops.lambda, lambdaParameters, pipeline], location());
+  = ("async" __)? "(" __ parameters:parameterList? __ ")" __ doubleArrow __ body:expectPipelineExpression {
+      return makeLambda(parameters, body, location());
     }
-  / parameter:parameterSingleton __ doubleArrow __ pipeline:expectPipelineExpression {
-      return annotate([ops.lambda, parameter, pipeline], location());
+  / parameters:parameterSingleton __ doubleArrow __ body:expectPipelineExpression {
+      return makeLambda(parameters, body, location());
     }
   / conditionalExpression
 
@@ -741,15 +741,13 @@ shiftOperator
 // A shorthand lambda expression: `=foo(_)`
 shorthandFunction "lambda function"
   // Avoid a following equal sign (for an equality)
-  = (shellMode / programMode) "=" !"=" __ definition:implicitParenthesesCallExpression {
+  = (shellMode / programMode) "=" !"=" __ body:implicitParenthesesCallExpression {
       if (options.mode === "program") {
         throw new Error("Parse error: shorthand function syntax isn't allowed in Origami programs. Use arrow syntax instead.");
       }
-      const lambdaParameters = annotate(
-        [annotate([ops.literal, "_"], location())],
-        location()
-      );
-      return annotate([ops.lambda, lambdaParameters, definition], location());
+      const underscore = annotate([ops.literal, "_"], location());
+      const parameters = annotate([underscore], location());
+      return makeLambda(parameters, body, location());
     }
   / implicitParenthesesCallExpression
 
@@ -824,11 +822,9 @@ templateDocument "template document"
       if (options.front) {
         return makeDocument(options.front, body, location());
       }
-      const lambdaParameters = annotate(
-        [annotate([ops.literal, "_"], location())],
-        location()
-      );
-      return annotate([ops.lambda, lambdaParameters, body], location());
+      const underscore = annotate([ops.literal, "_"], location());
+      const parameters = annotate([underscore], location());
+      return makeLambda(parameters, body, location());
     }
 
 // A backtick-quoted template literal

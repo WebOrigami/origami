@@ -26,6 +26,7 @@ import {
   makeCallChain,
   makeDeferredArguments,
   makeDocument,
+  makeLambda,
   makeObject,
   makePath,
   makePipeline,
@@ -581,12 +582,11 @@ function peg$parse(input, options) {
   function peg$f8() {
     return annotate([ops.literal, undefined], location());
   }
-  function peg$f9(parameters, pipeline) {
-    const lambdaParameters = parameters ?? annotate([], location());
-    return annotate([ops.lambda, lambdaParameters, pipeline], location());
+  function peg$f9(parameters, body) {
+    return makeLambda(parameters, body, location());
   }
-  function peg$f10(parameter, pipeline) {
-    return annotate([ops.lambda, parameter, pipeline], location());
+  function peg$f10(parameters, body) {
+    return makeLambda(parameters, body, location());
   }
   function peg$f11(head, tail) {
     return tail.reduce(makeBinaryOperation, head);
@@ -856,15 +856,13 @@ function peg$parse(input, options) {
   function peg$f94(head, tail) {
     return tail.reduce(makeBinaryOperation, head);
   }
-  function peg$f95(definition) {
+  function peg$f95(body) {
     if (options.mode === "program") {
       throw new Error("Parse error: shorthand function syntax isn't allowed in Origami programs. Use arrow syntax instead.");
     }
-    const lambdaParameters = annotate(
-      [annotate([ops.literal, "_"], location())],
-      location()
-    );
-    return annotate([ops.lambda, lambdaParameters, definition], location());
+    const underscore = annotate([ops.literal, "_"], location());
+    const parameters = annotate([underscore], location());
+    return makeLambda(parameters, body, location());
   }
   function peg$f96() {    return null;  }
   function peg$f97(chars) {
@@ -898,11 +896,9 @@ function peg$parse(input, options) {
     if (options.front) {
       return makeDocument(options.front, body, location());
     }
-    const lambdaParameters = annotate(
-      [annotate([ops.literal, "_"], location())],
-      location()
-    );
-    return annotate([ops.lambda, lambdaParameters, body], location());
+    const underscore = annotate([ops.literal, "_"], location());
+    const parameters = annotate([underscore], location());
+    return makeLambda(parameters, body, location());
   }
   function peg$f107(head, tail) {
     return makeTemplate(ops.templateText, head, tail, location());

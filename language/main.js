@@ -12,6 +12,7 @@ export { formatError, highlightError } from "./src/runtime/errors.js";
 export { default as evaluate } from "./src/runtime/evaluate.js";
 export { default as EventTargetMixin } from "./src/runtime/EventTargetMixin.js";
 export * as expressionFunction from "./src/runtime/expressionFunction.js";
+export { default as expressionObject } from "./src/runtime/expressionObject.js";
 export * from "./src/runtime/handleExtension.js";
 export { default as handleExtension } from "./src/runtime/handleExtension.js";
 export { default as HandleExtensionsTransform } from "./src/runtime/HandleExtensionsTransform.js";
