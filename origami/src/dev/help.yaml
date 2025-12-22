@@ -5,8 +5,8 @@ Dev:
       args: (tree)
       description: Identify broken internal links and references
     breakpoint:
-      args: (a)
-      description: Break into the JavaScript debugger, then return a
+      args: (arg)
+      description: Break into the JavaScript debugger, then return arg
     changes:
       args: (old, new)
       description: Return a tree of changes
