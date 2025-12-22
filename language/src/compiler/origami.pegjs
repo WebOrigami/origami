@@ -617,18 +617,49 @@ optional
 
 // Name of a function parameter
 parameter
-  = key:key {
-      return annotate([ops.literal, key], location());
-    }
+  = paramBindingPattern
+  / paramName
 
+paramBindingPattern
+  = paramObject
+
+// List of lambda parameters inside the parentheses: `a, b` in `(a, b) => a + b`
 parameterList
   = list:parameter|1.., separator| separator? {
       return annotate(list, location());
     }
 
-// A list with a single identifier
+// A single name in a parameter list: `a` in `a, { b }`
+paramName
+  = key:key {
+      return annotate([markers.paramName, key], location());
+    }
+
+// Object binding pattern in function parameter: `{ a, b: c }`
+paramObject
+  = "{" __ entries:paramObjectEntries? __ "}" {
+      return annotate([markers.paramObject, ...(entries ?? [])], location());
+    }
+
+// An entry in a parameter object: `a: b` in `{ a: b }`
+paramObjectEntry
+  = key:objectPublicKey __ ":" __ param:parameter {
+      return annotate([key, param], location());
+    }
+  / param:paramName {
+      return annotate([text(), param], location());
+    }
+
+// A separated list of parameter object entries inside the curly braces
+paramObjectEntries
+  = entries:paramObjectEntry|1.., separator| separator? {
+      return annotate(entries, location());
+    }
+
+// A lambda parameter list with a single identifier with no parentheses:
+// `x` in `x => x + 1`
 parameterSingleton
-  = param:parameter {
+  = param:paramName {
       return annotate([param], location());
     }
 
@@ -779,7 +810,7 @@ shorthandFunction "lambda function"
       if (options.mode === "program") {
         throw new Error("Parse error: shorthand function syntax isn't allowed in Origami programs. Use arrow syntax instead.");
       }
-      const underscore = annotate([ops.literal, "_"], location());
+      const underscore = annotate([markers.paramName, "_"], location());
       const parameters = annotate([underscore], location());
       return makeLambda(parameters, body, location());
     }
@@ -856,7 +887,7 @@ templateDocument "template document"
       if (options.front) {
         return makeDocument(options.front, body, location());
       }
-      const underscore = annotate([ops.literal, "_"], location());
+      const underscore = annotate([markers.paramName, "_"], location());
       const parameters = annotate([underscore], location());
       return makeLambda(parameters, body, location());
     }

@@ -100,6 +100,20 @@ describe("compile", () => {
     assert.deepEqual(await object.a.b, "Alice");
   });
 
+  test("lambda", async () => {
+    const fn = compile.expression("(name) => greet(name)", { globals });
+    const lambda = await fn();
+    const result = await lambda("Bob");
+    assert.equal(result, "Hello, Bob!");
+  });
+
+  test("lambda with object destructuring", async () => {
+    const fn = compile.expression("({ name }) => greet(name)", { globals });
+    const lambda = await fn();
+    const result = await lambda({ name: "Bob" });
+    assert.equal(result, "Hello, Bob!");
+  });
+
   test("templateDocument", async () => {
     const defineTemplateFn = compile.templateDocument(
       "Documents can contain ` backticks"
@@ -117,7 +131,7 @@ describe("compile", () => {
     );
   });
 
-  test.only("tagged template string array is identical across calls", async () => {
+  test("tagged template string array is identical across calls", async () => {
     let saved;
     const globals = {
       tag: (strings, ...values) => {

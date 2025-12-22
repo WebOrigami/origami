@@ -16,8 +16,12 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
 // Markers in compiled output, will get optimized away
 export const markers = {
-  global: Symbol("global"), // Global reference
   external: Symbol("external"), // External reference
+  global: Symbol("global"), // Global reference
+  paramArray: Symbol("paramArray"), // Parameter array destructuring
+  paramBinding: Symbol("paramBinding"), // Parameter object/array binding
+  paramName: Symbol("paramName"), // Parameter name
+  paramObject: Symbol("paramObject"), // Parameter object destructuring
   property: Symbol("property"), // Property access
   reference: Symbol("reference"), // Reference to local, scope, or global
   spread: Symbol("spread"), // Spread operator
@@ -257,26 +261,54 @@ export function makeDocument(front, body, location) {
 /**
  * Create a lambda function with the given parameters.
  *
- * @param {AnnotatedCode[]} parameterNames
+ * @param {AnnotatedCode[]} parameters
  * @param {AnnotatedCode} body
  * @param {CodeLocation} location
  */
-export function makeLambda(parameterNames, body, location) {
-  parameterNames ??= [];
-  const entries = parameterNames.map((literal, index) =>
-    annotate(
-      [
-        literal[1],
-        annotate(
-          [annotate([ops.params, 0], literal.location), index],
-          literal.location
-        ),
-      ],
-      literal.location
-    )
-  );
+export function makeLambda(parameters, body, location) {
+  parameters ??= [];
+
+  // Create a reference that at runtime resolves to parameters array. All
+  // parameter references will use this as their basis.
+  const reference = annotate([ops.params, 0], location);
+  const entries = makeParamArray(parameters, reference);
   const annotatedEntries = annotate(entries, location);
   return annotate([ops.lambda, annotatedEntries, body], location);
+}
+
+function makeParam(parameter, reference) {
+  switch (parameter[0]) {
+    case markers.paramArray:
+      return makeParamArray(parameter, reference);
+    case markers.paramName:
+      return makeParamName(parameter, reference);
+    case markers.paramObject:
+      return makeParamObject(parameter, reference);
+    default:
+      throw new Error(`Unknown parameter type: ${parameter[0]}`);
+  }
+}
+
+function makeParamArray(parameters, reference) {
+  const entries = parameters.map((parameter, index) => {
+    const indexReference = annotate([reference, index], parameter.location);
+    return makeParam(parameter, indexReference);
+  });
+  return entries.flat();
+}
+
+function makeParamName(parameter, reference) {
+  const paramName = parameter[1];
+  return [annotate([paramName, reference], parameter.location)];
+}
+
+function makeParamObject(parameter, reference) {
+  const entries = parameter.slice(1).map((entry) => {
+    const [key, binding] = entry;
+    const keyReference = annotate([reference, key], entry.location);
+    return makeParam(binding, keyReference);
+  });
+  return entries.flat();
 }
 
 /**
@@ -439,8 +471,8 @@ function makeOptionalCall(target, chain, location) {
   const body = makeCallChain(optionalTraverse, chain, location);
 
   // Create a function that takes __optional__ and makes the call
-  const optionalLiteral = annotate([ops.literal, optionalKey], location);
-  const lambda = makeLambda([optionalLiteral], body, location);
+  const optionalParam = annotate([markers.paramName, optionalKey], location);
+  const lambda = makeLambda([optionalParam], body, location);
 
   // Create the call to ops.optional
   const optionalCall = annotate([ops.optional, target, lambda], location);

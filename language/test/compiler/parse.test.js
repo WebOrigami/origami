@@ -117,49 +117,75 @@ describe("Origami parser", () => {
     );
   });
 
-  test("arrowFunction", () => {
-    assertParse("arrowFunction", "() => foo", [
-      ops.lambda,
-      [],
-      [markers.traverse, [markers.reference, "foo"]],
-    ]);
-    assertParse("arrowFunction", "x => y", [
-      ops.lambda,
-      [["x", [[ops.params, 0], 0]]],
-      [markers.traverse, [markers.reference, "y"]],
-    ]);
-    assertParse("arrowFunction", "(a, b, c) ⇒ fn(a, b, c)", [
-      ops.lambda,
-      [
-        ["a", [[ops.params, 0], 0]],
-        ["b", [[ops.params, 0], 1]],
-        ["c", [[ops.params, 0], 2]],
-      ],
-      [
-        [markers.traverse, [markers.reference, "fn"]],
-        [markers.traverse, [markers.reference, "a"]],
-        [markers.traverse, [markers.reference, "b"]],
-        [markers.traverse, [markers.reference, "c"]],
-      ],
-    ]);
-    assertParse("arrowFunction", "a => b => fn(a, b)", [
-      ops.lambda,
-      [["a", [[ops.params, 0], 0]]],
-      [
+  describe("arrowFunction", () => {
+    test("basic arrow functions", () => {
+      assertParse("arrowFunction", "() => foo", [
         ops.lambda,
-        [["b", [[ops.params, 0], 0]]],
+        [],
+        [markers.traverse, [markers.reference, "foo"]],
+      ]);
+      assertParse("arrowFunction", "x => y", [
+        ops.lambda,
+        [["x", [[ops.params, 0], 0]]],
+        [markers.traverse, [markers.reference, "y"]],
+      ]);
+      assertParse("arrowFunction", "(a, b, c) ⇒ fn(a, b, c)", [
+        ops.lambda,
+        [
+          ["a", [[ops.params, 0], 0]],
+          ["b", [[ops.params, 0], 1]],
+          ["c", [[ops.params, 0], 2]],
+        ],
         [
           [markers.traverse, [markers.reference, "fn"]],
           [markers.traverse, [markers.reference, "a"]],
           [markers.traverse, [markers.reference, "b"]],
+          [markers.traverse, [markers.reference, "c"]],
         ],
-      ],
-    ]);
-    assertParse("arrowFunction", "async (x) => x", [
-      ops.lambda,
-      [["x", [[ops.params, 0], 0]]],
-      [markers.traverse, [markers.reference, "x"]],
-    ]);
+      ]);
+      // `async` keyword is effectively ignored
+      assertParse("arrowFunction", "async (x) => x", [
+        ops.lambda,
+        [["x", [[ops.params, 0], 0]]],
+        [markers.traverse, [markers.reference, "x"]],
+      ]);
+    });
+
+    test("object parameter destructuring", () => {
+      assertParse("arrowFunction", "({ a, b: c }) => a + c", [
+        ops.lambda,
+        [
+          ["a", [[[ops.params, 0], 0], "a"]],
+          ["c", [[[ops.params, 0], 0], "b"]],
+        ],
+        [
+          ops.addition,
+          [markers.traverse, [markers.reference, "a"]],
+          [markers.traverse, [markers.reference, "c"]],
+        ],
+      ]);
+      assertParse("arrowFunction", "({ a: { b: { c }}}) => c", [
+        ops.lambda,
+        [["c", [[[[[ops.params, 0], 0], "a"], "b"], "c"]]],
+        [markers.traverse, [markers.reference, "c"]],
+      ]);
+    });
+
+    test("functional arrow functions", () => {
+      assertParse("arrowFunction", "a => b => fn(a, b)", [
+        ops.lambda,
+        [["a", [[ops.params, 0], 0]]],
+        [
+          ops.lambda,
+          [["b", [[ops.params, 0], 0]]],
+          [
+            [markers.traverse, [markers.reference, "fn"]],
+            [markers.traverse, [markers.reference, "a"]],
+            [markers.traverse, [markers.reference, "b"]],
+          ],
+        ],
+      ]);
+    });
   });
 
   test("bitwiseAndExpression", () => {
@@ -289,6 +315,29 @@ describe("Origami parser", () => {
             [ops.literal, 0],
           ],
         ],
+      ]);
+    });
+
+    test("paramObject", () => {
+      assertParse("paramObject", "{}", [markers.paramObject]);
+      assertParse("paramObject", "{ a, b: c }", [
+        markers.paramObject,
+        ["a", [markers.paramName, "a"]],
+        ["b", [markers.paramName, "c"]],
+      ]);
+      assertParse("paramObject", "{ a, b: { c } }", [
+        markers.paramObject,
+        ["a", [markers.paramName, "a"]],
+        ["b", [markers.paramObject, ["c", [markers.paramName, "c"]]]],
+      ]);
+    });
+
+    test("paramObjectEntry", () => {
+      assertParse("paramObjectEntry", "a", ["a", [markers.paramName, "a"]]);
+      assertParse("paramObjectEntry", "a: b", ["a", [markers.paramName, "b"]]);
+      assertParse("paramObjectEntry", "[key]: param", [
+        [markers.traverse, [markers.reference, "key"]],
+        [markers.paramName, "param"],
       ]);
     });
 
