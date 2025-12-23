@@ -102,13 +102,14 @@ arrayEntries
 arrayEntry
   = spreadElement
   / pipelineExpression
-  // JavaScript treats a missing value as `undefined`
+  // Missing value -> undefined
   / __ !"]" {
       return annotate([ops.literal, undefined], location());
     }
 
 arrowFunction
   = ("async" __)? "(" __ parameters:parameterList? __ ")" __ doubleArrow __ body:expectPipelineExpression {
+      parameters ??= annotate([], location());
       return makeLambda(parameters, body, location());
     }
   / parameters:parameterSingleton __ doubleArrow __ body:expectPipelineExpression {
@@ -620,8 +621,26 @@ parameter
   = paramBindingPattern
   / paramName
 
+paramArray
+  = "[" __ entries:paramArrayEntries? __ "]" {
+      return annotate([markers.paramArray, ...(entries ?? [])], location());
+    }
+
+paramArrayEntries
+  = entries:paramArrayEntry|1.., separator| separator? {
+      return annotate(entries, location());
+    }
+
+paramArrayEntry
+  = parameter
+  // Missing value -> undefined
+  / __ !"]" {
+      return undefined;
+    }
+
 paramBindingPattern
-  = paramObject
+  = paramArray
+  / paramObject
 
 // List of lambda parameters inside the parentheses: `a, b` in `(a, b) => a + b`
 parameterList
