@@ -107,6 +107,15 @@ describe("compile", () => {
     assert.equal(result, "Hello, Bob!");
   });
 
+  test("lambda with rest parameter", async () => {
+    const fn = compile.expression("(head, ...rest) => { head, rest }", {
+      globals,
+    });
+    const lambda = await fn();
+    const result = await lambda(1, 2, 3, 4);
+    assert.deepEqual(result, { head: 1, rest: [2, 3, 4] });
+  });
+
   test("lambda with object destructuring", async () => {
     const fn = compile.expression("({ name }) => greet(name)", { globals });
     const lambda = await fn();

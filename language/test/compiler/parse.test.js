@@ -151,6 +151,17 @@ describe("Origami parser", () => {
       ]);
     });
 
+    test.only("arrow function with rest parameter", () => {
+      assertParse("arrowFunction", "(head, ...tail) => tail", [
+        ops.lambda,
+        [
+          ["head", [[ops.params, 0], 0]],
+          ["tail", [[[ops.params, 0], "slice"], 1]],
+        ],
+        [markers.traverse, [markers.reference, "tail"]],
+      ]);
+    });
+
     test("array parameter destructuring", () => {
       assertParse("arrowFunction", "([a, b, c]) => a + b + c", [
         ops.lambda,
@@ -180,6 +191,22 @@ describe("Origami parser", () => {
           [markers.traverse, [markers.reference, "a"]],
           [markers.traverse, [markers.reference, "b"]],
         ],
+      ]);
+      assertParse("arrowFunction", "([head, ...tail]) => tail", [
+        ops.lambda,
+        [
+          ["head", [[[ops.params, 0], 0], 0]],
+          ["tail", [[[[ops.params, 0], 0], "slice"], 1]],
+        ],
+        [markers.traverse, [markers.reference, "tail"]],
+      ]);
+      assertParse("arrowFunction", "(head, ...{ length }) => length", [
+        ops.lambda,
+        [
+          ["head", [[ops.params, 0], 0]],
+          ["length", [[[[ops.params, 0], "slice"], 1], "length"]],
+        ],
+        [markers.traverse, [markers.reference, "length"]],
       ]);
     });
 
@@ -363,6 +390,16 @@ describe("Origami parser", () => {
         undefined,
         [markers.paramName, "b"],
       ]);
+      assertParse("paramArray", "[head, ...tail]", [
+        markers.paramArray,
+        [markers.paramName, "head"],
+        [markers.paramRest, [markers.paramName, "tail"]],
+      ]);
+    });
+
+    test("paramArrayEntry", () => {
+      assertParse("paramArrayEntry", "a", [markers.paramName, "a"]);
+      assertThrows("paramArrayEntry", "...rest", `but "." found`);
     });
 
     test("paramObject", () => {
@@ -385,6 +422,13 @@ describe("Origami parser", () => {
       assertParse("paramObjectEntry", "[key]: param", [
         [markers.traverse, [markers.reference, "key"]],
         [markers.paramName, "param"],
+      ]);
+    });
+
+    test("paramRest", () => {
+      assertParse("paramRest", "...rest", [
+        markers.paramRest,
+        [markers.paramName, "rest"],
       ]);
     });
 
@@ -993,6 +1037,7 @@ Body`,
     assertParse("key", "a~b", "a~b");
     assertParse("key", "foo-bar", "foo-bar");
     assertParse("key", "package-lock.json", "package-lock.json");
+    assertThrows("key", "...rest", `but "." found`);
   });
 
   test("logicalAndExpression", () => {

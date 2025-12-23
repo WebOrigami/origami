@@ -102,17 +102,17 @@ arrayEntries
 arrayEntry
   = spreadElement
   / pipelineExpression
-  // Missing value -> undefined
-  / __ !"]" {
+  / &separator {
+      // Missing value is allowed
       return annotate([ops.literal, undefined], location());
     }
 
 arrowFunction
-  = ("async" __)? "(" __ parameters:parameterList? __ ")" __ doubleArrow __ body:expectPipelineExpression {
+  = ("async" __)? "(" __ parameters:paramArrayEntries? __ ")" __ doubleArrow __ body:expectPipelineExpression {
       parameters ??= annotate([], location());
       return makeLambda(parameters, body, location());
     }
-  / parameters:parameterSingleton __ doubleArrow __ body:expectPipelineExpression {
+  / parameters:paramSingleton __ doubleArrow __ body:expectPipelineExpression {
       return makeLambda(parameters, body, location());
     }
   / conditionalExpression
@@ -423,7 +423,7 @@ keyChar
 keyCharStart
   // All JS identifier characters
   = char:. &{ return char.match(/[$_\p{ID_Continue}]/u) }
-  / "."
+  / "." !".." // a dot, but not a spread/rest operator
   / "@"
   / "~"
 
@@ -616,25 +616,28 @@ optional
       return annotate([ops.optional, propertyAccess], location());
     }
 
-// Name of a function parameter
-parameter
-  = paramBindingPattern
-  / paramName
-
 paramArray
-  = "[" __ entries:paramArrayEntries? __ "]" {
-      return annotate([markers.paramArray, ...(entries ?? [])], location());
+  = "[" __ entries:paramArrayEntries __ "]" {
+      return annotate([markers.paramArray, ...entries], location());
     }
 
+// A list of lambda parameters inside the parentheses: `a, b` in `(a, b) => a + b`
+// OR a list of lambda parameters inside array destructuring: `a, b` in `([a, b]) => a + b`
 paramArrayEntries
-  = entries:paramArrayEntry|1.., separator| separator? {
+  = entries:paramArrayEntry|1.., separator| rest:(separator @paramRest?)? {
+      if (rest) {
+        entries.push(rest);
+      }
       return annotate(entries, location());
+    }
+  / rest:paramRest {
+      return annotate([rest], location());
     }
 
 paramArrayEntry
-  = parameter
-  // Missing value -> undefined
-  / __ !"]" {
+  = param
+  / &separator {
+      // Missing value is allowed
       return undefined;
     }
 
@@ -642,11 +645,10 @@ paramBindingPattern
   = paramArray
   / paramObject
 
-// List of lambda parameters inside the parentheses: `a, b` in `(a, b) => a + b`
-parameterList
-  = list:parameter|1.., separator| separator? {
-      return annotate(list, location());
-    }
+// Single parameter in a function's parameter list
+param
+  = paramBindingPattern
+  / paramName
 
 // A single name in a parameter list: `a` in `a, { b }`
 paramName
@@ -662,7 +664,7 @@ paramObject
 
 // An entry in a parameter object: `a: b` in `{ a: b }`
 paramObjectEntry
-  = key:objectPublicKey __ ":" __ param:parameter {
+  = key:objectPublicKey __ ":" __ param:param {
       return annotate([key, param], location());
     }
   / param:paramName {
@@ -675,9 +677,15 @@ paramObjectEntries
       return annotate(entries, location());
     }
 
+// Optional rest parameter for param array or object
+paramRest
+  = "..." __ param:param {
+    return annotate([markers.paramRest, param], location());
+    }
+
 // A lambda parameter list with a single identifier with no parentheses:
 // `x` in `x => x + 1`
-parameterSingleton
+paramSingleton
   = param:paramName {
       return annotate([param], location());
     }

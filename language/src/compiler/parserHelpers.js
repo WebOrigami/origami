@@ -21,6 +21,7 @@ export const markers = {
   paramArray: Symbol("paramArray"), // Parameter array destructuring
   paramName: Symbol("paramName"), // Parameter name
   paramObject: Symbol("paramObject"), // Parameter object destructuring
+  paramRest: Symbol("paramRest"), // Rest operator in parameters
   property: Symbol("property"), // Property access
   reference: Symbol("reference"), // Reference to local, scope, or global
   spread: Symbol("spread"), // Spread operator
@@ -466,7 +467,13 @@ function makeParamArray(entries, reference) {
   const bindings = entries.map((entry, index) => {
     if (entry === undefined) {
       return []; // Skip missing entry
+    } else if (entry[0] === markers.paramRest) {
+      // Rest parameter
+      const sliceFunction = annotate([reference, "slice"], entry.location);
+      const sliceCall = annotate([sliceFunction, index], entry.location);
+      return makeParam(entry[1], sliceCall);
     }
+    // Other type of parameter
     const indexReference = annotate([reference, index], entry.location);
     return makeParam(entry, indexReference);
   });
