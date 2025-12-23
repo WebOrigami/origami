@@ -490,10 +490,21 @@ function makeParamName(parameter, reference) {
 
 // Return bindings for an object destructuring parameter
 function makeParamObject(entries, reference) {
+  const keys = [];
   const bindings = entries.map((entry) => {
+    if (entry[0] === markers.paramRest) {
+      // Rest parameter; exclude keys we've seen so far
+      const annotatedKeys = annotate([ops.array, ...keys], entry.location);
+      const objectRest = annotate(
+        [ops.objectRest, reference, annotatedKeys],
+        entry.location
+      );
+      return makeParam(entry[1], objectRest);
+    }
     const [key, binding] = entry;
-    const keyReference = annotate([reference, key], entry.location);
-    return makeParam(binding, keyReference);
+    keys.push(key);
+    const propertyValue = annotate([reference, key], entry.location);
+    return makeParam(binding, propertyValue);
   });
   return bindings.flat();
 }

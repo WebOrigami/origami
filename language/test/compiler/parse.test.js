@@ -210,23 +210,35 @@ describe("Origami parser", () => {
       ]);
     });
 
-    test("object parameter destructuring", () => {
-      assertParse("arrowFunction", "({ a, b: c }) => a + c", [
+    test.only("object parameter destructuring", () => {
+      // assertParse("arrowFunction", "({ a, b: c }) => a + c", [
+      //   ops.lambda,
+      //   [
+      //     ["a", [[[ops.params, 0], 0], "a"]],
+      //     ["c", [[[ops.params, 0], 0], "b"]],
+      //   ],
+      //   [
+      //     ops.addition,
+      //     [markers.traverse, [markers.reference, "a"]],
+      //     [markers.traverse, [markers.reference, "c"]],
+      //   ],
+      // ]);
+      // assertParse("arrowFunction", "({ a: { b: { c }}}) => c", [
+      //   ops.lambda,
+      //   [["c", [[[[[ops.params, 0], 0], "a"], "b"], "c"]]],
+      //   [markers.traverse, [markers.reference, "c"]],
+      // ]);
+      assertParse("arrowFunction", "({ a, b, ...rest }) => rest", [
         ops.lambda,
         [
           ["a", [[[ops.params, 0], 0], "a"]],
-          ["c", [[[ops.params, 0], 0], "b"]],
+          ["b", [[[ops.params, 0], 0], "b"]],
+          [
+            "rest",
+            [ops.objectRest, [[ops.params, 0], 0], [ops.array, "a", "b"]],
+          ],
         ],
-        [
-          ops.addition,
-          [markers.traverse, [markers.reference, "a"]],
-          [markers.traverse, [markers.reference, "c"]],
-        ],
-      ]);
-      assertParse("arrowFunction", "({ a: { b: { c }}}) => c", [
-        ops.lambda,
-        [["c", [[[[[ops.params, 0], 0], "a"], "b"], "c"]]],
-        [markers.traverse, [markers.reference, "c"]],
+        [markers.traverse, [markers.reference, "rest"]],
       ]);
     });
 

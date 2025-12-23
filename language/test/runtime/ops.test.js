@@ -304,6 +304,16 @@ describe("ops", () => {
     assert.strictEqual(ops.multiplication("foo", 2), NaN);
   });
 
+  test("ops.objectRest returns an object without specified keys", async () => {
+    const obj = {
+      a: 1,
+      b: 2,
+      c: 3,
+    };
+    const result = await ops.objectRest(obj, ["a", "b"]);
+    assert.deepEqual(result, { c: 3 });
+  });
+
   test("ops.optional", async () => {
     assert.equal(
       ops.optional(null, (x) => x.a),

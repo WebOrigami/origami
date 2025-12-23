@@ -662,6 +662,18 @@ paramObject
       return annotate([markers.paramObject, ...(entries ?? [])], location());
     }
 
+// A separated list of parameter object entries inside the curly braces
+paramObjectEntries
+  = entries:paramObjectEntry|1.., separator| rest:(separator @paramRest)? {
+      if (rest) {
+        entries.push(rest);
+      }
+      return annotate(entries, location());
+    }
+  / rest:paramRest {
+      return annotate([rest], location());
+    }
+
 // An entry in a parameter object: `a: b` in `{ a: b }`
 paramObjectEntry
   = key:objectPublicKey __ ":" __ param:param {
@@ -669,12 +681,6 @@ paramObjectEntry
     }
   / param:paramName {
       return annotate([text(), param], location());
-    }
-
-// A separated list of parameter object entries inside the curly braces
-paramObjectEntries
-  = entries:paramObjectEntry|1.., separator| separator? {
-      return annotate(entries, location());
     }
 
 // Optional rest parameter for param array or object

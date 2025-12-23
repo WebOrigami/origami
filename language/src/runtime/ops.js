@@ -402,6 +402,17 @@ addOpLabel(object, "«ops.object»");
 object.unevaluatedArgs = true;
 object.needsState = true;
 
+export async function objectRest(source, excludeKeys) {
+  const result = {};
+  for (const [key, value] of Object.entries(source)) {
+    if (!excludeKeys.includes(key)) {
+      result[key] = value; // might be a promise
+    }
+  }
+  return result;
+}
+addOpLabel(objectRest, "«ops.objectRest»");
+
 /**
  * Return the stack frame that's `depth` levels up the stack.
  *

@@ -117,10 +117,15 @@ describe("compile", () => {
   });
 
   test("lambda with object destructuring", async () => {
-    const fn = compile.expression("({ name }) => greet(name)", { globals });
+    const fn = compile.expression("({ name, ...rest }) => { name, rest }", {
+      globals,
+    });
     const lambda = await fn();
-    const result = await lambda({ name: "Bob" });
-    assert.equal(result, "Hello, Bob!");
+    const result = await lambda({ name: "Bob", age: 30, city: "New York" });
+    assert.deepEqual(result, {
+      name: "Bob",
+      rest: { age: 30, city: "New York" },
+    });
   });
 
   test("templateDocument", async () => {
