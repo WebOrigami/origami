@@ -108,7 +108,7 @@ arrayEntry
     }
 
 arrowFunction
-  = ("async" __)? "(" __ parameters:paramArrayEntries? __ ")" __ doubleArrow __ body:expectPipelineExpression {
+  = ("async" __)? "(" __ parameters:paramList? __ ")" __ doubleArrow __ body:expectPipelineExpression {
       parameters ??= annotate([], location());
       return makeLambda(parameters, body, location());
     }
@@ -630,8 +630,8 @@ paramArray
       return annotate([markers.paramArray, ...entries], location());
     }
 
-// A list of lambda parameters inside the parentheses: `a, b` in `(a, b) => a + b`
-// OR a list of lambda parameters inside array destructuring: `a, b` in `([a, b]) => a + b`
+// A list of parameters inside array destructuring: `a, b` in `([a, b]) => a + b`
+// Different than top-level parameters because elements can be elided: `a, , b`
 paramArrayEntries
   = entries:paramArrayEntry|1.., separator| rest:(separator @paramRest?)? {
       if (rest) {
@@ -658,6 +658,18 @@ paramBindingPattern
 param
   = paramBindingPattern
   / paramName
+    
+// A list of lambda parameters inside the parentheses: `a, b` in `(a, b) => a + b`
+paramList
+  = entries:param|1.., separator| rest:(separator @paramRest?)? {
+      if (rest) {
+        entries.push(rest);
+      }
+      return annotate(entries, location());
+    }
+  / rest:paramRest {
+      return annotate([rest], location());
+    }
 
 // A single name in a parameter list: `a` in `a, { b }`
 paramName

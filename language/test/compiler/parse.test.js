@@ -149,6 +149,8 @@ describe("Origami parser", () => {
         [["x", [[ops.params, 0], 0]]],
         [markers.traverse, [markers.reference, "x"]],
       ]);
+      // Can't omit a parameter like you can in an array
+      assertThrows("arrowFunction", "(, b) => b", "Expected an expression");
     });
 
     test.only("arrow function with rest parameter", () => {
