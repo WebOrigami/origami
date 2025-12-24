@@ -153,7 +153,7 @@ describe("Origami parser", () => {
       assertThrows("arrowFunction", "(, b) => b", "Expected an expression");
     });
 
-    test.only("arrow function with rest parameter", () => {
+    test("arrow function with rest parameter", () => {
       assertParse("arrowFunction", "(head, ...tail) => tail", [
         ops.lambda,
         [
