@@ -267,7 +267,13 @@ expectFrontDelimiter
       error("Expected \"---\"");
     }
 
-expectGuillemet
+expectLeftGuillemet
+  = '«'
+  / .? {
+      error("Expected closing guillemet");
+    }
+
+expectRightGuillemet
   = '»'
   / .? {
       error("Expected closing guillemet");
@@ -329,12 +335,15 @@ group "parenthetical group"
   }
 
 guillemetString "guillemet string"
-  = '«' chars:guillemetStringChar* expectGuillemet {
-    return annotate([ops.literal, chars.join("")], location());
-  }
+  = "«" chars:guillemetStringChar* expectRightGuillemet {
+      return annotate([ops.literal, chars.join("")], location());
+    }
+  / "»" chars:guillemetStringChar* expectLeftGuillemet {
+      return annotate([ops.literal, chars.join("")], location());
+    }
 
 guillemetStringChar
-  = !('»' / newLine) @textChar
+  = !("«" / "»" / newLine) @textChar
 
 // A host identifier that may include a colon and port number: `example.com:80`.
 // This is used as a special case at the head of a path, where we want to

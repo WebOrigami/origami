@@ -210,24 +210,24 @@ describe("Origami parser", () => {
       ]);
     });
 
-    test.only("object parameter destructuring", () => {
-      // assertParse("arrowFunction", "({ a, b: c }) => a + c", [
-      //   ops.lambda,
-      //   [
-      //     ["a", [[[ops.params, 0], 0], "a"]],
-      //     ["c", [[[ops.params, 0], 0], "b"]],
-      //   ],
-      //   [
-      //     ops.addition,
-      //     [markers.traverse, [markers.reference, "a"]],
-      //     [markers.traverse, [markers.reference, "c"]],
-      //   ],
-      // ]);
-      // assertParse("arrowFunction", "({ a: { b: { c }}}) => c", [
-      //   ops.lambda,
-      //   [["c", [[[[[ops.params, 0], 0], "a"], "b"], "c"]]],
-      //   [markers.traverse, [markers.reference, "c"]],
-      // ]);
+    test("object parameter destructuring", () => {
+      assertParse("arrowFunction", "({ a, b: c }) => a + c", [
+        ops.lambda,
+        [
+          ["a", [[[ops.params, 0], 0], "a"]],
+          ["c", [[[ops.params, 0], 0], "b"]],
+        ],
+        [
+          ops.addition,
+          [markers.traverse, [markers.reference, "a"]],
+          [markers.traverse, [markers.reference, "c"]],
+        ],
+      ]);
+      assertParse("arrowFunction", "({ a: { b: { c }}}) => c", [
+        ops.lambda,
+        [["c", [[[[[ops.params, 0], 0], "a"], "b"], "c"]]],
+        [markers.traverse, [markers.reference, "c"]],
+      ]);
       assertParse("arrowFunction", "({ a, b, ...rest }) => rest", [
         ops.lambda,
         [
@@ -631,6 +631,7 @@ describe("Origami parser", () => {
     assertThrows("callExpression", "fn(a", "Expected right parenthesis");
     assertThrows("doubleQuoteString", '"foo', "Expected closing quote");
     assertThrows("guillemetString", "«foo", "Expected closing guillemet");
+    assertThrows("guillemetString", "»foo", "Expected closing guillemet");
     assertThrows("objectGetter", "a =", "Expected an expression");
     assertThrows("objectProperty", "a:", "Expected an expression");
     assertThrows("singleQuoteString", "'foo", "Expected closing quote");
@@ -1677,6 +1678,7 @@ Body`,
     assertParse("stringLiteral", `"foo\\"s bar"`, [ops.literal, `foo"s bar`]);
     assertParse("stringLiteral", `'bar\\'s baz'`, [ops.literal, `bar's baz`]);
     assertParse("stringLiteral", `«string»`, [ops.literal, "string"]);
+    assertParse("stringLiteral", `»string«`, [ops.literal, "string"]);
     assertParse("stringLiteral", `"\\0\\b\\f\\n\\r\\t\\v"`, [
       ops.literal,
       "\0\b\f\n\r\t\v",
