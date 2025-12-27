@@ -159,7 +159,7 @@ describe("Origami parser", () => {
         [
           ["a", [ops.defaultValue, [[ops.params, 0], 0], [ops.literal, 1]]],
           [
-            "b",
+            "__temp0__",
             [
               ops.defaultValue,
               [[ops.params, 0], 1],
@@ -170,6 +170,7 @@ describe("Origami parser", () => {
               ],
             ],
           ],
+          ["b", [[ops.inherited, 0], "__temp0__"]],
         ],
         [
           ops.addition,

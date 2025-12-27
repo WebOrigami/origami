@@ -286,7 +286,9 @@ export function makeLambda(parameters, body, location) {
   // Create a reference that at runtime resolves to parameters array. All
   // parameter references will use this as their basis.
   const reference = annotate([ops.params, 0], location);
-  const bindings = makeParamArray(parameters, reference);
+
+  const state = { tempVariableCount: 0 };
+  const bindings = makeParamArray(parameters, reference, state);
   const annotatedBindings = annotate(bindings, parameters.location);
   return annotate([ops.lambda, annotatedBindings, body], location);
 }
@@ -461,26 +463,20 @@ function makeOptionalCall(target, chain, location) {
 }
 
 // Return bindings for the given parameter
-function makeParam(parameter, reference) {
+function makeParam(parameter, reference, state) {
   const [marker, ...args] = parameter;
   switch (marker) {
     case markers.paramArray:
-      return makeParamArray(args, reference);
+      return makeParamArray(args, reference, state);
 
     case markers.paramInitializer:
-      const [baseParam, defaultValue] = args;
-      const deferred = makeDeferredArguments([defaultValue])[0];
-      const defaultReference = annotate(
-        [ops.defaultValue, reference, deferred],
-        parameter.location
-      );
-      return makeParam(baseParam, defaultReference);
+      return makeParamInitializer(parameter, reference, state);
 
     case markers.paramName:
-      return makeParamName(parameter, reference);
+      return makeParamName(parameter, reference, state);
 
     case markers.paramObject:
-      return makeParamObject(args, reference);
+      return makeParamObject(args, reference, state);
 
     default:
       throw new Error(`Unknown parameter type: ${parameter[0]}`);
@@ -488,7 +484,7 @@ function makeParam(parameter, reference) {
 }
 
 // Return bindings for the array destructuring parameter
-function makeParamArray(entries, reference) {
+function makeParamArray(entries, reference, state) {
   const bindings = entries.map((entry, index) => {
     if (entry === undefined) {
       return []; // Skip missing entry
@@ -496,11 +492,11 @@ function makeParamArray(entries, reference) {
       // Rest parameter
       const sliceFunction = annotate([reference, "slice"], entry.location);
       const sliceCall = annotate([sliceFunction, index], entry.location);
-      return makeParam(entry[1], sliceCall);
+      return makeParam(entry[1], sliceCall, state);
     }
     // Other type of parameter
     const indexReference = annotate([reference, index], entry.location);
-    return makeParam(entry, indexReference);
+    return makeParam(entry, indexReference, state);
   });
 
   const flat = bindings.flat();
@@ -508,8 +504,44 @@ function makeParamArray(entries, reference) {
   return flat;
 }
 
+// Return binding for a parameter with a default value
+function makeParamInitializer(parameter, reference, state) {
+  const [baseParam, defaultValue] = parameter.slice(1);
+
+  if (defaultValue[0] === ops.literal) {
+    // Literal default value can be inlined
+    const defaultReference = annotate(
+      [ops.defaultValue, reference, defaultValue],
+      parameter.location
+    );
+    return makeParam(baseParam, defaultReference, state);
+  }
+
+  // Need to introduce a temporary variable so that the default value, if it's
+  // an expression, is only evaluated once.
+  const deferred = makeDeferredArguments([defaultValue])[0];
+  const defaultReference = annotate(
+    [ops.defaultValue, reference, deferred],
+    parameter.location
+  );
+  const tempVariableName = `__temp${state.tempVariableCount++}__`;
+  const tempBinding = annotate(
+    [tempVariableName, defaultReference],
+    parameter.location
+  );
+
+  const selfReference = annotate([ops.inherited, 0], parameter.location);
+  const tempReference = annotate(
+    [selfReference, tempVariableName],
+    parameter.location
+  );
+
+  const paramBindings = makeParam(baseParam, tempReference, state);
+  return [tempBinding, ...paramBindings];
+}
+
 // Return binding for a single parameter name
-function makeParamName(parameter, reference) {
+function makeParamName(parameter, reference, state) {
   const paramName = parameter[1];
   // Return as an array with one entry
   const bindings = [annotate([paramName, reference], parameter.location)];
@@ -517,7 +549,7 @@ function makeParamName(parameter, reference) {
 }
 
 // Return bindings for an object destructuring parameter
-function makeParamObject(entries, reference) {
+function makeParamObject(entries, reference, state) {
   const keys = [];
   const bindings = entries.map((entry) => {
     if (entry[0] === markers.paramRest) {
@@ -527,12 +559,12 @@ function makeParamObject(entries, reference) {
         [ops.objectRest, reference, annotatedKeys],
         entry.location
       );
-      return makeParam(entry[1], objectRest);
+      return makeParam(entry[1], objectRest, state);
     }
     const [key, binding] = entry;
     keys.push(key);
     const propertyValue = annotate([reference, key], entry.location);
-    return makeParam(binding, propertyValue);
+    return makeParam(binding, propertyValue, state);
   });
 
   const flat = bindings.flat();
