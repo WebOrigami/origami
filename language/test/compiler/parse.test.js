@@ -254,6 +254,11 @@ describe("Origami parser", () => {
         ],
         [markers.traverse, [markers.reference, "length"]],
       ]);
+      assertThrows(
+        "arrowFunction",
+        "([a, a]) => a",
+        `Duplicate parameter name "a"`
+      );
     });
 
     test("object parameter destructuring", () => {
@@ -296,6 +301,11 @@ describe("Origami parser", () => {
         ],
         [markers.traverse, [markers.reference, "rest"]],
       ]);
+      assertThrows(
+        "arrowFunction",
+        "({ a: c, b: c }) => c",
+        `Duplicate parameter name "c"`
+      );
     });
 
     test("functional arrow functions", () => {

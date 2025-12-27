@@ -74,6 +74,21 @@ export function applyMacro(code, name, macro) {
   return annotate(applied, code.location);
 }
 
+function checkDuplicateParamNames(flat) {
+  const names = new Set();
+  for (const binding of flat) {
+    const paramName = binding[0];
+    if (names.has(paramName)) {
+      const error = new SyntaxError(`Duplicate parameter name "${paramName}"`);
+      /** @type {any} */ (error).location = /** @type {any} */ (
+        binding
+      ).location;
+      throw error;
+    }
+    names.add(paramName);
+  }
+}
+
 /**
  * Create an array
  *
@@ -487,7 +502,10 @@ function makeParamArray(entries, reference) {
     const indexReference = annotate([reference, index], entry.location);
     return makeParam(entry, indexReference);
   });
-  return bindings.flat();
+
+  const flat = bindings.flat();
+  checkDuplicateParamNames(flat);
+  return flat;
 }
 
 // Return binding for a single parameter name
@@ -516,7 +534,10 @@ function makeParamObject(entries, reference) {
     const propertyValue = annotate([reference, key], entry.location);
     return makeParam(binding, propertyValue);
   });
-  return bindings.flat();
+
+  const flat = bindings.flat();
+  checkDuplicateParamNames(flat);
+  return flat;
 }
 
 /**
