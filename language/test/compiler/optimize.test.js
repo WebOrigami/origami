@@ -22,6 +22,7 @@ describe("optimize", () => {
     }`;
     const expected = [
       ops.lambda,
+      1,
       [["name", [[ops.params, 0], 0]]],
       [
         ops.object,

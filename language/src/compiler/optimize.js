@@ -47,7 +47,7 @@ export default function optimize(code, options = {}) {
       return resolvePath(code, globals, parent, locals, cache);
 
     case ops.lambda:
-      const parameters = args[0];
+      const parameters = args[1];
       if (parameters.length > 0) {
         const paramNames = parameters.map((param) => param[0]);
         locals.push({

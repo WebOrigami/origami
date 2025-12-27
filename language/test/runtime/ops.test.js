@@ -200,8 +200,9 @@ describe("ops", () => {
   });
 
   test("ops.lambda defines a function with no inputs", async () => {
-    const code = createCode([ops.lambda, [], [ops.literal, "result"]]);
+    const code = createCode([ops.lambda, 0, [], [ops.literal, "result"]]);
     const fn = await evaluate(code);
+    assert.equal(fn.length, 0);
     const result = await fn();
     assert.strictEqual(result, "result");
   });
@@ -213,11 +214,13 @@ describe("ops", () => {
 
     const code = createCode([
       ops.lambda,
+      1,
       [["_", [[ops.params, 0], 0]]],
       [[ops.scope, container], "message"],
     ]);
 
     const fn = await evaluate(code);
+    assert.equal(fn.length, 1);
     const result = await fn();
     assert.strictEqual(result, "Hello");
   });
@@ -225,6 +228,7 @@ describe("ops", () => {
   test("ops.lambda adds input parameters to scope", async () => {
     const code = createCode([
       ops.lambda,
+      2,
       [
         ["a", [[ops.params, 0], 0]],
         ["b", [[ops.params, 0], 1]],
@@ -232,6 +236,7 @@ describe("ops", () => {
       [ops.concat, [[ops.params, 0], "b"], [[ops.params, 0], "a"]],
     ]);
     const fn = await evaluate(code);
+    assert.equal(fn.length, 2);
     const result = await fn("x", "y");
     assert.strictEqual(result, "yx");
   });

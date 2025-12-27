@@ -121,16 +121,19 @@ describe("Origami parser", () => {
     test("basic arrow functions", () => {
       assertParse("arrowFunction", "() => foo", [
         ops.lambda,
+        0,
         [],
         [markers.traverse, [markers.reference, "foo"]],
       ]);
       assertParse("arrowFunction", "x => y", [
         ops.lambda,
+        1,
         [["x", [[ops.params, 0], 0]]],
         [markers.traverse, [markers.reference, "y"]],
       ]);
       assertParse("arrowFunction", "(a, b, c) ⇒ fn(a, b, c)", [
         ops.lambda,
+        3,
         [
           ["a", [[ops.params, 0], 0]],
           ["b", [[ops.params, 0], 1]],
@@ -146,6 +149,7 @@ describe("Origami parser", () => {
       // `async` keyword is effectively ignored
       assertParse("arrowFunction", "async (x) => x", [
         ops.lambda,
+        1,
         [["x", [[ops.params, 0], 0]]],
         [markers.traverse, [markers.reference, "x"]],
       ]);
@@ -156,6 +160,7 @@ describe("Origami parser", () => {
     test("arrow function with default parameters", () => {
       assertParse("arrowFunction", "(a = 1, b = fn()) => a + b", [
         ops.lambda,
+        0,
         [
           ["a", [ops.defaultValue, [[ops.params, 0], 0], [ops.literal, 1]]],
           [
@@ -165,6 +170,7 @@ describe("Origami parser", () => {
               [[ops.params, 0], 1],
               [
                 ops.lambda,
+                0,
                 [],
                 [[markers.traverse, [markers.reference, "fn"]], undefined],
               ],
@@ -183,6 +189,7 @@ describe("Origami parser", () => {
     test("arrow function with rest parameter", () => {
       assertParse("arrowFunction", "(head, ...tail) => tail", [
         ops.lambda,
+        1,
         [
           ["head", [[ops.params, 0], 0]],
           ["tail", [[[ops.params, 0], "slice"], 1]],
@@ -194,6 +201,7 @@ describe("Origami parser", () => {
     test("array parameter destructuring", () => {
       assertParse("arrowFunction", "([a, b, c]) => a + b + c", [
         ops.lambda,
+        1,
         [
           ["a", [[[ops.params, 0], 0], 0]],
           ["b", [[[ops.params, 0], 0], 1]],
@@ -211,6 +219,7 @@ describe("Origami parser", () => {
       ]);
       assertParse("arrowFunction", "([a, , b]) => a * b", [
         ops.lambda,
+        1,
         [
           ["a", [[[ops.params, 0], 0], 0]],
           ["b", [[[ops.params, 0], 0], 2]],
@@ -223,6 +232,7 @@ describe("Origami parser", () => {
       ]);
       assertParse("arrowFunction", "([a = 1, b = 2]) => a + b", [
         ops.lambda,
+        1,
         [
           [
             "a",
@@ -241,6 +251,7 @@ describe("Origami parser", () => {
       ]);
       assertParse("arrowFunction", "([head, ...tail]) => tail", [
         ops.lambda,
+        1,
         [
           ["head", [[[ops.params, 0], 0], 0]],
           ["tail", [[[[ops.params, 0], 0], "slice"], 1]],
@@ -249,6 +260,7 @@ describe("Origami parser", () => {
       ]);
       assertParse("arrowFunction", "(head, ...{ length }) => length", [
         ops.lambda,
+        1,
         [
           ["head", [[ops.params, 0], 0]],
           ["length", [[[[ops.params, 0], "slice"], 1], "length"]],
@@ -265,6 +277,7 @@ describe("Origami parser", () => {
     test("object parameter destructuring", () => {
       assertParse("arrowFunction", "({ a, b: c }) => a + c", [
         ops.lambda,
+        1,
         [
           ["a", [[[ops.params, 0], 0], "a"]],
           ["c", [[[ops.params, 0], 0], "b"]],
@@ -277,11 +290,13 @@ describe("Origami parser", () => {
       ]);
       assertParse("arrowFunction", "({ a: { b: { c }}}) => c", [
         ops.lambda,
+        1,
         [["c", [[[[[ops.params, 0], 0], "a"], "b"], "c"]]],
         [markers.traverse, [markers.reference, "c"]],
       ]);
       assertParse("arrowFunction", "({ a = 1 }) => a", [
         ops.lambda,
+        1,
         [
           [
             "a",
@@ -292,6 +307,7 @@ describe("Origami parser", () => {
       ]);
       assertParse("arrowFunction", "({ a, b, ...rest }) => rest", [
         ops.lambda,
+        1,
         [
           ["a", [[[ops.params, 0], 0], "a"]],
           ["b", [[[ops.params, 0], 0], "b"]],
@@ -312,9 +328,11 @@ describe("Origami parser", () => {
     test("functional arrow functions", () => {
       assertParse("arrowFunction", "a => b => fn(a, b)", [
         ops.lambda,
+        1,
         [["a", [[ops.params, 0], 0]]],
         [
           ops.lambda,
+          1,
           [["b", [[ops.params, 0], 0]]],
           [
             [markers.traverse, [markers.reference, "fn"]],
@@ -386,6 +404,7 @@ describe("Origami parser", () => {
         [markers.traverse, [markers.reference, "a"]],
         [
           ops.lambda,
+          1,
           [["__optional__", [[ops.params, 0], 0]]],
           [
             ops.property,
@@ -403,6 +422,7 @@ describe("Origami parser", () => {
         [markers.traverse, [markers.reference, "a"]],
         [
           ops.lambda,
+          1,
           [["__optional__", [[ops.params, 0], 0]]],
           [
             ops.optional,
@@ -413,6 +433,7 @@ describe("Origami parser", () => {
             ],
             [
               ops.lambda,
+              1,
               [["__optional__", [[ops.params, 0], 0]]],
               [
                 ops.property,
@@ -431,6 +452,7 @@ describe("Origami parser", () => {
         [markers.traverse, [markers.reference, "a"]],
         [
           ops.lambda,
+          1,
           [["__optional__", [[ops.params, 0], 0]]],
           [
             ops.property,
@@ -447,6 +469,7 @@ describe("Origami parser", () => {
         [markers.traverse, [markers.reference, "fn"]],
         [
           ops.lambda,
+          1,
           [["__optional__", [[ops.params, 0], 0]]],
           [
             [markers.traverse, [markers.reference, "__optional__"]],
@@ -668,13 +691,13 @@ describe("Origami parser", () => {
     assertParse("conditionalExpression", "false ? () => 1 : 0", [
       ops.conditional,
       [markers.traverse, [markers.reference, "false"]],
-      [ops.lambda, [], [ops.lambda, [], [ops.literal, 1]]],
+      [ops.lambda, 0, [], [ops.lambda, 0, [], [ops.literal, 1]]],
       [ops.literal, 0],
     ]);
     assertParse("conditionalExpression", "false ? () => 1 : 0", [
       ops.conditional,
       [markers.traverse, [markers.reference, "false"]],
-      [ops.lambda, [], [ops.lambda, [], [ops.literal, 1]]],
+      [ops.lambda, 0, [], [ops.lambda, 0, [], [ops.literal, 1]]],
       [ops.literal, 0],
     ]);
   });
@@ -886,6 +909,7 @@ Body`,
         [markers.traverse, [markers.reference, "fn"]],
         [
           ops.lambda,
+          1,
           [["_", [[ops.params, 0], 0]]],
           [ops.templateText, [ops.literal, ["x"]]],
         ],
@@ -905,6 +929,7 @@ Body`,
         [markers.traverse, [markers.reference, "map"]],
         [
           ops.lambda,
+          1,
           [["_", [[ops.params, 0], 0]]],
           [
             ops.templateText,
@@ -925,6 +950,7 @@ Body`,
       ]);
       assertParse("expression", "=tag`Hello, ${_}!`", [
         ops.lambda,
+        1,
         [["_", [[ops.params, 0], 0]]],
         [
           [markers.traverse, [markers.reference, "tag"]],
@@ -934,6 +960,7 @@ Body`,
       ]);
       assertParse("expression", "(post, slug) => fn.js(post, slug)", [
         ops.lambda,
+        2,
         [
           ["post", [[ops.params, 0], 0]],
           ["slug", [[ops.params, 0], 1]],
@@ -1006,6 +1033,7 @@ Body`,
 `,
       [
         ops.lambda,
+        1,
         [["name", [[ops.params, 0], 0]]],
         [[markers.traverse, [markers.reference, "_template"]], undefined],
       ],
@@ -1133,7 +1161,7 @@ Body`,
     assertParse("logicalAndExpression", "true && false", [
       ops.logicalAnd,
       [markers.traverse, [markers.reference, "true"]],
-      [ops.lambda, [], [markers.traverse, [markers.reference, "false"]]],
+      [ops.lambda, 0, [], [markers.traverse, [markers.reference, "false"]]],
     ]);
   });
 
@@ -1146,13 +1174,13 @@ Body`,
     assertParse("logicalOrExpression", "false || false || true", [
       ops.logicalOr,
       [markers.traverse, [markers.reference, "false"]],
-      [ops.lambda, [], [markers.traverse, [markers.reference, "false"]]],
-      [ops.lambda, [], [markers.traverse, [markers.reference, "true"]]],
+      [ops.lambda, 0, [], [markers.traverse, [markers.reference, "false"]]],
+      [ops.lambda, 0, [], [markers.traverse, [markers.reference, "true"]]],
     ]);
     assertParse("logicalOrExpression", "1 || 2 && 0", [
       ops.logicalOr,
       [ops.literal, 1],
-      [ops.lambda, [], [ops.logicalAnd, [ops.literal, 2], [ops.literal, 0]]],
+      [ops.lambda, 0, [], [ops.logicalAnd, [ops.literal, 2], [ops.literal, 0]]],
     ]);
   });
 
@@ -1199,13 +1227,13 @@ Body`,
     assertParse("nullishCoalescingExpression", "a ?? b", [
       ops.nullishCoalescing,
       [markers.traverse, [markers.reference, "a"]],
-      [ops.lambda, [], [markers.traverse, [markers.reference, "b"]]],
+      [ops.lambda, 0, [], [markers.traverse, [markers.reference, "b"]]],
     ]);
     assertParse("nullishCoalescingExpression", "a ?? b ?? c", [
       ops.nullishCoalescing,
       [markers.traverse, [markers.reference, "a"]],
-      [ops.lambda, [], [markers.traverse, [markers.reference, "b"]]],
-      [ops.lambda, [], [markers.traverse, [markers.reference, "c"]]],
+      [ops.lambda, 0, [], [markers.traverse, [markers.reference, "b"]]],
+      [ops.lambda, 0, [], [markers.traverse, [markers.reference, "c"]]],
     ]);
   });
 
@@ -1410,6 +1438,7 @@ Body`,
         "a",
         [
           ops.lambda,
+          1,
           [["a", [[ops.params, 0], 0]]],
           [markers.traverse, [markers.reference, "a"]],
         ],
@@ -1707,11 +1736,13 @@ Body`,
   test("shorthandFunction", () => {
     assertParse("shorthandFunction", "=message", [
       ops.lambda,
+      1,
       [["_", [[ops.params, 0], 0]]],
       [markers.traverse, [markers.reference, "message"]],
     ]);
     assertParse("shorthandFunction", "=`Hello, ${name}.`", [
       ops.lambda,
+      1,
       [["_", [[ops.params, 0], 0]]],
       [
         ops.templateText,
@@ -1721,6 +1752,7 @@ Body`,
     ]);
     assertParse("shorthandFunction", "=indent`hello`", [
       ops.lambda,
+      1,
       [["_", [[ops.params, 0], 0]]],
       [
         [markers.traverse, [markers.reference, "indent"]],
@@ -1776,6 +1808,7 @@ Body`,
   test("templateDocument with no front matter", () => {
     assertParse("templateDocument", "Hello, world!", [
       ops.lambda,
+      1,
       [["_", [[ops.params, 0], 0]]],
       [ops.templateIndent, [ops.literal, ["Hello, world!"]]],
     ]);
@@ -1850,6 +1883,7 @@ Body text`,
         [markers.traverse, [markers.reference, "people"]],
         [
           ops.lambda,
+          1,
           [["_", [[ops.params, 0], 0]]],
           [
             ops.templateText,

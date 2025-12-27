@@ -17,7 +17,7 @@ describe("once", () => {
       increment: () => ++counter,
     };
     // Create two lambdas with the same code
-    const code = [ops.lambda, [], [[[ops.scope, container], "increment"]]];
+    const code = [ops.lambda, 0, [], [[[ops.scope, container], "increment"]]];
     // @ts-ignore
     const lambda1 = await evaluate(code);
     const result1 = await once(lambda1);

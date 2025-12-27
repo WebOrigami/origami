@@ -278,19 +278,35 @@ export function makeDocument(front, body, location) {
 /**
  * Create a lambda function with the given parameters.
  *
- * @param {AnnotatedCode} parameters
+ * @param {AnnotatedCode} params
  * @param {AnnotatedCode} body
  * @param {CodeLocation} location
  */
-export function makeLambda(parameters, body, location) {
+export function makeLambda(params, body, location) {
   // Create a reference that at runtime resolves to parameters array. All
   // parameter references will use this as their basis.
   const reference = annotate([ops.params, 0], location);
 
+  // Shared state for parameter processing
   const state = { tempVariableCount: 0 };
-  const bindings = makeParamArray(parameters, reference, state);
-  const annotatedBindings = annotate(bindings, parameters.location);
-  return annotate([ops.lambda, annotatedBindings, body], location);
+
+  const bindings = makeParamArray(params, reference, state);
+  const annotatedBindings = annotate(bindings, params.location);
+
+  // Calculate function "length" (number of expected arguments). The length
+  // can't be easily calculated at runtime because default values and rest
+  // parameters affect it.
+  let length = 0;
+  for (const param of params) {
+    const [op] = param;
+    if (op === markers.paramInitializer || op === markers.paramRest) {
+      // Default value or rest parameter: stop counting
+      break;
+    }
+    length++;
+  }
+
+  return annotate([ops.lambda, length, annotatedBindings, body], location);
 }
 
 /**

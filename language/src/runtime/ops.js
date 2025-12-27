@@ -231,7 +231,7 @@ addOpLabel(instanceOf, "«ops.instanceOf»");
  * @param {string[]} parameters
  * @param {AnnotatedCode} code
  */
-export function lambda(parameters, code, state = {}) {
+export function lambda(length, parameters, code, state = {}) {
   const stack = state.stack ?? [];
 
   async function invoke(...args) {
@@ -266,9 +266,8 @@ export function lambda(parameters, code, state = {}) {
   // We set the `length` property on the function so that Tree.traverseOrThrow()
   // will correctly identify how many parameters it wants. This is unorthodox
   // but doesn't appear to affect other behavior.
-  const fnLength = parameters.length;
   Object.defineProperty(invoke, "length", {
-    value: fnLength,
+    value: length,
   });
 
   return invoke;
