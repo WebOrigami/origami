@@ -76,10 +76,7 @@ export default function optimize(code, options = {}) {
   // Optimize children
   const optimized = annotate(
     code.map((child, index) => {
-      // Don't optimize lambda parameter names
-      if (op === ops.lambda && index === 1) {
-        return child;
-      } else if (op === ops.object && index > 0) {
+      if (op === ops.object && index > 0) {
         const [key, value] = child;
         const adjustedLocals = avoidLocalRecursion(locals, key);
         const optimizedKey =
