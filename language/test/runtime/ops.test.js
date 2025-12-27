@@ -123,6 +123,19 @@ describe("ops", () => {
     assert.strictEqual(result2, 1);
   });
 
+  describe("ops.defaultValue", () => {
+    test("returns the first value if it's not undefined", async () => {
+      assert.strictEqual(await ops.defaultValue("defined", errorFn), "defined");
+      assert.strictEqual(await ops.defaultValue(null, trueFn), null);
+      assert.strictEqual(await ops.defaultValue(false, trueFn), false);
+      assert.strictEqual(await ops.defaultValue(0, trueFn), 0);
+    });
+
+    test("returns the second value if the first is undefined", async () => {
+      assert.strictEqual(await ops.defaultValue(undefined, trueFn), true);
+    });
+  });
+
   describe("ops.flat", () => {
     test("flattens arrays", async () => {
       assert.deepEqual(await ops.flat(1, 2, [3]), [1, 2, 3]);

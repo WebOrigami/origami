@@ -123,6 +123,18 @@ export async function construct(constructor, ...args) {
   return Reflect.construct(constructor, args);
 }
 
+/**
+ * Default value for a parameter: if the value is defined, return that;
+ * otherwise, return the result of invoking the initializer.
+ */
+export async function defaultValue(value, initializer) {
+  if (value !== undefined) {
+    return value;
+  }
+  return initializer instanceof Function ? await initializer() : initializer;
+}
+addOpLabel(defaultValue, "«ops.defaultValue»");
+
 export function division(a, b) {
   return a / b;
 }

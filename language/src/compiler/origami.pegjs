@@ -643,6 +643,15 @@ paramArrayEntries
       return annotate([rest], location());
     }
 
+// Single parameter in a function's parameter list
+param
+  = paramNameWithInitilializer
+  / pattern:paramBindingPattern initializer:paramInitializer? {
+      return initializer
+        ? annotate([markers.paramInitializer, pattern, initializer], location())
+        : pattern;
+    }
+
 paramArrayEntry
   = param
   / &separator {
@@ -654,11 +663,9 @@ paramBindingPattern
   = paramArray
   / paramObject
 
-// Single parameter in a function's parameter list
-param
-  = paramBindingPattern
-  / paramName
-    
+paramInitializer
+  = __ "=" __ @pipelineExpression
+
 // A list of lambda parameters inside the parentheses: `a, b` in `(a, b) => a + b`
 paramList
   = entries:param|1.., separator| rest:(separator @paramRest?)? {
@@ -671,10 +678,17 @@ paramList
       return annotate([rest], location());
     }
 
-// A single name in a parameter list: `a` in `a, { b }`
+// A single name in a parameter list: `a` in `a, b`
 paramName
   = key:key {
       return annotate([markers.paramName, key], location());
+    }
+
+paramNameWithInitilializer
+  = name:paramName initializer:paramInitializer? {
+      return initializer
+        ? annotate([markers.paramInitializer, name, initializer], location())
+        : name;
     }
 
 // Object binding pattern in function parameter: `{ a, b: c }`
@@ -700,8 +714,11 @@ paramObjectEntry
   = key:objectPublicKey __ ":" __ param:param {
       return annotate([key, param], location());
     }
-  / param:paramName {
-      return annotate([text(), param], location());
+  / name:paramName initializer:paramInitializer? {
+      const binding = initializer
+        ? annotate([markers.paramInitializer, name, initializer], location())
+        : name;
+      return annotate([name[1], binding], location());
     }
 
 // Optional rest parameter for param array or object

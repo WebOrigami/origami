@@ -19,6 +19,7 @@ export const markers = {
   external: Symbol("external"), // External reference
   global: Symbol("global"), // Global reference
   paramArray: Symbol("paramArray"), // Parameter array destructuring
+  paramInitializer: Symbol("paramInitializer"), // Parameter default value
   paramName: Symbol("paramName"), // Parameter name
   paramObject: Symbol("paramObject"), // Parameter object destructuring
   paramRest: Symbol("paramRest"), // Rest operator in parameters
@@ -450,6 +451,15 @@ function makeParam(parameter, reference) {
   switch (marker) {
     case markers.paramArray:
       return makeParamArray(args, reference);
+
+    case markers.paramInitializer:
+      const [baseParam, defaultValue] = args;
+      const deferred = makeDeferredArguments([defaultValue])[0];
+      const defaultReference = annotate(
+        [ops.defaultValue, reference, deferred],
+        parameter.location
+      );
+      return makeParam(baseParam, defaultReference);
 
     case markers.paramName:
       return makeParamName(parameter, reference);

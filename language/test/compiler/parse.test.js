@@ -153,6 +153,32 @@ describe("Origami parser", () => {
       assertThrows("arrowFunction", "(, b) => b", "Expected an expression");
     });
 
+    test("arrow function with default parameters", () => {
+      assertParse("arrowFunction", "(a = 1, b = fn()) => a + b", [
+        ops.lambda,
+        [
+          ["a", [ops.defaultValue, [[ops.params, 0], 0], [ops.literal, 1]]],
+          [
+            "b",
+            [
+              ops.defaultValue,
+              [[ops.params, 0], 1],
+              [
+                ops.lambda,
+                [],
+                [[markers.traverse, [markers.reference, "fn"]], undefined],
+              ],
+            ],
+          ],
+        ],
+        [
+          ops.addition,
+          [markers.traverse, [markers.reference, "a"]],
+          [markers.traverse, [markers.reference, "b"]],
+        ],
+      ]);
+    });
+
     test("arrow function with rest parameter", () => {
       assertParse("arrowFunction", "(head, ...tail) => tail", [
         ops.lambda,
@@ -194,6 +220,24 @@ describe("Origami parser", () => {
           [markers.traverse, [markers.reference, "b"]],
         ],
       ]);
+      assertParse("arrowFunction", "([a = 1, b = 2]) => a + b", [
+        ops.lambda,
+        [
+          [
+            "a",
+            [ops.defaultValue, [[[ops.params, 0], 0], 0], [ops.literal, 1]],
+          ],
+          [
+            "b",
+            [ops.defaultValue, [[[ops.params, 0], 0], 1], [ops.literal, 2]],
+          ],
+        ],
+        [
+          ops.addition,
+          [markers.traverse, [markers.reference, "a"]],
+          [markers.traverse, [markers.reference, "b"]],
+        ],
+      ]);
       assertParse("arrowFunction", "([head, ...tail]) => tail", [
         ops.lambda,
         [
@@ -229,6 +273,16 @@ describe("Origami parser", () => {
         ops.lambda,
         [["c", [[[[[ops.params, 0], 0], "a"], "b"], "c"]]],
         [markers.traverse, [markers.reference, "c"]],
+      ]);
+      assertParse("arrowFunction", "({ a = 1 }) => a", [
+        ops.lambda,
+        [
+          [
+            "a",
+            [ops.defaultValue, [[[ops.params, 0], 0], "a"], [ops.literal, 1]],
+          ],
+        ],
+        [markers.traverse, [markers.reference, "a"]],
       ]);
       assertParse("arrowFunction", "({ a, b, ...rest }) => rest", [
         ops.lambda,
@@ -413,6 +467,11 @@ describe("Origami parser", () => {
 
     test("paramArrayEntry", () => {
       assertParse("paramArrayEntry", "a", [markers.paramName, "a"]);
+      assertParse("paramArrayEntry", "a = 1", [
+        markers.paramInitializer,
+        [markers.paramName, "a"],
+        [ops.literal, 1],
+      ]);
       assertThrows("paramArrayEntry", "...rest", `but "." found`);
     });
 
@@ -436,6 +495,10 @@ describe("Origami parser", () => {
       assertParse("paramObjectEntry", "[key]: param", [
         [markers.traverse, [markers.reference, "key"]],
         [markers.paramName, "param"],
+      ]);
+      assertParse("paramObjectEntry", "a = 1", [
+        "a",
+        [markers.paramInitializer, [markers.paramName, "a"], [ops.literal, 1]],
       ]);
     });
 

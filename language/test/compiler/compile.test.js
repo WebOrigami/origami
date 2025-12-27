@@ -107,6 +107,17 @@ describe("compile", () => {
     assert.equal(result, "Hello, Bob!");
   });
 
+  test("lambda with default parameter", async () => {
+    const fn = compile.expression("(name = 'Guest') => greet(name)", {
+      globals,
+    });
+    const lambda = await fn();
+    const result1 = await lambda();
+    assert.equal(result1, "Hello, Guest!");
+    const result2 = await lambda("Bob");
+    assert.equal(result2, "Hello, Bob!");
+  });
+
   test("lambda with rest parameter", async () => {
     const fn = compile.expression("(head, ...rest) => { head, rest }", {
       globals,
