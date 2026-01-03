@@ -13,6 +13,11 @@ export default async function fetchAndHandleExtension(href) {
   }
   let buffer = await response.arrayBuffer();
 
+  const mediaType = response.headers.get("Content-Type");
+  if (mediaType) {
+    /** @type {any} */ (buffer).mediaType = mediaType;
+  }
+
   // Attach any loader defined for the file type.
   const url = new URL(href);
   const filename = url.pathname.split("/").pop();
