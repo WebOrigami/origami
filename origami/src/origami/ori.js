@@ -4,8 +4,7 @@ import {
   isStringlike,
   toString,
 } from "@weborigami/async-tree";
-import { compile } from "@weborigami/language";
-import projectGlobals from "@weborigami/language/src/project/projectGlobals.js";
+import { compile, projectGlobals } from "@weborigami/language";
 import { toYaml } from "../common/serialize.js";
 import * as dev from "../dev/dev.js";
 
