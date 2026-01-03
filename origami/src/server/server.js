@@ -119,7 +119,7 @@ export function requestListener(maplike) {
  * Construct a page in response in the given error, and also show the error in
  * the console.
  */
-function respondWithError(response, error) {
+export function respondWithError(response, error) {
   let message = formatError(error);
   // Remove ANSI escape codes from the message.
   message = message.replace(/\x1b\[[0-9;]*m/g, "");
@@ -138,7 +138,7 @@ ${message}
 </body>
 </html>
 `;
-  response.writeHead(404, { "Content-Type": "text/html" });
+  response.writeHead(500, { "Content-Type": "text/html" });
   response.end(html, "utf-8");
   console.error(message);
 }
