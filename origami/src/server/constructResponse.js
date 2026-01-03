@@ -28,7 +28,7 @@ export default async function constructResponse(request, resource) {
   }
 
   // Determine media type, what data we'll send, and encoding.
-  const url = new URL(request.url ?? "", `https://${request.headers.host}`);
+  const url = new URL(request?.url ?? "", `https://${request?.headers.host}`);
 
   if (!url.pathname.endsWith("/") && Tree.isMaplike(resource)) {
     // Maplike resource: redirect to its index page.
