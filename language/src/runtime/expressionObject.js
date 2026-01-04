@@ -38,7 +38,9 @@ export default async function expressionObject(entries, state = {}) {
   // Get the keys, which might included computed keys
   const computedKeys = await Promise.all(
     entries.map(async ([key]) =>
-      key instanceof Array ? await evaluate(key, state) : key
+      key instanceof Array
+        ? await evaluate(/** @type {any} */ (key), state)
+        : key
     )
   );
 
