@@ -125,9 +125,9 @@ function maybeHtml(text) {
   // - start with possible whitespace
   // - followed by '<'
   // - followed by a letter
-  // - followed by letters, digits, hyphens, underscores, colons, or periods
+  // - followed maybe by letters, digits, hyphens, underscores, colons, or periods
   // - followed by '>', or
   // - followed by whitespace, anything that's not '>', then a '>'
-  const tagRegex = /^\s*<[a-zA-Z][a-zA-Z0-9-_:\.]+(>|[\s]+[^>]*>)/;
+  const tagRegex = /^\s*<[a-zA-Z][a-zA-Z0-9-_:\.]*(>|[\s]+[^>]*>)/;
   return tagRegex.test(text);
 }
