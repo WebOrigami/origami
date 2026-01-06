@@ -89,6 +89,7 @@ export default async function constructResponse(request, resource) {
     const text = toString(resource);
     if (text) {
       mediaType = maybeHtml(text) ? "text/html" : "text/plain";
+      mediaType += "; charset=utf-8";
       body = text;
     }
   } else if (mediaType && SiteMap.mediaTypeIsText(mediaType)) {
