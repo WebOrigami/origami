@@ -80,7 +80,7 @@ export async function handleRequest(request, response, map) {
   }
 }
 
-function keysFromUrl(url) {
+export function keysFromUrl(url) {
   const encodedKeys = keysFromPath(url.pathname);
   const keys = encodedKeys.map((key) => decodeURIComponent(key));
 
