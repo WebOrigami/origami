@@ -4,6 +4,7 @@ export * as compile from "./src/compiler/compile.js";
 export { default as isOrigamiFrontMatter } from "./src/compiler/isOrigamiFrontMatter.js";
 export * as Handlers from "./src/handlers/handlers.js";
 export { default as builtins } from "./src/project/builtins.js";
+export { default as coreGlobals } from "./src/project/coreGlobals.js";
 export { default as jsGlobals } from "./src/project/jsGlobals.js";
 export { default as projectConfig } from "./src/project/projectConfig.js";
 export { default as projectGlobals } from "./src/project/projectGlobals.js";
