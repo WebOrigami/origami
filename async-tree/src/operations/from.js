@@ -23,7 +23,7 @@ import isMap from "./isMap.js";
  * @returns {Map|AsyncMap}
  */
 export default function from(object, options = {}) {
-  const deep = options.deep ?? object[symbols.deep];
+  const deep = options.deep ?? object?.[symbols.deep];
   let map;
   if (object == null) {
     throw new TypeError("The tree argument wasn't defined.");
