@@ -9,20 +9,22 @@ import {
 import handleExtension from "./handleExtension.js";
 import { evaluate, ops } from "./internal.js";
 
+const KEY_TYPE = {
+  STRING: 0, // Simple string key: `a: 1`
+  COMPUTED: 1, // Computed key: `[code]: 1`
+};
+
+const VALUE_TYPE = {
+  PRIMITIVE: 0, // Primitive value: `a: 1`
+  EAGER: 1, // Calculated immediately: `a: 1 + 1`
+  GETTER: 2, // Calculated on demand: `a = fn()`
+};
+
 /**
  * Given an array of entries with string keys and Origami code values (arrays of
  * ops and operands), return an object with the same keys defining properties
  * whose getters evaluate the code.
- *
- * The value can take three forms:
- *
- * 1. A primitive value (string, etc.). This will be defined directly as an
- *    object property.
- * 1. An eager (as opposed to lazy) code entry. This will be evaluated during
- *    this call and its result defined as an object property.
- * 1. A code entry that starts with ops.getter. This will be defined as a
- *    property getter on the object.
- *
+
  * @param {*} entries
  * @param {import("../../index.ts").RuntimeState} [state]
  */
@@ -35,193 +37,201 @@ export default async function expressionObject(entries, state = {}) {
   }
   setParent(object, parent);
 
-  // Get the keys, which might included computed keys
-  const computedKeys = await Promise.all(
-    entries.map(async ([key]) =>
-      key instanceof Array
-        ? await evaluate(/** @type {any} */ (key), state)
-        : key
-    )
-  );
+  // The object in Map form for use on the stack
+  const map = new ObjectMap(object);
 
-  let tree;
-  const eagerProperties = [];
-  const propertyIsEnumerable = {};
-  let hasLazyProperties = false;
-  for (let i = 0; i < entries.length; i++) {
-    let key = computedKeys[i];
-    let value = entries[i][1];
+  // Preparation: gather information about all properties
+  const infos = entries.map(([key, value]) => propertyInfo(key, value));
 
-    // Determine if we need to define a getter or a regular property. If the key
-    // has an extension, we need to define a getter. If the value is code (an
-    // array), we need to define a getter -- but if that code takes the form
-    // [ops.getter, <primitive>] or [ops.literal, <value>], we can define a
-    // regular property.
-    let defineProperty;
-    const extname = extension.extname(key);
-    if (extname) {
-      defineProperty = false;
-    } else if (!(value instanceof Array)) {
-      defineProperty = true;
-    } else if (value[0] === ops.getter && !(value[1] instanceof Array)) {
-      defineProperty = true;
-      value = value[1];
-    } else if (value[0] === ops.literal) {
-      defineProperty = true;
-      value = value[1];
-    } else {
-      defineProperty = false;
-    }
-
-    // If the key is wrapped in parentheses, it is not enumerable.
-    let enumerable = true;
-    if (key[0] === "(" && key[key.length - 1] === ")") {
-      key = key.slice(1, -1);
-      enumerable = false;
-    }
-    propertyIsEnumerable[key] = enumerable;
-
-    if (defineProperty) {
-      // Define simple property
-      Object.defineProperty(object, key, {
-        configurable: true,
-        enumerable,
-        value,
-        writable: true,
-      });
-    } else {
-      // Property getter
-      let code;
-      if (value[0] === ops.getter) {
-        hasLazyProperties = true;
-        code = value[1];
-      } else {
-        eagerProperties.push(key);
-        code = value;
-      }
-
-      const get = async () => {
-        tree ??= new ObjectMap(object);
-        const newState = Object.assign({}, state, { object: tree });
-        const result = await evaluate(code, newState);
-        return extname ? handleExtension(result, key, tree) : result;
-      };
-
-      Object.defineProperty(object, key, {
-        configurable: true,
-        enumerable,
-        get,
-      });
+  // First pass: define all properties with plain string keys
+  for (const info of infos) {
+    if (info.keyType === KEY_TYPE.STRING) {
+      defineProperty(object, info, state, map);
     }
   }
 
-  // Attach a keys method
+  // Second pass: redefine eager string-keyed properties with actual values.
+  for (const info of infos) {
+    if (
+      info.keyType === KEY_TYPE.STRING &&
+      info.valueType === VALUE_TYPE.EAGER
+    ) {
+      await redefineProperty(object, info);
+    }
+  }
+
+  // Third pass: define all computed properties. These may refer to the
+  // properties we just defined.
+  for (const info of infos) {
+    if (info.keyType === KEY_TYPE.COMPUTED) {
+      const newState = Object.assign({}, state, { object: map });
+      const key = await evaluate(/** @type {any} */ (info.key), newState);
+      // Destructively update the property info with the computed key
+      info.key = key;
+      defineProperty(object, info, state, map);
+    }
+  }
+
+  // Fourth pass: redefine eager computed-keyed properties with actual values.
+  for (const info of infos) {
+    if (
+      info.keyType === KEY_TYPE.COMPUTED &&
+      info.valueType === VALUE_TYPE.EAGER
+    ) {
+      await redefineProperty(object, info);
+    }
+  }
+
+  // Attach a keys method, where keys for primitive/eager properties with
+  // maplike values get a trailing slash.
   Object.defineProperty(object, symbols.keys, {
     configurable: true,
     enumerable: false,
     value: () =>
-      objectKeys(
-        object,
-        computedKeys,
-        eagerProperties,
-        propertyIsEnumerable,
-        entries
-      ),
+      infos
+        .map((info) => normalizeKey(object, info))
+        .filter((key) => key !== null),
     writable: true,
   });
 
-  // Evaluate any properties that were declared as immediate: get their value
-  // and overwrite the property getter with the actual value.
-  for (const key of eagerProperties) {
-    const value = await object[key];
-    const enumerable = Object.getOwnPropertyDescriptor(object, key)?.enumerable;
+  // TODO: If there are any getters, mark the object as async. Note: this code
+  // was added so that Tree.from() could know whether to return an ObjectMap or
+  // a hypothetical AsyncObjectMap, which in turn would let a map operation know
+  // whether to expect async property values. const hasGetters =
+  // infos.some((info) => info.valueType === VALUE_TYPE.GETTER); if (hasGetters)
+  // { Object.defineProperty(object, symbols.async, { configurable: true,
+  // enumerable: false, value: true, writable: true,
+  //   });
+  // }
+
+  return object;
+}
+
+/**
+ * Define a single property on the object
+ */
+function defineProperty(object, propertyInfo, state, map) {
+  let { enumerable, hasExtension, key, value, valueType } = propertyInfo;
+  if (valueType == VALUE_TYPE.PRIMITIVE) {
+    // Define simple property
     Object.defineProperty(object, key, {
       configurable: true,
       enumerable,
       value,
       writable: true,
     });
-  }
-
-  // If there are any getters, mark the object as async
-  if (hasLazyProperties) {
-    Object.defineProperty(object, symbols.async, {
+  } else {
+    // Eager or getter; will evaluate eager property later
+    Object.defineProperty(object, key, {
       configurable: true,
-      enumerable: false,
-      value: true,
-      writable: true,
+      enumerable,
+      get: async () => {
+        const newState = Object.assign({}, state, { object: map });
+        const result = await evaluate(value, newState);
+        return hasExtension ? handleExtension(result, key, map) : result;
+      },
     });
   }
-
-  return object;
 }
 
-export function entryKey(entry, object = null, eagerProperties = []) {
-  let [key, value] = entry;
-
-  if (typeof key !== "string") {
-    // Computed property key
-    return null;
-  }
-
-  if (key[0] === "(" && key[key.length - 1] === ")") {
-    // Non-enumerable property, remove parentheses. This doesn't come up in the
-    // constructor, but can happen in situations encountered by the compiler's
-    // optimizer.
-    key = key.slice(1, -1);
-  }
+/**
+ * Return a normalized version of the entry's key for use in the keys() method.
+ * Among other things, this adds trailing slashes to keys that correspond to
+ * maplike values.
+ */
+export function normalizeKey(object, propertyInfo) {
+  const { key, value, valueType } = propertyInfo;
 
   if (trailingSlash.has(key)) {
     // Explicit trailing slash, return as is
     return key;
   }
 
-  // If eager property value is maplike, add slash to the key
-  if (eagerProperties.includes(key) && Tree.isMaplike(object?.[key])) {
+  // If actual property value is maplike, add slash
+  if (
+    (valueType === VALUE_TYPE.EAGER || valueType === VALUE_TYPE.PRIMITIVE) &&
+    Tree.isMaplike(object?.[key])
+  ) {
     return trailingSlash.add(key);
   }
 
+  // Look at value code to see if it will produce a maplike value
   if (!(value instanceof Array)) {
     // Can't be a subtree
     return trailingSlash.remove(key);
   }
-
-  // If we're dealing with a getter, work with what that gets
-  if (value[0] === ops.getter) {
-    value = value[1];
-  }
-
-  // If entry will definitely create a subtree, add a trailing slash
   if (value[0] === ops.object) {
-    // Subtree
+    // Creates an object; maplike
     return trailingSlash.add(key);
   }
-
-  // See if it looks a merged object
   if (value[1] === "_result" && value[0][0] === ops.object) {
-    // Merge
+    // Merges an object; maplike
     return trailingSlash.add(key);
   }
 
+  // Return as is
   return key;
 }
 
-function objectKeys(
-  object,
-  computedKeys,
-  eagerProperties,
-  propertyIsEnumerable,
-  entries
-) {
-  // If the key is a simple string key and it's enumerable, get the friendly
-  // version of it; if it's a computed key used that.
-  const keys = entries.map((entry, index) =>
-    typeof entry[0] !== "string"
-      ? computedKeys[index]
-      : propertyIsEnumerable[entry[0]]
-      ? entryKey(entry, object, eagerProperties)
-      : null
-  );
-  // Return the enumerable keys
-  return keys.filter((key) => key !== null);
+/**
+ * Given a key and the code for its value, determine some basic aspects of the
+ * property. This may return an updated key and/or value as well.
+ */
+function propertyInfo(key, value) {
+  // If the key is wrapped in parentheses, it is not enumerable.
+  let enumerable = true;
+  if (
+    typeof key === "string" &&
+    key[0] === "(" &&
+    key[key.length - 1] === ")"
+  ) {
+    key = key.slice(1, -1);
+    enumerable = false;
+  }
+
+  const keyType = key instanceof Array ? KEY_TYPE.COMPUTED : KEY_TYPE.STRING;
+
+  let valueType;
+  if (!(value instanceof Array)) {
+    // Primitive, no code to evaluate
+    valueType = VALUE_TYPE.PRIMITIVE;
+  } else if (value[0] !== ops.getter) {
+    // Code will be eagerly evaluated when object is constructed
+    valueType = VALUE_TYPE.EAGER;
+  } else {
+    // Defined as a getter
+    value = value[1]; // The actual code
+    if (!(value instanceof Array)) {
+      // Getter returns a primitive value; treat as regular property
+      valueType = VALUE_TYPE.PRIMITIVE;
+    } else if (value[0] === ops.literal) {
+      // Getter returns a literal value; treat as eager property
+      valueType = VALUE_TYPE.EAGER;
+    } else {
+      valueType = VALUE_TYPE.GETTER;
+    }
+  }
+
+  // Special case: a key with an extension has to be a getter
+  const hasExtension =
+    typeof key === "string" && extension.extname(key).length > 0;
+  if (hasExtension) {
+    valueType = VALUE_TYPE.GETTER;
+  }
+
+  return { enumerable, hasExtension, key, keyType, value, valueType };
+}
+
+/**
+ * Get the value of the indicated eager property and overwrite the property
+ * definition with the actual value.
+ */
+async function redefineProperty(object, info) {
+  const value = await object[info.key];
+  Object.defineProperty(object, info.key, {
+    configurable: true,
+    enumerable: info.enumerable,
+    value,
+    writable: true,
+  });
 }

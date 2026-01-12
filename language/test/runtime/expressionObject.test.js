@@ -53,11 +53,26 @@ describe("expressionObject", () => {
   });
 
   test("can compute a property key", async () => {
-    const entries = [[[ops.concat, "data", ".json"], 1]];
+    const entries = [
+      [
+        [
+          ops.concat,
+          [
+            [ops.inherited, 0],
+            [ops.literal, "name"], // references `name` on same object
+          ],
+          ".json",
+        ],
+        1,
+      ],
+      ["name", "data"],
+    ];
     const context = new SyncMap();
     const object = await expressionObject(entries, { object: context });
-    assert.equal(await object["data.json"], 1);
-    assert.deepEqual(object[symbols.keys](), ["data.json"]);
+    assert.deepEqual(await Tree.plain(object), {
+      "data.json": 1,
+      name: "data",
+    });
   });
 
   test("returned object values can be unpacked", async () => {
@@ -79,7 +94,7 @@ describe("expressionObject", () => {
     assert.equal(object["hidden"], "shh");
   });
 
-  test("provides a symbols.keys method", async () => {
+  test("provides a symbols.keys method returning normalized keys", async () => {
     const entries = [
       // Will return a tree, should have a slash
       ["getter", [ops.getter, [ops.object, ["b", [ops.literal, 2]]]]],
@@ -100,11 +115,11 @@ describe("expressionObject", () => {
     ]);
   });
 
-  test("sets symbols.async on objects with getters", async () => {
-    const noGetter = await expressionObject([["eager", 1]]);
-    assert.equal(noGetter[symbols.async], undefined);
+  // test("sets symbols.async on objects with getters", async () => {
+  //   const noGetter = await expressionObject([["eager", 1]]);
+  //   assert.equal(noGetter[symbols.async], undefined);
 
-    const hasGetter = await expressionObject([["lazy", [ops.getter, [2]]]]);
-    assert.equal(hasGetter[symbols.async], true);
-  });
+  //   const hasGetter = await expressionObject([["lazy", [ops.getter, [2]]]]);
+  //   assert.equal(hasGetter[symbols.async], true);
+  // });
 });

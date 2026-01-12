@@ -1,6 +1,5 @@
 import { pathFromKeys, trailingSlash } from "@weborigami/async-tree";
 import jsGlobals from "../project/jsGlobals.js";
-import { entryKey } from "../runtime/expressionObject.js";
 import { ops } from "../runtime/internal.js";
 import { annotate, markers, spanLocations } from "./parserHelpers.js";
 
@@ -64,8 +63,8 @@ export default function optimize(code, options = {}) {
       const entries = args;
       // Filter out computed property keys when determining local variables
       const propertyNames = entries
-        .map((entry) => entryKey(entry))
-        .filter((key) => key !== null);
+        .map(([key]) => key)
+        .filter((key) => typeof key === "string");
       locals.push({
         type: REFERENCE_INHERITED,
         names: propertyNames,
