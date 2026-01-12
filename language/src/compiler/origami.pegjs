@@ -167,12 +167,14 @@ computedPropertyAccess
       return annotate([markers.property, expression], location());
     }
 
-// A space before a computed property access. This is allowed when not in shell
-// mode. In shell mode `foo [bar]` should parse as a function call with a single
-// argument of an array, not as a property access.
+// An inline space before a computed property access. This is allowed when not
+// in shell mode. In shell mode `foo [bar]` should parse as a function call with
+// a single argument of an array, not as a property access. In program made, we
+// allow an inline space per JavaScript. JavaScript also allows newlines, but we
+// disallow those to avoid confusion with array/list/object entry separators.
 computedPropertySpace
   = shellMode
-  / !shellMode __
+  / !shellMode inlineSpace
 
 conditionalExpression
   = condition:logicalOrExpression tail:(__
