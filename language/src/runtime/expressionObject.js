@@ -89,7 +89,7 @@ export default async function expressionObject(entries, state = {}) {
     enumerable: false,
     value: () =>
       infos
-        .map((info) => normalizeKey(object, info))
+        .map((info) => normalizeKey(info, object))
         .filter((key) => key !== null),
     writable: true,
   });
@@ -135,11 +135,11 @@ function defineProperty(object, propertyInfo, state, map) {
 }
 
 /**
- * Return a normalized version of the entry's key for use in the keys() method.
+ * Return a normalized version of the property key for use in the keys() method.
  * Among other things, this adds trailing slashes to keys that correspond to
  * maplike values.
  */
-export function normalizeKey(object, propertyInfo) {
+export function normalizeKey(propertyInfo, object = null) {
   const { key, value, valueType } = propertyInfo;
 
   if (trailingSlash.has(key)) {
@@ -177,7 +177,7 @@ export function normalizeKey(object, propertyInfo) {
  * Given a key and the code for its value, determine some basic aspects of the
  * property. This may return an updated key and/or value as well.
  */
-function propertyInfo(key, value) {
+export function propertyInfo(key, value) {
   // If the key is wrapped in parentheses, it is not enumerable.
   let enumerable = true;
   if (
