@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { Tree } from "@weborigami/async-tree";
-import { formatError, projectRoot } from "@weborigami/language";
+import { formatError, projectRootFromPath } from "@weborigami/language";
 import path from "node:path";
 import process, { stdout } from "node:process";
 import help from "../dev/help.js";
@@ -18,7 +18,8 @@ async function main(...args) {
   initializeBuiltins();
 
   // Find the project root.
-  const projectTree = await projectRoot();
+  const currentDirectory = process.cwd();
+  const projectRoot = await projectRootFromPath(currentDirectory);
 
   // If no arguments were passed, show usage.
   if (!expression) {
@@ -28,9 +29,8 @@ async function main(...args) {
   }
 
   // Traverse from the project root to the current directory.
-  const currentDirectory = process.cwd();
-  const relative = path.relative(projectTree.path, currentDirectory);
-  const parent = await Tree.traversePath(projectTree, relative);
+  const relative = path.relative(projectRoot.path, currentDirectory);
+  const parent = await Tree.traversePath(projectRoot, relative);
 
   const result = await ori(expression, { parent });
 

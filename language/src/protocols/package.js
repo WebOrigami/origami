@@ -2,66 +2,53 @@ import { Tree, keysFromPath } from "@weborigami/async-tree";
 import projectRoot from "../project/projectRoot.js";
 
 /**
- * @param {string[]} keys
+ * The package: protocol handler
+ *
+ * @param {any[]} args
  */
-export default async function packageNamespace(...keys) {
-  const parent = await projectRoot();
+export default async function packageProtocol(...args) {
+  const context = args.pop(); // Remaining args are the path
+  const root = await projectRoot(context);
 
-  let name = keys.shift();
-  let organization;
-  if (name?.startsWith("@")) {
-    // First key is an npm organization
-    organization = name;
-    if (keys.length === 0) {
-      // Return a function that will process the next key
-      return async (name, ...keys) =>
-        getPackage(parent, organization, name, keys);
-    }
-    name = keys.shift();
+  // Identify the path to the package root
+  const packageRootPath = ["node_modules"];
+  const name = args.shift();
+  packageRootPath.push(name);
+  if (name.startsWith("@")) {
+    // First key is an npm organization, add next key as name
+    packageRootPath.push(args.shift());
   }
 
-  return getPackage(parent, organization, name, keys);
-}
-
-async function getPackage(parent, organization, name, keys) {
-  const packagePath = ["node_modules"];
-  if (organization) {
-    packagePath.push(organization);
-  }
-  packagePath.push(name);
-
-  const parentScope = await Tree.scope(parent);
-  const packageRoot = await Tree.traverse(
-    // @ts-ignore
-    parentScope,
-    ...packagePath
-  );
-
+  // Get the package root (top level folder of the package)
+  const packageRoot = await Tree.traverse(root, ...packageRootPath);
   if (!packageRoot) {
-    throw new Error(`Can't find ${packagePath.join("/")}`);
+    throw new Error(`Can't find ${packageRootPath.join("/")}`);
   }
 
+  // Identify the main entry point
   const mainPath = await Tree.traverse(packageRoot, "package.json", "main");
   if (!mainPath) {
     throw new Error(
-      `node_modules/${keys.join(
+      `${packageRootPath.join(
         "/"
       )} doesn't contain a package.json with a "main" entry.`
     );
   }
 
+  // Identify the folder containing the main entry point
   const mainKeys = keysFromPath(mainPath);
-  const mainContainerKeys = mainKeys.slice(0, -1);
-  const mainFileName = mainKeys[mainKeys.length - 1];
-  const mainContainer = await Tree.traverse(packageRoot, ...mainContainerKeys);
+  const mainFileName = mainKeys.pop();
+  const mainContainer = await Tree.traverse(packageRoot, ...mainKeys);
   const packageExports = await mainContainer.import(mainFileName);
 
   let result =
     "default" in packageExports ? packageExports.default : packageExports;
 
-  if (keys.length > 0) {
-    result = await Tree.traverse(result, ...keys);
+  // If there are remaining args, traverse into the package exports
+  if (args.length > 0) {
+    result = await Tree.traverse(result, ...args);
   }
 
   return result;
 }
+packageProtocol.needsState = true;

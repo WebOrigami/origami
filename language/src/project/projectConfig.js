@@ -1,12 +1,12 @@
 import { FileMap, toString } from "@weborigami/async-tree";
 import ori_handler from "../handlers/ori_handler.js";
 import coreGlobals from "./coreGlobals.js";
-import projectRoot from "./projectRoot.js";
+import projectRootFromPath from "./projectRootFromPath.js";
 
 const mapPathToConfig = new Map();
 
 export default async function config(dir = process.cwd()) {
-  const root = await projectRoot(dir);
+  const root = await projectRootFromPath(dir);
 
   const rootPath = root.path;
   const cached = mapPathToConfig.get(rootPath);
