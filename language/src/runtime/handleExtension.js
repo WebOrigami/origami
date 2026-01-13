@@ -21,7 +21,6 @@ let projectGlobals;
  * @param {import("@weborigami/async-tree").SyncOrAsyncMap} [parent]
  */
 export default async function handleExtension(value, key, parent) {
-  projectGlobals ??= await globals();
   if (isPacked(value) && isStringlike(key) && value.unpack === undefined) {
     const hasSlash = trailingSlash.has(key);
     if (hasSlash) {
@@ -34,7 +33,8 @@ export default async function handleExtension(value, key, parent) {
       : extension.extname(key);
     if (extname) {
       const handlerName = `${extname.slice(1)}_handler`;
-      let handler = await projectGlobals[handlerName];
+      const handlers = await getHandlers(parent);
+      let handler = await handlers[handlerName];
       if (handler) {
         if (isUnpackable(handler)) {
           // The extension handler itself needs to be unpacked
@@ -65,4 +65,20 @@ export default async function handleExtension(value, key, parent) {
     }
   }
   return value;
+}
+
+async function getHandlers(parent) {
+  // Walk up the parent chain to find first `handlers` property
+  let current = parent;
+
+  while (current) {
+    if (current.handlers) {
+      return current.handlers;
+    }
+    current = current.parent;
+  }
+
+  // Fall back to project globals
+  projectGlobals ??= await globals();
+  return projectGlobals;
 }
