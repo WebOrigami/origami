@@ -172,7 +172,7 @@ describe("Origami parser", () => {
                 ops.lambda,
                 0,
                 [],
-                [[markers.traverse, [markers.reference, "fn"]], undefined],
+                [[markers.traverse, [markers.reference, "fn"]]],
               ],
             ],
           ],
@@ -371,7 +371,7 @@ describe("Origami parser", () => {
   describe("callExpression", () => {
     test("call chains", () => {
       assertParse("callExpression", "(foo.js())('arg')", [
-        [[markers.traverse, [markers.reference, "foo.js"]], undefined],
+        [[markers.traverse, [markers.reference, "foo.js"]]],
         [ops.literal, "arg"],
       ]);
       assertParse("callExpression", "fn('a')('b')", [
@@ -382,7 +382,7 @@ describe("Origami parser", () => {
         [ops.literal, "b"],
       ]);
       assertParse("callExpression", "(foo.js())(a, b)", [
-        [[markers.traverse, [markers.reference, "foo.js"]], undefined],
+        [[markers.traverse, [markers.reference, "foo.js"]]],
         [markers.traverse, [markers.reference, "a"]],
         [markers.traverse, [markers.reference, "b"]],
       ]);
@@ -546,7 +546,6 @@ describe("Origami parser", () => {
     test("parentheses arguments", () => {
       assertParse("callExpression", "fn()", [
         [markers.traverse, [markers.reference, "fn"]],
-        undefined,
       ]);
       assertParse("callExpression", "foo.js(arg)", [
         [markers.traverse, [markers.reference, "foo.js"]],
@@ -563,7 +562,7 @@ describe("Origami parser", () => {
         [markers.traverse, [markers.reference, "b"]],
       ]);
       assertParse("callExpression", "fn()(arg)", [
-        [[markers.traverse, [markers.reference, "fn"]], undefined],
+        [[markers.traverse, [markers.reference, "fn"]]],
         [markers.traverse, [markers.reference, "arg"]],
       ]);
     });
@@ -617,19 +616,14 @@ describe("Origami parser", () => {
 
     test("path and parentheses chains", () => {
       assertParse("callExpression", "foo.js()/key", [
-        [[markers.traverse, [markers.reference, "foo.js"]], undefined],
+        [[markers.traverse, [markers.reference, "foo.js"]]],
         [ops.literal, "key"],
       ]);
       assertParse("callExpression", "tree/key()", [
         [markers.traverse, [markers.reference, "tree/"], [ops.literal, "key"]],
-        undefined,
       ]);
       assertParse("callExpression", "fn()/key()", [
-        [
-          [[markers.traverse, [markers.reference, "fn"]], undefined],
-          [ops.literal, "key"],
-        ],
-        undefined,
+        [[[markers.traverse, [markers.reference, "fn"]]], [ops.literal, "key"]],
       ]);
       assertParse("callExpression", "package:@weborigami/dropbox/auth(creds)", [
         [
@@ -1035,7 +1029,7 @@ Body`,
         ops.lambda,
         1,
         [["name", [[ops.params, 0], 0]]],
-        [[markers.traverse, [markers.reference, "_template"]], undefined],
+        [[markers.traverse, [markers.reference, "_template"]]],
       ],
       "program",
       false
@@ -1053,7 +1047,6 @@ Body`,
     ]);
     assertParse("group", "(fn())", [
       [markers.traverse, [markers.reference, "fn"]],
-      undefined,
     ]);
     assertParse("group", "(a -> b)", [
       [markers.traverse, [markers.reference, "b"]],
@@ -1105,7 +1098,7 @@ Body`,
       [markers.traverse, [markers.reference, "c"]],
     ]);
     assertParse("implicitParenthesesCallExpression", "(fn()) 'arg'", [
-      [[markers.traverse, [markers.reference, "fn"]], undefined],
+      [[markers.traverse, [markers.reference, "fn"]]],
       [ops.literal, "arg"],
     ]);
     assertParse(
@@ -1311,10 +1304,7 @@ Body`,
             ops.object,
             [
               "b",
-              [
-                ops.getter,
-                [[markers.traverse, [markers.reference, "fn"]], undefined],
-              ],
+              [ops.getter, [[markers.traverse, [markers.reference, "fn"]]]],
             ],
           ],
         ],
@@ -1506,7 +1496,7 @@ Body`,
   });
 
   test("parenthesesArguments", () => {
-    assertParse("parenthesesArguments", "()", [undefined]);
+    assertParse("parenthesesArguments", "()", []);
     assertParse("parenthesesArguments", "(a, b, c)", [
       [markers.traverse, [markers.reference, "a"]],
       [markers.traverse, [markers.reference, "b"]],

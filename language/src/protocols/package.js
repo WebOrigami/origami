@@ -7,8 +7,8 @@ import projectRoot from "../project/projectRoot.js";
  * @param {any[]} args
  */
 export default async function packageProtocol(...args) {
-  const context = args.pop(); // Remaining args are the path
-  const root = await projectRoot(context);
+  const state = args.pop(); // Remaining args are the path
+  const root = await projectRoot(state);
 
   // Identify the path to the package root
   const packageRootPath = ["node_modules"];

@@ -752,7 +752,7 @@ parenthesesArgumentList "list"
 // Function arguments in parentheses
 parenthesesArguments "function arguments in parentheses"
   = inlineSpace* "(" __ list:parenthesesArgumentList? __ expectClosingParenthesis {
-      return annotate(list ?? [undefined], location());
+      return annotate(list ?? [], location());
     }
 
 // A slash-separated path of keys that follows a call target, such as the path

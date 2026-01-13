@@ -931,7 +931,7 @@ function peg$parse(input, options) {
     return annotate(args, location());
   }
   function peg$f98(list) {
-    return annotate(list ?? [undefined], location());
+    return annotate(list ?? [], location());
   }
   function peg$f99(keys) {
     const args = keys ?? [];
