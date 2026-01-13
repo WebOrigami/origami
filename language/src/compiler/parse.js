@@ -2192,25 +2192,23 @@ function peg$parse(input, options) {
 
     s0 = peg$currPos;
     s1 = peg$parsecomputedPropertySpace();
-    if (s1 !== peg$FAILED) {
-      if (input.charCodeAt(peg$currPos) === 91) {
-        s2 = peg$c6;
-        peg$currPos++;
-      } else {
-        s2 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$e9); }
-      }
-      if (s2 !== peg$FAILED) {
-        s3 = peg$parseexpectExpression();
-        if (s3 !== peg$FAILED) {
-          s4 = peg$parseexpectClosingBracket();
-          if (s4 !== peg$FAILED) {
-            peg$savedPos = s0;
-            s0 = peg$f16(s3);
-          } else {
-            peg$currPos = s0;
-            s0 = peg$FAILED;
-          }
+    if (s1 === peg$FAILED) {
+      s1 = null;
+    }
+    if (input.charCodeAt(peg$currPos) === 91) {
+      s2 = peg$c6;
+      peg$currPos++;
+    } else {
+      s2 = peg$FAILED;
+      if (peg$silentFails === 0) { peg$fail(peg$e9); }
+    }
+    if (s2 !== peg$FAILED) {
+      s3 = peg$parseexpectExpression();
+      if (s3 !== peg$FAILED) {
+        s4 = peg$parseexpectClosingBracket();
+        if (s4 !== peg$FAILED) {
+          peg$savedPos = s0;
+          s0 = peg$f16(s3);
         } else {
           peg$currPos = s0;
           s0 = peg$FAILED;

@@ -163,7 +163,7 @@ comment "comment"
   / singleLineComment
 
 computedPropertyAccess
-  = computedPropertySpace "[" expression:expectExpression expectClosingBracket {
+  = computedPropertySpace? "[" expression:expectExpression expectClosingBracket {
       return annotate([markers.property, expression], location());
     }
 
