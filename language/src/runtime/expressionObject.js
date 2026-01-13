@@ -9,7 +9,7 @@ import {
 import handleExtension from "./handleExtension.js";
 import { evaluate, ops } from "./internal.js";
 
-const KEY_TYPE = {
+export const KEY_TYPE = {
   STRING: 0, // Simple string key: `a: 1`
   COMPUTED: 1, // Computed key: `[code]: 1`
 };
@@ -89,8 +89,8 @@ export default async function expressionObject(entries, state = {}) {
     enumerable: false,
     value: () =>
       infos
-        .map((info) => normalizeKey(info, object))
-        .filter((key) => key !== null),
+        .filter((info) => info.enumerable)
+        .map((info) => normalizeKey(info, object)),
     writable: true,
   });
 

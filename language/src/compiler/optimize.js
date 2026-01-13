@@ -1,6 +1,10 @@
 import { pathFromKeys, trailingSlash } from "@weborigami/async-tree";
 import jsGlobals from "../project/jsGlobals.js";
-import { normalizeKey, propertyInfo } from "../runtime/expressionObject.js";
+import {
+  KEY_TYPE,
+  normalizeKey,
+  propertyInfo,
+} from "../runtime/expressionObject.js";
 import { ops } from "../runtime/internal.js";
 import { annotate, markers, spanLocations } from "./parserHelpers.js";
 
@@ -62,10 +66,7 @@ export default function optimize(code, options = {}) {
 
     case ops.object:
       const entries = args;
-      // Filter out computed property keys when determining local variables
-      const propertyNames = entries
-        .map(([key, value]) => normalizeKey(propertyInfo(key, value)))
-        .filter((key) => key !== null);
+      const propertyNames = getPropertyNames(entries);
       locals.push({
         type: REFERENCE_INHERITED,
         names: propertyNames,
@@ -205,6 +206,14 @@ function findLocalDetails(key, locals) {
     }
   }
   return null;
+}
+
+function getPropertyNames(entries) {
+  const infos = entries.map(([key, value]) => propertyInfo(key, value));
+  // Filter out computed property keys when determining local variables
+  return infos
+    .filter((info) => info.keyType !== KEY_TYPE.COMPUTED)
+    .map((info) => normalizeKey(info));
 }
 
 function globalReference(key, globals) {
