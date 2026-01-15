@@ -1,5 +1,11 @@
+/**
+ * Origami is a JavaScript project, but we use TypeScript as an internal tool to
+ * confirm our code is type safe.
+ */
+
 import { SyncOrAsyncMap, UnpackFunction } from "@weborigami/async-tree";
 
+// Re-export all exports from main.js
 export * from "./main.js";
 
 /**

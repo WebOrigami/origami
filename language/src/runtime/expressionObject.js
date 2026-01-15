@@ -138,6 +138,9 @@ function defineProperty(object, propertyInfo, state, map) {
  * Return a normalized version of the property key for use in the keys() method.
  * Among other things, this adds trailing slashes to keys that correspond to
  * maplike values.
+ *
+ * @param {any} propertyInfo
+ * @param {object|null} [object]
  */
 export function normalizeKey(propertyInfo, object = null) {
   const { key, value, valueType } = propertyInfo;
