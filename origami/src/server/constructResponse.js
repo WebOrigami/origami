@@ -122,6 +122,9 @@ function maybeHtml(text) {
   if (text.startsWith("<!DOCTYPE html>")) {
     return true;
   }
+  if (text.startsWith("<!--")) {
+    return true;
+  }
   // Check if the text starts with an HTML tag.
   // - start with possible whitespace
   // - followed by '<'
