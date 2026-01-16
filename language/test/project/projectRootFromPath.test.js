@@ -33,8 +33,8 @@ describe("projectRootFromPath", () => {
     assert.equal(resultPath, fileURLToPath(projectUrl));
   });
 
-  test("defaults to current working directory", async () => {
+  test("defaults to supplied directory", async () => {
     const root = await projectRootFromPath("/");
-    assert.equal(root.path, process.cwd());
+    assert.equal(root.path, "/");
   });
 });

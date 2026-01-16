@@ -29,28 +29,38 @@ export default async function projectRootFromPath(dirname = process.cwd()) {
   let root;
   let value;
   // Use a plain FileMap to avoid loading extension handlers
-  const currentTree = new FileMap(dirname);
-  // Try looking for config file
-  value = await currentTree.get(configFileName);
-  if (value) {
-    // Found config file
-    root = new OrigamiFileMap(currentTree.path);
-  } else {
+  let currentFolder = new FileMap(dirname);
+  while (currentFolder) {
+    // Try looking for config file
+    value = await currentFolder.get(configFileName);
+    if (value) {
+      // Found config file
+      root = new OrigamiFileMap(currentFolder.path);
+      break;
+    }
+
     // Try looking for package.json
-    value = await currentTree.get(packageFileName);
+    value = await currentFolder.get(packageFileName);
     if (value) {
       // Found package.json
-      root = new OrigamiFileMap(currentTree.path);
-    } else {
-      // Move up a folder and try again
-      const parentPath = path.dirname(dirname);
-      if (parentPath !== dirname) {
-        root = await projectRootFromPath(parentPath);
-      } else {
-        // At filesystem root, use current working directory
-        root = new OrigamiFileMap(process.cwd());
-      }
+      root = new OrigamiFileMap(currentFolder.path);
+      break;
     }
+
+    // Move up a folder and try again
+    const parentPath = path.dirname(currentFolder.path);
+    if (parentPath !== currentFolder.path) {
+      currentFolder = new FileMap(parentPath);
+    } else {
+      // At filesystem root; not found
+      root = null;
+      break;
+    }
+  }
+
+  if (!root) {
+    // Default to using the provided folder as the project root
+    root = new OrigamiFileMap(dirname);
   }
 
   mapPathToRoot.set(dirname, root);
