@@ -7,7 +7,13 @@ import sharp from "sharp";
  * @param {import("sharp").ResizeOptions} options
  */
 export default async function resize(input, options) {
-  return input instanceof Uint8Array || input instanceof ArrayBuffer
-    ? sharp(input).rotate().resize(options).toBuffer()
-    : undefined;
+  if (!(input instanceof Uint8Array || input instanceof ArrayBuffer)) {
+    return undefined;
+  }
+
+  const data = await sharp(input).rotate().resize(options).toBuffer();
+
+  // Sharp WASM library returns what appears to be a SharedArrayBuffer, which is
+  // not accepted in some contexts, so we convert it to a regular Uint8Array.
+  return new Uint8Array(data);
 }
