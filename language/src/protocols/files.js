@@ -1,25 +1,24 @@
 import os from "node:os";
 import path from "node:path";
-import projectRoot from "../project/projectRoot.js";
 import OrigamiFileMap from "../runtime/OrigamiFileMap.js";
 
 /**
  *
- * @param {string[]} args
+ * @param {any[]} args
  */
 export default async function files(...args) {
   const state = args.pop(); // Remaining args are the path
 
   // If path begins with `~`, treat it relative to the home directory.
-  // Otherwise, treat it relative to the current working directory.
+  // Otherwise, treat it relative to the current container.
   let relativePath = args.join(path.sep);
   let basePath;
   if (relativePath.startsWith("~")) {
     basePath = os.homedir();
     relativePath = relativePath.slice(2);
   } else {
-    const root = await projectRoot(state);
-    basePath = root.path;
+    const { container } = state;
+    basePath = container.path;
   }
   const resolved = path.resolve(basePath, relativePath);
 
