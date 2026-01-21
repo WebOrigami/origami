@@ -105,7 +105,7 @@ Origami:
     post:
       args: (url, data)
       description: POST the given data to the URL
-    project:
+    projectRoot:
       description: The root folder for the current Origami project
     redirect:
       args: (url, options)
