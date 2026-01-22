@@ -19,7 +19,6 @@ const TypedArray = Object.getPrototypeOf(Uint8Array);
  */
 export default async function ori(expression, options = {}) {
   const parent = options.parent ?? null;
-  const parentPath = parent ? parent.path : null;
   const formatResult = options.formatResult ?? true;
 
   // In case expression has come from a file, cast it to a string.
@@ -31,7 +30,7 @@ export default async function ori(expression, options = {}) {
 
   // Add Dev builtins as top-level globals
   const globals = {
-    ...(await projectGlobals(parentPath)),
+    ...(await projectGlobals(parent)),
     ...dev,
   };
 

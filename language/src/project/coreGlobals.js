@@ -3,12 +3,17 @@ import protocolGlobals from "../protocols/protocolGlobals.js";
 import * as protocols from "../protocols/protocols.js";
 import jsGlobals from "./jsGlobals.js";
 
-let origamiBuiltins;
+let globals;
 
 export default async function coreGlobals() {
+  if (globals) {
+    return globals;
+  }
+
   // Dynamic import to avoid circular dependency
   const handlerGlobals = await import("../handlers/handlers.js");
 
+  let origamiBuiltins;
   if (!origamiBuiltins) {
     // This dynamic import is for a different reason. We want to load the
     // Origami builtins if they're available, but not fail if they're not. This
@@ -21,7 +26,7 @@ export default async function coreGlobals() {
     }
   }
 
-  return {
+  globals = {
     ...jsGlobals,
     Tree,
     Protocol: protocols,
@@ -29,4 +34,6 @@ export default async function coreGlobals() {
     ...handlerGlobals,
     ...origamiBuiltins,
   };
+
+  return globals;
 }
