@@ -1,14 +1,9 @@
 import { ObjectMap } from "@weborigami/async-tree";
 import assert from "node:assert";
-import { before, describe, test } from "node:test";
-import initializeBuiltins from "../../src/initializeBuiltins.js";
+import { describe, test } from "node:test";
 import sitemap from "../../src/origami/sitemap.js";
 
 describe("sitemap", () => {
-  before(() => {
-    initializeBuiltins();
-  });
-
   test("returns a sitemap for a tree", async () => {
     const tree = new ObjectMap(
       {
@@ -18,7 +13,7 @@ describe("sitemap", () => {
           "c.html": "C",
         },
       },
-      { deep: true }
+      { deep: true },
     );
     const result = await sitemap(tree, {
       base: "https://example.com",
@@ -37,7 +32,7 @@ describe("sitemap", () => {
     <loc>https://example.com/b/c.html</loc>
   </url>
 </urlset>
-`
+`,
     );
   });
 });

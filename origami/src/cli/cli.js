@@ -5,17 +5,12 @@ import { formatError, projectRootFromPath } from "@weborigami/language";
 import path from "node:path";
 import process, { stdout } from "node:process";
 import help from "../dev/help.js";
-import initializeBuiltins from "../initializeBuiltins.js";
 import ori from "../origami/ori.js";
 
 const TypedArray = Object.getPrototypeOf(Uint8Array);
 
 async function main(...args) {
   const expression = args.join(" ");
-
-  // Need to initialize builtins before calling projectRoot, which instantiates
-  // an OrigamiFileMap object that handles extensions, which requires builtins.
-  initializeBuiltins();
 
   // Find the project root.
   const currentDirectory = process.cwd();
@@ -39,8 +34,8 @@ async function main(...args) {
       result instanceof ArrayBuffer
         ? new Uint8Array(result)
         : typeof result === "string" || result instanceof TypedArray
-        ? result
-        : String(result);
+          ? result
+          : String(result);
     await stdout.write(output);
 
     // If stdout points to the console, and the result didn't end in a newline,

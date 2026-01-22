@@ -1,7 +1,6 @@
 import { OrigamiFileMap } from "@weborigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import initializeBuiltins from "../../src/initializeBuiltins.js";
 
 /**
  * Run the programs in the `programs` directory as unit tests.
@@ -13,7 +12,6 @@ import initializeBuiltins from "../../src/initializeBuiltins.js";
 describe("programs", async () => {
   const dir = new URL("fixtures", import.meta.url);
   const fixtures = new OrigamiFileMap(dir);
-  initializeBuiltins();
 
   for (const key of await fixtures.keys()) {
     const file = await fixtures.get(key);

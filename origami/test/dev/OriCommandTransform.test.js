@@ -1,14 +1,9 @@
 import { ObjectMap } from "@weborigami/async-tree";
 import assert from "node:assert";
-import { before, describe, test } from "node:test";
+import { describe, test } from "node:test";
 import OriCommandTransform from "../../src/dev/OriCommandTransform.js";
-import initializeBuiltins from "../../src/initializeBuiltins.js";
 
 describe("OriCommandTransform", () => {
-  before(() => {
-    initializeBuiltins();
-  });
-
   test("prefers value defined by base tree even if it starts with '!'", async () => {
     const tree = new (OriCommandTransform(ObjectMap))({
       "!yaml": "foo",
