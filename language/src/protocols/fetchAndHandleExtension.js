@@ -3,10 +3,12 @@ import handleExtension from "../runtime/handleExtension.js";
 /**
  * Fetch the resource at the given href.
  *
+ * @typedef {import("@weborigami/async-tree").SyncOrAsyncMap} SyncOrAsyncMap
  *
  * @param {string} href
+ * @param {SyncOrAsyncMap} parent
  */
-export default async function fetchAndHandleExtension(href) {
+export default async function fetchAndHandleExtension(href, parent) {
   const response = await fetch(href);
   if (!response.ok) {
     return undefined;
@@ -22,7 +24,7 @@ export default async function fetchAndHandleExtension(href) {
   const url = new URL(href);
   const filename = url.pathname.split("/").pop();
   if (filename) {
-    buffer = await handleExtension(buffer, filename);
+    buffer = await handleExtension(buffer, filename, parent);
   }
 
   return buffer;

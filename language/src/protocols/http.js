@@ -6,9 +6,11 @@ import fetchAndHandleExtension from "./fetchAndHandleExtension.js";
  *
  *
  * @param {string} host
- * @param  {...string} keys
+ * @param  {...any} keys
  */
 export default async function http(host, ...keys) {
+  const state = keys.pop();
   const href = constructHref("http:", host, ...keys);
-  return fetchAndHandleExtension(href);
+  return fetchAndHandleExtension(href, state.parent);
 }
+http.needsState = true;

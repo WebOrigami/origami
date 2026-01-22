@@ -25,7 +25,10 @@ export default async function projectGlobals(parent) {
     const globals = await coreGlobals();
 
     if (parent) {
-      // Get config for the given container and add it to the globals.
+      // Get config for the given container and add it to the globals. During
+      // this read, we want to only rely on core globals to avoid circularities,
+      // so we temporarily set globals to coreGlobals.
+      projectRoot.globals = globals;
       const config = await projectConfig(parent);
 
       // Merge config into globals; don't invoke property getters.
