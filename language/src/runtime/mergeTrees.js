@@ -1,4 +1,5 @@
 import { isPlainObject, isUnpackable, Tree } from "@weborigami/async-tree";
+import assignPropertyDescriptors from "./assignPropertyDescriptors.js";
 
 /**
  * Create a tree that's the result of merging the given trees.
@@ -21,26 +22,14 @@ export default async function mergeTrees(...trees) {
   // Unpack any packed objects.
   const unpacked = await Promise.all(
     filtered.map((obj) =>
-      isUnpackable(obj) ? /** @type {any} */ (obj).unpack() : obj
-    )
+      isUnpackable(obj) ? /** @type {any} */ (obj).unpack() : obj,
+    ),
   );
 
   // If all trees are plain objects, return a plain object.
   if (unpacked.every((tree) => isPlainObject(tree) && !Tree.isMap(tree))) {
-    // If we do an Object.assign, we'd evaluate getters.
-    // To avoid that, we'll merge property descriptors.
-    const result = {};
-    for (const obj of unpacked) {
-      const descriptors = Object.getOwnPropertyDescriptors(obj);
-      for (const [key, descriptor] of Object.entries(descriptors)) {
-        if (descriptor.value !== undefined) {
-          result[key] = descriptor.value;
-        } else {
-          Object.defineProperty(result, key, descriptor);
-        }
-      }
-    }
-    return result;
+    // Use our Object.assign variation that avoids invoking property getters.
+    return assignPropertyDescriptors({}, ...unpacked);
   }
 
   // Merge the trees.
