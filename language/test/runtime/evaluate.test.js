@@ -32,10 +32,10 @@ describe("evaluate", () => {
       return this;
     };
     fn.containerAsTarget = true;
-    const container = new SyncMap();
-    const state = { container };
+    const parent = new SyncMap();
+    const state = { parent };
     const code = createCode([fn]);
     const result = await evaluate(code, state);
-    assert.equal(result, container);
+    assert.equal(result, parent);
   });
 });

@@ -63,8 +63,8 @@ export type Position = {
 }
 
 export type RuntimeState = {
-  /** The container (e.g., file system) that holds the code */
-  container?: SyncOrAsyncMap | null;
+  /** The container (e.g., file system folder) that holds the code */
+  parent?: SyncOrAsyncMap | null;
   /** The object to which this code is attached */
   object?: SyncOrAsyncMap | null;
   /** The current stack of function parameter assignments */

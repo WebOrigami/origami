@@ -24,7 +24,7 @@ export default async function evaluate(code, state = {}) {
   } else {
     // Evaluate each instruction in the code.
     evaluated = await Promise.all(
-      code.map((instruction) => evaluate(instruction, state))
+      code.map((instruction) => evaluate(instruction, state)),
     );
   }
 
@@ -34,7 +34,7 @@ export default async function evaluate(code, state = {}) {
   if (!fn) {
     // The code wants to invoke something that's couldn't be found in scope.
     const error = ReferenceError(
-      `${codeFragment(code[0].location)} is not defined`
+      `${codeFragment(code[0].location)} is not defined`,
     );
     /** @type {any} */ (error).location = code[0].location;
     throw error;
@@ -48,9 +48,9 @@ export default async function evaluate(code, state = {}) {
   if (fn.needsState) {
     // The function is an op that wants the runtime state
     args.push(state);
-  } else if (fn.containerAsTarget && state.container) {
+  } else if (fn.containerAsTarget && state.parent) {
     // The function wants the code's container as the `this` target
-    fn = fn.bind(state.container);
+    fn = fn.bind(state.parent);
   }
 
   // Execute the function or traverse the tree.

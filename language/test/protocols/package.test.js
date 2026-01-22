@@ -8,9 +8,9 @@ describe("package: protocol", () => {
   test("returns a package's main export(s)", async () => {
     // Reproduce the type of evaluation context object the runtime would create
     const projectRoot = await projectRootFromPath(process.cwd());
-    const context = { container: projectRoot };
+    const state = { parent: projectRoot };
 
-    const result = await packageProtocol("@weborigami", "async-tree", context);
+    const result = await packageProtocol("@weborigami", "async-tree", state);
     const { toString } = result;
     assert.equal(toString(123), "123");
   });

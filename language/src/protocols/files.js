@@ -17,8 +17,7 @@ export default async function files(...args) {
     basePath = os.homedir();
     relativePath = relativePath.slice(2);
   } else {
-    const { container } = state;
-    basePath = container.path;
+    basePath = state.parent.path;
   }
   const resolved = path.resolve(basePath, relativePath);
 

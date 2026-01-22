@@ -10,9 +10,7 @@ import { evaluate } from "./internal.js";
  */
 export function createExpressionFunction(code, parent) {
   async function fn() {
-    return evaluate(code, {
-      container: parent,
-    });
+    return evaluate(code, { parent });
   }
   fn.code = code;
   fn.toString = () => code.location.source.text;
