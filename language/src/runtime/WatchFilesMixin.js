@@ -1,5 +1,4 @@
-import * as fs from "node:fs/promises";
-import path from "node:path";
+import * as fs from "node:fs";
 import Watcher from "watcher";
 import TreeEvent from "./TreeEvent.js";
 
@@ -15,10 +14,10 @@ export default function WatchFilesMixin(Base) {
       }
     }
 
-    onChange(key) {
+    onChange(filePath) {
       // Reset cached values.
       this.subfoldersMap = new Map();
-      this.dispatchEvent(new TreeEvent("change", { key }));
+      this.dispatchEvent(new TreeEvent("change", { filePath }));
     }
 
     async unwatch() {
@@ -38,7 +37,7 @@ export default function WatchFilesMixin(Base) {
       this.watching = true;
 
       // Ensure the directory exists.
-      await fs.mkdir(this.dirname, { recursive: true });
+      fs.mkdirSync(this.dirname, { recursive: true });
 
       this.watcher = new Watcher(this.dirname, {
         ignoreInitial: true,
@@ -46,8 +45,7 @@ export default function WatchFilesMixin(Base) {
         recursive: true,
       });
       this.watcher.on("all", (event, filePath) => {
-        const key = path.basename(filePath);
-        this.onChange(key);
+        this.onChange(filePath);
       });
 
       // Add to the list of FileTree instances watching this directory.

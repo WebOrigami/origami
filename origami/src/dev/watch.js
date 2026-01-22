@@ -16,7 +16,7 @@ export default async function watch(maplike, fn) {
   const container = await getTreeArgument(maplike, "watch");
 
   // Watch the indicated tree.
-  await /** @type {any} */ (container).watch?.();
+  /** @type {any} */ (container).watch?.();
 
   if (fn === undefined) {
     return container;
