@@ -5,8 +5,6 @@ import OrigamiFileMap from "../runtime/OrigamiFileMap.js";
 const configFileName = "config.ori";
 const packageFileName = "package.json";
 
-const mapPathToRoot = new Map();
-
 /**
  * Return an OrigamiFileMap object for the given folder.
  *
@@ -20,11 +18,6 @@ const mapPathToRoot = new Map();
  * @param {string} dirname
  */
 export default async function projectRootFromPath(dirname) {
-  const cached = mapPathToRoot.get(dirname);
-  if (cached) {
-    return cached;
-  }
-
   let root;
   let value;
   // Use a plain FileMap to avoid loading extension handlers
@@ -62,6 +55,5 @@ export default async function projectRootFromPath(dirname) {
     root = new OrigamiFileMap(dirname);
   }
 
-  mapPathToRoot.set(dirname, root);
   return root;
 }
