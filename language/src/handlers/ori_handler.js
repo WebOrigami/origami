@@ -14,11 +14,12 @@ export default {
   /** @type {import("@weborigami/async-tree").UnpackFunction} */
   async unpack(packed, options = {}) {
     const parent = getParent(packed, options);
+    const parentPath = parent ? parent.path : null;
     const source = getSource(packed, options);
 
     // Compile the source code as an Origami program
     const compiler = options.compiler ?? compile.program;
-    const globals = options.globals ?? (await projectGlobals());
+    const globals = options.globals ?? (await projectGlobals(parentPath));
     const fn = compiler(source, {
       globals,
       mode: "program",

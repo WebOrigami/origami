@@ -28,7 +28,8 @@ export default function OriCommandTransform(Base) {
         }
 
         // Key is an Origami command; invoke it.
-        const globals = await projectGlobals();
+        const parentPath = this.path ?? null;
+        const globals = await projectGlobals(parentPath);
         const commandName = trailingSlash.remove(key.slice(1).trim());
 
         // Look for command as a global or Dev command

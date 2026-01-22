@@ -5,8 +5,15 @@ import projectRootFromPath from "./projectRootFromPath.js";
 
 const mapPathToConfig = new Map();
 
-export default async function config(dir = process.cwd()) {
-  const root = await projectRootFromPath(dir);
+/**
+ * Given a folder path, return the Origami configuration for the associated
+ * project root. This will be the unpacked config.ori file if it exists, or an
+ * empty object otherwise.
+ *
+ * @param {string} dirname
+ */
+export default async function config(dirname) {
+  const root = await projectRootFromPath(dirname);
 
   const rootPath = root.path;
   const cached = mapPathToConfig.get(rootPath);

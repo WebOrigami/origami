@@ -68,6 +68,7 @@ export default {
   /** @type {import("@weborigami/async-tree").UnpackFunction} */
   async unpack(packed, options = {}) {
     const parent = options.parent ?? null;
+    const parentPath = parent ? parent.path : null;
     const text = toString(packed);
     if (text === null) {
       throw new Error("Tried to treat a file as text but it wasn't text.");
@@ -80,7 +81,7 @@ export default {
       const { body, frontText, isOrigami } = parsed;
       let frontData;
       if (isOrigami) {
-        const globals = await projectGlobals();
+        const globals = await projectGlobals(parentPath);
         const compiled = compile.expression(frontText.trim(), {
           globals,
           parent,

@@ -79,6 +79,7 @@ async function getHandlers(parent) {
   }
 
   // Fall back to project globals
-  projectGlobals ??= await globals();
+  const parentPath = parent ? parent.path : null;
+  projectGlobals ??= await globals(parentPath);
   return projectGlobals;
 }

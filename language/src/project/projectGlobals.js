@@ -4,19 +4,25 @@ import projectConfig from "./projectConfig.js";
 
 let globals;
 
-// Core globals plus project config
-export default async function projectGlobals(dir = process.cwd()) {
+/**
+ * Return the complete set of globals available to code running in the
+ * given folder. This will be the core globals plus any configuration
+ * specified in the project's config.ori file.
+ *
+ * @param {string|null} dirname
+ */
+export default async function projectGlobals(dirname) {
   if (!globals) {
     // Start with core globals
     globals = await coreGlobals();
 
-    // Now get config. The config.ori file may require access to globals,
-    // which will obtain the core globals set above. Once we've got the
-    // config, we add it to the globals.
-    const config = await projectConfig(dir);
+    if (dirname) {
+      // Get config for the given folder and add it to the globals.
+      const config = await projectConfig(dirname);
 
-    // Merge config into globals, taking care to avoid invoking property getters.
-    assignPropertyDescriptors(globals, config);
+      // Merge config into globals; don't invoke property getters.
+      assignPropertyDescriptors(globals, config);
+    }
   }
 
   return globals;

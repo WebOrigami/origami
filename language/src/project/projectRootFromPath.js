@@ -8,19 +8,18 @@ const packageFileName = "package.json";
 const mapPathToRoot = new Map();
 
 /**
- * Return an OrigamiFileMap object for the current project root.
+ * Return an OrigamiFileMap object for the given folder.
  *
- * This searches the current directory and its ancestors for an Origami file
- * called `config.ori`. If an Origami configuration file is found, the
- * containing folder is considered to be the project root.
+ * This searches the given folder and its ancestors for an Origami file called
+ * `config.ori`. If an Origami configuration file is found, the containing
+ * folder is considered to be the project root.
  *
- * Otherwise, this looks for a package.json file to determine the project root.
- * If no package.json is found, the current folder is used as the project root.
+ * Otherwise this looks for a package.json file to determine the project root.
+ * If none is found, the given folder itself is used as the project root.
  *
- *
- * @param {string} [dirname]
+ * @param {string} dirname
  */
-export default async function projectRootFromPath(dirname = process.cwd()) {
+export default async function projectRootFromPath(dirname) {
   const cached = mapPathToRoot.get(dirname);
   if (cached) {
     return cached;

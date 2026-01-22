@@ -98,7 +98,8 @@ export default {
 };
 
 async function oriCallTagForParent(parent, options, yaml) {
-  const globals = await projectGlobals();
+  const parentPath = parent ? parent.path : null;
+  const globals = await projectGlobals(parentPath);
   return {
     collection: "seq",
 
@@ -162,7 +163,8 @@ async function oriCallTagForParent(parent, options, yaml) {
 // Define the !ori tag for YAML parsing. This will run in the context of the
 // supplied parent.
 async function oriTagForParent(parent, options, yaml) {
-  const globals = await projectGlobals();
+  const parentPath = parent ? parent.path : null;
+  const globals = await projectGlobals(parentPath);
   return {
     resolve(text) {
       hasOriTags = true;

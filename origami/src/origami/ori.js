@@ -19,6 +19,7 @@ const TypedArray = Object.getPrototypeOf(Uint8Array);
  */
 export default async function ori(expression, options = {}) {
   const parent = options.parent ?? null;
+  const parentPath = parent ? parent.path : null;
   const formatResult = options.formatResult ?? true;
 
   // In case expression has come from a file, cast it to a string.
@@ -30,7 +31,7 @@ export default async function ori(expression, options = {}) {
 
   // Add Dev builtins as top-level globals
   const globals = {
-    ...(await projectGlobals()),
+    ...(await projectGlobals(parentPath)),
     ...dev,
   };
 
@@ -46,17 +47,6 @@ export default async function ori(expression, options = {}) {
 
   // Execute
   let result = await fn();
-
-  // if (result === undefined) {
-  //   // Was the code a path traversal?
-  //   const wasTraversal =
-  //     fn.code[0] === ops.unpack ||
-  //     (fn.code[0] instanceof Array && fn.code[0][0] === ops.scope);
-  //   if (wasTraversal) {
-  //     // Yes, probably an error
-  //     console.warn(`ori: warning: undefined ${highlightError(expression)}`);
-  //   }
-  // }
 
   // If result was a function, execute it.
   if (typeof result === "function") {
