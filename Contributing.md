@@ -6,7 +6,7 @@ Bug reports are welcome. Most bugs on the project have been reported in the [Web
 
 ### Identifying a minimal reproduction case
 
-Investigating and diagnosing a bug can take a great deal of time. Moreover, it's often hard to understand an Origami bug outside the context of your (potentially large and complex) project. A bug report saying, "I get this error: <insert error message>" _may_ be enough to understand the problem. But if the bug depends on your project infrastructure, it may be possible to diagnose it without cloning your project, installing its dependencies, then running the project to see what's happening. That all takes considerable time.
+Investigating and diagnosing a bug can take a great deal of time, as it's often hard to understand an Origami bug outside the context of your (potentially large and complex) project. A bug report saying, "I get this error: <insert error message>" _may_ be enough to understand the problem. But if the bug depends on your project infrastructure, it may be possible to diagnose it without cloning your project, installing its dependencies, then running the project to see what's happening. That all takes considerable time.
 
 To the extent you want to contribute to the Origami project, the simplest and most direct way you can help is to invest time reducing bug reports to the small possible case that reproduces the bug.
 
@@ -15,21 +15,19 @@ The very best bug reports identify **two** conditions: one that works as expecte
 Suppose you do `npm run build` and get an error: `Bad thing happened in src/site.ori`. Before reporting this error, try to isolate it:
 
 - If the error just appeared after your most recent edit, save your work, undo that edit, and try to recover the working state you recently had. It's much easier to track things down if you can figure out the specific line(s) you changed that made the problem.
-- If you only discover the error after having made a bunch of changes, you may still be able to isolate the problem by working either forward from a known good state or working backward from the broken state.
-- If you discover the error after having made a giant pile of changes, another strategy is to create a new file (in the case, a copy of `site.ori`).
+- If you only noticed the error after having made a bunch of changes, you may still be able to isolate the problem by working either forward from a known good state or working backward from the broken state.
 - If the error is happening the first time you try an Origami feature (perhaps a builtin function you haven't used before), try reproducing an example from the Origami documentation. If you can't get the example to work, that's an extremely valuable data point.
 
-Once you can identify two conditions — the good one that works, the bad one that doesn't — the next step is to shrink the difference between them. Your goal is to box the bug into the smallest possible space.
+Once you can identify two conditions — a good one that works, a bad one that doesn't — your next step is to shrink the difference between them. Your want to box the bug into the smallest possible space so that it can be easily spotted.
 
 1. If (in this example) your `site.ori` file does many things, in the bad version of the file, comment out the lines that seem to be triggering the bug and confirm the site builds without error.
-1. Now identify _other_ lines that you believe are irrelevant to the bug. If you comment out the suspected buggy lines, the site should build; if you uncomment them, the build should fail — 
+1. Now identify some other lines which you think should be irrelevant to the bug and comment them out. Verify that those lines are irrelevant: also comment out the suspected buggy lines and the site should build; bring back the suspected buggy lines and the build should fail.
+1. Keep eliminating more irrelevant lines until you've identified the smallest set of lines that trigger the bug.
+1. If the problematic lines are complex, you can often go further by stripping out any part of them that doesn't feel relevant to the problem.
 
-1. Now start reducing the difference between those conditions: try replacing the working `changes` with `Dev.changes`; try adding the parenthesis; etc.
-1. At some point you will see the typo
+You want to work step-by-step to bring the good condition and bad conditions closer together. Eventually you will identify some tiny change that triggers the problem.
 
-If the problem here hadn’t been a typo, you could keep going: rewrite the sample .yaml file data as .ori files, rename `oldTree.yaml` to `oldTree.ori`, then eventually to `build-old`, etc. You want to work step-by-step to bring the good condition and bad conditions closer together. Eventually you will identify some tiny change that triggers the problem.
-
-In the vast majority of cases, trying to identify the smallest breaking change will reveal what the actual mistake is. And in the event you’ve found a bug, you’ve dramatically reduced the area where the problem could lie.
+Identifying the smallest breaking change may give you insight into what the actual problem is. In some cases, the bug may lie in your code, not Origami. And in the event you’ve found an Origami bug, you’ve dramatically reduced the area where the problem could lie.
 
 ## Developing
 
