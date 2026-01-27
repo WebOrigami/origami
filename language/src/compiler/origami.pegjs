@@ -853,7 +853,7 @@ relationalOperator
   / "<"
   / ">="
   / ">"
-  / "instanceof"
+  / "instanceof" &[\s] // ensure `instanceof` is followed by whitespace
   / "in" &[\s] // ensure `in` is followed by whitespace
 
 separator
