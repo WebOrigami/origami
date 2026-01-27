@@ -2,6 +2,8 @@ export * from "./src/runtime/internal.js";
 
 export * as compile from "./src/compiler/compile.js";
 export { default as isOrigamiFrontMatter } from "./src/compiler/isOrigamiFrontMatter.js";
+export { parse } from "./src/compiler/parse.js";
+export * from "./src/compiler/parserHelpers.js";
 export * as Handlers from "./src/handlers/handlers.js";
 export { default as coreGlobals } from "./src/project/coreGlobals.js";
 export { default as jsGlobals } from "./src/project/jsGlobals.js";

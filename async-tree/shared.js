@@ -26,6 +26,7 @@ export { default as getParent } from "./src/utilities/getParent.js";
 export { default as getRealmObjectPrototype } from "./src/utilities/getRealmObjectPrototype.js";
 export { default as isPacked } from "./src/utilities/isPacked.js";
 export { default as isPlainObject } from "./src/utilities/isPlainObject.js";
+export { default as isPrimitive } from "./src/utilities/isPrimitive.js";
 export { default as isStringlike } from "./src/utilities/isStringlike.js";
 export { default as isUnpackable } from "./src/utilities/isUnpackable.js";
 export { default as keysFromPath } from "./src/utilities/keysFromPath.js";
@@ -62,7 +63,7 @@ export class ExplorableSiteTree extends ExplorableSiteMap {
   constructor(href) {
     super(href);
     console.warn(
-      "ExplorableSiteTree is deprecated. Please use ExplorableSiteMap instead."
+      "ExplorableSiteTree is deprecated. Please use ExplorableSiteMap instead.",
     );
   }
 }

@@ -6,6 +6,7 @@ function compile(source, options) {
   const { front, parent, startRule } = options;
   const mode = options.mode ?? "program";
   const globals = options.globals ?? {};
+
   if (typeof source === "string") {
     source = { text: source };
   }
