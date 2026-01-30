@@ -10,6 +10,8 @@ import {
 import * as serialize from "../common/serialize.js";
 import { mediaTypeForExtension } from "./mediaTypes.js";
 
+const TypedArray = Object.getPrototypeOf(Uint8Array);
+
 /**
  * Given a resource that was returned from a route, construct an appropriate
  * HTTP Response indicating what should be sent to the client. Return null
@@ -92,10 +94,19 @@ export default async function constructResponse(request, resource) {
       mediaType += "; charset=utf-8";
       body = text;
     }
-  } else if (mediaType && SiteMap.mediaTypeIsText(mediaType)) {
-    // Assume text is encoded in UTF-8.
-    body = toString(resource);
-    mediaType += "; charset=utf-8";
+  } else if (
+    body instanceof TypedArray &&
+    mediaType &&
+    SiteMap.mediaTypeIsText(mediaType) &&
+    !mediaType.includes("charset")
+  ) {
+    // See if text is encoded in UTF-8.
+    const text = toString(resource);
+    if (text !== null) {
+      // We were able to decode the TypedArray as UTF-8 text.
+      body = text;
+      mediaType += "; charset=utf-8";
+    }
   }
 
   // If we didn't get back some kind of data that response.write() accepts,
@@ -104,7 +115,7 @@ export default async function constructResponse(request, resource) {
   if (!validResponse) {
     const typeName = body?.constructor?.name ?? typeof body;
     console.error(
-      `A served tree must return a string or a TypedArray but returned an instance of ${typeName}.`
+      `A served tree must return a string or a TypedArray but returned an instance of ${typeName}.`,
     );
     return null;
   }
