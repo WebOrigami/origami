@@ -215,11 +215,13 @@ export function propertyInfo(key, value) {
     }
   }
 
-  // Special case: a key with an extension has to be a getter
   const hasExtension =
     typeof key === "string" && extension.extname(key).length > 0;
-  if (hasExtension) {
-    valueType = VALUE_TYPE.GETTER;
+
+  // Special case: if the key has an extension but the value is a primitive,
+  // treat it as eager so we can handle the extension.
+  if (hasExtension && valueType === VALUE_TYPE.PRIMITIVE) {
+    valueType = VALUE_TYPE.EAGER;
   }
 
   return { enumerable, hasExtension, key, keyType, value, valueType };

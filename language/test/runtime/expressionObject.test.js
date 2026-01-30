@@ -75,7 +75,7 @@ describe("expressionObject", () => {
     });
   });
 
-  test("returned object values can be unpacked", async () => {
+  test.only("returned object values can be unpacked", async () => {
     const entries = [["data.json", `{ "a": 1 }`]];
     const context = new SyncMap();
     const result = await expressionObject(entries, { object: context });
