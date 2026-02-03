@@ -1,4 +1,5 @@
 import getMapArgument from "../utilities/getMapArgument.js";
+import interop from "../utilities/interop.js";
 import toString from "../utilities/toString.js";
 import deepValuesIterator from "./deepValuesIterator.js";
 
@@ -20,8 +21,8 @@ export default async function deepText(maplike) {
       string = toString(value);
     }
     if (value === null || value === undefined) {
-      const message = `Warning: a template encountered a ${string} value. To locate where this happened, build your project and search your build output for the text "${string}".`;
-      console.warn(message);
+      const message = `Warning: a template encountered a ${string} value.`;
+      interop.warn(message);
     }
     strings.push(string);
   }

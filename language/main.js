@@ -12,7 +12,7 @@ export { default as projectGlobals } from "./src/project/projectGlobals.js";
 export { default as projectRoot } from "./src/project/projectRoot.js";
 export { default as projectRootFromPath } from "./src/project/projectRootFromPath.js";
 export * as Protocols from "./src/protocols/protocols.js";
-export { formatError, highlightError } from "./src/runtime/errors.js";
+export { formatError, highlightError, lineInfo } from "./src/runtime/errors.js";
 export { default as evaluate } from "./src/runtime/evaluate.js";
 export { default as EventTargetMixin } from "./src/runtime/EventTargetMixin.js";
 export * as expressionFunction from "./src/runtime/expressionFunction.js";

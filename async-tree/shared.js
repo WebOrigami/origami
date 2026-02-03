@@ -24,6 +24,7 @@ export { default as castArraylike } from "./src/utilities/castArraylike.js";
 export { default as getTreeArgument } from "./src/utilities/getMapArgument.js";
 export { default as getParent } from "./src/utilities/getParent.js";
 export { default as getRealmObjectPrototype } from "./src/utilities/getRealmObjectPrototype.js";
+export { default as interop } from "./src/utilities/interop.js";
 export { default as isPacked } from "./src/utilities/isPacked.js";
 export { default as isPlainObject } from "./src/utilities/isPlainObject.js";
 export { default as isPrimitive } from "./src/utilities/isPrimitive.js";

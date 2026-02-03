@@ -62,7 +62,7 @@ export async function builtinReferenceError(tree, builtins, key) {
 // Display a warning message in the console, but only once for each unique
 // message and location.
 export function displayWarning(message, location) {
-  const warning = "Warning: " + message + lineInfo(location);
+  const warning = "Warning: " + message + "\n" + lineInfo(location);
   if (!displayedWarnings.has(warning)) {
     displayedWarnings.add(warning);
     console.warn(warning);
@@ -96,7 +96,7 @@ export function formatError(error) {
       ) {
         // Provide more meaningful message for TraverseError
         line = `TraverseError: This part of the path is null or undefined: ${highlightError(
-          fragment
+          fragment,
         )}`;
         fragmentInMessage = true;
       }
@@ -114,7 +114,7 @@ export function formatError(error) {
     if (!fragmentInMessage) {
       message += `\nevaluating: ${highlightError(fragment)}`;
     }
-    message += lineInfo(location);
+    message += "\n" + lineInfo(location);
   }
 
   return message;
@@ -142,7 +142,7 @@ export function maybeOrigamiSourceCode(text) {
 }
 
 // Return user-friendly line information for the error location
-function lineInfo(location) {
+export function lineInfo(location) {
   let { source, start } = location;
 
   let line;
@@ -175,10 +175,10 @@ function lineInfo(location) {
       // Not a file: URL, use as is
       fileRef = url.href;
     }
-    return `\n    at ${fileRef}:${line}:${column}`;
+    return `    at ${fileRef}:${line}:${column}`;
   } else if (source.text.includes("\n")) {
     // Don't know the URL, but has multiple lines so add line number
-    return `\n    at line ${line}, column ${column}`;
+    return `    at line ${line}, column ${column}`;
   } else {
     return "";
   }

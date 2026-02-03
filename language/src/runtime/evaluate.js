@@ -1,6 +1,8 @@
-import { Tree, isUnpackable } from "@weborigami/async-tree";
+import { isUnpackable, Tree } from "@weborigami/async-tree";
+import asyncStorage from "./asyncStorage.js";
 import codeFragment from "./codeFragment.js";
 import { displayWarning } from "./errors.js";
+import "./interop.js";
 import * as symbols from "./symbols.js";
 
 /**
@@ -53,13 +55,18 @@ export default async function evaluate(code, state = {}) {
     fn = fn.bind(state.parent);
   }
 
+  const context = { ...state, code };
+
   // Execute the function or traverse the tree.
   let result;
   try {
-    result =
-      fn instanceof Function
-        ? await fn(...args) // Invoke the function
-        : await Tree.traverseOrThrow(fn, ...args); // Traverse the tree.
+    result = await asyncStorage.run(
+      context,
+      async () =>
+        fn instanceof Function
+          ? await fn(...args) // Invoke the function
+          : await Tree.traverseOrThrow(fn, ...args), // Traverse the tree.
+    );
   } catch (/** @type {any} */ error) {
     if (!error.location) {
       // Attach the location of the code we tried to evaluate.
