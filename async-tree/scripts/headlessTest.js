@@ -15,9 +15,7 @@ page.on("console", (msg) => {
   }
 });
 
-// load your local index.html
-// const url = new URL("index.html", import.meta.url);
-const url = "http://localhost:5000/test/browser/index.html";
+const url = new URL("../test/browser/index.html", import.meta.url).href;
 await page.goto(url);
 await browser.close();
 if (!failed) {

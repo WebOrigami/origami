@@ -12,7 +12,7 @@
     "typescript": "5.9.3"
   },
   "scripts": {
-    "headlessTest": "node test/browser/headlessTest.js",
+    "headlessTest": "node scripts/headlessTest.js",
     "test": "node --test --test-reporter=spec",
     "typecheck": "tsc"
   }
