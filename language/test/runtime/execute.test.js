@@ -2,16 +2,16 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 
 import { SyncMap } from "@weborigami/async-tree";
-import evaluate from "../../src/runtime/evaluate.js";
+import execute from "../../src/runtime/execute.js";
 import { createCode } from "../compiler/codeHelpers.js";
 
-describe("evaluate", () => {
+describe("execute", () => {
   test("if object in function position isn't a function, can unpack it", async () => {
     const fn = (...args) => args.join(",");
     const packed = new String();
     /** @type {any} */ (packed).unpack = async () => fn;
     const code = createCode([packed, "a", "b", "c"]);
-    const result = await evaluate(code);
+    const result = await execute(code);
     assert.equal(result, "a,b,c");
   });
 
@@ -22,7 +22,7 @@ describe("evaluate", () => {
     fn.needsState = true;
     const state = {};
     const code = createCode([fn]);
-    const result = await evaluate(code, state);
+    const result = await execute(code, state);
     assert.equal(result, state);
   });
 
@@ -35,7 +35,7 @@ describe("evaluate", () => {
     const parent = new SyncMap();
     const state = { parent };
     const code = createCode([fn]);
-    const result = await evaluate(code, state);
+    const result = await execute(code, state);
     assert.equal(result, parent);
   });
 });

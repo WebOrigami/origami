@@ -6,8 +6,9 @@ import {
   trailingSlash,
   Tree,
 } from "@weborigami/async-tree";
+import execute from "./execute.js";
 import handleExtension from "./handleExtension.js";
-import { evaluate, ops } from "./internal.js";
+import { ops } from "./internal.js";
 
 export const KEY_TYPE = {
   STRING: 0, // Simple string key: `a: 1`
@@ -65,7 +66,7 @@ export default async function expressionObject(entries, state = {}) {
   for (const info of infos) {
     if (info.keyType === KEY_TYPE.COMPUTED) {
       const newState = Object.assign({}, state, { object: map });
-      const key = await evaluate(/** @type {any} */ (info.key), newState);
+      const key = await execute(/** @type {any} */ (info.key), newState);
       // Destructively update the property info with the computed key
       info.key = key;
       defineProperty(object, info, state, map);
@@ -127,7 +128,7 @@ function defineProperty(object, propertyInfo, state, map) {
       enumerable,
       get: async () => {
         const newState = Object.assign({}, state, { object: map });
-        const result = await evaluate(value, newState);
+        const result = await execute(value, newState);
         return hasExtension ? handleExtension(result, key, map) : result;
       },
     });

@@ -8,8 +8,8 @@
 
 import { getParent, isUnpackable, Tree } from "@weborigami/async-tree";
 import os from "node:os";
+import execute from "./execute.js";
 import expressionObject from "./expressionObject.js";
-import { evaluate } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
 import OrigamiFileMap from "./OrigamiFileMap.js";
 import { codeSymbol } from "./symbols.js";
@@ -70,7 +70,7 @@ export async function cache(cache, path, code) {
   }
 
   // Don't await: might get another request for this before promise resolves
-  const promise = await evaluate(code);
+  const promise = await execute(code);
 
   // Save promise so another request will get the same promise
   cache[path] = promise;
@@ -94,7 +94,7 @@ cache.unevaluatedArgs = true;
 export async function comma(...args) {
   let result;
   for (const arg of args) {
-    result = await evaluate(arg);
+    result = await execute(arg);
   }
   return result;
 }
@@ -255,7 +255,7 @@ export function lambda(length, parameters, code, state = {}) {
       newState = Object.assign({}, state, { stack: newStack });
     }
 
-    const result = await evaluate(code, newState);
+    const result = await execute(code, newState);
     return result;
   }
 

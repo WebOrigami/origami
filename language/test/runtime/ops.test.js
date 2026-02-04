@@ -2,7 +2,8 @@ import { ObjectMap, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 
-import { evaluate, ops } from "../../src/runtime/internal.js";
+import execute from "../../src/runtime/execute.js";
+import { ops } from "../../src/runtime/internal.js";
 import { createCode } from "../compiler/codeHelpers.js";
 
 describe("ops", () => {
@@ -21,7 +22,7 @@ describe("ops", () => {
 
   test("ops.array creates an array", async () => {
     const code = createCode([ops.array, 1, 2, 3]);
-    const result = await evaluate(code);
+    const result = await execute(code);
     assert.deepEqual(result, [1, 2, 3]);
   });
 
@@ -44,7 +45,7 @@ describe("ops", () => {
 
   test("ops.comma returns the last value", async () => {
     const code = createCode([ops.comma, 1, 2, 3]);
-    const result = await evaluate(code);
+    const result = await execute(code);
     assert.strictEqual(result, 3);
   });
 
@@ -73,7 +74,7 @@ describe("ops", () => {
       ".",
     ]);
 
-    const result = await evaluate(code);
+    const result = await execute(code);
     assert.strictEqual(result, "Hello, world.");
   });
 
@@ -117,9 +118,9 @@ describe("ops", () => {
         [ops.literal, "count"],
       ],
     ]);
-    const result = await evaluate(code);
+    const result = await execute(code);
     assert.strictEqual(result, 1);
-    const result2 = await evaluate(code);
+    const result2 = await execute(code);
     assert.strictEqual(result2, 1);
   });
 
@@ -201,7 +202,7 @@ describe("ops", () => {
 
   test("ops.lambda defines a function with no inputs", async () => {
     const code = createCode([ops.lambda, 0, [], [ops.literal, "result"]]);
-    const fn = await evaluate(code);
+    const fn = await execute(code);
     assert.equal(fn.length, 0);
     const result = await fn();
     assert.strictEqual(result, "result");
@@ -219,7 +220,7 @@ describe("ops", () => {
       [[ops.scope, container], "message"],
     ]);
 
-    const fn = await evaluate(code);
+    const fn = await execute(code);
     assert.equal(fn.length, 1);
     const result = await fn();
     assert.strictEqual(result, "Hello");
@@ -235,7 +236,7 @@ describe("ops", () => {
       ],
       [ops.deepText, [[ops.params, 0], "b"], [[ops.params, 0], "a"]],
     ]);
-    const fn = await evaluate(code);
+    const fn = await execute(code);
     assert.equal(fn.length, 2);
     const result = await fn("x", "y");
     assert.strictEqual(result, "yx");
@@ -311,7 +312,7 @@ describe("ops", () => {
       ],
       "_result",
     ]);
-    const result = await evaluate(code);
+    const result = await execute(code);
     assert.deepEqual(await Tree.plain(result), { a: 1, b: 2, c: 1 });
   });
 
@@ -383,7 +384,7 @@ describe("ops", () => {
       ["world", [[[ops.scope, container], "upper"], "world"]],
     ]);
 
-    const result = await evaluate(code);
+    const result = await execute(code);
     assert.strictEqual(result.hello, "HELLO");
     assert.strictEqual(result.world, "WORLD");
   });
@@ -398,7 +399,7 @@ describe("ops", () => {
       1,
       [[[ops.scope, container], "upper"], "world"],
     ]);
-    const result = await evaluate(code);
+    const result = await execute(code);
     assert.deepEqual(result, ["Hello", 1, "WORLD"]);
   });
 
@@ -407,7 +408,7 @@ describe("ops", () => {
     const frame1 = { a: 1 };
     const frame2 = { b: 2 };
     const stack = [frame1, frame2];
-    const result = await evaluate(code, { stack });
+    const result = await execute(code, { stack });
     assert.strictEqual(result, frame1);
   });
 

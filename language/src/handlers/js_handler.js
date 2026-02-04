@@ -12,7 +12,7 @@ export default {
     const { key, parent } = options;
     if (!(parent && "import" in parent)) {
       throw new TypeError(
-        "The parent tree must support importing modules to unpack JavaScript files."
+        "The parent tree must support importing modules to unpack JavaScript files.",
       );
     }
 
@@ -35,7 +35,7 @@ export default {
 };
 
 // If the value is a function, bind it to the parent so that the function can,
-// e.g., find local files. Note: evaluate() supports a related but separate
+// e.g., find local files. Note: execute() supports a related but separate
 // mechanism called `containerAsTarget`. We want to use binding here so that, if
 // a function is handed to another to be called later, it still has the correct
 // `this`.

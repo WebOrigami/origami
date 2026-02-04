@@ -10,6 +10,6 @@
 
 export * as ops from "./ops.js";
 
-export { default as evaluate } from "./evaluate.js";
+export { default as evaluate } from "./execute.js";
 
 export * as expressionFunction from "./expressionFunction.js";

@@ -1,4 +1,4 @@
-import { evaluate } from "./internal.js";
+import execute from "./execute.js";
 
 /**
  * Given parsed Origami code, return a function that executes that code.
@@ -10,7 +10,7 @@ import { evaluate } from "./internal.js";
  */
 export function createExpressionFunction(code, parent) {
   async function fn() {
-    return evaluate(code, { parent });
+    return execute(code, { parent });
   }
   fn.code = code;
   fn.toString = () => code.location.source.text;

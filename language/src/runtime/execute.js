@@ -6,14 +6,14 @@ import "./interop.js";
 import * as symbols from "./symbols.js";
 
 /**
- * Evaluate the given code and return the result.
+ * Execute the given code and return the result.
  *
  * `this` should be the tree used as the context for the evaluation.
  *
  * @param {import("../../index.ts").AnnotatedCode} code
  * @param {import("../../index.ts").RuntimeState} [state]
  */
-export default async function evaluate(code, state = {}) {
+export default async function execute(code, state = {}) {
   if (!(code instanceof Array)) {
     // Simple scalar; return as is.
     return code;
@@ -26,7 +26,7 @@ export default async function evaluate(code, state = {}) {
   } else {
     // Evaluate each instruction in the code.
     evaluated = await Promise.all(
-      code.map((instruction) => evaluate(instruction, state)),
+      code.map((instruction) => execute(instruction, state)),
     );
   }
 
