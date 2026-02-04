@@ -52,10 +52,9 @@ export function formatError(error) {
   if (context?.code) {
     // Use the code being evaluated when the error occurred
     let position = /** @type {any} */ (error).position;
-    if (position !== undefined) {
-      location = context.code[position]?.location;
-      fragment = location ? codeFragment(location) : null;
-    }
+    const code = position ? context.code[position] : context.code;
+    location = code.location;
+    fragment = location ? codeFragment(location) : null;
   }
 
   if (error.stack) {

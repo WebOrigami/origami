@@ -9,9 +9,9 @@ const globals = await coreGlobals();
 describe("formatError", () => {
   test("identifies an undefined function", async () => {
     await assertError(
-      `undefinedFunction()`,
-      `ReferenceError: undefinedFunction is not defined
-evaluating: \x1b[31mundefinedFunction\x1b[0m
+      `doesntExist()`,
+      `ReferenceError: doesntExist is not defined
+evaluating: \x1b[31mdoesntExist()\x1b[0m
 `,
     );
   });
