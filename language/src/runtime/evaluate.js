@@ -7,7 +7,7 @@ import * as compile from "../compiler/compile.js";
  * @param {Source|string} source
  * @param {any} [options]
  */
-export default async function evaluate2(source, options = {}) {
+export default async function evaluate(source, options = {}) {
   const fn = compile.expression(source, options);
   const result = await fn();
   return result;

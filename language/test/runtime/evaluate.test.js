@@ -1,7 +1,7 @@
 import { Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import evaluate2 from "../../src/runtime/evaluate2.js";
+import evaluate from "../../src/runtime/evaluate.js";
 
 const globals = {
   concat: (...args) => args.join(""),
@@ -9,7 +9,7 @@ const globals = {
   name: "Alice",
 };
 
-describe("evaluate2", () => {
+describe("evaluate", () => {
   test("array", async () => {
     await assertEvaluation("[]", []);
     await assertEvaluation("[ 1, 2, 3, ]", [1, 2, 3]);
@@ -103,7 +103,7 @@ describe("evaluate2", () => {
 });
 
 async function assertEvaluation(text, expected, options = {}) {
-  let result = await evaluate2(text, {
+  let result = await evaluate(text, {
     globals,
     ...options,
   });
