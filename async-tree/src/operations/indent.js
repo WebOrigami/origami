@@ -1,3 +1,4 @@
+import interop from "../utilities/interop.js";
 import toString from "../utilities/toString.js";
 import deepText from "./deepText.js";
 import isMaplike from "./isMaplike.js";
@@ -21,7 +22,7 @@ export default async function indent(strings, ...values) {
   }
   const { blockIndentations, strings: modifiedStrings } = modified;
   const valueTexts = await Promise.all(
-    values.map((value) => (isMaplike(value) ? deepText(value) : value))
+    values.map((value) => (isMaplike(value) ? deepText(value) : value)),
   );
   return joinBlocks(modifiedStrings, valueTexts, blockIndentations);
 }
@@ -31,7 +32,12 @@ export default async function indent(strings, ...values) {
 function joinBlocks(strings, values, blockIndentations) {
   let result = strings[0];
   for (let i = 0; i < values.length; i++) {
-    let text = toString(values[i]);
+    const value = values[i];
+    let text = toString(value);
+    if (value == null) {
+      const message = `Warning: a template encountered a ${text} value.`;
+      interop.warn(message);
+    }
     if (text) {
       const blockIndentation = blockIndentations[i];
       if (blockIndentation) {
@@ -77,7 +83,7 @@ function modifyStrings(strings) {
     const indentationRegex = new RegExp(`\n${indent}`, "g");
     // The `replaceAll` also converts strings to a real array.
     modified = strings.map((string) =>
-      string.replaceAll(indentationRegex, "\n")
+      string.replaceAll(indentationRegex, "\n"),
     );
     // Remove indentation from last line of last string
     modified[modified.length - 1] = modified
