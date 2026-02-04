@@ -16,7 +16,7 @@ export default async function traverseOrThrow(maplike, ...keys) {
   // Start our traversal at the root of the tree.
   /** @type {any} */
   let value = maplike;
-  let position = 0;
+  let position = 1;
 
   // Process all the keys.
   const remainingKeys = keys.slice();

@@ -12,11 +12,11 @@ import { getTreeArgument, trailingSlash, Tree } from "@weborigami/async-tree";
 export default async function changes(oldMaplike, newMaplike) {
   const oldTree = await getTreeArgument(oldMaplike, "changes", {
     deep: true,
-    position: 0,
+    position: 1,
   });
   const newTree = await getTreeArgument(newMaplike, "changes", {
     deep: true,
-    position: 1,
+    position: 2,
   });
 
   const oldKeys = await Tree.keys(oldTree);

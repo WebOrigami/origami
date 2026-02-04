@@ -53,8 +53,6 @@ export function formatError(error) {
     // Use the code being evaluated when the error occurred
     let position = /** @type {any} */ (error).position;
     if (position !== undefined) {
-      // HACK: Shift by 1 to account for function being at position 0
-      position += 1;
       location = context.code[position]?.location;
       fragment = location ? codeFragment(location) : null;
     }

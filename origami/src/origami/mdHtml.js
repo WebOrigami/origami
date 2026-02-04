@@ -25,7 +25,7 @@ marked.use(
   markedSmartypants(),
   {
     gfm: true, // Use GitHub-flavored markdown.
-  }
+  },
 );
 
 /**
@@ -36,7 +36,7 @@ marked.use(
 export default async function mdHtml(input) {
   if (input == null) {
     const error = new TypeError("mdHtml: The input is not defined.");
-    /** @type {any} */ (error).position = 0;
+    /** @type {any} */ (error).position = 1;
     throw error;
   }
   if (isUnpackable(input)) {

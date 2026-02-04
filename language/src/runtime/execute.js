@@ -17,6 +17,8 @@ export default async function execute(code, state = {}) {
     return code;
   }
 
+  const context = { ...state, code };
+
   let evaluated;
   if (code[0]?.unevaluatedArgs) {
     // Don't evaluate instructions, use as is.
@@ -33,10 +35,12 @@ export default async function execute(code, state = {}) {
 
   if (!fn) {
     // The code wants to invoke something that's couldn't be found in scope.
+    /** @type {any} */
     const error = ReferenceError(
       `${codeFragment(code[0].location)} is not defined`,
     );
-    /** @type {any} */ (error).location = code[0].location;
+    error.context = context; // For error formatting
+    error.position = 0; // Position of the problematic instruction
     throw error;
   }
 
@@ -53,8 +57,6 @@ export default async function execute(code, state = {}) {
     fn = fn.bind(state.parent);
   }
 
-  const context = { ...state, code };
-
   // Execute the function or traverse the tree.
   let result;
   try {
@@ -67,8 +69,7 @@ export default async function execute(code, state = {}) {
     );
   } catch (/** @type {any} */ error) {
     if (!error.context) {
-      // Attach evaluation context for use by error formatters
-      error.context = context;
+      error.context = context; // For error formatting
     }
     throw error;
   }

@@ -18,11 +18,11 @@ import keys from "./keys.js";
 export default async function mask(aMaplike, bMaplike) {
   const aMap = await getMapArgument(aMaplike, "filter", {
     deep: true,
-    position: 0,
+    position: 1,
   });
   const bMap = await getMapArgument(bMaplike, "filter", {
     deep: true,
-    position: 1,
+    position: 2,
   });
 
   return Object.assign(new AsyncMap(), {
@@ -66,7 +66,7 @@ export default async function mask(aMaplike, bMaplike) {
         }
         return trailingSlash.toggle(
           key,
-          trailingSlash.has(key) || isMaplike(bValue)
+          trailingSlash.has(key) || isMaplike(bValue),
         );
       });
 

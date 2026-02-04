@@ -18,7 +18,7 @@ import isUnpackable from "./isUnpackable.js";
  */
 export default async function getMapArgument(maplike, operation, options = {}) {
   const deep = options.deep;
-  const position = options.position ?? 0;
+  const position = options.position ?? 1;
 
   if (isUnpackable(maplike)) {
     maplike = await maplike.unpack();

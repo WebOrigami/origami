@@ -20,13 +20,13 @@ import keys from "./keys.js";
  */
 export default async function treeCache(sourceMaplike, cacheMaplike) {
   const source = await getMapArgument(sourceMaplike, "cache", {
-    position: 0,
+    position: 1,
   });
 
   let cache;
   if (cacheMaplike) {
     cache = /** @type {any} */ (
-      await getMapArgument(cacheMaplike, "cache", { position: 1 })
+      await getMapArgument(cacheMaplike, "cache", { position: 2 })
     );
     // @ts-ignore
     if (isReadOnlyMap(cache)) {

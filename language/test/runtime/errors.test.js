@@ -6,9 +6,18 @@ import evaluate from "../../src/runtime/evaluate.js";
 
 const globals = await coreGlobals();
 
-describe("errors", () => {
+describe("formatError", () => {
+  test("identifies an undefined function", async () => {
+    await assertError(
+      `undefinedFunction()`,
+      `ReferenceError: undefinedFunction is not defined
+evaluating: \x1b[31mundefinedFunction\x1b[0m
+`,
+    );
+  });
+
   test("identifies the argument that produced an error", async () => {
-    assertError(
+    await assertError(
       `Tree.map(foo, (_) => _)`,
       `TypeError: map: The tree argument wasn't defined.
 evaluating: \x1b[31mfoo\x1b[0m
