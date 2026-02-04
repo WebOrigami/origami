@@ -1,9 +1,7 @@
 import { isUnpackable, Tree } from "@weborigami/async-tree";
 import asyncStorage from "./asyncStorage.js";
 import codeFragment from "./codeFragment.js";
-import { displayWarning } from "./errors.js";
 import "./interop.js";
-import * as symbols from "./symbols.js";
 
 /**
  * Execute the given code and return the result.
@@ -79,11 +77,6 @@ export default async function execute(code, state = {}) {
             code.location;
     }
     throw error;
-  }
-
-  if (result?.[symbols.warningSymbol]) {
-    displayWarning(result[symbols.warningSymbol], code.location);
-    delete result[symbols.warningSymbol];
   }
 
   return result;

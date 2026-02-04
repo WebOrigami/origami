@@ -1,15 +1,9 @@
 // Text we look for in an error stack to guess whether a given line represents a
 
-import {
-  box,
-  trailingSlash,
-  TraverseError,
-  Tree,
-} from "@weborigami/async-tree";
+import { trailingSlash, TraverseError, Tree } from "@weborigami/async-tree";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import codeFragment from "./codeFragment.js";
-import * as symbols from "./symbols.js";
 import { typos } from "./typos.js";
 
 // function in the Origami source code.
@@ -17,25 +11,8 @@ const origamiSourceSignals = [
   "async-tree/src/",
   "language/src/",
   "origami/src/",
-  "at Scope.evaluate",
+  "at Scope.execute",
 ];
-
-const displayedWarnings = new Set();
-
-export function attachWarning(value, message) {
-  if (value == null) {
-    return value;
-  }
-
-  if (typeof value === "object" && value?.[symbols.warningSymbol]) {
-    // Already has a warning, don't overwrite it
-    return value;
-  }
-
-  const boxed = box(value);
-  boxed[symbols.warningSymbol] = message;
-  return boxed;
-}
 
 export async function builtinReferenceError(tree, builtins, key) {
   // See if the key is in scope (but not as a builtin)
@@ -57,16 +34,6 @@ export async function builtinReferenceError(tree, builtins, key) {
     message = messages.join("\n");
   }
   return new ReferenceError(message);
-}
-
-// Display a warning message in the console, but only once for each unique
-// message and location.
-export function displayWarning(message, location) {
-  const warning = "Warning: " + message + "\n" + lineInfo(location);
-  if (!displayedWarnings.has(warning)) {
-    displayedWarnings.add(warning);
-    console.warn(warning);
-  }
 }
 
 /**
