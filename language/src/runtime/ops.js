@@ -101,16 +101,6 @@ export async function comma(...args) {
 addOpLabel(comma, "«ops.comma»");
 comma.unevaluatedArgs = true;
 
-/**
- * Concatenate the given arguments.
- *
- * @param {any[]} args
- */
-export async function concat(...args) {
-  return Tree.deepText(args);
-}
-addOpLabel(concat, "«ops.concat»");
-
 export async function conditional(condition, truthy, falsy) {
   const value = condition ? truthy : falsy;
   return value instanceof Function ? await value() : value;
@@ -122,6 +112,16 @@ export async function construct(constructor, ...args) {
   }
   return Reflect.construct(constructor, args);
 }
+
+/**
+ * Return the deep text of the arguments
+ *
+ * @param {any[]} args
+ */
+export async function deepText(...args) {
+  return Tree.deepText(args);
+}
+addOpLabel(deepText, "«ops.deepText");
 
 /**
  * Default value for a parameter: if the value is defined, return that;
@@ -160,8 +160,8 @@ export async function flat(...args) {
     args.map(async (arg) =>
       arg instanceof Array || typeof arg !== "object"
         ? arg
-        : await Tree.values(arg)
-    )
+        : await Tree.values(arg),
+    ),
   );
 
   return arrays.flat();
@@ -210,7 +210,7 @@ export async function inherited(depth, state) {
   for (let i = 0; i < depth; i++) {
     if (!current) {
       throw new ReferenceError(
-        `Origami internal error: Can't find context object`
+        `Origami internal error: Can't find context object`,
       );
     }
     current = getParent(current);
@@ -511,7 +511,7 @@ addOpLabel(rootDirectory, "«ops.rootDirectory»");
 export async function scope(parent) {
   if (!parent) {
     throw new ReferenceError(
-      "Tried to find a value in scope, but no container was provided as the parent."
+      "Tried to find a value in scope, but no container was provided as the parent.",
     );
   }
   return Tree.scope(parent);

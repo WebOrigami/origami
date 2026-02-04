@@ -265,7 +265,7 @@ export function makeDocument(front, body, location) {
   // In order for template expressions to see the front matter properties,
   // we translate the top-level front properties to object entries.
   const entries = Object.entries(front).map(([key, value]) =>
-    annotate([key, annotate([ops.literal, value], location)], location)
+    annotate([key, annotate([ops.literal, value], location)], location),
   );
 
   // Add an entry for the body
@@ -351,7 +351,7 @@ function makeMerge(spreads, location) {
       });
       const indirectObject = annotate(
         [ops.object, ...indirectEntries],
-        location
+        location,
       );
       resultEntries.push(indirectObject);
     } else {
@@ -458,11 +458,11 @@ function makeOptionalCall(target, chain, location) {
   // Create a reference to the __optional__ parameter
   const optionalReference = annotate(
     [markers.reference, optionalKey],
-    location
+    location,
   );
   const optionalTraverse = annotate(
     [markers.traverse, optionalReference],
-    location
+    location,
   );
 
   // Create the call body to be made if the target is not null/undefined
@@ -528,7 +528,7 @@ function makeParamInitializer(parameter, reference, state) {
     // Literal default value can be inlined
     const defaultReference = annotate(
       [ops.defaultValue, reference, defaultValue],
-      parameter.location
+      parameter.location,
     );
     return makeParam(baseParam, defaultReference, state);
   }
@@ -538,18 +538,18 @@ function makeParamInitializer(parameter, reference, state) {
   const deferred = makeDeferredArguments([defaultValue])[0];
   const defaultReference = annotate(
     [ops.defaultValue, reference, deferred],
-    parameter.location
+    parameter.location,
   );
   const tempVariableName = `__temp${state.tempVariableCount++}__`;
   const tempBinding = annotate(
     [tempVariableName, defaultReference],
-    parameter.location
+    parameter.location,
   );
 
   const selfReference = annotate([ops.inherited, 0], parameter.location);
   const tempReference = annotate(
     [selfReference, tempVariableName],
-    parameter.location
+    parameter.location,
   );
 
   const paramBindings = makeParam(baseParam, tempReference, state);
@@ -573,7 +573,7 @@ function makeParamObject(entries, reference, state) {
       const annotatedKeys = annotate([ops.array, ...keys], entry.location);
       const objectRest = annotate(
         [ops.objectRest, reference, annotatedKeys],
-        entry.location
+        entry.location,
       );
       return makeParam(entry[1], objectRest, state);
     }
@@ -596,7 +596,7 @@ function makeParamObject(entries, reference, state) {
 export function makePath(keys) {
   // Remove empty segments
   const args = keys.filter(
-    (key, index) => index === 0 || (key[1] !== "" && key[1] !== "/")
+    (key, index) => index === 0 || (key[1] !== "" && key[1] !== "/"),
   );
 
   // Upgrade head to a reference
@@ -627,7 +627,7 @@ export function makePipeline(arg, fn, location) {
 
 function makePossibleSpreadCall(target, args, location) {
   const hasSpread = args.some(
-    (arg) => Array.isArray(arg) && arg[0] === markers.spread
+    (arg) => Array.isArray(arg) && arg[0] === markers.spread,
   );
   if (!hasSpread) {
     // No spreads, simple call
@@ -651,7 +651,7 @@ function makePossibleSpreadCall(target, args, location) {
  * Make a tagged template call
  *
  * Because the tagged template function may not be an Origami function, we wrap
- * each argument in a ops.concat call to convert it to a string.
+ * each argument in a ops.deepText call to convert it to a string.
  *
  * @param {AnnotatedCode} fn
  * @param {AnnotatedCode} strings
@@ -660,7 +660,7 @@ function makePossibleSpreadCall(target, args, location) {
 function makeTaggedTemplateCall(fn, strings, ...values) {
   const args = values.map((value) =>
     // @ts-ignore
-    annotate([ops.concat, value], value.location)
+    annotate([ops.deepText, value], value.location),
   );
   return annotate([fn, strings, ...args], strings.location);
 }

@@ -15,7 +15,7 @@ describe("ops", () => {
     assert.strictEqual(ops.addition("hello ", "everyone"), "hello everyone");
     assert.strictEqual(
       ops.addition("2001", ": A Space Odyssey"),
-      "2001: A Space Odyssey"
+      "2001: A Space Odyssey",
     );
   });
 
@@ -48,21 +48,6 @@ describe("ops", () => {
     assert.strictEqual(result, 3);
   });
 
-  test("ops.concat concatenates tree value text", async () => {
-    const container = {
-      name: "world",
-    };
-    const code = createCode([
-      ops.concat,
-      "Hello, ",
-      [[ops.scope, container], "name"],
-      ".",
-    ]);
-
-    const result = await evaluate(code);
-    assert.strictEqual(result, "Hello, world.");
-  });
-
   test("ops.conditional", async () => {
     assert.strictEqual(await ops.conditional(true, trueFn, falseFn), true);
     assert.strictEqual(await ops.conditional(true, falseFn, trueFn), false);
@@ -75,6 +60,21 @@ describe("ops", () => {
 
   test("ops.construct", async () => {
     assert.equal(await ops.construct(String, "hello"), "hello");
+  });
+
+  test("ops.deepText concatenates tree value text", async () => {
+    const container = {
+      name: "world",
+    };
+    const code = createCode([
+      ops.deepText,
+      "Hello, ",
+      [[ops.scope, container], "name"],
+      ".",
+    ]);
+
+    const result = await evaluate(code);
+    assert.strictEqual(result, "Hello, world.");
   });
 
   test("ops.division divides two numbers", async () => {
@@ -183,7 +183,7 @@ describe("ops", () => {
           b: {},
         },
       },
-      { deep: true }
+      { deep: true },
     );
     const b = await Tree.traverse(tree, "a", "b");
     assert.equal(await ops.inherited(2, { object: b }), tree);
@@ -233,7 +233,7 @@ describe("ops", () => {
         ["a", [[ops.params, 0], 0]],
         ["b", [[ops.params, 0], 1]],
       ],
-      [ops.concat, [[ops.params, 0], "b"], [[ops.params, 0], "a"]],
+      [ops.deepText, [[ops.params, 0], "b"], [[ops.params, 0], "a"]],
     ]);
     const fn = await evaluate(code);
     assert.equal(fn.length, 2);
@@ -335,15 +335,15 @@ describe("ops", () => {
   test("ops.optional", async () => {
     assert.equal(
       ops.optional(null, (x) => x.a),
-      undefined
+      undefined,
     );
     assert.equal(
       ops.optional(undefined, (x) => x.a),
-      undefined
+      undefined,
     );
     assert.equal(
       ops.optional({ a: 1 }, (x) => x.a),
-      1
+      1,
     );
   });
 
@@ -434,7 +434,7 @@ describe("ops", () => {
           },
           c: 1,
         },
-        { deep: true }
+        { deep: true },
       );
       const a = await tree.get("a");
       const b = await a.get("b");
@@ -481,7 +481,7 @@ describe("ops", () => {
     assert.strictEqual(ops.typeOf(undefined), "undefined");
     assert.strictEqual(
       ops.typeOf(() => null),
-      "function"
+      "function",
     );
   });
 

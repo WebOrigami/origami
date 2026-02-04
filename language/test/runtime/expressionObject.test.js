@@ -41,7 +41,7 @@ describe("expressionObject", () => {
   test("can instantiate an Origami tree", async () => {
     const entries = [
       ["name", "world"],
-      ["message", [ops.concat, "Hello, ", [[ops.inherited, 0], "name"], "!"]],
+      ["message", [ops.deepText, "Hello, ", [[ops.inherited, 0], "name"], "!"]],
     ];
     const context = new SyncMap();
     const object = await expressionObject(entries, { object: context });
@@ -56,7 +56,7 @@ describe("expressionObject", () => {
     const entries = [
       [
         [
-          ops.concat,
+          ops.deepText,
           [
             [ops.inherited, 0],
             [ops.literal, "name"], // references `name` on same object
@@ -103,7 +103,7 @@ describe("expressionObject", () => {
       // Immediate maplike value, should have a slash
       ["object", [ops.object, ["b", [ops.literal, 2]]]],
       // Computed key
-      [[ops.concat, [ops.array, "data", ".json"]], 1],
+      [[ops.deepText, [ops.array, "data", ".json"]], 1],
     ];
     const object = await expressionObject(entries);
     assert.deepEqual(object[symbols.keys](), [

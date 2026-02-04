@@ -31,7 +31,7 @@ describe("Origami parser", () => {
         [
           markers.traverse,
           [markers.external, "Path with spaces (and parens).html"],
-        ]
+        ],
       );
       assertParse("angleBracketLiteral", "<foo/bar/baz>", [
         markers.traverse,
@@ -113,7 +113,7 @@ describe("Origami parser", () => {
         2
         3
       ]`,
-      [ops.array, [ops.literal, 1], [ops.literal, 2], [ops.literal, 3]]
+      [ops.array, [ops.literal, 1], [ops.literal, 2], [ops.literal, 3]],
     );
   });
 
@@ -270,7 +270,7 @@ describe("Origami parser", () => {
       assertThrows(
         "arrowFunction",
         "([a, a]) => a",
-        `Duplicate parameter name "a"`
+        `Duplicate parameter name "a"`,
       );
     });
 
@@ -321,7 +321,7 @@ describe("Origami parser", () => {
       assertThrows(
         "arrowFunction",
         "({ a: c, b: c }) => c",
-        `Duplicate parameter name "c"`
+        `Duplicate parameter name "c"`,
       );
     });
 
@@ -739,7 +739,7 @@ describe("Origami parser", () => {
 ---
 Body`,
       'Expected "---"',
-      { line: 2, column: 14 }
+      { line: 2, column: 14 },
     );
   });
 
@@ -752,7 +752,7 @@ a : 1
 ---
 Body`,
       "Unexpected flow-map-end token",
-      { line: 3, column: 1 }
+      { line: 3, column: 1 },
     );
   });
 
@@ -848,7 +848,7 @@ Body`,
         "x //comment",
         [markers.traverse, [markers.reference, "x"]],
         "program",
-        false
+        false,
       );
     });
 
@@ -940,7 +940,7 @@ Body`,
       assertParse("expression", "tag`Hello, ${name}!`", [
         [markers.traverse, [markers.reference, "tag"]],
         [ops.literal, ["Hello, ", "!"]],
-        [ops.concat, [markers.traverse, [markers.reference, "name"]]],
+        [ops.deepText, [markers.traverse, [markers.reference, "name"]]],
       ]);
       assertParse("expression", "=tag`Hello, ${_}!`", [
         ops.lambda,
@@ -949,7 +949,7 @@ Body`,
         [
           [markers.traverse, [markers.reference, "tag"]],
           [ops.literal, ["Hello, ", "!"]],
-          [ops.concat, [markers.traverse, [markers.reference, "_"]]],
+          [ops.deepText, [markers.traverse, [markers.reference, "_"]]],
         ],
       ]);
       assertParse("expression", "(post, slug) => fn.js(post, slug)", [
@@ -1013,7 +1013,7 @@ Body`,
               ],
             ],
           ],
-        ]
+        ],
       );
     });
   });
@@ -1032,7 +1032,7 @@ Body`,
         [[markers.traverse, [markers.reference, "_template"]]],
       ],
       "program",
-      false
+      false,
     );
   });
 
@@ -1065,17 +1065,17 @@ Body`,
     assertThrows(
       "identifier",
       "1stCharacterIsNumber",
-      "Expected JavaScript identifier start"
+      "Expected JavaScript identifier start",
     );
     assertThrows(
       "identifier",
       "has space",
-      "Expected JavaScript identifier continuation"
+      "Expected JavaScript identifier continuation",
     );
     assertThrows(
       "identifier",
       "foo.bar",
-      "Expected JavaScript identifier continuation"
+      "Expected JavaScript identifier continuation",
     );
   });
 
@@ -1108,7 +1108,7 @@ Body`,
         [markers.traverse, [markers.reference, "tree/"], [ops.literal, "key"]],
         [markers.traverse, [markers.reference, "arg"]],
       ],
-      "shell"
+      "shell",
     );
     assertParse("implicitParenthesesCallExpression", "foo.js bar.ori 'arg'", [
       [markers.traverse, [markers.reference, "foo.js"]],
@@ -1133,7 +1133,7 @@ Body`,
           [markers.traverse, [markers.reference, "b.json"]],
           [ops.array, [markers.traverse, [markers.reference, "c.json"]]],
         ],
-      ]
+      ],
     );
   });
 
@@ -1183,7 +1183,7 @@ Body`,
       "/*\nHello, world!\n*/",
       null,
       "program",
-      false
+      false,
     );
   });
 
@@ -1286,7 +1286,7 @@ Body`,
           ops.object,
           ["a", [ops.getter, [markers.traverse, [markers.reference, "b"]]]],
           ["b", [ops.literal, 2]],
-        ]
+        ],
       );
       assertParse("objectLiteral", "{ a: { b: 1 } }", [
         ops.object,
@@ -1544,7 +1544,7 @@ Body`,
       "tree/",
       [[ops.literal, "tree/"]],
       undefined,
-      false
+      false,
     );
     assertParse(
       "pathKeys",
@@ -1554,7 +1554,7 @@ Body`,
         [ops.literal, "12"],
       ],
       undefined,
-      false
+      false,
     );
     assertParse(
       "pathKeys",
@@ -1565,7 +1565,7 @@ Body`,
         [ops.literal, "bar"],
       ],
       undefined,
-      false
+      false,
     );
     assertParse(
       "pathKeys",
@@ -1577,7 +1577,7 @@ Body`,
         [ops.literal, "b"],
       ],
       undefined,
-      false
+      false,
     );
   });
 
@@ -1674,7 +1674,7 @@ Body`,
 `,
       [ops.literal, "Hello"],
       "program",
-      false
+      false,
     );
   });
 
@@ -1757,7 +1757,7 @@ Body`,
       "// Hello, world!",
       null,
       "program",
-      false
+      false,
     );
   });
 
@@ -1815,7 +1815,7 @@ Body text`,
         ops.object,
         ["title", [ops.literal, "Title goes here"]],
         ["_body", [ops.templateIndent, [ops.literal, ["Body text"]]]],
-      ]
+      ],
     );
   });
 
@@ -1842,7 +1842,7 @@ Body text`,
           ],
         ],
       ],
-      "shell"
+      "shell",
     );
   });
 
@@ -1891,7 +1891,7 @@ Body text`,
       "${foo}",
       [markers.traverse, [markers.reference, "foo"]],
       "shell",
-      false
+      false,
     );
   });
 
@@ -1965,7 +1965,7 @@ Body text`,
      `,
       null,
       "program",
-      false
+      false,
     );
   });
 });
@@ -1975,7 +1975,7 @@ function assertParse(
   source,
   expected,
   mode = "shell",
-  checkLocation = true
+  checkLocation = true,
 ) {
   const code = parse(source, {
     grammarSource: { text: source },
@@ -1990,7 +1990,7 @@ function assertParse(
     assertCodeLocations(code);
     const resultSource = code.location.source.text.slice(
       code.location.start.offset,
-      code.location.end.offset
+      code.location.end.offset,
     );
     assert.equal(resultSource, source);
   }
@@ -2010,7 +2010,7 @@ function assertThrows(startRule, source, message, position, mode = "program") {
   } catch (/** @type {any} */ error) {
     assert(
       error.message.includes(message),
-      `Error message incorrect:\n  expected: "${message}"\n  actual: "${error.message}"`
+      `Error message incorrect:\n  expected: "${message}"\n  actual: "${error.message}"`,
     );
     if (position) {
       assert.equal(error.location.start.line, position.line);
