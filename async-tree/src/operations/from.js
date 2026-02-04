@@ -30,7 +30,7 @@ export default function from(object, options = {}) {
   } else if (object instanceof Promise) {
     // A common mistake
     throw new TypeError(
-      "The tree argument was a Promise. Did you mean to use await?"
+      "The tree argument was a Promise. Did you mean to use await?",
     );
   } else if (isMap(object)) {
     // Already a map

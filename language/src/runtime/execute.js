@@ -66,15 +66,9 @@ export default async function execute(code, state = {}) {
           : await Tree.traverseOrThrow(fn, ...args), // Traverse the tree.
     );
   } catch (/** @type {any} */ error) {
-    if (!error.location) {
-      // Attach the location of the code we tried to evaluate.
-      error.location =
-        error.position !== undefined && code[error.position + 1]?.location
-          ? // Use location of the argument with the given position (need to
-            // offset by 1 to skip the function).
-            code[error.position + 1]?.location
-          : // Use overall location.
-            code.location;
+    if (!error.context) {
+      // Attach evaluation context for use by error formatters
+      error.context = context;
     }
     throw error;
   }

@@ -44,9 +44,21 @@ export async function builtinReferenceError(tree, builtins, key) {
 export function formatError(error) {
   let message;
 
-  let location = /** @type {any} */ (error).location;
-  const fragment = location ? codeFragment(location) : null;
+  // See if we can identify the Origami location that caused the error
+  let location;
+  let fragment;
   let fragmentInMessage = false;
+  const context = /** @type {any} */ (error).context;
+  if (context?.code) {
+    // Use the code being evaluated when the error occurred
+    let position = /** @type {any} */ (error).position;
+    if (position !== undefined) {
+      // HACK: Shift by 1 to account for function being at position 0
+      position += 1;
+      location = context.code[position]?.location;
+      fragment = location ? codeFragment(location) : null;
+    }
+  }
 
   if (error.stack) {
     // Display the stack only until we reach the Origami source code.
