@@ -1,12 +1,11 @@
 import { isUnpackable, Tree } from "@weborigami/async-tree";
 import asyncStorage from "./asyncStorage.js";
-import createReferenceError from "./createReferenceError.js";
 import "./interop.js";
 
 /**
  * Execute the given code and return the result.
  *
- * `this` should be the tree used as the context for the evaluation.
+ * `this` should be the map used as the context for the evaluation.
  *
  * @typedef {import("../../index.ts").AnnotatedCode} AnnotatedCode
  * @typedef {import("../../index.ts").RuntimeState} RuntimeState
@@ -31,20 +30,26 @@ export default async function execute(code, state = {}) {
     );
   }
 
-  // The head of the array is a function or a tree; the rest are args or keys.
+  // Add the code to the runtime state
+  /** @type {import("../../index.ts").CodeContext} */
+  const context = { state, code };
+
+  // The head of the array is a function or a map; the rest are args or keys.
   let [fn, ...args] = evaluated;
 
   if (!fn) {
     // The code wants to invoke something that's couldn't be found in scope.
-    const error = await createReferenceError({
-      state,
-      code: code[0],
-    });
+    /** @type {any} */
+    const error = new ReferenceError(
+      "Couldn't find the function or map to execute.",
+    );
+    error.context = context; // For error formatting
+    error.position = 0; // Problem was at function position
     throw error;
   }
 
   if (isUnpackable(fn)) {
-    // Unpack the object and use the result as the function or tree.
+    // Unpack the object and use the result as the function or map.
     fn = await fn.unpack();
   }
 
@@ -56,11 +61,7 @@ export default async function execute(code, state = {}) {
     fn = fn.bind(state.parent);
   }
 
-  // Add the code to the runtime state
-  /** @type {import("../../index.ts").CodeContext} */
-  const context = { state, code };
-
-  // Execute the function or traverse the tree.
+  // Execute the function or traverse the map.
   let result;
   try {
     result = await asyncStorage.run(
@@ -68,7 +69,7 @@ export default async function execute(code, state = {}) {
       async () =>
         fn instanceof Function
           ? await fn(...args) // Invoke the function
-          : await Tree.traverseOrThrow(fn, ...args), // Traverse the tree.
+          : await Tree.traverseOrThrow(fn, ...args), // Traverse the map.
     );
   } catch (/** @type {any} */ error) {
     if (!error.context) {

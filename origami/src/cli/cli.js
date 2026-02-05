@@ -61,6 +61,6 @@ while (args[0] === "") {
 try {
   await main(...args);
 } catch (/** @type {any} */ error) {
-  console.error(formatError(error));
+  console.error(await formatError(error));
   process.exitCode = 1;
 }

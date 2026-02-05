@@ -48,7 +48,7 @@ async function evaluateTree(parent, fn) {
   try {
     result = await fn();
   } catch (/** @type {any} */ error) {
-    message = formatError(error);
+    message = await formatError(error);
   }
   tree = result ? Tree.from(result, { parent }) : undefined;
   if (tree) {

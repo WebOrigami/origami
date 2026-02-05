@@ -26,11 +26,11 @@ export default function from(object, options = {}) {
   const deep = options.deep ?? object?.[symbols.deep];
   let map;
   if (object == null) {
-    throw new TypeError("The tree argument wasn't defined.");
+    throw new ReferenceError("The map argument wasn't defined.");
   } else if (object instanceof Promise) {
     // A common mistake
     throw new TypeError(
-      "The tree argument was a Promise. Did you mean to use await?",
+      "The map argument was a Promise. Did you mean to use await?",
     );
   } else if (isMap(object)) {
     // Already a map

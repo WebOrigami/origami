@@ -119,8 +119,8 @@ export function requestListener(maplike) {
  * Construct a page in response in the given error, and also show the error in
  * the console.
  */
-export function respondWithError(response, error) {
-  let message = formatError(error);
+export async function respondWithError(response, error) {
+  let message = await formatError(error);
   // Remove ANSI escape codes from the message.
   message = message.replace(/\x1b\[[0-9;]*m/g, "");
   // Prevent HTML in the error message from being interpreted as HTML.

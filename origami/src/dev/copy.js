@@ -4,7 +4,6 @@ import {
   SyncMap,
   Tree,
 } from "@weborigami/async-tree";
-import { formatError } from "@weborigami/language";
 import process, { stdout } from "node:process";
 
 /**
@@ -64,17 +63,12 @@ function showSetProgress(source, counts) {
     set(key, value) {
       counts.total++;
       showProgress();
-      try {
-        const setResult = source.set(key, value);
-        return awaitIfPromise(setResult, () => {
-          counts.copied++;
-          showProgress();
-          return progressTree;
-        });
-      } catch (/** @type {any} */ error) {
-        console.error(formatError(error));
+      const setResult = source.set(key, value);
+      return awaitIfPromise(setResult, () => {
+        counts.copied++;
+        showProgress();
         return progressTree;
-      }
+      });
     },
   });
 

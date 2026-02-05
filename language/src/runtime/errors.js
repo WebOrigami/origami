@@ -2,6 +2,7 @@ import { TraverseError } from "@weborigami/async-tree";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import codeFragment from "./codeFragment.js";
+import explainReferenceError from "./explainReferenceError.js";
 
 // Text we look for in an error stack to guess whether a given line represents a
 // function in the Origami source code.
@@ -17,48 +18,57 @@ const origamiSourceSignals = [
  *
  * @param {Error} error
  */
-export function formatError(error) {
-  let message;
-
+export async function formatError(error) {
   // See if we can identify the Origami location that caused the error
   let location;
   let fragment;
   let fragmentInMessage = false;
   const context = /** @type {any} */ (error).context;
-  if (context?.code) {
+  let code = context?.code;
+  if (code) {
     // Use the code being evaluated when the error occurred
     let position = /** @type {any} */ (error).position;
-    const code = position ? context.code[position] : context.code;
+    code = position !== undefined ? context.code[position] : context.code;
     location = code.location;
     fragment = location ? codeFragment(location) : null;
   }
 
-  if (error.stack) {
-    // Display the stack only until we reach the Origami source code.
-    message = "";
-    let lines = error.stack.split("\n");
-    for (let i = 0; i < lines.length; i++) {
-      let line = lines[i];
-      if (maybeOrigamiSourceCode(line)) {
-        break;
-      }
-      if (
-        error instanceof TraverseError &&
-        error.message === "A null or undefined value can't be traversed"
-      ) {
-        // Provide more meaningful message for TraverseError
-        line = `TraverseError: This part of the path is null or undefined: ${highlightError(
-          fragment,
-        )}`;
-        fragmentInMessage = true;
-      }
-      if (message) {
-        message += "\n";
-      }
-      message += line;
-    }
+  // Construct the error message
+  let message;
+  // If the first line of the stack is just the error message, use that as the message
+  let lines = error.stack?.split("\n") ?? [];
+  if (!lines[0].startsWith("    at")) {
+    message = lines[0];
+    lines.shift();
   } else {
-    message = error.toString();
+    message = error.message ?? error.toString();
+  }
+
+  // See if we can improve the error message
+  if (error instanceof ReferenceError && code && context) {
+    const explanation = await explainReferenceError(code, context.state);
+    if (explanation) {
+      message += "\n" + explanation;
+    }
+  } else if (
+    error instanceof TraverseError &&
+    error.message === "A null or undefined value can't be traversed"
+  ) {
+    // Provide more meaningful message for TraverseError
+    message = `TraverseError: This part of the path is null or undefined: ${highlightError(
+      fragment,
+    )}`;
+    fragmentInMessage = true;
+  }
+
+  // If the error has a stack trace, only include the portion until we reach
+  // Origami source code.
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (maybeOrigamiSourceCode(line)) {
+      break;
+    }
+    message += "\n" + line;
   }
 
   // Add location
@@ -75,10 +85,6 @@ export function formatError(error) {
 export function highlightError(text) {
   // ANSI escape sequence to highlight text in red
   return `\x1b[31m${text}\x1b[0m`;
-}
-
-export function maybeOrigamiSourceCode(text) {
-  return origamiSourceSignals.some((signal) => text.includes(signal));
 }
 
 // Return user-friendly line information for the error location
@@ -102,7 +108,10 @@ export function lineInfo(location) {
   }
 
   if (typeof source === "object" && source.url) {
-    const { url } = source;
+    let { url } = source;
+    if (typeof url === "string") {
+      url = new URL(url);
+    }
     let fileRef;
     // If URL is a file: URL, change to a relative path
     if (url.protocol === "file:") {
@@ -122,4 +131,8 @@ export function lineInfo(location) {
   } else {
     return "";
   }
+}
+
+export function maybeOrigamiSourceCode(text) {
+  return origamiSourceSignals.some((signal) => text.includes(signal));
 }
