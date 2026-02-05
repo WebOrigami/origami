@@ -16,6 +16,16 @@ evaluating: \x1b[31mdoesntExist()\x1b[0m
     );
   });
 
+  //   test.skip("proposes typos using globals", async () => {
+  //     await assertError(
+  //       `Mat.max(1, 2)`,
+  //       `ReferenceError: Mat is not defined
+  // Maybe you meant: "Math"?
+  // evaluating: \x1b[31mMat.max(1, 2)\x1b[0m
+  // `,
+  //     );
+  //   });
+
   test("identifies the argument that produced an error", async () => {
     await assertError(
       `Tree.map(foo, (_) => _)`,

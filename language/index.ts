@@ -63,11 +63,17 @@ export type Position = {
 }
 
 export type RuntimeState = {
-  /** The container (e.g., file system folder) that holds the code */
+  // Global variables that were used when compiling the code. These aren't used
+  // by the code itself, but help generate meaningful error messages.
+  globals?: any;
+  
+  // The object to which this code is attached
+  object?: any;
+  
+  // The container (e.g., file system folder) that holds the code
   parent?: SyncOrAsyncMap | null;
-  /** The object to which this code is attached */
-  object?: SyncOrAsyncMap | null;
-  /** The current stack of function parameter assignments */
+
+  // The current stack of function parameter assignments
   stack?: Array<Record<string, any>>;
 }
 

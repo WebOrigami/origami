@@ -3,14 +3,15 @@ import execute from "./execute.js";
 /**
  * Given parsed Origami code, return a function that executes that code.
  *
- * @typedef {import("@weborigami/async-tree").SyncOrAsyncMap} SyncOrAsyncMap
+ * @typedef {import("../../index.ts").RuntimeState} RuntimeState
+ * @typedef {import("../../index.js").AnnotatedCode} AnnotatedCode
  *
- * @param {import("../../index.js").AnnotatedCode} code - parsed Origami expression
- * @param {SyncOrAsyncMap} parent - the parent tree in which the code is running
+ * @param {AnnotatedCode} code - parsed Origami expression
+ * @param {RuntimeState} [state] - runtime state
  */
-export function createExpressionFunction(code, parent) {
+export function createExpressionFunction(code, state) {
   async function fn() {
-    return execute(code, { parent });
+    return execute(code, state);
   }
   fn.code = code;
   fn.toString = () => code.location.source.text;
@@ -22,7 +23,7 @@ export function createExpressionFunction(code, parent) {
  * expression.
  *
  * @param {any} obj
- * @returns {obj is { code: Array }}
+ * @returns {obj is AnnotatedCode}
  */
 export function isExpressionFunction(obj) {
   return typeof obj === "function" && obj.code;
