@@ -14,10 +14,15 @@ const binaryOperatorRegex =
  * @param {import("../../index.ts").RuntimeState} state
  */
 export default async function explainReferenceError(code, state) {
+  const stateKeys = await getStateKeys(state);
+
   if (code[0] === ops.property) {
     // An inner property access returned undefined.
     // Might be a global+extension or local+extension.
-    const explanation = await accidentalReferenceExplainer(code.source, state);
+    const explanation = await accidentalReferenceExplainer(
+      code.source,
+      stateKeys,
+    );
     return explanation;
   }
 
@@ -36,7 +41,7 @@ export default async function explainReferenceError(code, state) {
   const explainers = [mathExplainer, typoExplainer];
   let explanation;
   for (const explainer of explainers) {
-    explanation = await explainer(key, state);
+    explanation = await explainer(key, stateKeys);
     if (explanation) {
       message += "\n" + explanation;
       break;
@@ -54,20 +59,13 @@ export default async function explainReferenceError(code, state) {
  *
  * In either case, suggest using angle brackets.
  */
-async function accidentalReferenceExplainer(key, state) {
+async function accidentalReferenceExplainer(key, stateKeys) {
   const parts = key.split(".");
   if (parts.length !== 2) {
     return null;
   }
 
-  const { globals, object } = state;
-  if (!globals) {
-    return null;
-  }
-
-  const globalKeys = Object.keys(globals);
-
-  const extensionHandlers = globalKeys.filter((globalKey) =>
+  const extensionHandlers = stateKeys.global.filter((globalKey) =>
     globalKey.endsWith("_handler"),
   );
   const extensions = extensionHandlers.map((handler) => handler.slice(0, -8));
@@ -75,26 +73,56 @@ async function accidentalReferenceExplainer(key, state) {
     return null;
   }
 
-  if (globalKeys.includes(parts[0])) {
+  if (stateKeys.global.includes(parts[0])) {
     return `"${parts[0]}" is a global, but "${parts[1]}" looks like a file extension.
 If you intended to reference a file, use angle brackets: <${key}>`;
   }
 
-  const objectScope = object ? await scope(object) : null;
-  const objectKeys = objectScope ? await Tree.keys(objectScope) : [];
-  const normalizedKeys = objectKeys.map((key) => trailingSlash.remove(key));
-  if (normalizedKeys.includes(parts[0])) {
-    return `"${key}" looks like a file reference, but is matching the local variable "${parts[0]}".
+  if (stateKeys.object.includes(parts[0])) {
+    return `"${key}" looks like a file reference, but is matching the local object property "${parts[0]}".
+If you intended to reference a file, use angle brackets: <${key}>`;
+  }
+
+  if (stateKeys.stack.includes(parts[0])) {
+    return `"${key}" looks like a file reference, but is matching the local parameter "${parts[0]}".
 If you intended to reference a file, use angle brackets: <${key}>`;
   }
 
   return null;
 }
 
+// Return global, local, and object keys in scope for the given state
+async function getStateKeys(state) {
+  const { globals, parent, object, stack } = state;
+  const objectScope = object ? await scope(object) : null;
+  const parentScope = parent ? await scope(parent) : null;
+
+  const globalKeys = globals ? Object.keys(globals) : [];
+  const objectKeys = objectScope ? await Tree.keys(objectScope) : [];
+  const scopeKeys = parentScope ? await Tree.keys(parentScope) : [];
+  const stackKeys = stack?.map((frame) => Object.keys(frame)).flat() ?? [];
+
+  const normalizedGlobalKeys = globalKeys.map((key) =>
+    trailingSlash.remove(key),
+  );
+  const normalizedObjectKeys = objectKeys.map((key) =>
+    trailingSlash.remove(key),
+  );
+  const normalizedScopeKeys = scopeKeys.map((key) => trailingSlash.remove(key));
+  const normalizedStackKeys = stackKeys.map((key) => trailingSlash.remove(key));
+
+  return {
+    global: normalizedGlobalKeys,
+    object: normalizedObjectKeys,
+    scope: normalizedScopeKeys,
+    stack: normalizedStackKeys,
+  };
+}
+
 /**
  * If it looks like a math operation, suggest adding spaces around the operator.
  */
-function mathExplainer(key, state) {
+function mathExplainer(key, stateKeys) {
   if (!binaryOperatorRegex.test(key)) {
     return null;
   }
@@ -107,18 +135,15 @@ function mathExplainer(key, state) {
 /**
  * Suggest possible typos for the given key based on the keys in scope.
  */
-async function typoExplainer(key, state) {
-  const { globals, parent, object } = state;
-  const objectScope = object ? await scope(object) : null;
-  const parentScope = parent ? await scope(parent) : null;
-
-  const globalKeys = globals ? Object.keys(globals) : [];
-  const objectKeys = objectScope ? await Tree.keys(objectScope) : [];
-  const scopeKeys = parentScope ? await Tree.keys(parentScope) : [];
-  const normalizedKeys = [...globalKeys, ...objectKeys, ...scopeKeys].map(
-    (key) => trailingSlash.remove(key),
-  );
-  const allKeys = [...new Set(normalizedKeys)];
+async function typoExplainer(key, stateKeys) {
+  const allKeys = [
+    ...new Set([
+      ...stateKeys.global,
+      ...stateKeys.object,
+      ...stateKeys.scope,
+      ...stateKeys.stack,
+    ]),
+  ];
 
   let firstPartTypos;
   if (key.includes(".")) {

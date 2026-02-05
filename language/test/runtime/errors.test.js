@@ -88,6 +88,17 @@ evaluating: \x1B[31mindex.orj\x1B[0m
     );
   });
 
+  test("proposes typos using stack keys", async () => {
+    await assertError(
+      `((userName) => userNme.toString())("Alice")`,
+      `ReferenceError: Couldn't find the function or map to execute.
+It looks like "userNme.toString" is not in scope.
+Perhaps you intended: userName
+evaluating: \x1B[31muserNme.toString\x1B[0m
+`,
+    );
+  });
+
   test("suggests spaces around math operations", async () => {
     await assertError(
       `(1+2).toString()`,
@@ -123,7 +134,7 @@ evaluating: \x1B[31mperformance.html\x1B[0m
     );
   });
 
-  test("suggest angle brackets for accidental local key", async () => {
+  test("suggests angle brackets for accidental local key", async () => {
     // code with error: [ops.property, [[ops.inherited, 0], "posts"], ".ori"]
     await assertError(
       `{
@@ -131,14 +142,26 @@ evaluating: \x1B[31mperformance.html\x1B[0m
         index.html: posts.ori()
       }`,
       `ReferenceError: Couldn't find the function or map to execute.
-"posts.ori" looks like a file reference, but is matching the local variable "posts".
+"posts.ori" looks like a file reference, but is matching the local object property "posts".
 If you intended to reference a file, use angle brackets: <posts.ori>
 evaluating: \x1B[31mposts.ori\x1B[0m
     at line 3, column 21`,
     );
   });
 
-  test("suggest angle brackets for property of accidental local key", async () => {
+  test("suggests angle brackets for accidental local parameter", async () => {
+    // code with error: [ops.property, [[ops.inherited, 0], "posts"], ".ori"]
+    await assertError(
+      `((posts) => posts.ori())(1)`,
+      `ReferenceError: Couldn't find the function or map to execute.
+"posts.ori" looks like a file reference, but is matching the local parameter "posts".
+If you intended to reference a file, use angle brackets: <posts.ori>
+evaluating: \x1B[31mposts.ori\x1B[0m
+`,
+    );
+  });
+
+  test("suggests angle brackets for property of accidental local key", async () => {
     // code with error: [ops.property, [[ops.inherited, 0], "posts"], "md"]
     await assertError(
       `{
@@ -146,7 +169,7 @@ evaluating: \x1B[31mposts.ori\x1B[0m
         index.html: (posts.md).toString()
       }`,
       `ReferenceError: Tried to get a property of something that doesn't exist.
-"posts.md" looks like a file reference, but is matching the local variable "posts".
+"posts.md" looks like a file reference, but is matching the local object property "posts".
 If you intended to reference a file, use angle brackets: <posts.md>
 evaluating: \x1B[31mposts.md\x1B[0m
     at line 3, column 22`,
@@ -158,7 +181,9 @@ async function assertError(source, expectedMessage, options) {
   try {
     await evaluate(source, {
       globals,
+      object: null,
       parent: {},
+      stack: [],
       ...options,
     });
   } catch (/** @type {any} */ error) {
