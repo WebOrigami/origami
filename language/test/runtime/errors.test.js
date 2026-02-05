@@ -87,6 +87,17 @@ evaluating: \x1B[31mindex.orj\x1B[0m
       { parent },
     );
   });
+
+  test("suggests spaces around math operations", async () => {
+    await assertError(
+      `(1+2).toString()`,
+      `ReferenceError: Tried to get a property of something that doesn't exist.
+It looks like "1+2" is not in scope.
+If you intended a math operation, Origami requires spaces around the operator: "1 + 2"
+evaluating: \x1B[31m(1+2).toString()\x1B[0m
+`,
+    );
+  });
 });
 
 async function assertError(source, expectedMessage, options) {
@@ -99,5 +110,8 @@ async function assertError(source, expectedMessage, options) {
   } catch (/** @type {any} */ error) {
     const actualMessage = await formatError(error);
     assert.strictEqual(actualMessage, expectedMessage);
+    return;
   }
+
+  throw new Error("Expected an error to be thrown");
 }
