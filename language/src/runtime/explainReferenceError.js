@@ -14,14 +14,10 @@ const binaryOperatorRegex =
  * @param {import("../../index.ts").RuntimeState} state
  */
 export default async function explainReferenceError(code, state) {
-  // If the code is a property access, get the target of the access
   if (code[0] === ops.property) {
-    code = code[1];
-  }
-
-  if (code[0] === ops.property) {
-    // Might be a global+extension
-    const explanation = await globalWithExtensionExplainer(code.source, state);
+    // An inner property access returned undefined.
+    // Might be a global+extension or local+extension.
+    const explanation = await accidentalReferenceExplainer(code.source, state);
     return explanation;
   }
 
@@ -51,24 +47,25 @@ export default async function explainReferenceError(code, state) {
 }
 
 /**
- * If the key looks like `performance.html`, where the first part is a global
- * and the second part is an extension, suggest using angle brackets.
+ * Handle a reference that worked but maybe shouldn't have:
+ *
+ * - a global + extension like `performance.html` (`performance` is a global)
+ * - a local + extension like `posts.md` (where `posts` is a local variable)
+ *
+ * In either case, suggest using angle brackets.
  */
-function globalWithExtensionExplainer(key, state) {
+async function accidentalReferenceExplainer(key, state) {
   const parts = key.split(".");
   if (parts.length !== 2) {
     return null;
   }
 
-  const { globals } = state;
+  const { globals, object } = state;
   if (!globals) {
     return null;
   }
 
   const globalKeys = Object.keys(globals);
-  if (!globalKeys.includes(parts[0])) {
-    return null;
-  }
 
   const extensionHandlers = globalKeys.filter((globalKey) =>
     globalKey.endsWith("_handler"),
@@ -78,8 +75,20 @@ function globalWithExtensionExplainer(key, state) {
     return null;
   }
 
-  return `"${parts[0]}" is a global, but "${parts[1]}" looks like a file extension.
+  if (globalKeys.includes(parts[0])) {
+    return `"${parts[0]}" is a global, but "${parts[1]}" looks like a file extension.
 If you intended to reference a file, use angle brackets: <${key}>`;
+  }
+
+  const objectScope = object ? await scope(object) : null;
+  const objectKeys = objectScope ? await Tree.keys(objectScope) : [];
+  const normalizedKeys = objectKeys.map((key) => trailingSlash.remove(key));
+  if (normalizedKeys.includes(parts[0])) {
+    return `"${key}" looks like a file reference, but is matching the local variable "${parts[0]}".
+If you intended to reference a file, use angle brackets: <${key}>`;
+  }
+
+  return null;
 }
 
 /**

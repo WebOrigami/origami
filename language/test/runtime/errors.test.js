@@ -94,19 +94,62 @@ evaluating: \x1B[31mindex.orj\x1B[0m
       `ReferenceError: Tried to get a property of something that doesn't exist.
 It looks like "1+2" is not in scope.
 If you intended a math operation, Origami requires spaces around the operator: "1 + 2"
-evaluating: \x1B[31m(1+2).toString()\x1B[0m
+evaluating: \x1B[31m1+2\x1B[0m
 `,
     );
   });
 
-  test("suggests angle brackets for globals with extensions", async () => {
+  test("suggests angle brackets for global with extensions", async () => {
+    // code with error: [ops.property, Performance, "ori"]
+    await assertError(
+      `performance.ori()`,
+      `ReferenceError: Couldn't find the function or map to execute.
+"performance" is a global, but "ori" looks like a file extension.
+If you intended to reference a file, use angle brackets: <performance.ori>
+evaluating: \x1B[31mperformance.ori\x1B[0m
+`,
+    );
+  });
+
+  test("suggests angle brackets for property of global with extensions", async () => {
+    // code with error: [ops.property, Performance, "html"]
     await assertError(
       `(performance.html).toString()`,
       `ReferenceError: Tried to get a property of something that doesn't exist.
 "performance" is a global, but "html" looks like a file extension.
 If you intended to reference a file, use angle brackets: <performance.html>
-evaluating: \x1B[31m(performance.html).toString()\x1B[0m
+evaluating: \x1B[31mperformance.html\x1B[0m
 `,
+    );
+  });
+
+  test("suggest angle brackets for accidental local key", async () => {
+    // code with error: [ops.property, [[ops.inherited, 0], "posts"], ".ori"]
+    await assertError(
+      `{
+        posts: {}
+        index.html: posts.ori()
+      }`,
+      `ReferenceError: Couldn't find the function or map to execute.
+"posts.ori" looks like a file reference, but is matching the local variable "posts".
+If you intended to reference a file, use angle brackets: <posts.ori>
+evaluating: \x1B[31mposts.ori\x1B[0m
+    at line 3, column 21`,
+    );
+  });
+
+  test("suggest angle brackets for property of accidental local key", async () => {
+    // code with error: [ops.property, [[ops.inherited, 0], "posts"], "md"]
+    await assertError(
+      `{
+        posts: {}
+        index.html: (posts.md).toString()
+      }`,
+      `ReferenceError: Tried to get a property of something that doesn't exist.
+"posts.md" looks like a file reference, but is matching the local variable "posts".
+If you intended to reference a file, use angle brackets: <posts.md>
+evaluating: \x1B[31mposts.md\x1B[0m
+    at line 3, column 22`,
     );
   });
 });

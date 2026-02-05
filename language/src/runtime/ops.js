@@ -460,9 +460,12 @@ addOpLabel(optional, "«ops.optional»");
  */
 export async function property(object, key) {
   if (object == null) {
-    throw new ReferenceError(
+    /** @type {any} */
+    const error = new ReferenceError(
       "Tried to get a property of something that doesn't exist.",
     );
+    error.position = 1; // position of the bad argument
+    throw error;
   }
 
   if (isUnpackable(object)) {
