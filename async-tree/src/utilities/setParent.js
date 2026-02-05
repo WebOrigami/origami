@@ -9,7 +9,7 @@ import * as symbols from "../symbols.js";
  * @typedef {import("../../index.ts").SyncOrAsyncMap} SyncOrAsyncMap
  *
  * @param {*} child
- * @param {SyncOrAsyncMap|null} parent
+ * @param {any} parent
  */
 export default function setParent(child, parent) {
   if (isMap(child)) {

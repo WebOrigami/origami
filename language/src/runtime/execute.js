@@ -1,6 +1,6 @@
 import { isUnpackable, Tree } from "@weborigami/async-tree";
 import asyncStorage from "./asyncStorage.js";
-import codeFragment from "./codeFragment.js";
+import createReferenceError from "./createReferenceError.js";
 import "./interop.js";
 
 /**
@@ -8,16 +8,17 @@ import "./interop.js";
  *
  * `this` should be the tree used as the context for the evaluation.
  *
- * @param {import("../../index.ts").AnnotatedCode} code
- * @param {import("../../index.ts").RuntimeState} [state]
+ * @typedef {import("../../index.ts").AnnotatedCode} AnnotatedCode
+ * @typedef {import("../../index.ts").RuntimeState} RuntimeState
+ *
+ * @param {AnnotatedCode} code
+ * @param {RuntimeState} [state]
  */
 export default async function execute(code, state = {}) {
   if (!(code instanceof Array)) {
     // Simple scalar; return as is.
     return code;
   }
-
-  const context = { ...state, code };
 
   let evaluated;
   if (code[0]?.unevaluatedArgs) {
@@ -35,12 +36,10 @@ export default async function execute(code, state = {}) {
 
   if (!fn) {
     // The code wants to invoke something that's couldn't be found in scope.
-    /** @type {any} */
-    const error = ReferenceError(
-      `${codeFragment(code[0].location)} is not defined`,
-    );
-    error.context = context; // For error formatting
-    error.position = 0; // Position of the problematic instruction
+    const error = await createReferenceError({
+      state,
+      code: code[0],
+    });
     throw error;
   }
 
@@ -56,6 +55,10 @@ export default async function execute(code, state = {}) {
     // The function wants the code's container as the `this` target
     fn = fn.bind(state.parent);
   }
+
+  // Add the code to the runtime state
+  /** @type {import("../../index.ts").CodeContext} */
+  const context = { state, code };
 
   // Execute the function or traverse the tree.
   let result;

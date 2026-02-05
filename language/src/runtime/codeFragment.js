@@ -1,11 +1,12 @@
 export default function codeFragment(location) {
   const { source, start, end } = location;
+  const sourceText = source.text ?? source;
 
   let fragment =
-    start.offset < end.offset
-      ? source.text.slice(start.offset, end.offset)
+    start && end && start.offset < end.offset
+      ? sourceText.slice(start.offset, end.offset)
       : // Use entire source
-        source.text;
+        sourceText;
 
   // Replace newlines and whitespace runs with a single space.
   fragment = fragment.replace(/(\n|\s\s+)+/g, " ");

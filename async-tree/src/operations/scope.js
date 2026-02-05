@@ -1,5 +1,6 @@
 import AsyncMap from "../drivers/AsyncMap.js";
 import getMapArgument from "../utilities/getMapArgument.js";
+import getParent from "../utilities/getParent.js";
 
 /**
  * A map's "scope" is the collection of everything in that map and all of its
@@ -26,7 +27,7 @@ export default async function scope(maplike) {
         if (value !== undefined) {
           break;
         }
-        current = "parent" in current ? current.parent : null;
+        current = getParent(current);
       }
       return value;
     },
@@ -40,7 +41,7 @@ export default async function scope(maplike) {
         for await (const key of current.keys()) {
           scopeKeys.add(key);
         }
-        current = "parent" in current ? current.parent : null;
+        current = getParent(current);
       }
 
       yield* scopeKeys;

@@ -23,6 +23,15 @@ export type AnnotatedCode = (AnnotatedCode | AnnotatedCodeItem)[] & {
  */
 export type Code = Array<any>;
 
+/**
+ * The context in which code is executed, including the code itself and the
+ * runtime state, used for reporting errors and warnings.
+ */
+export type CodeContext = {
+  code: Code;
+  state: RuntimeState;
+};
+
 export type CodeLocation = {
   end: Position;
   source: Source;

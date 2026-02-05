@@ -1,11 +1,9 @@
-// Text we look for in an error stack to guess whether a given line represents a
-
-import { trailingSlash, TraverseError, Tree } from "@weborigami/async-tree";
+import { TraverseError } from "@weborigami/async-tree";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import codeFragment from "./codeFragment.js";
-import { typos } from "./typos.js";
 
+// Text we look for in an error stack to guess whether a given line represents a
 // function in the Origami source code.
 const origamiSourceSignals = [
   "async-tree/src/",
@@ -13,28 +11,6 @@ const origamiSourceSignals = [
   "origami/src/",
   "at Scope.execute",
 ];
-
-export async function builtinReferenceError(tree, builtins, key) {
-  // See if the key is in scope (but not as a builtin)
-  const scope = await Tree.scope(tree);
-  const value = await scope.get(key);
-  let message;
-  if (value === undefined) {
-    const messages = [
-      `"${key}" is being called as if it were a builtin function, but it's not.`,
-    ];
-    const typos = await formatScopeTypos(builtins, key);
-    messages.push(typos);
-    message = messages.join(" ");
-  } else {
-    const messages = [
-      `To call a function like "${key}" that's not a builtin, include a slash: ${key}/( )`,
-      `Details: https://weborigami.org/language/syntax.html#shorthand-for-builtin-functions`,
-    ];
-    message = messages.join("\n");
-  }
-  return new ReferenceError(message);
-}
 
 /**
  * Format an error for display in the console.
@@ -96,18 +72,6 @@ export function formatError(error) {
   return message;
 }
 
-export async function formatScopeTypos(scope, key) {
-  const keys = await scopeTypos(scope, key);
-  // Don't match deprecated keys
-  const filtered = keys.filter((key) => !key.startsWith("@"));
-  if (filtered.length === 0) {
-    return "";
-  }
-  const quoted = filtered.map((key) => `"${key}"`);
-  const list = quoted.join(", ");
-  return `Maybe you meant ${list}?`;
-}
-
 export function highlightError(text) {
   // ANSI escape sequence to highlight text in red
   return `\x1b[31m${text}\x1b[0m`;
@@ -158,21 +122,4 @@ export function lineInfo(location) {
   } else {
     return "";
   }
-}
-
-export async function scopeReferenceError(scope, key) {
-  const messages = [
-    `"${key}" is not in scope or is undefined.`,
-    await formatScopeTypos(scope, key),
-  ];
-  const message = messages.join(" ");
-  return new ReferenceError(message);
-}
-
-// Return all possible typos for `key` in scope
-async function scopeTypos(scope, key) {
-  const scopeKeys = [...(await scope.keys())];
-  const normalizedScopeKeys = scopeKeys.map((key) => trailingSlash.remove(key));
-  const normalizedKey = trailingSlash.remove(key);
-  return typos(normalizedKey, normalizedScopeKeys);
 }
