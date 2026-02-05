@@ -98,6 +98,17 @@ evaluating: \x1B[31m(1+2).toString()\x1B[0m
 `,
     );
   });
+
+  test("suggests angle brackets for globals with extensions", async () => {
+    await assertError(
+      `(performance.html).toString()`,
+      `ReferenceError: Tried to get a property of something that doesn't exist.
+"performance" is a global, but "html" looks like a file extension.
+If you intended to reference a file, use angle brackets: <performance.html>
+evaluating: \x1B[31m(performance.html).toString()\x1B[0m
+`,
+    );
+  });
 });
 
 async function assertError(source, expectedMessage, options) {
