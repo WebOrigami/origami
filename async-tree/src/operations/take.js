@@ -9,6 +9,7 @@ import * as args from "../utilities/args.js";
  */
 export default async function take(maplike, count) {
   const source = await args.map(maplike, "Tree.take");
+  count = args.number(count, "Tree.take");
   return Object.assign(new AsyncMap(), {
     description: `take ${count}`,
 

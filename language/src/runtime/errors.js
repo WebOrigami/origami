@@ -56,12 +56,6 @@ export async function formatError(error) {
     if (explanation) {
       message += "\n" + explanation;
     }
-  } else {
-    // Provide more meaningful message for TraverseError
-    message = `TraverseError: This part of the path is null or undefined: ${highlightError(
-      fragment,
-    )}`;
-    fragmentInMessage = true;
   }
 
   // If the error has a stack trace, only include the portion until we reach
@@ -79,7 +73,10 @@ export async function formatError(error) {
     if (!fragmentInMessage) {
       message += `\nevaluating: ${highlightError(fragment)}`;
     }
-    message += "\n" + lineInfo(location);
+    const lineInformation = lineInfo(location);
+    if (lineInformation) {
+      message += "\n" + lineInformation;
+    }
   }
 
   return message;
@@ -132,7 +129,7 @@ export function lineInfo(location) {
     // Don't know the URL, but has multiple lines so add line number
     return `    at line ${line}, column ${column}`;
   } else {
-    return "";
+    return null;
   }
 }
 

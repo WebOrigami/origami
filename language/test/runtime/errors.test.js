@@ -13,8 +13,7 @@ describe("formatError", () => {
         `doesntExist()`,
         `ReferenceError: Couldn't find the function or map to execute.
 It looks like "doesntExist" is not in scope.
-evaluating: \x1b[31mdoesntExist\x1b[0m
-`,
+evaluating: \x1b[31mdoesntExist\x1b[0m`,
       );
     });
 
@@ -23,8 +22,7 @@ evaluating: \x1b[31mdoesntExist\x1b[0m
         `Tree.map(foo, (_) => _)`,
         `ReferenceError: Tree.map: The map argument wasn't defined.
 It looks like "foo" is not in scope.
-evaluating: \x1b[31mfoo\x1b[0m
-`,
+evaluating: \x1b[31mfoo\x1b[0m`,
       );
     });
 
@@ -48,8 +46,7 @@ evaluating: \x1b[31mfoo\x1b[0m
         `ReferenceError: Couldn't find the function or map to execute.
 It looks like "Mat.max" is not in scope.
 Perhaps you intended one of these: Map, Math
-evaluating: \x1B[31mMat.max\x1B[0m
-`,
+evaluating: \x1B[31mMat.max\x1B[0m`,
       );
     });
 
@@ -83,8 +80,7 @@ evaluating: \x1B[31mdatu.toString\x1B[0m
         `ReferenceError: Couldn't find the function or map to execute.
 It looks like "index.orj" is not in scope.
 Perhaps you intended: index.ori
-evaluating: \x1B[31mindex.orj\x1B[0m
-`,
+evaluating: \x1B[31mindex.orj\x1B[0m`,
         { parent },
       );
     });
@@ -95,8 +91,7 @@ evaluating: \x1B[31mindex.orj\x1B[0m
         `ReferenceError: Couldn't find the function or map to execute.
 It looks like "userNme.toString" is not in scope.
 Perhaps you intended: userName
-evaluating: \x1B[31muserNme.toString\x1B[0m
-`,
+evaluating: \x1B[31muserNme.toString\x1B[0m`,
       );
     });
 
@@ -106,8 +101,7 @@ evaluating: \x1B[31muserNme.toString\x1B[0m
         `ReferenceError: Tried to get a property of something that doesn't exist.
 It looks like "1+2" is not in scope.
 If you intended a math operation, Origami requires spaces around the operator: "1 + 2"
-evaluating: \x1B[31m1+2\x1B[0m
-`,
+evaluating: \x1B[31m1+2\x1B[0m`,
       );
     });
 
@@ -118,8 +112,7 @@ evaluating: \x1B[31m1+2\x1B[0m
         `ReferenceError: Couldn't find the function or map to execute.
 "performance" is a global, but "ori" looks like a file extension.
 If you intended to reference a file, use angle brackets: <performance.ori>
-evaluating: \x1B[31mperformance.ori\x1B[0m
-`,
+evaluating: \x1B[31mperformance.ori\x1B[0m`,
       );
     });
 
@@ -130,8 +123,7 @@ evaluating: \x1B[31mperformance.ori\x1B[0m
         `ReferenceError: Tried to get a property of something that doesn't exist.
 "performance" is a global, but "html" looks like a file extension.
 If you intended to reference a file, use angle brackets: <performance.html>
-evaluating: \x1B[31mperformance.html\x1B[0m
-`,
+evaluating: \x1B[31mperformance.html\x1B[0m`,
       );
     });
 
@@ -157,8 +149,7 @@ evaluating: \x1B[31mposts.ori\x1B[0m
         `ReferenceError: Couldn't find the function or map to execute.
 "posts.ori" looks like a file reference, but is matching the local parameter "posts".
 If you intended to reference a file, use angle brackets: <posts.ori>
-evaluating: \x1B[31mposts.ori\x1B[0m
-`,
+evaluating: \x1B[31mposts.ori\x1B[0m`,
       );
     });
 
@@ -195,8 +186,7 @@ evaluating: \x1B[31mposts.md\x1B[0m
         `TraverseError: A path included a null or undefined value.
 The path traversal ended unexpectedly at: a/b/sup
 Perhaps you intended: /sub
-evaluating: \x1B[31msup/\x1B[0m
-`,
+evaluating: \x1B[31msup/\x1B[0m`,
         { parent },
       );
     });
