@@ -13,6 +13,7 @@ import values from "./values.js";
  */
 export default async function groupBy(maplike, groupKeyFn) {
   const source = await args.map(maplike, "Tree.groupBy");
+  const fn = args.invocable(groupKeyFn, "Tree.groupBy");
 
   const result = new SyncMap();
   const sourceEntries = await entries(source);
@@ -24,7 +25,7 @@ export default async function groupBy(maplike, groupKeyFn) {
 
   for (const [key, value] of sourceEntries) {
     // Get the groups for this value.
-    let groups = await groupKeyFn(value, key, source);
+    let groups = await fn(value, key, source);
     if (!groups) {
       continue;
     }

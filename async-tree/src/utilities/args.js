@@ -1,5 +1,6 @@
 import from from "../operations/from.js";
 import isUnpackable from "./isUnpackable.js";
+import toFunction from "./toFunction.js";
 
 /**
  * Runtime argument checking.
@@ -11,19 +12,18 @@ import isUnpackable from "./isUnpackable.js";
  */
 
 /**
- * Check a number argument.
+ * Check an invocable argument and return it as a function.
  *
- * @param {number} arg
+ * @param {import("../../index.ts").Invocable} arg
  * @param {string} operation
- * @returns
+ * @returns {Function}
  */
-export function number(arg, operation) {
-  if (typeof arg !== "number" || Number.isNaN(arg)) {
-    throw new TypeError(
-      `${operation}: Expected a number argument, got "${arg}".`,
-    );
+export function invocable(arg, operation) {
+  const fn = toFunction(arg);
+  if (!fn) {
+    throw new TypeError(`${operation}: Expected a function argument.`);
   }
-  return arg;
+  return fn;
 }
 
 /**
@@ -57,4 +57,20 @@ export async function map(arg, operation, options = {}) {
     throw newError;
   }
   return map;
+}
+
+/**
+ * Check a number argument.
+ *
+ * @param {number} arg
+ * @param {string} operation
+ * @returns
+ */
+export function number(arg, operation) {
+  if (typeof arg !== "number" || Number.isNaN(arg)) {
+    throw new TypeError(
+      `${operation}: Expected a number argument, got "${arg}".`,
+    );
+  }
+  return arg;
 }

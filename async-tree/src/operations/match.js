@@ -1,5 +1,5 @@
 import AsyncMap from "../drivers/AsyncMap.js";
-import isMap from "./isMap.js";
+import * as args from "../utilities/args.js";
 
 /**
  * Return a tree with the indicated keys (if provided).
@@ -27,14 +27,16 @@ export default function match(pattern, resultFn, keys = []) {
     // Convert the simple pattern format into a regular expression.
     const regexText = pattern.replace(
       /\[(?<variable>.+)\]/g,
-      (match, p1, offset, string, groups) => `(?<${groups.variable}>.+)`
+      (match, p1, offset, string, groups) => `(?<${groups.variable}>.+)`,
     );
     regex = new RegExp(`^${regexText}$`);
   } else if (pattern instanceof RegExp) {
     regex = pattern;
   } else {
-    throw new Error(`match(): Unsupported pattern`);
+    throw new Error(`Tree.match: Unsupported pattern`);
   }
+
+  const fn = args.invocable(resultFn, "Tree.match");
 
   const result = Object.assign(new AsyncMap(), {
     description: "match",
@@ -45,24 +47,11 @@ export default function match(pattern, resultFn, keys = []) {
         return undefined;
       }
 
-      if (
-        typeof resultFn !== "function" &&
-        !(isMap(resultFn) && "parent" in resultFn)
-      ) {
-        // Simple return value; return as is
-        return resultFn;
-      }
-
       // Copy the `groups` property to a real object
       const matches = { ...keyMatch.groups };
 
-      // Invoke the result function with the extended scope.
-      let value;
-      if (typeof resultFn === "function") {
-        value = await resultFn(matches);
-      } else {
-        value = Object.create(resultFn);
-      }
+      // Invoke the result function
+      const value = await fn(matches);
 
       return value;
     },
