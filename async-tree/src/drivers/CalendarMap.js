@@ -48,8 +48,8 @@ export default class CalendarMap extends SyncMap {
       end.day = end.month
         ? daysInMonth(end.year, end.month)
         : end.year
-        ? 31 // Last day of December
-        : today.getDate();
+          ? 31 // Last day of December
+          : today.getDate();
     }
     if (end.month === undefined) {
       end.month = end.year ? 12 : today.getMonth() + 1;
@@ -77,7 +77,7 @@ export default class CalendarMap extends SyncMap {
   keys() {
     return Array.from(
       { length: this.end.year - this.start.year + 1 },
-      (_, i) => this.start.year + i
+      (_, i) => this.start.year + i,
     )[Symbol.iterator]();
   }
 }
@@ -91,6 +91,14 @@ function dateParts(date) {
     year = parts[0] ? parseInt(parts[0]) : undefined;
     month = parts[1] ? parseInt(parts[1]) : undefined;
     day = parts[2] ? parseInt(parts[2]) : undefined;
+
+    if (
+      (year && isNaN(year)) ||
+      (month && isNaN(month)) ||
+      (day && isNaN(day))
+    ) {
+      throw new TypeError(`Tree.calendar: invalid date: ${date}`);
+    }
   }
   return { year, month, day };
 }
@@ -135,7 +143,7 @@ function daysForMonthMap(year, month, start, end, valueFn) {
     *keys() {
       const days = Array.from(
         { length: daysInMonth(year, month) },
-        (_, i) => i + 1
+        (_, i) => i + 1,
       );
       yield* days
         .filter((day) => this.inRange(day))
