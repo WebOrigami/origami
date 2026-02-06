@@ -10,7 +10,7 @@ import getMapArgument from "../utilities/getMapArgument.js";
  * @param {any} value
  */
 export default async function set(maplike, key, value) {
-  const map = await getMapArgument(maplike, "set");
+  const map = await getMapArgument(maplike, "Tree.set");
   await map.set(key, value);
 
   // Unlike Map.prototype.set, we return undefined. This is more useful when

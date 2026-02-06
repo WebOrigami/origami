@@ -9,6 +9,6 @@ import getMapArgument from "../utilities/getMapArgument.js";
  * @param {any} key
  */
 export default async function has(maplike, key) {
-  const map = await getMapArgument(maplike, "has");
+  const map = await getMapArgument(maplike, "Tree.has");
   return map.has(key);
 }

@@ -18,12 +18,12 @@ const templateText = `(urls) => \`<?xml version="1.0" encoding="UTF-8"?>
  * @returns {Promise<string>}
  */
 export default async function sitemap(maplike, options = {}) {
-  const tree = await getTreeArgument(maplike, "sitemap");
+  const tree = await getTreeArgument(maplike, "Origami.sitemap");
 
   // We're only interested in keys that end in .html or with no extension.
   const filtered = await Tree.filter(
     tree,
-    (value, key) => key.endsWith?.(".html") || !key.includes?.(".")
+    (value, key) => key.endsWith?.(".html") || !key.includes?.("."),
   );
 
   const treePaths = await Tree.paths(filtered, options);

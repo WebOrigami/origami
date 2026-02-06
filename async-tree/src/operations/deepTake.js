@@ -13,7 +13,7 @@ import isMap from "./isMap.js";
  * @param {number} count
  */
 export default async function deepTake(maplike, count) {
-  const tree = await getMapArgument(maplike, "deepTake", { deep: true });
+  const tree = await getMapArgument(maplike, "Tree.deepTake", { deep: true });
   const { values } = await traverse(tree, count);
   return from(values, { deep: true });
 }

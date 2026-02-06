@@ -19,7 +19,7 @@ import { getDescriptor } from "../common/utilities.js";
  * @param {PlainObject} [options]
  */
 export default async function dot(maplike, options = {}) {
-  const tree = await getTreeArgument(maplike, "treeDot", { deep: true });
+  const tree = await getTreeArgument(maplike, "Dev.treeDot", { deep: true });
   const rootLabel = getDescriptor(tree) ?? "";
   const treeArcs = await statements(tree, "", rootLabel, options);
   return `digraph g {
@@ -43,7 +43,7 @@ async function statements(tree, nodePath, nodeLabel, options) {
   const url = createLinks ? `; URL="${rootUrl}"` : "";
   const rootLabel = nodeLabel ? `; xlabel="${nodeLabel}"` : "";
   result.push(
-    `  "${nodePath}" [shape=circle${rootLabel}; label=""; color=gray40; width=0.15${url}];`
+    `  "${nodePath}" [shape=circle${rootLabel}; label=""; color=gray40; width=0.15${url}];`,
   );
 
   // Draw edges and collect labels for the nodes they lead to.
@@ -63,7 +63,7 @@ async function statements(tree, nodePath, nodeLabel, options) {
       value =
         error.name && error.message
           ? `${error.name}: ${error.message}`
-          : error.name ?? error.message ?? error;
+          : (error.name ?? error.message ?? error);
     }
 
     const expandable =
@@ -76,8 +76,8 @@ async function statements(tree, nodePath, nodeLabel, options) {
       const label = isStringlike(value)
         ? toString(value)
         : value !== undefined
-        ? await serialize.toYaml(value)
-        : "";
+          ? await serialize.toYaml(value)
+          : "";
       if (value === undefined) {
         isError = true;
       }

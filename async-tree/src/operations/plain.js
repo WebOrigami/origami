@@ -29,6 +29,6 @@ export default async function plain(maplike) {
   if (maplike instanceof Function) {
     throw new TypeError("plain: can't convert a function to a plain object");
   }
-  const tree = await getMapArgument(maplike, "plain");
+  const tree = await getMapArgument(maplike, "Tree.plain");
   return toPlainValue(tree);
 }

@@ -8,6 +8,6 @@ import getMapArgument from "../utilities/getMapArgument.js";
  * @param {Maplike} maplike
  */
 export default async function size(maplike) {
-  const map = await getMapArgument(maplike, "size");
+  const map = await getMapArgument(maplike, "Tree.size");
   return map.size;
 }

@@ -10,12 +10,12 @@ import { getDescriptor } from "../common/utilities.js";
  * @param {string} [basePath]
  */
 export default async function indexPage(maplike, basePath) {
-  const tree = await getTreeArgument(maplike, "svg");
+  const tree = await getTreeArgument(maplike, "Origami.indexPage");
   const treeKeys = await Tree.keys(tree);
 
   // Skip system-ish files that start with a period. Also skip `index.html`.
   const filtered = treeKeys.filter(
-    (key) => !(key.startsWith?.(".") || key === "index.html")
+    (key) => !(key.startsWith?.(".") || key === "index.html"),
   );
 
   const links = [];

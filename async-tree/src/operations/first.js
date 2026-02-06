@@ -8,7 +8,7 @@ import getMapArgument from "../utilities/getMapArgument.js";
  * @param {Maplike} maplike
  */
 export default async function first(maplike) {
-  const map = await getMapArgument(maplike, "first");
+  const map = await getMapArgument(maplike, "Tree.first");
   let firstKey;
   for await (const key of map.keys()) {
     // Just needed to get first key

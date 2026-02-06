@@ -12,7 +12,9 @@ import keys from "./keys.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function deepReverse(maplike) {
-  const source = await getMapArgument(maplike, "deepReverse", { deep: true });
+  const source = await getMapArgument(maplike, "Tree.deepReverse", {
+    deep: true,
+  });
 
   return Object.assign(new AsyncMap(), {
     description: "deepReverse",

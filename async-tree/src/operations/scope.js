@@ -12,7 +12,7 @@ import getParent from "../utilities/getParent.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function scope(maplike) {
-  const source = await getMapArgument(maplike, "scope");
+  const source = await getMapArgument(maplike, "Tree.scope");
 
   return Object.assign(new AsyncMap(), {
     description: "scope",

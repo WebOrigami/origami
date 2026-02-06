@@ -11,7 +11,7 @@ import keys from "./keys.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function reverse(maplike) {
-  const source = await getMapArgument(maplike, "reverse");
+  const source = await getMapArgument(maplike, "Tree.reverse");
   return Object.assign(new AsyncMap(), {
     description: "reverse",
 

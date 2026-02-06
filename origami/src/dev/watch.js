@@ -13,7 +13,7 @@ import { formatError, moduleCache } from "@weborigami/language";
  * @returns {Promise<Map|AsyncMap>}
  */
 export default async function watch(maplike, fn) {
-  const container = await getTreeArgument(maplike, "watch");
+  const container = await getTreeArgument(maplike, "Dev.watch");
 
   // Watch the indicated tree.
   /** @type {any} */ (container).watch?.();

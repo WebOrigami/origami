@@ -9,6 +9,6 @@ import getMapArgument from "../utilities/getMapArgument.js";
  * @returns {Promise<Function>}
  */
 export default async function toFunction(maplike) {
-  const map = await getMapArgument(maplike, "toFunction");
+  const map = await getMapArgument(maplike, "Tree.toFunction");
   return map.get.bind(map);
 }

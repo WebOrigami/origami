@@ -9,7 +9,7 @@ import keys from "./keys.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function addNextPrevious(maplike) {
-  const source = await getMapArgument(maplike, "addNextPrevious");
+  const source = await getMapArgument(maplike, "Tree.addNextPrevious");
   let sourceKeys;
 
   return Object.assign(new AsyncMap(), {

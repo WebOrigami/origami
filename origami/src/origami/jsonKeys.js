@@ -14,7 +14,7 @@ import {
  * @returns {Promise<AsyncMap>}
  */
 export default async function jsonKeysBuiltin(maplike) {
-  const source = await getTreeArgument(maplike, "jsonKeys");
+  const source = await getTreeArgument(maplike, "Origami.jsonKeys");
   return jsonKeysMap(source);
 }
 

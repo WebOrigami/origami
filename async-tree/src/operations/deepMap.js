@@ -15,7 +15,7 @@ import map from "./map.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function deepMap(maplike, options) {
-  const tree = await getMapArgument(maplike, "deepMap", { deep: true });
+  const tree = await getMapArgument(maplike, "Tree.deepMap", { deep: true });
   const withDeep = isPlainObject(options)
     ? // Dictionary
       { ...options, deep: true }

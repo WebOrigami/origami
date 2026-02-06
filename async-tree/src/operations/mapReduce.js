@@ -23,7 +23,7 @@ import isMap from "./isMap.js";
  * @param {ReduceFn} reduceFn
  */
 export default async function mapReduce(source, valueFn, reduceFn) {
-  const sourceMap = await getMapArgument(source, "mapReduce");
+  const sourceMap = await getMapArgument(source, "Tree.mapReduce");
 
   // We're going to fire off all the get requests in parallel, as quickly as
   // the keys come in. We call the tree's `get` method for each key, but
@@ -37,8 +37,8 @@ export default async function mapReduce(source, valueFn, reduceFn) {
       return isMap(value)
         ? mapReduce(value, valueFn, reduceFn) // subtree; recurse
         : valueFn
-        ? valueFn(value, key, sourceMap)
-        : value;
+          ? valueFn(value, key, sourceMap)
+          : value;
     })();
     promises.push(promise);
   }

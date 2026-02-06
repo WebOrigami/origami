@@ -8,6 +8,6 @@ import getMapArgument from "../utilities/getMapArgument.js";
  * @param {Maplike} maplike
  */
 export default async function parent(maplike) {
-  const map = await getMapArgument(maplike, "parent");
+  const map = await getMapArgument(maplike, "Tree.parent");
   return "parent" in map ? map.parent : undefined;
 }

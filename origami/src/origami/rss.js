@@ -8,7 +8,7 @@ import jsonFeedToRss from "@weborigami/json-feed-to-rss";
  * @param {any} options
  */
 export default async function rss(jsonFeed, options = {}) {
-  const tree = await getTreeArgument(jsonFeed, "rss");
+  const tree = await getTreeArgument(jsonFeed, "Origami.rss");
   const jsonFeedPlain = await Tree.plain(tree);
   return jsonFeedToRss(jsonFeedPlain, options);
 }

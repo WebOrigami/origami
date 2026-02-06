@@ -13,8 +13,8 @@ import process, { stdout } from "node:process";
  * @param {Maplike} target
  */
 export default async function copy(source, target) {
-  const sourceTree = await getTreeArgument(source, "copy", { position: 1 });
-  let targetTree = await getTreeArgument(target, "copy", { position: 2 });
+  const sourceTree = await getTreeArgument(source, "Dev.copy", { position: 1 });
+  let targetTree = await getTreeArgument(target, "Dev.copy", { position: 2 });
 
   let progressTree;
   if (stdout.isTTY) {

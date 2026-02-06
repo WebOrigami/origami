@@ -15,7 +15,7 @@ import indexPage from "./indexPage.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function staticBuiltin(maplike) {
-  const source = await getTreeArgument(maplike, "static");
+  const source = await getTreeArgument(maplike, "Origami.static");
   return staticMap(source);
 }
 

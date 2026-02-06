@@ -10,7 +10,7 @@ import keys from "./keys.js";
  */
 export default async function length(maplike) {
   console.warn("Tree.length() is deprecated. Use Tree.size() instead.");
-  const tree = await getMapArgument(maplike, "length");
+  const tree = await getMapArgument(maplike, "Tree.length");
   const treeKeys = await keys(tree);
   return treeKeys.length;
 }

@@ -17,7 +17,7 @@ const defaultPort = 5000;
  * @param {number} [port]
  */
 export default async function serve(maplike, port) {
-  let tree = await getTreeArgument(maplike, "serve");
+  let tree = await getTreeArgument(maplike, "Dev.serve");
 
   if (!isTransformApplied(ExplorableSiteTransform, tree)) {
     tree = transformObject(ExplorableSiteTransform, tree);
@@ -36,7 +36,7 @@ export default async function serve(maplike, port) {
   // @ts-ignore
   http.createServer(requestListener(tree)).listen(port, undefined, () => {
     console.log(
-      `Server running at http://localhost:${port}. Press Ctrl+C to stop.`
+      `Server running at http://localhost:${port}. Press Ctrl+C to stop.`,
     );
   });
 }
@@ -48,9 +48,9 @@ function findOpenPort(port) {
   return new Promise((resolve, reject) =>
     server
       .on("error", (/** @type {any} */ error) =>
-        error.code === "EADDRINUSE" ? server.listen(++port) : reject(error)
+        error.code === "EADDRINUSE" ? server.listen(++port) : reject(error),
       )
       .on("listening", () => server.close(() => resolve(port)))
-      .listen(port)
+      .listen(port),
   );
 }

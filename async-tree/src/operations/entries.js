@@ -9,7 +9,7 @@ import getMapArgument from "../utilities/getMapArgument.js";
  * @returns {Promise<Array<[any, any]>>}
  */
 export default async function entries(maplike) {
-  const map = await getMapArgument(maplike, "entries");
+  const map = await getMapArgument(maplike, "Tree.entries");
   if (map instanceof Map) {
     return Array.from(map.entries());
   } else {

@@ -19,14 +19,14 @@ import keys from "./keys.js";
  * @returns {Promise<SyncMap|AsyncMap>}
  */
 export default async function treeCache(sourceMaplike, cacheMaplike) {
-  const source = await getMapArgument(sourceMaplike, "cache", {
+  const source = await getMapArgument(sourceMaplike, "Tree.cache", {
     position: 1,
   });
 
   let cache;
   if (cacheMaplike) {
     cache = /** @type {any} */ (
-      await getMapArgument(cacheMaplike, "cache", { position: 2 })
+      await getMapArgument(cacheMaplike, "Tree.cache", { position: 2 })
     );
     // @ts-ignore
     if (isReadOnlyMap(cache)) {

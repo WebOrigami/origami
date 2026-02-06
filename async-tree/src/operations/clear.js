@@ -8,7 +8,7 @@ import getMapArgument from "../utilities/getMapArgument.js";
  * @param {Maplike} maplike
  */
 export default async function clear(maplike) {
-  const map = await getMapArgument(maplike, "clear");
+  const map = await getMapArgument(maplike, "Tree.clear");
   if ("readOnly" in map && map.readOnly) {
     throw new TypeError("clear: target map is read-only");
   }

@@ -12,7 +12,7 @@ import keys from "./keys.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function shuffle(maplike, reshuffle = false) {
-  const source = await getMapArgument(maplike, "shuffle");
+  const source = await getMapArgument(maplike, "Tree.shuffle");
 
   let mapKeys;
 

@@ -17,7 +17,7 @@ import keys from "./keys.js";
  * @param {SortOptions|ValueKeyFn} [options]
  */
 export default async function sort(maplike, options) {
-  const source = await getMapArgument(maplike, "sort");
+  const source = await getMapArgument(maplike, "Tree.sort");
 
   let sortKey;
   let compare;
@@ -49,11 +49,11 @@ export default async function sort(maplike, options) {
             const sort = await sortKey(value, key, source);
             if (sort === undefined) {
               throw new Error(
-                `sortKey function returned undefined for key ${key}`
+                `sortKey function returned undefined for key ${key}`,
               );
             }
             return { key, sort };
-          })
+          }),
         );
 
         // Wrap the comparison function so it applies to sort keys.

@@ -10,7 +10,7 @@ import getMapArgument from "../utilities/getMapArgument.js";
  */
 export default async function root(maplike) {
   /** @type {any} */
-  let current = await getMapArgument(maplike, "root");
+  let current = await getMapArgument(maplike, "Tree.root");
   while (current.parent || current[symbols.parent]) {
     current = current.parent || current[symbols.parent];
   }

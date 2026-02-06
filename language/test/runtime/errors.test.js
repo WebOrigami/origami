@@ -21,7 +21,7 @@ evaluating: \x1b[31mdoesntExist\x1b[0m
     test("identifies the argument that produced an error", async () => {
       await assertError(
         `Tree.map(foo, (_) => _)`,
-        `ReferenceError: map: The map argument wasn't defined.
+        `ReferenceError: Tree.map: The map argument wasn't defined.
 It looks like "foo" is not in scope.
 evaluating: \x1b[31mfoo\x1b[0m
 `,

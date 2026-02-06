@@ -8,7 +8,7 @@ import getMapArgument from "../utilities/getMapArgument.js";
  * @param {Maplike} maplike
  */
 export default async function keys(maplike) {
-  const map = await getMapArgument(maplike, "keys");
+  const map = await getMapArgument(maplike, "Tree.keys");
   let keys;
   let iterable = map.keys();
   if (Symbol.asyncIterator in iterable) {

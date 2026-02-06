@@ -15,8 +15,12 @@ import isMaplike from "./isMaplike.js";
  * @param {Maplike} source
  */
 export default async function assign(target, source) {
-  const targetTree = await getMapArgument(target, "assign", { position: 1 });
-  const sourceTree = await getMapArgument(source, "assign", { position: 2 });
+  const targetTree = await getMapArgument(target, "Tree.assign", {
+    position: 1,
+  });
+  const sourceTree = await getMapArgument(source, "Tree.assign", {
+    position: 2,
+  });
   if ("readOnly" in targetTree && targetTree.readOnly) {
     throw new TypeError("assign: Target must be a read/write map");
   }

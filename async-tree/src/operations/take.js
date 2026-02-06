@@ -8,7 +8,7 @@ import getMapArgument from "../utilities/getMapArgument.js";
  * @param {number} count
  */
 export default async function take(maplike, count) {
-  const source = await getMapArgument(maplike, "take");
+  const source = await getMapArgument(maplike, "Tree.take");
   return Object.assign(new AsyncMap(), {
     description: `take ${count}`,
 

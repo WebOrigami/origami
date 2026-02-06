@@ -28,7 +28,9 @@ export default async function map(maplike, options = {}) {
   const validated = validateOptions(options);
   const mapFn = createMapFn(validated);
 
-  const tree = await getMapArgument(maplike, "map", { deep: validated.deep });
+  const tree = await getMapArgument(maplike, "Tree.map", {
+    deep: validated.deep,
+  });
   return mapFn(tree);
 }
 
@@ -37,7 +39,7 @@ function createGet(tree, options, mapFn) {
   const { inverseKeyFn, deep, valueFn } = options;
   return async (resultKey) => {
     if (resultKey === undefined) {
-      throw new ReferenceError(`map: Cannot get an undefined key.`);
+      throw new ReferenceError(`Tree.map: Cannot get an undefined key.`);
     }
 
     // Step 1: Map the result key to the source key

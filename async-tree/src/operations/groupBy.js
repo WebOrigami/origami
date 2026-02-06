@@ -12,14 +12,14 @@ import values from "./values.js";
  * @param {import("../../index.ts").ValueKeyFn} groupKeyFn
  */
 export default async function groupBy(maplike, groupKeyFn) {
-  const source = await getMapArgument(maplike, "groupBy");
+  const source = await getMapArgument(maplike, "Tree.groupBy");
 
   const result = new SyncMap();
   const sourceEntries = await entries(source);
 
   // Are all the keys integers?
   const integerKeys = sourceEntries.every(
-    ([key]) => !Number.isNaN(parseInt(key))
+    ([key]) => !Number.isNaN(parseInt(key)),
   );
 
   for (const [key, value] of sourceEntries) {

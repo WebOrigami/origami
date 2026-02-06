@@ -13,7 +13,7 @@ import OriCommandTransform from "./OriCommandTransform.js";
  * @returns {Promise<Map|AsyncMap>}
  */
 export default async function debug(maplike) {
-  let tree = await getTreeArgument(maplike, "debug");
+  let tree = await getTreeArgument(maplike, "Dev.debug");
 
   if (!isTransformApplied(DebugTransform, tree)) {
     tree = transformObject(DebugTransform, tree);

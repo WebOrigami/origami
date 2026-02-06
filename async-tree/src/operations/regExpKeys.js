@@ -18,7 +18,9 @@ import isMap from "./isMap.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function regExpKeys(maplike) {
-  const source = await getMapArgument(maplike, "regExpKeys", { deep: true });
+  const source = await getMapArgument(maplike, "Tree.regExpKeys", {
+    deep: true,
+  });
 
   const map = new SyncMap();
 
@@ -32,7 +34,7 @@ export default async function regExpKeys(maplike) {
       if (key == null) {
         // Reject nullish key.
         throw new ReferenceError(
-          `regExpKeys: Cannot get a null or undefined key.`
+          `regExpKeys: Cannot get a null or undefined key.`,
         );
       }
 

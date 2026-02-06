@@ -9,6 +9,6 @@ import reduce from "./reduce.js";
  * @param {Maplike} source
  */
 export default async function sync(source) {
-  const tree = await getMapArgument(source, "sync");
+  const tree = await getMapArgument(source, "Tree.sync");
   return reduce(tree, (mapped) => mapped);
 }

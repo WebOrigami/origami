@@ -3,7 +3,7 @@ import getMapArgument from "../utilities/getMapArgument.js";
 import isMap from "./isMap.js";
 
 export default async function invokeFunctions(maplike) {
-  const source = await getMapArgument(maplike, "invokeFunctions", {
+  const source = await getMapArgument(maplike, "Tree.invokeFunctions", {
     deep: true,
   });
 

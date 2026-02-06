@@ -14,7 +14,7 @@ import keys from "./keys.js";
  * @param {number} [size=10]
  */
 export default async function paginate(maplike, size = 10) {
-  const source = await getMapArgument(maplike, "paginate");
+  const source = await getMapArgument(maplike, "Tree.paginate");
 
   const treeKeys = await keys(source);
   const pageCount = Math.ceil(treeKeys.length / size);

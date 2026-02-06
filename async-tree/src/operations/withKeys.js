@@ -13,8 +13,10 @@ import values from "./values.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function withKeys(maplike, keysMaplike) {
-  const source = await getMapArgument(maplike, "withKeys", { position: 1 });
-  const keysMap = await getMapArgument(keysMaplike, "withKeys", {
+  const source = await getMapArgument(maplike, "Tree.withKeys", {
+    position: 1,
+  });
+  const keysMap = await getMapArgument(keysMaplike, "Tree.withKeys", {
     position: 2,
   });
 
