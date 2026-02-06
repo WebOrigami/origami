@@ -1,10 +1,13 @@
 /**
  * Error class thrown by Tree.traverseOrThrow()
  */
-export default class TraverseError extends ReferenceError {
-  constructor(message, options) {
+export default class TraverseError extends Error {
+  constructor(message, options = {}) {
     super(message);
     this.name = "TraverseError";
-    Object.assign(this, options);
+    this.head = options.head;
+    this.lastValue = options.lastValue;
+    this.keys = options.keys;
+    this.position = options.position;
   }
 }

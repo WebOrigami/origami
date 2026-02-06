@@ -16,19 +16,25 @@ export default async function traverseOrThrow(maplike, ...keys) {
   // Start our traversal at the root of the tree.
   /** @type {any} */
   let value = maplike;
-  let position = 1;
+
+  // For error reporting
+  let lastValue = null;
+  let position = 0;
 
   // Process all the keys.
   const remainingKeys = keys.slice();
   let key;
   while (remainingKeys.length > 0) {
     if (value == null) {
-      throw new TraverseError("A null or undefined value can't be traversed", {
-        tree: maplike,
+      throw new TraverseError("A path included a null or undefined value.", {
+        head: maplike,
+        lastValue,
         keys,
         position,
       });
     }
+
+    lastValue = value;
 
     // If the value is packed and can be unpacked, unpack it.
     if (isUnpackable(value)) {

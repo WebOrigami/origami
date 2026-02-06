@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import codeFragment from "./codeFragment.js";
 import explainReferenceError from "./explainReferenceError.js";
+import explainTraverseError from "./explainTraverseError.js";
 
 // Text we look for in an error stack to guess whether a given line represents a
 // function in the Origami source code.
@@ -50,10 +51,12 @@ export async function formatError(error) {
     if (explanation) {
       message += "\n" + explanation;
     }
-  } else if (
-    error instanceof TraverseError &&
-    error.message === "A null or undefined value can't be traversed"
-  ) {
+  } else if (error instanceof TraverseError) {
+    const explanation = await explainTraverseError(error);
+    if (explanation) {
+      message += "\n" + explanation;
+    }
+  } else {
     // Provide more meaningful message for TraverseError
     message = `TraverseError: This part of the path is null or undefined: ${highlightError(
       fragment,
