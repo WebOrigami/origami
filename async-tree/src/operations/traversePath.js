@@ -1,3 +1,4 @@
+import getMapArgument from "../utilities/getMapArgument.js";
 import keysFromPath from "../utilities/keysFromPath.js";
 import traverse from "./traverse.js";
 
@@ -7,10 +8,11 @@ import traverse from "./traverse.js";
  *
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
- * @param {Maplike} tree
+ * @param {Maplike} maplike
  * @param {string} path
  */
-export default async function traversePath(tree, path) {
+export default async function traversePath(maplike, path) {
+  const map = await getMapArgument(maplike, "Tree.traversePath");
   const keys = keysFromPath(path);
-  return traverse(tree, ...keys);
+  return traverse(map, ...keys);
 }

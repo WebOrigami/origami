@@ -137,7 +137,7 @@ function validateOption(options, key) {
   const value = options[key];
   if (key in options && value === undefined) {
     throw new TypeError(
-      `map: The ${key} option is given but its value is undefined.`,
+      `Tree.map: The ${key} option is given but its value is undefined.`,
     );
   }
   return value;
@@ -175,20 +175,22 @@ function validateOptions(options) {
       (keyFn.includes("=>") || keyFn.includes("→"))
     ) {
       throw new TypeError(
-        `map: The key option appears to be an extension mapping. Did you mean to call Tree.mapExtension() ?`,
+        `Tree.map: The key option appears to be an extension mapping. Did you mean to call Tree.mapExtension() ?`,
       );
     }
     keyFn &&= castToFunction(keyFn, "key");
     valueFn &&= castToFunction(valueFn, "value");
   } else if (options === undefined) {
     /** @type {any} */
-    const error = new TypeError(`map: The second parameter was undefined.`);
+    const error = new TypeError(
+      `Tree.map: The second parameter was undefined.`,
+    );
     error.position = 2;
     throw error;
   } else {
     /** @type {any} */
     const error = new TypeError(
-      `map: You must specify a value function or options dictionary as the second parameter.`,
+      `Tree.map: You must specify a value function or options dictionary as the second parameter.`,
     );
     error.position = 2;
     throw error;
@@ -196,17 +198,17 @@ function validateOptions(options) {
 
   if (extension && !options._noExtensionWarning) {
     console.warn(
-      `map: The 'extension' option for Tree.map() is deprecated and will be removed in a future release. Use Tree.mapExtension() instead.`,
+      `Tree.map: The 'extension' option for Tree.map() is deprecated and will be removed in a future release. Use Tree.mapExtension() instead.`,
     );
   }
   if (extension && (keyFn || inverseKeyFn)) {
     throw new TypeError(
-      `map: You can't specify extensions and also a key or inverseKey function`,
+      `Tree.map: You can't specify extensions and also a key or inverseKey function`,
     );
   }
   if (extension && keyNeedsSourceValue === true) {
     throw new TypeError(
-      `map: using extensions sets keyNeedsSourceValue to be false`,
+      `Tree.map: using extensions sets keyNeedsSourceValue to be false`,
     );
   }
 
@@ -227,7 +229,7 @@ function validateOptions(options) {
 
     if (!keyFn && inverseKeyFn) {
       throw new TypeError(
-        `map: You can't specify an inverseKey function without a key function`,
+        `Tree.map: You can't specify an inverseKey function without a key function`,
       );
     }
 
@@ -241,7 +243,7 @@ function validateOptions(options) {
 
   if (!valueFn && !keyFn) {
     throw new TypeError(
-      `map: You must specify a value function or a key function`,
+      `Tree.map: You must specify a value function or a key function`,
     );
   }
 
@@ -264,7 +266,7 @@ function castToFunction(object, name) {
   const fn = toFunction(object);
   if (!fn) {
     throw new TypeError(
-      `map: The ${name} option must be a function but couldn't be treated as one.`,
+      `Tree.map: The ${name} option must be a function but couldn't be treated as one.`,
     );
   }
   return fn;

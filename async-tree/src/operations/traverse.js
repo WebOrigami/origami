@@ -1,4 +1,5 @@
 import TraverseError from "../TraverseError.js";
+import getMapArgument from "../utilities/getMapArgument.js";
 import traverseOrThrow from "./traverseOrThrow.js";
 
 /**
@@ -10,10 +11,11 @@ import traverseOrThrow from "./traverseOrThrow.js";
  * @param {...any} keys
  */
 export default async function traverse(maplike, ...keys) {
+  const map = await getMapArgument(maplike, "Tree.traverse");
   try {
     // Await the result here so that, if the path doesn't exist, the catch
     // block below will catch the exception.
-    return await traverseOrThrow(maplike, ...keys);
+    return await traverseOrThrow(map, ...keys);
   } catch (/** @type {any} */ error) {
     if (error instanceof TraverseError) {
       return undefined;

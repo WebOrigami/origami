@@ -1,5 +1,6 @@
 import * as trailingSlash from "../trailingSlash.js";
 import TraverseError from "../TraverseError.js";
+import getMapArgument from "../utilities/getMapArgument.js";
 import isUnpackable from "../utilities/isUnpackable.js";
 import from from "./from.js";
 
@@ -13,9 +14,10 @@ import from from "./from.js";
  * @param  {...any} keys
  */
 export default async function traverseOrThrow(maplike, ...keys) {
-  // Start our traversal at the root of the tree.
+  // Start our traversal at given map. We force coercion here so that a
+  // non-maplike argument will throw the standard argument-checking error.
   /** @type {any} */
-  let value = maplike;
+  let value = await getMapArgument(maplike, "Tree.traverseOrThrow");
 
   // For error reporting
   let lastValue = null;

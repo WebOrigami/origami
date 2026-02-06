@@ -10,7 +10,7 @@ import getMapArgument from "../utilities/getMapArgument.js";
 export default async function clear(maplike) {
   const map = await getMapArgument(maplike, "Tree.clear");
   if ("readOnly" in map && map.readOnly) {
-    throw new TypeError("clear: target map is read-only");
+    throw new TypeError("Tree.clear: target map is read-only");
   }
   const promises = [];
   for await (const key of map.keys()) {
