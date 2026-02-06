@@ -23,7 +23,6 @@ export async function formatError(error) {
   // See if we can identify the Origami location that caused the error
   let location;
   let fragment;
-  let fragmentInMessage = false;
   const context = /** @type {any} */ (error).context;
   let code = context?.code;
   if (code) {
@@ -31,7 +30,7 @@ export async function formatError(error) {
     let position = /** @type {any} */ (error).position;
     code = position !== undefined ? context.code[position] : context.code;
     location = code.location;
-    fragment = location ? codeFragment(location) : null;
+    fragment = location ? codeFragment(location) : (code.source ?? code);
   }
 
   // Construct the error message
@@ -68,11 +67,10 @@ export async function formatError(error) {
     message += "\n" + line;
   }
 
+  message += `\nevaluating: ${highlightError(fragment)}`;
+
   // Add location
   if (location) {
-    if (!fragmentInMessage) {
-      message += `\nevaluating: ${highlightError(fragment)}`;
-    }
     const lineInformation = lineInfo(location);
     if (lineInformation) {
       message += "\n" + lineInformation;

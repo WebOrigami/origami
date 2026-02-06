@@ -14,6 +14,9 @@ import { formatError, moduleCache } from "@weborigami/language";
  */
 export default async function watch(maplike, fn) {
   const container = await args.map(maplike, "Dev.watch");
+  const treeFn = fn
+    ? args.invocable(fn, "Dev.watch", { position: 2 })
+    : undefined;
 
   // Watch the indicated tree.
   /** @type {any} */ (container).watch?.();
@@ -23,7 +26,7 @@ export default async function watch(maplike, fn) {
   }
 
   // The caller supplied a function to reevaluate whenever the tree changes.
-  let tree = await evaluateTree(container, fn);
+  let tree = await evaluateTree(container, treeFn);
 
   // We want to return a stable reference to the tree, so we'll use a prototype
   // chain that will always point to the latest tree. We'll extend the tree's
@@ -33,7 +36,7 @@ export default async function watch(maplike, fn) {
 
   // Reevaluate the function whenever the tree changes.
   /** @type {any} */ (container).addEventListener?.("change", async () => {
-    const tree = await evaluateTree(container, fn);
+    const tree = await evaluateTree(container, treeFn);
     moduleCache.resetTimestamp();
     updateIndirectPointer(handle, tree);
   });

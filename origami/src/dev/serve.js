@@ -18,6 +18,10 @@ const defaultPort = 5000;
  */
 export default async function serve(maplike, port) {
   let tree = await args.map(maplike, "Dev.serve");
+  port =
+    port !== undefined
+      ? args.number(port, "Dev.serve", { position: 2 })
+      : undefined;
 
   if (!isTransformApplied(ExplorableSiteTransform, tree)) {
     tree = transformObject(ExplorableSiteTransform, tree);

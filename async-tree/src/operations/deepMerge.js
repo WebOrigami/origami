@@ -23,8 +23,15 @@ export default async function deepMerge(...maplikes) {
   );
 
   // If any argument isn't maplike, throw an error.
-  if (unpacked.some((source) => !isMaplike(source))) {
-    throw new TypeError("Tree.deepMerge: all arguments must be maplike.");
+  for (const index in unpacked) {
+    if (!isMaplike(unpacked[index])) {
+      /** @type {any} */
+      const error = new TypeError(
+        `Tree.deepMerge: an argument wasn't maplike.`,
+      );
+      error.position = Number(index) + 1;
+      throw error;
+    }
   }
 
   const sources = unpacked.map((maplike) => from(maplike, { deep: true }));

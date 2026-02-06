@@ -18,10 +18,13 @@ import toFunction from "./toFunction.js";
  * @param {string} operation
  * @returns {Function}
  */
-export function invocable(arg, operation) {
+export function invocable(arg, operation, options = {}) {
   const fn = toFunction(arg);
   if (!fn) {
-    throw new TypeError(`${operation}: Expected a function argument.`);
+    /** @type {any} */
+    const error = new TypeError(`${operation}: Expected a function argument.`);
+    error.position = options.position ?? 1;
+    throw error;
   }
   return fn;
 }
@@ -66,11 +69,14 @@ export async function map(arg, operation, options = {}) {
  * @param {string} operation
  * @returns
  */
-export function number(arg, operation) {
+export function number(arg, operation, options = {}) {
   if (typeof arg !== "number" || Number.isNaN(arg)) {
-    throw new TypeError(
+    /** @type {any} */
+    const error = new TypeError(
       `${operation}: Expected a number argument, got "${arg}".`,
     );
+    error.position = options.position ?? 1;
+    throw error;
   }
   return arg;
 }

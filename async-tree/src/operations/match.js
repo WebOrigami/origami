@@ -36,7 +36,7 @@ export default function match(pattern, resultFn, keys = []) {
     throw new Error(`Tree.match: Unsupported pattern`);
   }
 
-  const fn = args.invocable(resultFn, "Tree.match");
+  const fn = args.invocable(resultFn, "Tree.match", { position: 2 });
 
   const result = Object.assign(new AsyncMap(), {
     description: "match",

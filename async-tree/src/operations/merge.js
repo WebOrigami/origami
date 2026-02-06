@@ -31,8 +31,13 @@ export default async function merge(...treelikes) {
   );
 
   // If any argument isn't maplike, throw an error.
-  if (unpacked.some((source) => !isMaplike(source))) {
-    throw new TypeError("Tree.merge: all arguments must be maplike.");
+  for (const index in unpacked) {
+    if (!isMaplike(unpacked[index])) {
+      /** @type {any} */
+      const error = new TypeError(`Tree.merge: an argument wasn't maplike.`);
+      error.position = Number(index) + 1;
+      throw error;
+    }
   }
 
   // If all arguments are plain objects, return a plain object.
