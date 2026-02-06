@@ -1,9 +1,4 @@
-import {
-  Tree,
-  getRealmObjectPrototype,
-  isStringlike,
-  toString,
-} from "@weborigami/async-tree";
+import { Tree, args, getRealmObjectPrototype } from "@weborigami/async-tree";
 import { compile, projectGlobals } from "@weborigami/language";
 import { toYaml } from "../common/serialize.js";
 import * as dev from "../dev/dev.js";
@@ -14,19 +9,13 @@ const TypedArray = Object.getPrototypeOf(Uint8Array);
  * Parse an Origami expression, evaluate it in the context of a tree (provided
  * by `this`), and return the result as text.
  *
- *
- * @param {string} expression
+ * @param {import("@weborigami/async-tree").Stringlike} expression
  */
 export default async function ori(expression, options = {}) {
   const parent = options.parent ?? null;
   const formatResult = options.formatResult ?? true;
 
-  // In case expression has come from a file, cast it to a string.
-  if (!isStringlike(expression)) {
-    throw new TypeError("ori: The expression is not text.");
-  }
-  // @ts-ignore
-  expression = toString(expression);
+  expression = args.stringlike(expression, "Origami.ori");
 
   // Add Dev builtins as top-level globals
   const globals = {

@@ -1,4 +1,4 @@
-import { toString } from "@weborigami/async-tree";
+import { args, toString } from "@weborigami/async-tree";
 import loadJsDom from "../common/loadJsDom.js";
 
 /**
@@ -7,8 +7,9 @@ import loadJsDom from "../common/loadJsDom.js";
  * @param {import("@weborigami/async-tree").Stringlike} html
  */
 export default async function htmlEscape(html) {
+  const text = args.stringlike(html, "Origami.htmlEscape");
   const { JSDOM } = await loadJsDom();
   const div = JSDOM.fragment("<div></div>").firstChild;
-  div.textContent = toString(html);
+  div.textContent = toString(text);
   return div.innerHTML;
 }

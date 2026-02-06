@@ -1,4 +1,5 @@
 import {
+  args,
   isStringlike,
   isUnpackable,
   toPlainValue,
@@ -13,6 +14,7 @@ import {
  * @param {any} data
  */
 export default async function post(url, data) {
+  url = args.string(url, "Origami.post");
   let body;
   let headers;
   if (isUnpackable(data)) {
@@ -39,7 +41,7 @@ export default async function post(url, data) {
   });
   if (!response.ok) {
     throw new Error(
-      `Failed to POST to ${url}. Error ${response.status}: ${response.statusText}`
+      `Failed to POST to ${url}. Error ${response.status}: ${response.statusText}`,
     );
   }
   return response.arrayBuffer();

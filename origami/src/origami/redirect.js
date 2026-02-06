@@ -1,4 +1,13 @@
+import { args } from "@weborigami/async-tree";
+
+/**
+ * Generate a live or static redirect response.
+ *
+ * @param {string} url
+ * @param {{ permanent?: boolean }} [options]
+ */
 export default function redirect(url, options = { permanent: false }) {
+  url = args.string(url, "Origami.redirect");
   const response = new Response("ok", {
     headers: {
       Location: url,

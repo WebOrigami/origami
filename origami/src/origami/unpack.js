@@ -6,7 +6,9 @@
  */
 export default function unpack(obj) {
   if (obj == null) {
-    throw new ReferenceError("Cannot unpack null or undefined value");
+    throw new ReferenceError(
+      "Origami.unpack: Cannot unpack a null or undefined value",
+    );
   }
   return obj.unpack?.() ?? obj;
 }

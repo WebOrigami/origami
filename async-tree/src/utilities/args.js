@@ -1,6 +1,7 @@
 import from from "../operations/from.js";
 import isUnpackable from "./isUnpackable.js";
 import toFunction from "./toFunction.js";
+import toString from "./toString.js";
 
 /**
  * Runtime argument checking.
@@ -10,6 +11,19 @@ import toFunction from "./toFunction.js";
  * Operations can use these to validate the arguments and provide more helpful
  * error messages.
  */
+
+/**
+ * Check a function argument.
+ */
+export function fn(arg, operation, options = {}) {
+  if (typeof arg !== "function") {
+    /** @type {any} */
+    const error = new TypeError(`${operation}: Expected a function argument.`);
+    error.position = options.position ?? 1;
+    throw error;
+  }
+  return arg;
+}
 
 /**
  * Check an invocable argument and return it as a function.
@@ -67,16 +81,48 @@ export async function map(arg, operation, options = {}) {
  *
  * @param {number} arg
  * @param {string} operation
- * @returns
  */
 export function number(arg, operation, options = {}) {
   if (typeof arg !== "number" || Number.isNaN(arg)) {
     /** @type {any} */
-    const error = new TypeError(
-      `${operation}: Expected a number argument, got "${arg}".`,
-    );
+    const error = new TypeError(`${operation}: Expected a number argument.`);
     error.position = options.position ?? 1;
     throw error;
   }
   return arg;
+}
+
+/**
+ * Check a string argument.
+ *
+ * @param {string} arg
+ * @param {string} operation
+ */
+export function string(arg, operation, options = {}) {
+  if (typeof arg !== "string") {
+    /** @type {any} */
+    const error = new TypeError(`${operation}: Expected a string argument.`);
+    error.position = options.position ?? 1;
+    throw error;
+  }
+  return arg;
+}
+
+/**
+ * Check a stringlike argument.
+ *
+ * @param {import("../../index.ts").Stringlike} arg
+ * @param {string} operation
+ */
+export function stringlike(arg, operation, options = {}) {
+  const result = toString(arg);
+  if (!result) {
+    /** @type {any} */
+    const error = new TypeError(
+      `${operation}: Expected a stringlike argument.`,
+    );
+    error.position = options.position ?? 1;
+    throw error;
+  }
+  return result;
 }

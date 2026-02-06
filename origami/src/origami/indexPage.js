@@ -11,6 +11,10 @@ import { getDescriptor } from "../common/utilities.js";
  */
 export default async function indexPage(maplike, basePath) {
   const tree = await args.map(maplike, "Origami.indexPage");
+  if (basePath !== undefined) {
+    basePath = args.string(basePath, "Origami.indexPage", { position: 2 });
+  }
+
   const treeKeys = await Tree.keys(tree);
 
   // Skip system-ish files that start with a period. Also skip `index.html`.

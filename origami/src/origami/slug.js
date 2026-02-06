@@ -1,5 +1,15 @@
-export default function slug(filename) {
-  let slug = filename.toLowerCase();
+import { args } from "@weborigami/async-tree";
+
+/**
+ * Return a slug version of the given text: lowercase, spaces replaced by
+ * dashes, and special characters removed.
+ *
+ * @param {string} text
+ */
+export default function slug(text) {
+  text = args.string(text, "Origami.slug");
+
+  let slug = text.toLowerCase();
 
   // Convert spaces to dashes
   slug = slug.replace(/\s+/g, "-");

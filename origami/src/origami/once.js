@@ -1,13 +1,15 @@
+import { args } from "@weborigami/async-tree";
+
 const fnPromiseMap = new Map();
 const codePromiseMap = new Map();
 
 /**
  * Evaluate the given function only once and cache the result.
  *
- *
  * @param {Function} fn
  */
 export default async function once(fn) {
+  fn = args.fn(fn, "Origami.once");
   const code = /** @type {any} */ (fn).code;
   if (code) {
     // Origami function, cache by code

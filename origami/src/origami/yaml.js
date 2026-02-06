@@ -4,15 +4,9 @@ import YAML from "yaml";
 /**
  * Render the object as text in YAML format.
  *
- * @param {any} [obj]
+ * @param {any} obj
  */
 export default async function yamlBuiltin(obj) {
-  // A fragment of the logic from args.js
-  if (arguments.length > 0 && obj === undefined) {
-    throw new Error(
-      "An Origami function was called with an initial argument, but its value is undefined."
-    );
-  }
   if (obj === undefined) {
     return undefined;
   }

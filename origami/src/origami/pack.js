@@ -1,4 +1,5 @@
 /**
+ * Invoke the `pack` method of an object, if it exists.
  *
  * @param {any} obj
  */

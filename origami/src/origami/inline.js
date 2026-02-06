@@ -6,7 +6,6 @@ import documentObject from "../common/documentObject.js";
  * Inline any Origami expressions found inside ${...} placeholders in the input
  * text.
  *
- *
  * @param {any} input
  */
 export default async function inline(input, options = {}) {
@@ -17,7 +16,9 @@ export default async function inline(input, options = {}) {
   const inputIsDocument = input._body !== undefined;
   const origami = inputIsDocument ? input._body : toString(input);
   if (origami === null) {
-    return undefined;
+    throw new Error(
+      "Origami.inline: The provided input couldn't be treated as text.",
+    );
   }
 
   const parent =
@@ -29,7 +30,7 @@ export default async function inline(input, options = {}) {
   if (inputIsDocument) {
     // Collect all document properties except the body
     front = Object.fromEntries(
-      Object.entries(input).filter(([key]) => key !== "_body")
+      Object.entries(input).filter(([key]) => key !== "_body"),
     );
   } else {
     front = null;

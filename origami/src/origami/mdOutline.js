@@ -8,7 +8,9 @@ export default async function mdOutline(input) {
   const inputIsDocument = typeof input === "object" && "_body" in input;
   const markdown = inputIsDocument ? input._body : toString(input);
   if (markdown === null) {
-    throw new Error("mdHtml: The provided input couldn't be treated as text.");
+    throw new Error(
+      "Origami.mdOutline: The provided input couldn't be treated as text.",
+    );
   }
 
   // Call the marked lexer to parse the markdown into tokens

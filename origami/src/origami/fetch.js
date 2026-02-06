@@ -1,3 +1,4 @@
+import { args } from "@weborigami/async-tree";
 import { handleExtension } from "@weborigami/language";
 
 /**
@@ -5,6 +6,7 @@ import { handleExtension } from "@weborigami/language";
  * with an unpack() method if the resource has a known file extension.
  */
 export default async function fetchBuiltin(resource, options, state) {
+  resource = args.string(resource, "Origami.fetch");
   const response = await fetch(resource, options);
   if (!response.ok) {
     return undefined;
