@@ -1,4 +1,4 @@
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 
 /**
  * Returns a function that invokes the map's `get` method.
@@ -9,6 +9,6 @@ import getMapArgument from "../utilities/getMapArgument.js";
  * @returns {Promise<Function>}
  */
 export default async function toFunction(maplike) {
-  const map = await getMapArgument(maplike, "Tree.toFunction");
+  const map = await args.map(maplike, "Tree.toFunction");
   return map.get.bind(map);
 }

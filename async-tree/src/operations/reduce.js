@@ -1,4 +1,4 @@
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 import mapReduce from "./mapReduce.js";
 
 /**
@@ -11,6 +11,6 @@ import mapReduce from "./mapReduce.js";
  * @param {ReduceFn} reduceFn
  */
 export default async function reduce(maplike, reduceFn) {
-  const map = await getMapArgument(maplike, "Tree.reduce");
+  const map = await args.map(maplike, "Tree.reduce");
   return mapReduce(map, null, reduceFn);
 }

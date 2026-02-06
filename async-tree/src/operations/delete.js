@@ -1,3 +1,5 @@
+import * as args from "../utilities/args.js";
+
 /**
  * Removes the value for the given key from the specific node of the tree.
  *
@@ -6,11 +8,8 @@
  * @param {Maplike} maplike
  * @param {any} key
  */
-
-import getMapArgument from "../utilities/getMapArgument.js";
-
-// `delete` is a reserved word in JavaScript, so we use `del` instead.
 export default async function del(maplike, key) {
-  const map = await getMapArgument(maplike, "Tree.delete");
+  // `delete` is reserved word so can't use that as function name
+  const map = await args.map(maplike, "Tree.delete");
   return map.delete(key);
 }

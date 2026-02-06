@@ -1,4 +1,4 @@
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 
 /**
  * Return the keys of the map.
@@ -8,7 +8,7 @@ import getMapArgument from "../utilities/getMapArgument.js";
  * @param {Maplike} maplike
  */
 export default async function keys(maplike) {
-  const map = await getMapArgument(maplike, "Tree.keys");
+  const map = await args.map(maplike, "Tree.keys");
   let keys;
   let iterable = map.keys();
   if (Symbol.asyncIterator in iterable) {

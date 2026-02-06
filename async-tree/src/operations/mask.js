@@ -1,6 +1,6 @@
 import AsyncMap from "../drivers/AsyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 import isMaplike from "./isMaplike.js";
 import keys from "./keys.js";
 
@@ -16,11 +16,11 @@ import keys from "./keys.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function mask(aMaplike, bMaplike) {
-  const aMap = await getMapArgument(aMaplike, "Tree.mask", {
+  const aMap = await args.map(aMaplike, "Tree.mask", {
     deep: true,
     position: 1,
   });
-  const bMap = await getMapArgument(bMaplike, "Tree.mask", {
+  const bMap = await args.map(bMaplike, "Tree.mask", {
     deep: true,
     position: 2,
   });

@@ -1,4 +1,4 @@
-import { getTreeArgument, trailingSlash, Tree } from "@weborigami/async-tree";
+import { args, trailingSlash, Tree } from "@weborigami/async-tree";
 
 /**
  * Given an old tree and a new tree, return a tree of changes indicated
@@ -10,11 +10,11 @@ import { getTreeArgument, trailingSlash, Tree } from "@weborigami/async-tree";
  * @param {Maplike} newMaplike
  */
 export default async function changes(oldMaplike, newMaplike) {
-  const oldTree = await getTreeArgument(oldMaplike, "Dev.changes", {
+  const oldTree = await args.map(oldMaplike, "Dev.changes", {
     deep: true,
     position: 1,
   });
-  const newTree = await getTreeArgument(newMaplike, "Dev.changes", {
+  const newTree = await args.map(newMaplike, "Dev.changes", {
     deep: true,
     position: 2,
   });

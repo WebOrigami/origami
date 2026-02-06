@@ -1,5 +1,5 @@
 import AsyncMap from "../drivers/AsyncMap.js";
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 import isMap from "./isMap.js";
 import keys from "./keys.js";
 
@@ -12,7 +12,7 @@ import keys from "./keys.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function deepReverse(maplike) {
-  const source = await getMapArgument(maplike, "Tree.deepReverse", {
+  const source = await args.map(maplike, "Tree.deepReverse", {
     deep: true,
   });
 

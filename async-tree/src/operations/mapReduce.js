@@ -1,4 +1,4 @@
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 import isMap from "./isMap.js";
 
 /**
@@ -23,7 +23,7 @@ import isMap from "./isMap.js";
  * @param {ReduceFn} reduceFn
  */
 export default async function mapReduce(source, valueFn, reduceFn) {
-  const sourceMap = await getMapArgument(source, "Tree.mapReduce");
+  const sourceMap = await args.map(source, "Tree.mapReduce");
 
   // We're going to fire off all the get requests in parallel, as quickly as
   // the keys come in. We call the tree's `get` method for each key, but

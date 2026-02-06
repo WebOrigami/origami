@@ -1,4 +1,4 @@
-import { getTreeArgument, SiteMap } from "@weborigami/async-tree";
+import { args, SiteMap } from "@weborigami/async-tree";
 
 /**
  * Return a site: if it's a tree, return the tree; if it's a string, create a
@@ -8,5 +8,5 @@ export default async function getSiteArgument(site, command) {
   if (typeof site === "string") {
     return new SiteMap(site);
   }
-  return getTreeArgument(site, command);
+  return args.map(site, command);
 }

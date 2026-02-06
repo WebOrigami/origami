@@ -1,4 +1,4 @@
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 import setParent from "../utilities/setParent.js";
 import isMap from "./isMap.js";
 
@@ -10,7 +10,7 @@ import isMap from "./isMap.js";
  * @param {Maplike} maplike
  */
 export default async function child(maplike, key) {
-  const map = await getMapArgument(maplike, "Tree.child", { position: 0 });
+  const map = await args.map(maplike, "Tree.child", { position: 0 });
 
   let result;
 

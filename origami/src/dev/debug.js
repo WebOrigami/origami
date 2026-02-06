@@ -1,4 +1,4 @@
-import { getTreeArgument, Tree } from "@weborigami/async-tree";
+import { args, Tree } from "@weborigami/async-tree";
 import { isTransformApplied, transformObject } from "../common/utilities.js";
 import ExplorableSiteTransform from "./ExplorableSiteTransform.js";
 import OriCommandTransform from "./OriCommandTransform.js";
@@ -13,7 +13,7 @@ import OriCommandTransform from "./OriCommandTransform.js";
  * @returns {Promise<Map|AsyncMap>}
  */
 export default async function debug(maplike) {
-  let tree = await getTreeArgument(maplike, "Dev.debug");
+  let tree = await args.map(maplike, "Dev.debug");
 
   if (!isTransformApplied(DebugTransform, tree)) {
     tree = transformObject(DebugTransform, tree);

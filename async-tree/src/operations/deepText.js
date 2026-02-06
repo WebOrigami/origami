@@ -1,4 +1,4 @@
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 import interop from "../utilities/interop.js";
 import toString from "../utilities/toString.js";
 import deepValuesIterator from "./deepValuesIterator.js";
@@ -9,7 +9,7 @@ import deepValuesIterator from "./deepValuesIterator.js";
  * @param {import("../../index.ts").Maplike} maplike
  */
 export default async function deepText(maplike) {
-  const tree = await getMapArgument(maplike, "Tree.deepText", { deep: true });
+  const tree = await args.map(maplike, "Tree.deepText", { deep: true });
   const strings = [];
   for await (const value of deepValuesIterator(tree, { expand: true })) {
     let string;

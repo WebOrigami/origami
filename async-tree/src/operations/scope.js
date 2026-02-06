@@ -1,5 +1,5 @@
 import AsyncMap from "../drivers/AsyncMap.js";
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 import getParent from "../utilities/getParent.js";
 
 /**
@@ -12,7 +12,7 @@ import getParent from "../utilities/getParent.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function scope(maplike) {
-  const source = await getMapArgument(maplike, "Tree.scope");
+  const source = await args.map(maplike, "Tree.scope");
 
   return Object.assign(new AsyncMap(), {
     description: "scope",

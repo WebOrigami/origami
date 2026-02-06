@@ -2,10 +2,16 @@ import from from "../operations/from.js";
 import isUnpackable from "./isUnpackable.js";
 
 /**
- * Convert the indicated argument to a map, or throw an exception.
+ * Runtime argument checking.
  *
- * Tree operations can use this to validate the map argument and provide more
- * helpful error messages. This also unpacks a unpackable map argument.
+ * These return a particular kind of argument or throw an error.
+ *
+ * Operations can use these to validate the arguments and provide more helpful
+ * error messages.
+ */
+
+/**
+ * Return a map
  *
  * @typedef {import("../../index.ts").AsyncMap} AsyncMap
  * @typedef {import("../../index.ts").Maplike} Maplike
@@ -16,7 +22,7 @@ import isUnpackable from "./isUnpackable.js";
  * @param {{ deep?: boolean, position?: number }} [options]
  * @returns {Promise<Map|AsyncMap>}
  */
-export default async function getMapArgument(maplike, operation, options = {}) {
+export async function map(maplike, operation, options = {}) {
   const deep = options.deep;
   const position = options.position ?? 1;
 

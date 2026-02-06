@@ -1,9 +1,4 @@
-import {
-  AsyncMap,
-  Tree,
-  getTreeArgument,
-  jsonKeys,
-} from "@weborigami/async-tree";
+import { AsyncMap, Tree, args, jsonKeys } from "@weborigami/async-tree";
 
 /**
  * Expose .keys.json for a tree.
@@ -14,7 +9,7 @@ import {
  * @returns {Promise<AsyncMap>}
  */
 export default async function jsonKeysBuiltin(maplike) {
-  const source = await getTreeArgument(maplike, "Origami.jsonKeys");
+  const source = await args.map(maplike, "Origami.jsonKeys");
   return jsonKeysMap(source);
 }
 

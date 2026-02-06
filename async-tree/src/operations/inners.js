@@ -1,6 +1,6 @@
 import AsyncMap from "../drivers/AsyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 import isMap from "./isMap.js";
 
 /**
@@ -12,7 +12,7 @@ import isMap from "./isMap.js";
  * @param {Maplike} maplike
  */
 export default async function inners(maplike) {
-  const source = await getMapArgument(maplike, "Tree.inners");
+  const source = await args.map(maplike, "Tree.inners");
 
   return Object.assign(new AsyncMap(), {
     async get(key) {

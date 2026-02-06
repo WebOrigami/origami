@@ -1,4 +1,4 @@
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 import keysFromPath from "../utilities/keysFromPath.js";
 import traverse from "./traverse.js";
 
@@ -12,7 +12,7 @@ import traverse from "./traverse.js";
  * @param {string} path
  */
 export default async function traversePath(maplike, path) {
-  const map = await getMapArgument(maplike, "Tree.traversePath");
+  const map = await args.map(maplike, "Tree.traversePath");
   const keys = keysFromPath(path);
   return traverse(map, ...keys);
 }

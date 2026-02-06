@@ -1,5 +1,5 @@
 import AsyncMap from "../drivers/AsyncMap.js";
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 import keys from "./keys.js";
 
 /**
@@ -17,7 +17,7 @@ import keys from "./keys.js";
  * @param {SortOptions|ValueKeyFn} [options]
  */
 export default async function sort(maplike, options) {
-  const source = await getMapArgument(maplike, "Tree.sort");
+  const source = await args.map(maplike, "Tree.sort");
 
   let sortKey;
   let compare;

@@ -1,4 +1,4 @@
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 
 /**
  * Returns true if the map has the given key, false otherwise.
@@ -9,6 +9,6 @@ import getMapArgument from "../utilities/getMapArgument.js";
  * @param {any} key
  */
 export default async function has(maplike, key) {
-  const map = await getMapArgument(maplike, "Tree.has");
+  const map = await args.map(maplike, "Tree.has");
   return map.has(key);
 }

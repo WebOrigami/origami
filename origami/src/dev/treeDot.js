@@ -1,6 +1,6 @@
 import {
   Tree,
-  getTreeArgument,
+  args,
   isPlainObject,
   isStringlike,
   toString,
@@ -19,7 +19,7 @@ import { getDescriptor } from "../common/utilities.js";
  * @param {PlainObject} [options]
  */
 export default async function dot(maplike, options = {}) {
-  const tree = await getTreeArgument(maplike, "Dev.treeDot", { deep: true });
+  const tree = await args.map(maplike, "Dev.treeDot", { deep: true });
   const rootLabel = getDescriptor(tree) ?? "";
   const treeArcs = await statements(tree, "", rootLabel, options);
   return `digraph g {

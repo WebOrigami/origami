@@ -1,4 +1,4 @@
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 
 /**
  * Return the number of keys in the map.
@@ -8,6 +8,6 @@ import getMapArgument from "../utilities/getMapArgument.js";
  * @param {Maplike} maplike
  */
 export default async function size(maplike) {
-  const map = await getMapArgument(maplike, "Tree.size");
+  const map = await args.map(maplike, "Tree.size");
   return map.size;
 }

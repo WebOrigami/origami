@@ -7,7 +7,7 @@ import YAML from "yaml";
  * @param {any} [obj]
  */
 export default async function yamlBuiltin(obj) {
-  // A fragment of the logic from getTreeArgument.js
+  // A fragment of the logic from args.js
   if (arguments.length > 0 && obj === undefined) {
     throw new Error(
       "An Origami function was called with an initial argument, but its value is undefined."

@@ -1,4 +1,4 @@
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 
 /**
  * Returns an array of `[key, value]` for each entry in the map.
@@ -9,7 +9,7 @@ import getMapArgument from "../utilities/getMapArgument.js";
  * @returns {Promise<Array<[any, any]>>}
  */
 export default async function entries(maplike) {
-  const map = await getMapArgument(maplike, "Tree.entries");
+  const map = await args.map(maplike, "Tree.entries");
   if (map instanceof Map) {
     return Array.from(map.entries());
   } else {

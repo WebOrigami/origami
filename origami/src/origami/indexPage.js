@@ -1,4 +1,4 @@
-import { getTreeArgument, Tree } from "@weborigami/async-tree";
+import { args, Tree } from "@weborigami/async-tree";
 import { getDescriptor } from "../common/utilities.js";
 
 /**
@@ -10,7 +10,7 @@ import { getDescriptor } from "../common/utilities.js";
  * @param {string} [basePath]
  */
 export default async function indexPage(maplike, basePath) {
-  const tree = await getTreeArgument(maplike, "Origami.indexPage");
+  const tree = await args.map(maplike, "Origami.indexPage");
   const treeKeys = await Tree.keys(tree);
 
   // Skip system-ish files that start with a period. Also skip `index.html`.

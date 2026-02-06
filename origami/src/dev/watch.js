@@ -1,4 +1,4 @@
-import { ConstantMap, getTreeArgument, Tree } from "@weborigami/async-tree";
+import { args, ConstantMap, Tree } from "@weborigami/async-tree";
 import { formatError, moduleCache } from "@weborigami/language";
 
 /**
@@ -13,7 +13,7 @@ import { formatError, moduleCache } from "@weborigami/language";
  * @returns {Promise<Map|AsyncMap>}
  */
 export default async function watch(maplike, fn) {
-  const container = await getTreeArgument(maplike, "Dev.watch");
+  const container = await args.map(maplike, "Dev.watch");
 
   // Watch the indicated tree.
   /** @type {any} */ (container).watch?.();

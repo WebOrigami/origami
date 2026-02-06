@@ -1,7 +1,7 @@
 import AsyncMap from "../drivers/AsyncMap.js";
 import ObjectMap from "../drivers/ObjectMap.js";
 import * as trailingSlash from "../trailingSlash.js";
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 import isMap from "./isMap.js";
 import merge from "./merge.js";
 
@@ -9,7 +9,7 @@ const globstar = "**";
 const globstarSlash = `${globstar}/`;
 
 export default async function globKeys(maplike) {
-  const source = await getMapArgument(maplike, "Tree.globKeys", { deep: true });
+  const source = await args.map(maplike, "Tree.globKeys", { deep: true });
   return Object.assign(new AsyncMap(), {
     async get(key) {
       if (typeof key !== "string") {

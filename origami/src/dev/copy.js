@@ -1,9 +1,4 @@
-import {
-  AsyncMap,
-  getTreeArgument,
-  SyncMap,
-  Tree,
-} from "@weborigami/async-tree";
+import { args, AsyncMap, SyncMap, Tree } from "@weborigami/async-tree";
 import process, { stdout } from "node:process";
 
 /**
@@ -13,8 +8,8 @@ import process, { stdout } from "node:process";
  * @param {Maplike} target
  */
 export default async function copy(source, target) {
-  const sourceTree = await getTreeArgument(source, "Dev.copy", { position: 1 });
-  let targetTree = await getTreeArgument(target, "Dev.copy", { position: 2 });
+  const sourceTree = await args.map(source, "Dev.copy", { position: 1 });
+  let targetTree = await args.map(target, "Dev.copy", { position: 2 });
 
   let progressTree;
   if (stdout.isTTY) {

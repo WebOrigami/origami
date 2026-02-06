@@ -1,6 +1,6 @@
 import AsyncMap from "../drivers/AsyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 import isPlainObject from "../utilities/isPlainObject.js";
 import isUnpackable from "../utilities/isUnpackable.js";
 import toFunction from "../utilities/toFunction.js";
@@ -28,7 +28,7 @@ export default async function map(maplike, options = {}) {
   const validated = validateOptions(options);
   const mapFn = createMapFn(validated);
 
-  const tree = await getMapArgument(maplike, "Tree.map", {
+  const tree = await args.map(maplike, "Tree.map", {
     deep: validated.deep,
   });
   return mapFn(tree);

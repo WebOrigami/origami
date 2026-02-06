@@ -1,5 +1,5 @@
 import * as trailingSlash from "../trailingSlash.js";
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 import from from "./from.js";
 import isMap from "./isMap.js";
 import isMaplike from "./isMaplike.js";
@@ -15,7 +15,7 @@ import isMaplike from "./isMaplike.js";
  * @param {{ base?: string }} options
  */
 export default async function paths(maplike, options = {}) {
-  const tree = await getMapArgument(maplike, "Tree.paths");
+  const tree = await args.map(maplike, "Tree.paths");
   const base = options.base ?? "";
   const result = [];
   for await (const key of tree.keys()) {

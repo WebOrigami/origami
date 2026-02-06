@@ -1,5 +1,5 @@
 import SyncMap from "../drivers/SyncMap.js";
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 import entries from "./entries.js";
 import isMaplike from "./isMaplike.js";
 import values from "./values.js";
@@ -12,7 +12,7 @@ import values from "./values.js";
  * @param {import("../../index.ts").ValueKeyFn} groupKeyFn
  */
 export default async function groupBy(maplike, groupKeyFn) {
-  const source = await getMapArgument(maplike, "Tree.groupBy");
+  const source = await args.map(maplike, "Tree.groupBy");
 
   const result = new SyncMap();
   const sourceEntries = await entries(source);

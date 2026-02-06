@@ -1,9 +1,4 @@
-import {
-  AsyncMap,
-  Tree,
-  getTreeArgument,
-  jsonKeys,
-} from "@weborigami/async-tree";
+import { AsyncMap, Tree, args, jsonKeys } from "@weborigami/async-tree";
 import indexPage from "./indexPage.js";
 
 /**
@@ -15,7 +10,7 @@ import indexPage from "./indexPage.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function staticBuiltin(maplike) {
-  const source = await getTreeArgument(maplike, "Origami.static");
+  const source = await args.map(maplike, "Origami.static");
   return staticMap(source);
 }
 

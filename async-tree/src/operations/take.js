@@ -1,5 +1,5 @@
 import AsyncMap from "../drivers/AsyncMap.js";
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 
 /**
  * Returns a new map with the number of keys limited to the indicated count.
@@ -8,7 +8,7 @@ import getMapArgument from "../utilities/getMapArgument.js";
  * @param {number} count
  */
 export default async function take(maplike, count) {
-  const source = await getMapArgument(maplike, "Tree.take");
+  const source = await args.map(maplike, "Tree.take");
   return Object.assign(new AsyncMap(), {
     description: `take ${count}`,
 

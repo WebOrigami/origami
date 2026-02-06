@@ -1,4 +1,4 @@
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 import map from "./map.js";
 
 /**
@@ -23,7 +23,7 @@ export default async function filter(maplike, options) {
     deep = options.deep ?? false;
   }
 
-  const tree = await getMapArgument(maplike, "Tree.filter", { deep });
+  const tree = await args.map(maplike, "Tree.filter", { deep });
   return map(tree, {
     deep,
 

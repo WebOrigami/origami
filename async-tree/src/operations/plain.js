@@ -1,4 +1,4 @@
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 import toPlainValue from "../utilities/toPlainValue.js";
 
 /**
@@ -29,6 +29,6 @@ export default async function plain(maplike) {
   if (maplike instanceof Function) {
     throw new TypeError("plain: can't convert a function to a plain object");
   }
-  const tree = await getMapArgument(maplike, "Tree.plain");
+  const tree = await args.map(maplike, "Tree.plain");
   return toPlainValue(tree);
 }

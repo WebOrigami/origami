@@ -1,7 +1,7 @@
 import AsyncMap from "../drivers/AsyncMap.js";
 import SyncMap from "../drivers/SyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 import isMap from "./isMap.js";
 
 /**
@@ -18,7 +18,7 @@ import isMap from "./isMap.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function regExpKeys(maplike) {
-  const source = await getMapArgument(maplike, "Tree.regExpKeys", {
+  const source = await args.map(maplike, "Tree.regExpKeys", {
     deep: true,
   });
 

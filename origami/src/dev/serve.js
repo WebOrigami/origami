@@ -1,4 +1,4 @@
-import { getTreeArgument } from "@weborigami/async-tree";
+import { args } from "@weborigami/async-tree";
 import http from "node:http";
 import { createServer } from "node:net";
 import process from "node:process";
@@ -17,7 +17,7 @@ const defaultPort = 5000;
  * @param {number} [port]
  */
 export default async function serve(maplike, port) {
-  let tree = await getTreeArgument(maplike, "Dev.serve");
+  let tree = await args.map(maplike, "Dev.serve");
 
   if (!isTransformApplied(ExplorableSiteTransform, tree)) {
     tree = transformObject(ExplorableSiteTransform, tree);

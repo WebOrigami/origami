@@ -1,7 +1,7 @@
 import AsyncMap from "../drivers/AsyncMap.js";
 import SyncMap from "../drivers/SyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 import keys from "./keys.js";
 
 /**
@@ -14,7 +14,7 @@ import keys from "./keys.js";
  * @param {number} [size=10]
  */
 export default async function paginate(maplike, size = 10) {
-  const source = await getMapArgument(maplike, "Tree.paginate");
+  const source = await args.map(maplike, "Tree.paginate");
 
   const treeKeys = await keys(source);
   const pageCount = Math.ceil(treeKeys.length / size);

@@ -1,5 +1,5 @@
 import AsyncMap from "../drivers/AsyncMap.js";
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 import keys from "./keys.js";
 
 /**
@@ -11,7 +11,7 @@ import keys from "./keys.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function reverse(maplike) {
-  const source = await getMapArgument(maplike, "Tree.reverse");
+  const source = await args.map(maplike, "Tree.reverse");
   return Object.assign(new AsyncMap(), {
     description: "reverse",
 

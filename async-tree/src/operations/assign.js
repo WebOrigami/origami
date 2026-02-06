@@ -1,4 +1,4 @@
-import getMapArgument from "../utilities/getMapArgument.js";
+import * as args from "../utilities/args.js";
 import child from "./child.js";
 import isMaplike from "./isMaplike.js";
 
@@ -15,10 +15,10 @@ import isMaplike from "./isMaplike.js";
  * @param {Maplike} source
  */
 export default async function assign(target, source) {
-  const targetTree = await getMapArgument(target, "Tree.assign", {
+  const targetTree = await args.map(target, "Tree.assign", {
     position: 1,
   });
-  const sourceTree = await getMapArgument(source, "Tree.assign", {
+  const sourceTree = await args.map(source, "Tree.assign", {
     position: 2,
   });
   if ("readOnly" in targetTree && targetTree.readOnly) {
