@@ -4,6 +4,7 @@ import isPlainObject from "../utilities/isPlainObject.js";
 import isUnpackable from "../utilities/isUnpackable.js";
 import from from "./from.js";
 import isMap from "./isMap.js";
+import isMaplike from "./isMaplike.js";
 import keys from "./keys.js";
 
 /**
@@ -25,9 +26,14 @@ export default async function merge(...treelikes) {
   const filtered = treelikes.filter((source) => source);
   const unpacked = await Promise.all(
     filtered.map(async (source) =>
-      isUnpackable(source) ? await source.unpack() : source
-    )
+      isUnpackable(source) ? await source.unpack() : source,
+    ),
   );
+
+  // If any argument isn't maplike, throw an error.
+  if (unpacked.some((source) => !isMaplike(source))) {
+    throw new TypeError("Tree.merge: all arguments must be maplike.");
+  }
 
   // If all arguments are plain objects, return a plain object.
   if (unpacked.every((source) => !isMap(source) && isPlainObject(source))) {

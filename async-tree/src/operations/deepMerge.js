@@ -18,9 +18,15 @@ export default async function deepMerge(...maplikes) {
   const filtered = maplikes.filter((source) => source);
   const unpacked = await Promise.all(
     filtered.map(async (source) =>
-      isUnpackable(source) ? await source.unpack() : source
-    )
+      isUnpackable(source) ? await source.unpack() : source,
+    ),
   );
+
+  // If any argument isn't maplike, throw an error.
+  if (unpacked.some((source) => !isMaplike(source))) {
+    throw new TypeError("Tree.deepMerge: all arguments must be maplike.");
+  }
+
   const sources = unpacked.map((maplike) => from(maplike, { deep: true }));
 
   return Object.assign(new AsyncMap(), {
