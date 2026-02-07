@@ -1,4 +1,9 @@
-import { scope, trailingSlash, Tree } from "@weborigami/async-tree";
+import {
+  pathFromKeys,
+  scope,
+  trailingSlash,
+  Tree,
+} from "@weborigami/async-tree";
 import { ops } from "./internal.js";
 import { typos } from "./typos.js";
 
@@ -33,9 +38,16 @@ export default async function explainReferenceError(code, state) {
   }
 
   // External scope reference -- what key was it looking for?
-  const key = trailingSlash.remove(code[3][1][1]);
+  const scopeCall = code[3].slice(1); // drop the ops.scope
+  const keys = scopeCall.map((part) => part[1]);
+  const path = pathFromKeys(keys);
 
-  // Base message
+  if (keys.length > 1) {
+    return `This path returned undefined: ${path}`;
+  }
+
+  // Common case of a single key
+  const key = keys[0];
   let message = `It looks like "${key}" is not in scope.`;
 
   const explainers = [mathExplainer, typoExplainer];

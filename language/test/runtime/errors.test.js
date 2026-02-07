@@ -167,6 +167,21 @@ evaluating: \x1B[31mposts.md\x1B[0m
     at line 3, column 22`,
       );
     });
+
+    test("handle a traversal failure inside a reference error", async () => {
+      const parent = {
+        post1: {
+          title: "First post",
+        },
+      };
+      await assertError(
+        `(post1/totle).toUpperCase()`,
+        `ReferenceError: Tried to get a property of something that doesn't exist.
+This path returned undefined: post1/totle
+evaluating: \x1B[31mpost1/totle\x1B[0m`,
+        { parent },
+      );
+    });
   });
 
   describe("TraverseError", () => {
