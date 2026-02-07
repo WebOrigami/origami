@@ -12,7 +12,7 @@ describe("formatError", () => {
       await assertError(
         `doesntExist()`,
         `ReferenceError: Couldn't find the function or map to execute.
-It looks like "doesntExist" is not in scope.
+"doesntExist" is not in scope.
 evaluating: \x1b[31mdoesntExist\x1b[0m`,
       );
     });
@@ -21,7 +21,7 @@ evaluating: \x1b[31mdoesntExist\x1b[0m`,
       await assertError(
         `Tree.map(foo, (_) => _)`,
         `ReferenceError: Tree.map: The map argument wasn't defined.
-It looks like "foo" is not in scope.
+"foo" is not in scope.
 evaluating: \x1b[31mfoo\x1b[0m`,
       );
     });
@@ -34,7 +34,7 @@ evaluating: \x1b[31mfoo\x1b[0m`,
           url: "file:///path/to/test.ori",
         },
         `ReferenceError: Couldn't find the function or map to execute.
-It looks like "foo" is not in scope.
+"foo" is not in scope.
 evaluating: \x1b[31mfoo\x1b[0m
     at /path/to/test.ori:1:1`,
       );
@@ -44,7 +44,7 @@ evaluating: \x1b[31mfoo\x1b[0m
       await assertError(
         `Mat.max(1, 2)`,
         `ReferenceError: Couldn't find the function or map to execute.
-It looks like "Mat.max" is not in scope.
+"Mat.max" is not in scope.
 Perhaps you intended one of these: Map, Math
 evaluating: \x1B[31mMat.max\x1B[0m`,
       );
@@ -64,7 +64,7 @@ evaluating: \x1B[31mMat.max\x1B[0m`,
           }.sub.more.result
         `,
         `ReferenceError: Couldn't find the function or map to execute.
-It looks like "datu.toString" is not in scope.
+"datu.toString" is not in scope.
 Perhaps you intended one of these: data, date
 evaluating: \x1B[31mdatu.toString\x1B[0m
     at line 7, column 25`,
@@ -78,7 +78,7 @@ evaluating: \x1B[31mdatu.toString\x1B[0m
       await assertError(
         `index.orj(1, 2, 3)`,
         `ReferenceError: Couldn't find the function or map to execute.
-It looks like "index.orj" is not in scope.
+"index.orj" is not in scope.
 Perhaps you intended: index.ori
 evaluating: \x1B[31mindex.orj\x1B[0m`,
         { parent },
@@ -89,7 +89,7 @@ evaluating: \x1B[31mindex.orj\x1B[0m`,
       await assertError(
         `((userName) => userNme.toString())("Alice")`,
         `ReferenceError: Couldn't find the function or map to execute.
-It looks like "userNme.toString" is not in scope.
+"userNme.toString" is not in scope.
 Perhaps you intended: userName
 evaluating: \x1B[31muserNme.toString\x1B[0m`,
       );
@@ -99,7 +99,7 @@ evaluating: \x1B[31muserNme.toString\x1B[0m`,
       await assertError(
         `(1+2).toString()`,
         `ReferenceError: Tried to get a property of something that doesn't exist.
-It looks like "1+2" is not in scope.
+"1+2" is not in scope.
 If you intended a math operation, Origami requires spaces around the operator: "1 + 2"
 evaluating: \x1B[31m1+2\x1B[0m`,
       );
@@ -168,7 +168,7 @@ evaluating: \x1B[31mposts.md\x1B[0m
       );
     });
 
-    test("handle a traversal failure inside a reference error", async () => {
+    test("handles a traversal failure inside a reference error", async () => {
       const parent = {
         post1: {
           title: "First post",
@@ -182,10 +182,20 @@ evaluating: \x1B[31mpost1/totle\x1B[0m`,
         { parent },
       );
     });
+
+    test.only("suggests a fully-qualified name", async () => {
+      await assertError(
+        `repeat(3, "hi")`,
+        `ReferenceError: Couldn't find the function or map to execute.
+"repeat" is not in scope.
+Perhaps you intended: Origami.repeat
+evaluating: \x1B[31mrepeat\x1B[0m`,
+      );
+    });
   });
 
   describe("TraverseError", () => {
-    test("suggest typos for failed path", async () => {
+    test("suggests typos for failed path", async () => {
       const parent = {
         a: {
           b: {
@@ -206,7 +216,7 @@ evaluating: \x1B[31msup/\x1B[0m`,
       );
     });
 
-    test("identify when a numeric key failed", async () => {
+    test("identifies when a numeric key failed", async () => {
       const parent = {
         map: new Map([[1, new Map([["a", true]])]]),
       };

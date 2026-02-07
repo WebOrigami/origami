@@ -52,9 +52,13 @@ export default async function explainReferenceError(code, state) {
   }
 
   // Common case of a single key
-  let message = `It looks like "${key}" is not in scope.`;
+  let message = `"${key}" is not in scope.`;
 
-  const explainers = [mathExplainer, typoExplainer];
+  const explainers = [
+    mathExplainer,
+    qualifiedReferenceExplainer,
+    typoExplainer,
+  ];
   let explanation;
   for (const explainer of explainers) {
     explanation = await explainer(key, stateKeys);
@@ -118,6 +122,22 @@ async function getStateKeys(state) {
   const scopeKeys = parentScope ? await Tree.keys(parentScope) : [];
   const stackKeys = stack?.map((frame) => Object.keys(frame)).flat() ?? [];
 
+  const qualifiedGlobal = [];
+  for (const globalKey of globalKeys) {
+    // Heuristic namespace test: name starts with capital, prototype is null (an
+    // exotic `Module` instance)
+    if (
+      /^[A-Z]/.test(globalKey) &&
+      Object.getPrototypeOf(globals[globalKey]) === null
+    ) {
+      for (const [key, value] of Object.entries(globals[globalKey])) {
+        if (typeof value === "function") {
+          qualifiedGlobal.push(`${globalKey}.${key}`);
+        }
+      }
+    }
+  }
+
   const normalizedGlobalKeys = globalKeys.map((key) =>
     trailingSlash.remove(key),
   );
@@ -130,6 +150,7 @@ async function getStateKeys(state) {
   return {
     global: normalizedGlobalKeys,
     object: normalizedObjectKeys,
+    qualifiedGlobal,
     scope: normalizedScopeKeys,
     stack: normalizedStackKeys,
   };
@@ -146,6 +167,33 @@ function mathExplainer(key, stateKeys) {
   // Create a global version of the regex for replacing all operators
   const withSpaces = key.replace(binaryOperatorRegex, " $& ");
   return `If you intended a math operation, Origami requires spaces around the operator: "${withSpaces}"`;
+}
+
+/**
+ * If the key is an unqualified reference (`repeat`), but there's a qualified
+ * version in scope (`Origami.repeat`), suggest that.
+ */
+async function qualifiedReferenceExplainer(key, stateKeys) {
+  if (key.includes(".")) {
+    return null;
+  }
+
+  const qualifiedKeys = stateKeys.qualifiedGlobal.filter((k) =>
+    k.endsWith("." + key),
+  );
+
+  if (qualifiedKeys.length === 0) {
+    return null;
+  }
+
+  let message = `Perhaps you intended`;
+  const list = qualifiedKeys.join(", ");
+  if (qualifiedKeys.length > 1) {
+    message += " one of these";
+  }
+  message += `: ${list}`;
+
+  return message;
 }
 
 /**
