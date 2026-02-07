@@ -1,4 +1,9 @@
-import { trailingSlash, TraverseError, Tree } from "@weborigami/async-tree";
+import {
+  pathFromKeys,
+  trailingSlash,
+  TraverseError,
+  Tree,
+} from "@weborigami/async-tree";
 import { typos } from "./typos.js";
 
 /**
@@ -31,17 +36,28 @@ export default async function explainTraverseError(error) {
   const lastValueKeys = await Tree.keys(lastValue);
   const normalizedKeys = lastValueKeys.map(trailingSlash.remove);
 
-  const possibleTypos = typos(key, normalizedKeys);
-  if (possibleTypos.length > 0) {
-    message += "\nPerhaps you intended";
-    if (possibleTypos.length > 1) {
-      message += " one of these";
+  const keyAsNumber = Number(key);
+  if (!isNaN(keyAsNumber)) {
+    // See if the string version of the key is present
+    if (lastValueKeys.includes(keyAsNumber)) {
+      const suggestedPath = `${pathFromKeys(keys.slice(0, position - 1))}(${keyAsNumber})`;
+      message += `\nSlash-separated keys are searched as strings. Here there's no string "${key}" key, but there is a number ${keyAsNumber} key.
+To get the value for that number key, use parentheses: ${suggestedPath}`;
     }
-    message += ": ";
+  } else {
+    // Suggest typos
+    const possibleTypos = typos(key, normalizedKeys);
+    if (possibleTypos.length > 0) {
+      message += "\nPerhaps you intended";
+      if (possibleTypos.length > 1) {
+        message += " one of these";
+      }
+      message += ": ";
 
-    const withLeadingSlashes =
-      position > 1 ? possibleTypos.map((key) => `/${key}`) : possibleTypos;
-    message += withLeadingSlashes.join(", ");
+      const withLeadingSlashes =
+        position > 1 ? possibleTypos.map((key) => `/${key}`) : possibleTypos;
+      message += withLeadingSlashes.join(", ");
+    }
   }
 
   return message;

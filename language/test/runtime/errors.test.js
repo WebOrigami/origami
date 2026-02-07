@@ -190,6 +190,21 @@ evaluating: \x1B[31msup/\x1B[0m`,
         { parent },
       );
     });
+
+    test("identify when a numeric key failed", async () => {
+      const parent = {
+        map: new Map([[1, new Map([["a", true]])]]),
+      };
+      await assertError(
+        `map/1/a`,
+        `TraverseError: A path included a null or undefined value.
+The path traversal ended unexpectedly at: map/1
+Slash-separated keys are searched as strings. Here there's no string "1" key, but there is a number 1 key.
+To get the value for that number key, use parentheses: map/(1)
+evaluating: \x1B[31m1/\x1B[0m`,
+        { parent },
+      );
+    });
   });
 });
 
