@@ -50,6 +50,7 @@ export default async function explainReferenceError(code, state) {
     // Generic reference error, can't offer help
     return null;
   }
+  key = trailingSlash.remove(key);
 
   // Common case of a single key
   let message = `"${key}" is not in scope.`;

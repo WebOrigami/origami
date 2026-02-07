@@ -61,6 +61,20 @@ export default async function handleExtension(value, key, parent = null) {
         }
       }
     }
+
+    // If no handler was found, attach a handler that throws an error. Otherwise
+    // an expression like `file/key` ends up casting `file` to a map. Since the
+    // file is a Uint8Array, the map ends up backed by the array; getting `key`
+    // from the map then quietly returns undefined. This masks the fact that the
+    // reference is an error.
+    if (!value.unpack) {
+      const message = extname
+        ? `No handler is registered for the ${extname} extension.`
+        : `A file without an extension cannot be unpacked: ${key}`;
+      value.unpack = async () => {
+        throw new Error(message);
+      };
+    }
   }
   return value;
 }
