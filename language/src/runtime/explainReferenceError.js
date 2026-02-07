@@ -32,22 +32,26 @@ export default async function explainReferenceError(code, state) {
   }
 
   // See if the code looks like an external scope reference that failed
-  if (code[0] !== ops.cache) {
+  let key;
+  if (code[0] === ops.cache) {
+    // External scope reference
+    const scopeCall = code[3].slice(1); // drop the ops.scope
+    const keys = scopeCall.map((part) => part[1]);
+    const path = pathFromKeys(keys);
+
+    if (keys.length > 1) {
+      return `This path returned undefined: ${path}`;
+    }
+    key = keys[0];
+  } else if (code[0]?.[0] === ops.scope) {
+    // Simple scope reference
+    key = code[1][1];
+  } else {
     // Generic reference error, can't offer help
     return null;
   }
 
-  // External scope reference -- what key was it looking for?
-  const scopeCall = code[3].slice(1); // drop the ops.scope
-  const keys = scopeCall.map((part) => part[1]);
-  const path = pathFromKeys(keys);
-
-  if (keys.length > 1) {
-    return `This path returned undefined: ${path}`;
-  }
-
   // Common case of a single key
-  const key = keys[0];
   let message = `It looks like "${key}" is not in scope.`;
 
   const explainers = [mathExplainer, typoExplainer];
