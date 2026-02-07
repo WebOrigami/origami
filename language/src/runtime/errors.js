@@ -33,18 +33,19 @@ export async function formatError(error) {
     fragment = location ? codeFragment(location) : (code.source ?? code);
   }
 
-  // Construct the error message
-  let message;
+  // Get the original error message
+  let originalMessage;
   // If the first line of the stack is just the error message, use that as the message
   let lines = error.stack?.split("\n") ?? [];
   if (!lines[0].startsWith("    at")) {
-    message = lines[0];
+    originalMessage = lines[0];
     lines.shift();
   } else {
-    message = error.message ?? error.toString();
+    originalMessage = error.message ?? error.toString();
   }
+  let message = originalMessage;
 
-  // See if we can improve the error message
+  // See if we can explain the error message
   if (error instanceof ReferenceError && code && context) {
     const explanation = await explainReferenceError(code, context.state);
     if (explanation) {
@@ -54,6 +55,17 @@ export async function formatError(error) {
     const explanation = await explainTraverseError(error);
     if (explanation) {
       message += "\n" + explanation;
+    }
+  }
+
+  // If the error's `message` starts with a qualified method name like `Tree.map`
+  // and a colon, extract the method name and link to the docs.
+  const match = error.message?.match(/^(?<namespace>\w+).(?<method>\w+):/);
+  if (match) {
+    /** @type {any} */
+    const { namespace, method } = match.groups;
+    if (["Dev", "Origami", "Tree"].includes(namespace)) {
+      message += `\nFor documentation, see https://weborigami.org/builtins/${namespace}/${method}`;
     }
   }
 

@@ -22,6 +22,7 @@ evaluating: \x1b[31mdoesntExist\x1b[0m`,
         `Tree.map(foo, (_) => _)`,
         `ReferenceError: Tree.map: The map argument wasn't defined.
 "foo" is not in scope.
+For documentation, see https://weborigami.org/builtins/Tree/map
 evaluating: \x1b[31mfoo\x1b[0m`,
       );
     });
@@ -183,7 +184,7 @@ evaluating: \x1B[31mpost1/totle\x1B[0m`,
       );
     });
 
-    test.only("suggests a fully-qualified name", async () => {
+    test("suggests a fully-qualified name", async () => {
       await assertError(
         `repeat(3, "hi")`,
         `ReferenceError: Couldn't find the function or map to execute.
