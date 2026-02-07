@@ -21,6 +21,11 @@ export default {
       // Downgrade to old Node Buffer for exif-parser.
       packed = Buffer.from(packed);
     }
+
+    if (!(packed instanceof Buffer)) {
+      throw new TypeError("JPEG handler can only unpack binary data.");
+    }
+
     const parser = exifParser.create(packed);
     parser.enableTagNames(true);
     parser.enableSimpleValues(true);

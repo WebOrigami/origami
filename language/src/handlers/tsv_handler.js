@@ -7,7 +7,7 @@ export default {
     const parent = options.parent ?? null;
     const text = toString(packed);
     if (text === null) {
-      throw new TypeError(".tsv handler can only unpack text");
+      throw new TypeError("TSV handler can only unpack text.");
     }
     const data = tsvParse(text);
     // Define `parent` as non-enumerable property

@@ -39,7 +39,7 @@ export default {
   async unpack(packed, options = {}) {
     const yaml = toString(packed);
     if (!yaml) {
-      throw new Error("Tried to parse something as YAML but it wasn't text.");
+      throw new Error("YAML handler can only unpack text.");
     }
     const parent = getParent(packed, options);
     const oriCallTag = await oriCallTagForParent(parent, options, yaml);

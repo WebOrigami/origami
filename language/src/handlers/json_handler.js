@@ -12,9 +12,11 @@ export default {
   unpack(packed) {
     const json = toString(packed);
     if (!json) {
-      throw new Error("Tried to parse something as JSON but it wasn't text.");
+      throw new Error("JSON handler can only unpack text.");
     }
+
     const data = JSON.parse(json);
+
     if (data && typeof data === "object" && Object.isExtensible(data)) {
       Object.defineProperty(data, symbols.deep, {
         enumerable: false,
