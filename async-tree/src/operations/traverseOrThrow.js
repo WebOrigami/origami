@@ -11,6 +11,7 @@ import from from "./from.js";
  *
  * @param {Maplike} maplike
  * @param  {...any} keys
+ * @returns {Promise<any>}
  */
 export default async function traverseOrThrow(maplike, ...keys) {
   let value = maplike;

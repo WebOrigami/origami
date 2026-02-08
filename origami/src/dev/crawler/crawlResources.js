@@ -37,7 +37,7 @@ export default async function* crawlResources(tree, baseUrl) {
   while (true) {
     // Get the latest array of promises that haven't been resolved yet.
     const promises = Object.values(promisesForPaths).filter(
-      (promise) => promise !== null
+      (promise) => promise !== null,
     );
 
     if (promises.length === 0) {
@@ -136,7 +136,7 @@ async function processPath(tree, path, baseUrl) {
     value = await Tree.traverse(tree, ...keys);
     normalizedKeys = keys.slice();
     normalizedPath = path;
-    if (Tree.isMaplike(value)) {
+    if (value && Tree.isMaplike(value)) {
       // Path is actually a directory. See if we can get the empty string or
       // "index.html".
       value =
@@ -196,7 +196,7 @@ async function processPath(tree, path, baseUrl) {
     value,
     key,
     baseUrl,
-    normalizedPath
+    normalizedPath,
   );
 
   return {

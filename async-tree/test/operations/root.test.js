@@ -14,10 +14,10 @@ describe("root", () => {
           },
         },
       },
-      { deep: true }
+      { deep: true },
     );
     const c = await traverse(tree, "a", "b", "c");
-    const r = await root(c);
+    const r = c ? await root(c) : undefined;
     assert.strictEqual(r, tree);
   });
 });

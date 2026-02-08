@@ -27,11 +27,11 @@ export default async function packageProtocol(...args) {
 
   // Identify the main entry point
   const mainPath = await Tree.traverse(packageRoot, "package.json", "main");
-  if (!mainPath) {
+  if (mainPath === undefined) {
     throw new Error(
       `${packageRootPath.join(
-        "/"
-      )} doesn't contain a package.json with a "main" entry.`
+        "/",
+      )} doesn't contain a package.json with a "main" entry.`,
     );
   }
 
