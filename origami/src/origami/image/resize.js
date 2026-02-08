@@ -1,4 +1,4 @@
-import sharp from "sharp";
+let sharp;
 
 /**
  * Resize an image.
@@ -7,6 +7,11 @@ import sharp from "sharp";
  * @param {import("sharp").ResizeOptions} options
  */
 export default async function resize(input, options) {
+  if (!sharp) {
+    // Dynamic import to avoid loading Sharp until needed
+    sharp = (await import("sharp")).default;
+  }
+
   if (!(input instanceof Uint8Array || input instanceof ArrayBuffer)) {
     return undefined;
   }

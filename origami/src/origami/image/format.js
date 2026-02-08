@@ -1,4 +1,4 @@
-import sharp from "sharp";
+let sharp;
 
 /**
  * Return the image in a different format.
@@ -9,6 +9,11 @@ import sharp from "sharp";
  * @param {any} options
  */
 export default async function imageFormat(input, format, options) {
+  if (!sharp) {
+    // Dynamic import to avoid loading Sharp until needed
+    sharp = (await import("sharp")).default;
+  }
+
   if (!(input instanceof Uint8Array || input instanceof ArrayBuffer)) {
     return undefined;
   }
