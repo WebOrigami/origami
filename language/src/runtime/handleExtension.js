@@ -7,6 +7,7 @@ import {
   setParent,
   trailingSlash,
 } from "@weborigami/async-tree";
+import getPackedPath from "../handlers/getPackedPath.js";
 import projectGlobals from "../project/projectGlobals.js";
 
 /**
@@ -50,14 +51,8 @@ export default async function handleExtension(value, key, parent = null) {
           setParent(value, parent);
         }
 
-        const unpack = handler.unpack;
-        if (unpack) {
-          // Wrap the unpack function so its only called once per value.
-          let loadPromise;
-          value.unpack = async () => {
-            loadPromise ??= unpack(value, { key, parent });
-            return loadPromise;
-          };
+        if (handler.unpack) {
+          value.unpack = wrapUnpack(handler.unpack, value, key, parent);
         }
       }
     }
@@ -76,5 +71,24 @@ export default async function handleExtension(value, key, parent = null) {
       };
     }
   }
+  value;
   return value;
+}
+
+// Wrap the unpack function so it's only called once per value, and so we can
+// add the file path to any errors it throws.
+function wrapUnpack(unpack, value, key, parent) {
+  let result;
+  return async () => {
+    if (!result) {
+      try {
+        result = await unpack(value, { key, parent });
+      } catch (/** @type {any} */ error) {
+        const filePath = getPackedPath(value, { key, parent });
+        const message = `Can't unpack ${filePath}\n${error.message}`;
+        throw new error.constructor(message, { cause: error });
+      }
+    }
+    return result;
+  };
 }

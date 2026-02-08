@@ -20,6 +20,18 @@ const origamiSourceSignals = [
  * @param {Error} error
  */
 export async function formatError(error) {
+  // Get the original error message
+  let originalMessage;
+  // If the first line of the stack is just the error message, use that as the message
+  let lines = error.stack?.split("\n") ?? [];
+  if (!lines[0].startsWith("    at")) {
+    originalMessage = lines[0];
+    lines.shift();
+  } else {
+    originalMessage = error.message ?? error.toString();
+  }
+  let message = originalMessage;
+
   // See if we can identify the Origami location that caused the error
   let location;
   let fragment;
@@ -32,18 +44,6 @@ export async function formatError(error) {
     location = code.location;
     fragment = location ? codeFragment(location) : (code.source ?? code);
   }
-
-  // Get the original error message
-  let originalMessage;
-  // If the first line of the stack is just the error message, use that as the message
-  let lines = error.stack?.split("\n") ?? [];
-  if (!lines[0].startsWith("    at")) {
-    originalMessage = lines[0];
-    lines.shift();
-  } else {
-    originalMessage = error.message ?? error.toString();
-  }
-  let message = originalMessage;
 
   // See if we can explain the error message
   if (error instanceof ReferenceError && code && context) {
