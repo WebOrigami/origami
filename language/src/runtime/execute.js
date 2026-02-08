@@ -56,8 +56,8 @@ export default async function execute(code, state = {}) {
   if (fn.needsState) {
     // The function is an op that wants the runtime state
     args.push(state);
-  } else if (fn.containerAsTarget && state.parent) {
-    // The function wants the code's container as the `this` target
+  } else if (fn.parentAsTarget && state.parent) {
+    // The function wants the code's parent as the `this` target
     fn = fn.bind(state.parent);
   }
 

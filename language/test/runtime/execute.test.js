@@ -26,12 +26,12 @@ describe("execute", () => {
     assert.equal(result, state);
   });
 
-  test("if function has containerAsTarget, it gets bound to state.container", async () => {
+  test("if function has parentAsTarget, it gets bound to state.container", async () => {
     /** @this {import("@weborigami/async-tree").SyncOrAsyncMap} */
     const fn = function () {
       return this;
     };
-    fn.containerAsTarget = true;
+    fn.parentAsTarget = true;
     const parent = new SyncMap();
     const state = { parent };
     const code = createCode([fn]);
