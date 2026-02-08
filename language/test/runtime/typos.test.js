@@ -13,6 +13,8 @@ describe("typos", () => {
     assert(isTypo("cat", "act")); // transposition
     assert(!isTypo("cat", "dog")); // more than 1 edit
     assert(!isTypo("a", "b")); // single character
+    assert(isTypo("cat", "CAT")); // differ only by case
+    assert(isTypo("café", "cafe")); // differ only by accents
   });
 
   test("typos", () => {

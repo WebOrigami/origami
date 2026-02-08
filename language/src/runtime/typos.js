@@ -1,7 +1,12 @@
 /**
- * Returns true if the two strings have a Damerau-Levenshtein distance of 1.
- * This will be true if the strings differ by a single insertion, deletion,
- * substitution, or transposition.
+ * Returns true if one string could be a typo of the other.
+ *
+ * We generally define a typo as two strings with a Damerau-Levenshtein distance
+ * of 1. This will be true if the strings differ by a single insertion,
+ * deletion, substitution, or transposition.
+ *
+ * Additionally, we consider two strings that differ only in case to be typos,
+ * as well as two strings that differ only by accents.
  *
  * @param {string} s1
  * @param {string} s2
@@ -13,6 +18,16 @@ export function isTypo(s1, s2) {
   // If the strings are identical, distance is 0
   if (s1 === s2) {
     return false;
+  }
+
+  // If the strings are the same ignoring case, consider them typos
+  if (s1.toLowerCase() === s2.toLowerCase()) {
+    return true;
+  }
+
+  // If the strings are the same ignoring accents, consider them typos
+  if (normalize(s1) === normalize(s2)) {
+    return true;
   }
 
   // If strings are both a single character, we don't want to consider them
@@ -64,6 +79,10 @@ export function isTypo(s1, s2) {
     }
   }
   return shorter === longer.slice(0, shorter.length);
+}
+
+function normalize(str) {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
 /**
