@@ -127,11 +127,13 @@ async function getStateKeys(state) {
   for (const globalKey of globalKeys) {
     // Heuristic namespace test: name starts with capital, prototype is null (an
     // exotic `Module` instance)
+    let global = globals[globalKey];
     if (
       /^[A-Z]/.test(globalKey) &&
-      Object.getPrototypeOf(globals[globalKey]) === null
+      global &&
+      Object.getPrototypeOf(global) === null
     ) {
-      for (const [key, value] of Object.entries(globals[globalKey])) {
+      for (const [key, value] of Object.entries(global)) {
         if (typeof value === "function") {
           qualifiedGlobal.push(`${globalKey}.${key}`);
         }
