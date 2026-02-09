@@ -6,6 +6,7 @@ import * as symbols from "../symbols.js";
 import box from "../utilities/box.js";
 import isPlainObject from "../utilities/isPlainObject.js";
 import setParent from "../utilities/setParent.js";
+import TypedArray from "../utilities/TypedArray.js";
 import isMap from "./isMap.js";
 
 /**
@@ -39,6 +40,8 @@ export default function from(object, options = {}) {
     map = new FunctionMap(object);
   } else if (object instanceof Set) {
     map = new SetMap(object);
+  } else if (object instanceof ArrayBuffer || object instanceof TypedArray) {
+    throw new TypeError("Attempted to treat raw file data as a map.");
   } else if (isPlainObject(object) || object instanceof Array) {
     map = new ObjectMap(object, { deep });
     // @ts-ignore

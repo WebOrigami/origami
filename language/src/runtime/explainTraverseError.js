@@ -1,4 +1,6 @@
 import {
+  extension,
+  isPacked,
   pathFromKeys,
   trailingSlash,
   TraverseError,
@@ -33,30 +35,38 @@ export default async function explainTraverseError(error) {
 
   const key = trailingSlash.remove(keys[position - 1]);
 
-  const lastValueKeys = await Tree.keys(lastValue);
-  const normalizedKeys = lastValueKeys.map(trailingSlash.remove);
-
-  const keyAsNumber = Number(key);
-  if (!isNaN(keyAsNumber)) {
-    // See if the string version of the key is present
-    if (lastValueKeys.includes(keyAsNumber)) {
-      const suggestedPath = `${pathFromKeys(keys.slice(0, position - 1))}(${keyAsNumber})`;
-      message += `\nSlash-separated keys are searched as strings. Here there's no string "${key}" key, but there is a number ${keyAsNumber} key.
-To get the value for that number key, use parentheses: ${suggestedPath}`;
+  // Missing an extension handler?
+  if (isPacked(lastValue) && typeof lastValue.unpack !== "function") {
+    const ext = extension.extname(key);
+    if (ext) {
+      message += `\nThe value couldn't be unpacked because no file extension handler is registered for "${ext}".`;
     }
   } else {
-    // Suggest typos
-    const possibleTypos = typos(key, normalizedKeys);
-    if (possibleTypos.length > 0) {
-      message += "\nPerhaps you intended";
-      if (possibleTypos.length > 1) {
-        message += " one of these";
-      }
-      message += ": ";
+    const lastValueKeys = await Tree.keys(lastValue);
+    const normalizedKeys = lastValueKeys.map(trailingSlash.remove);
 
-      const withLeadingSlashes =
-        position > 1 ? possibleTypos.map((key) => `/${key}`) : possibleTypos;
-      message += withLeadingSlashes.join(", ");
+    const keyAsNumber = Number(key);
+    if (!isNaN(keyAsNumber)) {
+      // See if the string version of the key is present
+      if (lastValueKeys.includes(keyAsNumber)) {
+        const suggestedPath = `${pathFromKeys(keys.slice(0, position - 1))}(${keyAsNumber})`;
+        message += `\nSlash-separated keys are searched as strings. Here there's no string "${key}" key, but there is a number ${keyAsNumber} key.
+To get the value for that number key, use parentheses: ${suggestedPath}`;
+      }
+    } else {
+      // Suggest typos
+      const possibleTypos = typos(key, normalizedKeys);
+      if (possibleTypos.length > 0) {
+        message += "\nPerhaps you intended";
+        if (possibleTypos.length > 1) {
+          message += " one of these";
+        }
+        message += ": ";
+
+        const withLeadingSlashes =
+          position > 1 ? possibleTypos.map((key) => `/${key}`) : possibleTypos;
+        message += withLeadingSlashes.join(", ");
+      }
     }
   }
 

@@ -1,5 +1,6 @@
 import * as trailingSlash from "../trailingSlash.js";
 import TraverseError from "../TraverseError.js";
+import isPacked from "../utilities/isPacked.js";
 import isUnpackable from "../utilities/isUnpackable.js";
 import from from "./from.js";
 
@@ -25,7 +26,7 @@ export default async function traverseOrThrow(maplike, ...keys) {
   let key;
   while (remainingKeys.length > 0) {
     if (value == null) {
-      throw new TraverseError("A path included a null or undefined value.", {
+      throw new TraverseError("A path hit a null or undefined value.", {
         head: maplike,
         lastValue,
         keys,
@@ -36,8 +37,20 @@ export default async function traverseOrThrow(maplike, ...keys) {
     lastValue = value;
 
     // If the value is packed and can be unpacked, unpack it.
-    if (isUnpackable(value)) {
-      value = await value.unpack();
+    if (isPacked(value)) {
+      if (typeof (/** @type {any} */ (value).unpack) === "function") {
+        value = await value.unpack();
+      } else {
+        throw new TraverseError(
+          "A path hit a raw file value that can't be unpacked.",
+          {
+            head: maplike,
+            lastValue,
+            keys,
+            position,
+          },
+        );
+      }
     }
 
     if (value instanceof Function) {

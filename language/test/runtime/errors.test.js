@@ -209,7 +209,7 @@ evaluating: \x1B[31mrepeat\x1B[0m`,
       };
       await assertError(
         `a/b/sup/c`,
-        `TraverseError: A path included a null or undefined value.
+        `TraverseError: A path hit a null or undefined value.
 The path traversal ended unexpectedly at: a/b/sup
 Perhaps you intended: /sub
 evaluating: \x1B[31msup/\x1B[0m`,
@@ -223,11 +223,25 @@ evaluating: \x1B[31msup/\x1B[0m`,
       };
       await assertError(
         `map/1/a`,
-        `TraverseError: A path included a null or undefined value.
+        `TraverseError: A path hit a null or undefined value.
 The path traversal ended unexpectedly at: map/1
 Slash-separated keys are searched as strings. Here there's no string "1" key, but there is a number 1 key.
 To get the value for that number key, use parentheses: map/(1)
 evaluating: \x1B[31m1/\x1B[0m`,
+        { parent },
+      );
+    });
+
+    test("identifies when a value couldn't be unpacked due to a missing extension handler", async () => {
+      const parent = {
+        "file.foo": Uint8Array.from("hello"),
+      };
+      await assertError(
+        `file.foo/bar`,
+        `TraverseError: A path hit a raw file value that can't be unpacked.
+The path traversal ended unexpectedly at: file.foo
+The value couldn't be unpacked because no file extension handler is registered for ".foo".
+evaluating: \x1B[31mfile.foo/\x1B[0m`,
         { parent },
       );
     });
