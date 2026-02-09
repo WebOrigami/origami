@@ -66,6 +66,7 @@ export default async function handleExtension(value, key, parent = null) {
       const message = extname
         ? `No handler is registered for the ${extname} extension.`
         : `A file without an extension cannot be unpacked: ${key}`;
+      value = box(value);
       value.unpack = async () => {
         throw new Error(message);
       };
