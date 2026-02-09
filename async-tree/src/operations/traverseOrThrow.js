@@ -3,6 +3,7 @@ import TraverseError from "../TraverseError.js";
 import isPacked from "../utilities/isPacked.js";
 import isUnpackable from "../utilities/isUnpackable.js";
 import from from "./from.js";
+import isMaplike from "./isMaplike.js";
 
 /**
  * Return the value at the corresponding path of keys. Throw if any interior
@@ -18,7 +19,7 @@ export default async function traverseOrThrow(maplike, ...keys) {
   let value = maplike;
 
   // For error reporting
-  let lastValue = null;
+  let lastValue = value;
   let position = 0;
 
   // Process all the keys.
@@ -42,7 +43,7 @@ export default async function traverseOrThrow(maplike, ...keys) {
         value = await value.unpack();
       } else {
         throw new TraverseError(
-          "A path hit a raw file value that can't be unpacked.",
+          "A path hit binary file data that can't be unpacked.",
           {
             head: maplike,
             lastValue,
@@ -78,8 +79,21 @@ export default async function traverseOrThrow(maplike, ...keys) {
   }
 
   // If last key ended in a slash and value is unpackable, unpack it.
-  if (key && trailingSlash.has(key) && isUnpackable(value)) {
-    value = await value.unpack();
+  if (key && trailingSlash.has(key) && !isMaplike(value)) {
+    if (isUnpackable(value)) {
+      value = await value.unpack();
+    } else {
+      const message =
+        value === undefined
+          ? "A path tried to unpack a value that doesn't exist."
+          : "A path tried to unpack data that's already unpacked.";
+      throw new TraverseError(message, {
+        head: maplike,
+        lastValue,
+        keys,
+        position,
+      });
+    }
   }
 
   return value;

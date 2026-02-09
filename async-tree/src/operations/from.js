@@ -41,7 +41,7 @@ export default function from(object, options = {}) {
   } else if (object instanceof Set) {
     map = new SetMap(object);
   } else if (object instanceof ArrayBuffer || object instanceof TypedArray) {
-    throw new TypeError("Attempted to treat raw file data as a map.");
+    throw new TypeError("Can't treat binary file data as a map.");
   } else if (isPlainObject(object) || object instanceof Array) {
     map = new ObjectMap(object, { deep });
     // @ts-ignore

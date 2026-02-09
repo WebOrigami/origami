@@ -27,21 +27,24 @@ export default async function explainTraverseError(error) {
   }
 
   // The key that caused the error is the one before the current position
-  const path = keys
-    .slice(0, position)
-    .map((key, index) => trailingSlash.toggle(key, index < position - 1))
-    .join("");
+  const path = pathFromKeys(keys.slice(0, position));
   let message = `The path traversal ended unexpectedly at: ${path}`;
 
   const key = trailingSlash.remove(keys[position - 1]);
 
-  // Missing an extension handler?
-  if (isPacked(lastValue) && typeof lastValue.unpack !== "function") {
+  if (
+    error.message === "A path tried to unpack data that's already unpacked."
+  ) {
+    // Key ends in a slash but value isn't packed
+    message += `\nYou can drop the trailing slash and just use: ${key}`;
+  } else if (isPacked(lastValue) && typeof lastValue.unpack !== "function") {
+    // Missing an extension handler
     const ext = extension.extname(key);
     if (ext) {
       message += `\nThe value couldn't be unpacked because no file extension handler is registered for "${ext}".`;
     }
   } else {
+    // Compare the requested key with the available keys
     const lastValueKeys = await Tree.keys(lastValue);
     const normalizedKeys = lastValueKeys.map(trailingSlash.remove);
 
@@ -64,7 +67,7 @@ To get the value for that number key, use parentheses: ${suggestedPath}`;
         message += ": ";
 
         const withLeadingSlashes =
-          position > 1 ? possibleTypos.map((key) => `/${key}`) : possibleTypos;
+          position > 1 ? possibleTypos.map(trailingSlash.add) : possibleTypos;
         message += withLeadingSlashes.join(", ");
       }
     }

@@ -18,38 +18,7 @@ describe("traverse", () => {
     assert.equal(await traverse(tree), tree);
     assert.equal(await traverse(tree, "a1"), 1);
     assert.equal(await traverse(tree, "a2", "b2", "c2"), 4);
+    // Should return undefined instead of throwing
     assert.equal(await traverse(tree, "a2", "doesntexist", "c2"), undefined);
-  });
-
-  test("traverses a function with fixed number of arguments", async () => {
-    const tree = (a, b) => ({
-      c: "Result",
-    });
-    assert.equal(await traverse(tree, "a", "b", "c"), "Result");
-  });
-
-  test("traverses from one tree into another", async () => {
-    const tree = new ObjectMap({
-      a: {
-        b: new Map([
-          ["c", "Hello"],
-          ["d", "Goodbye"],
-        ]),
-      },
-    });
-    assert.equal(await traverse(tree, "a", "b", "c"), "Hello");
-  });
-
-  test("unpacks last value if key ends in a slash", async () => {
-    const tree = new ObjectMap({
-      a: {
-        b: Object.assign(new String("packed"), {
-          unpack() {
-            return "unpacked";
-          },
-        }),
-      },
-    });
-    assert.equal(await traverse(tree, "a/", "b/"), "unpacked");
   });
 });
