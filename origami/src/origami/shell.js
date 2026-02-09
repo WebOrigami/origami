@@ -13,8 +13,8 @@ export default async function shell(command) {
   try {
     const { stdout } = await exec(command);
     return stdout;
-  } catch (err) {
-    console.error(err);
+  } catch (/** @type {any} */ error) {
+    console.error(error.stderr);
     return undefined;
   }
 }
