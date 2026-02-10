@@ -836,7 +836,9 @@ regexLiteral
     }
 
 regexLiteralChar
-  = escapedChar
+  = char:escapedChar {
+    return `\\${char}`;
+  }
   / [^/\n\r] // No unescaped slashes or newlines
 
 relationalExpression

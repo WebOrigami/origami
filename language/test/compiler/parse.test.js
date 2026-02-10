@@ -1686,6 +1686,7 @@ Body`,
   test("regexLiteral", () => {
     assertParse("regexLiteral", "/abc+/g", [ops.literal, /abc+/g]);
     assertParse("regexLiteral", String.raw`/\//`, [ops.literal, /\//]);
+    assertParse("regexLiteral", String.raw`/\d+/`, [ops.literal, /\d+/]);
   });
 
   test("relationalExpression", () => {
