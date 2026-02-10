@@ -49,16 +49,20 @@ export async function formatError(error) {
   const fragment = location ? codeFragment(location) : (code?.source ?? code);
 
   // See if we can explain the error message
-  if (error instanceof ReferenceError && code && context) {
-    const explanation = await explainReferenceError(code, context.state);
-    if (explanation) {
-      message += "\n" + explanation;
+  try {
+    if (error instanceof ReferenceError && code && context) {
+      const explanation = await explainReferenceError(code, context.state);
+      if (explanation) {
+        message += "\n" + explanation;
+      }
+    } else if (error instanceof TraverseError) {
+      const explanation = await explainTraverseError(error);
+      if (explanation) {
+        message += "\n" + explanation;
+      }
     }
-  } else if (error instanceof TraverseError) {
-    const explanation = await explainTraverseError(error);
-    if (explanation) {
-      message += "\n" + explanation;
-    }
+  } catch (internalError) {
+    // Ignore; won't modify the message
   }
 
   // If the error's `message` starts with a qualified method name like `Tree.map`

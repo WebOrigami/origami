@@ -19,6 +19,10 @@ const binaryOperatorRegex =
  * @param {import("../../index.ts").RuntimeState} state
  */
 export default async function explainReferenceError(code, state) {
+  if (!state) {
+    return null;
+  }
+
   const stateKeys = await getStateKeys(state);
 
   if (code[0] === ops.property) {
@@ -50,7 +54,11 @@ export default async function explainReferenceError(code, state) {
     // Generic reference error, can't offer help
     return null;
   }
+
   key = trailingSlash.remove(key);
+  if (typeof key !== "string") {
+    return null;
+  }
 
   // Common case of a single key
   let message = `"${key}" is not in scope.`;
