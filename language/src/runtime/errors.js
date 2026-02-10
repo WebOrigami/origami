@@ -34,16 +34,19 @@ export async function formatError(error) {
 
   // See if we can identify the Origami location that caused the error
   let location;
-  let fragment;
   const context = /** @type {any} */ (error).context;
   let code = context?.code;
   if (code) {
     // Use the code being evaluated when the error occurred
     let position = /** @type {any} */ (error).position;
-    code = position !== undefined ? context.code[position] : context.code;
-    location = code.location;
-    fragment = location ? codeFragment(location) : (code.source ?? code);
+    const argCode =
+      position !== undefined ? context.code[position] : context.code;
+    if (argCode instanceof Array) {
+      code = argCode;
+      location = /** @type {any} */ (argCode).location;
+    }
   }
+  const fragment = location ? codeFragment(location) : (code?.source ?? code);
 
   // See if we can explain the error message
   if (error instanceof ReferenceError && code && context) {
