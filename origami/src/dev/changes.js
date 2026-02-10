@@ -1,4 +1,10 @@
-import { args, trailingSlash, Tree } from "@weborigami/async-tree";
+import {
+  args,
+  isStringlike,
+  toString,
+  trailingSlash,
+  Tree,
+} from "@weborigami/async-tree";
 
 /**
  * Given an old tree and a new tree, return a tree of changes indicated
@@ -44,9 +50,9 @@ export default async function changes(oldMaplike, newMaplike) {
         result ??= {};
         result[oldKey] = treeChanges;
       }
-    } else if (oldValue?.toString && newValue?.toString) {
-      const oldText = oldValue.toString();
-      const newText = newValue.toString();
+    } else if (isStringlike(oldValue) && isStringlike(newValue)) {
+      const oldText = toString(oldValue);
+      const newText = toString(newValue);
       if (oldText !== newText) {
         result ??= {};
         result[oldKey] = "changed";
