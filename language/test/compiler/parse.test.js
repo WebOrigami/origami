@@ -756,6 +756,11 @@ Body`,
     );
   });
 
+  test("escapedChar", () => {
+    assertParse("escapedChar", String.raw`\n`, "\n");
+    assertParse("escapedChar", String.raw`\\`, `\\`);
+  });
+
   test("exponentiationExpression", () => {
     assertParse("exponentiationExpression", "2 ** 2 ** 3", [
       ops.exponentiation,
@@ -1680,6 +1685,7 @@ Body`,
 
   test("regexLiteral", () => {
     assertParse("regexLiteral", "/abc+/g", [ops.literal, /abc+/g]);
+    assertParse("regexLiteral", String.raw`/\//`, [ops.literal, /\//]);
   });
 
   test("relationalExpression", () => {

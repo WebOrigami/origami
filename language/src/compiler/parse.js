@@ -6278,15 +6278,15 @@ function peg$parse(input, options) {
   function peg$parseregexLiteralChar() {
     let s0;
 
-    s0 = input.charAt(peg$currPos);
-    if (peg$r17.test(s0)) {
-      peg$currPos++;
-    } else {
-      s0 = peg$FAILED;
-      if (peg$silentFails === 0) { peg$fail(peg$e99); }
-    }
+    s0 = peg$parseescapedChar();
     if (s0 === peg$FAILED) {
-      s0 = peg$parseescapedChar();
+      s0 = input.charAt(peg$currPos);
+      if (peg$r17.test(s0)) {
+        peg$currPos++;
+      } else {
+        s0 = peg$FAILED;
+        if (peg$silentFails === 0) { peg$fail(peg$e99); }
+      }
     }
 
     return s0;

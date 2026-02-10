@@ -836,8 +836,8 @@ regexLiteral
     }
 
 regexLiteralChar
-  = [^/\n\r] // No unescaped slashes or newlines
-  / escapedChar
+  = escapedChar
+  / [^/\n\r] // No unescaped slashes or newlines
 
 relationalExpression
   // We disallow a newline before the relational operator to support a newline
