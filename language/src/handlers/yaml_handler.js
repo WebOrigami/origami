@@ -1,4 +1,5 @@
 import {
+  castArraylike,
   getParent,
   isUnpackable,
   symbols,
@@ -82,8 +83,9 @@ export default {
     }
 
     if (hasOriTags) {
-      // Resolve any promises in the data.
-      data = await Tree.reduce(data, (mapped) => Object.fromEntries(mapped));
+      // Resolve any promises in the deep data.
+      const tree = Tree.from(data, { deep: true });
+      data = await Tree.reduce(tree, (mapped) => castArraylike(mapped));
     }
 
     if (data && typeof data === "object" && Object.isExtensible(data)) {
