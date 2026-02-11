@@ -83,7 +83,7 @@ export default {
 
     if (hasOriTags) {
       // Resolve any promises in the data.
-      data = await Tree.plain(data);
+      data = await Tree.reduce(data, (mapped) => Object.fromEntries(mapped));
     }
 
     if (data && typeof data === "object" && Object.isExtensible(data)) {
