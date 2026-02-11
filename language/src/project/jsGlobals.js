@@ -128,7 +128,7 @@ const globals = {
   encodeURIComponent,
   escape,
   eval,
-  // fetch -- special case, see below
+  fetch,
   globalThis,
   isFinite,
   isNaN,
@@ -150,7 +150,6 @@ const globals = {
   true: true,
 
   // Special cases
-  fetch: fetchWrapper,
   import: importWrapper,
 };
 
