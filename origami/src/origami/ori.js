@@ -54,6 +54,14 @@ async function format(result) {
     return result;
   }
 
+  if (result instanceof Response) {
+    if (!result.ok) {
+      console.warn(`Response not OK: ${result.status} ${result.statusText}`);
+      return undefined;
+    }
+    return await result.arrayBuffer();
+  }
+
   /** @type {string|String|undefined} */
   let text;
 
