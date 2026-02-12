@@ -179,11 +179,14 @@ addOpLabel(exponentiation, "«ops.exponentiation»");
  */
 export async function flat(...args) {
   const arrays = await Promise.all(
-    args.map(async (arg) =>
-      arg instanceof Array || typeof arg !== "object"
+    args.map(async (arg) => {
+      if (isUnpackable(arg)) {
+        arg = await arg.unpack();
+      }
+      return arg instanceof Array || typeof arg !== "object"
         ? arg
-        : await Tree.values(arg),
-    ),
+        : await Tree.values(arg);
+    }),
   );
 
   return arrays.flat();
