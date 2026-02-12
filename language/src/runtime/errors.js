@@ -20,6 +20,11 @@ const origamiSourceSignals = [
  * @param {Error} error
  */
 export async function formatError(error) {
+  // We want to display information for the root cause
+  while (error.cause instanceof Error) {
+    error = error.cause;
+  }
+
   // Get the original error message
   let originalMessage;
   // If the first line of the stack is just the error message, use that as the message
