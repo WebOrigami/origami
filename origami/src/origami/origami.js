@@ -1,10 +1,10 @@
 export { extension } from "@weborigami/async-tree";
 export { default as help } from "../dev/help.js"; // Alias
-export { default as document } from "./document.js";
-// export { default as htmlDom } from "./htmlDom.js";
 export { default as basename } from "./basename.js";
 export { default as csv } from "./csv.js";
+export { default as document } from "./document.js";
 export { default as fetch } from "./fetch.js";
+export { default as htmlDom } from "./htmlDom.js";
 export { default as htmlEscape } from "./htmlEscape.js";
 export { default as format } from "./image/format.js";
 export * as image from "./image/image.js";
