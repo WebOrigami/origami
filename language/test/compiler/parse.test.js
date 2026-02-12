@@ -569,8 +569,8 @@ describe("Origami parser", () => {
 
     test("parentheses arguments with spreads", () => {
       assertParse("callExpression", "fn(a, ...b, ...c)", [
-        [ops.property, [markers.traverse, [markers.reference, "fn"]], "apply"],
-        null,
+        ops.apply,
+        [markers.traverse, [markers.reference, "fn"]],
         [
           ops.flat,
           [ops.array, [markers.traverse, [markers.reference, "a"]]],
@@ -1126,12 +1126,8 @@ Body`,
       "implicitParenthesesCallExpression",
       "concat a.json, ...b.json, c.json",
       [
-        [
-          ops.property,
-          [markers.traverse, [markers.reference, "concat"]],
-          "apply",
-        ],
-        null,
+        ops.apply,
+        [markers.traverse, [markers.reference, "concat"]],
         [
           ops.flat,
           [ops.array, [markers.traverse, [markers.reference, "a.json"]]],

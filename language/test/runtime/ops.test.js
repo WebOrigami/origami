@@ -20,6 +20,12 @@ describe("ops", () => {
     );
   });
 
+  test("ops.apply applies a function to arguments", async () => {
+    const code = createCode([ops.apply, ops.addition, [ops.array, 1, 2]]);
+    const result = await execute(code);
+    assert.strictEqual(result, 3);
+  });
+
   test("ops.array creates an array", async () => {
     const code = createCode([ops.array, 1, 2, 3]);
     const result = await execute(code);

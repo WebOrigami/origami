@@ -27,6 +27,28 @@ export function addition(a, b) {
 addOpLabel(addition, "«ops.addition»");
 
 /**
+ * Flatten the arguments and then apply the function.
+ * This is used to handle spreads in function calls.
+ */
+export async function apply(fn, args, state) {
+  // TODO: This is starting to recapitulate much of execute()
+  if (isUnpackable(fn)) {
+    fn = await fn.unpack();
+  }
+  if (fn.needsState) {
+    // The function is an op that wants the runtime state
+    args.push(state);
+  }
+  const result =
+    fn instanceof Function
+      ? await fn(...args) // Invoke the function
+      : await Tree.traverseOrThrow(fn, ...args); // Traverse the map.
+  return result;
+}
+addOpLabel(apply, "«ops.apply»");
+apply.needsState = true;
+
+/**
  * Construct an array.
  *
  * @param {any[]} items

@@ -634,8 +634,7 @@ function makePossibleSpreadCall(target, args, location) {
     return [target, ...args];
   }
 
-  // Get function's apply method
-  const applyMethod = annotate([ops.property, target, "apply"], location);
+  // We'll need to use ops.apply and ops.flat to handle the spreads.
   const wrappedArgs = args.map((arg) => {
     if (arg[0] === markers.spread) {
       return arg[1];
@@ -643,8 +642,8 @@ function makePossibleSpreadCall(target, args, location) {
       return annotate([ops.array, arg], arg.location);
     }
   });
-  const flatCall = annotate([ops.flat, ...wrappedArgs], location);
-  return [applyMethod, null, flatCall];
+  const flattened = annotate([ops.flat, ...wrappedArgs], location);
+  return annotate([ops.apply, target, flattened], location);
 }
 
 /**
