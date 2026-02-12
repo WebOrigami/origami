@@ -1,4 +1,4 @@
-import { Tree, keysFromPath } from "@weborigami/async-tree";
+import { Tree, keysFromPath, pathFromKeys } from "@weborigami/async-tree";
 import projectRoot from "../project/projectRoot.js";
 
 /**
@@ -11,27 +11,36 @@ export default async function packageProtocol(...args) {
   const root = await projectRoot(state);
 
   // Identify the path to the package root
-  const packageRootPath = ["node_modules"];
-  const name = args.shift();
-  packageRootPath.push(name);
+  const packageRootKeys = ["node_modules"];
+  let name = args.shift();
+  packageRootKeys.push(name);
   if (name.startsWith("@")) {
     // First key is an npm organization, add next key as name
-    packageRootPath.push(args.shift());
+    const nameArg = args.shift();
+    name += nameArg;
+    packageRootKeys.push(nameArg);
   }
+  const packageRootPath = pathFromKeys(packageRootKeys);
 
   // Get the package root (top level folder of the package)
-  const packageRoot = await Tree.traverse(root, ...packageRootPath);
+  let packageRoot = await Tree.traverse(root, ...packageRootKeys);
   if (!packageRoot) {
-    throw new Error(`Can't find ${packageRootPath.join("/")}`);
+    // Can't find package -- are we *in* the package?
+    const packageJson = await Tree.traverse(root, "package.json");
+    const packageData = await packageJson?.unpack();
+    if (packageData?.name === name) {
+      // Yes, we're in the package itself
+      packageRoot = root;
+    } else {
+      throw new Error(`Can't find ${packageRootPath}`);
+    }
   }
 
   // Identify the main entry point
   const mainPath = await Tree.traverse(packageRoot, "package.json", "main");
   if (mainPath === undefined) {
     throw new Error(
-      `${packageRootPath.join(
-        "/",
-      )} doesn't contain a package.json with a "main" entry.`,
+      `${packageRootPath} doesn't contain a package.json with a "main" entry.`,
     );
   }
 
