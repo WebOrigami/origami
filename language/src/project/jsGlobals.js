@@ -159,14 +159,6 @@ Object.defineProperty(globals, "globalThis", {
   value: globals,
 });
 
-async function fetchWrapper(resource, options) {
-  console.warn(
-    "Warning: A plain `fetch` reference will eventually call the standard JavaScript fetch() function. For Origami's fetch behavior, update your code to call Origami.fetch().",
-  );
-  const response = await fetch(resource, options);
-  return response.ok ? await response.arrayBuffer() : undefined;
-}
-
 /**
  * @typedef {import("@weborigami/async-tree").AsyncMap} AsyncMap
  *
