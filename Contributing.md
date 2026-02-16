@@ -2,7 +2,7 @@ Please read the section on [Respectful open source participation](ReadMe.md#resp
 
 ## Reporting bugs
 
-Bug reports are welcome. Most bugs on the project have been reported in the [Web Origami room](https://matrix.to/#/%23weborigami:envs.net) on [Matrix](https://matrix.org). This is very beneficial to the project in two ways: 1) other users who wouldn't normally monitor the GitHuba Issues area can contribute suggestions, and 2) bug reports or feature suggestions can be firmed up more interactively. In many cases the discussion leads to a better outcome that might have ensued with the semi-formal structure of a GitHub Issue.
+Bug reports are welcome. Most bugs on the project have been reported in the [Web Origami chat room](https://weborigami.zulipchat.com/login/). This is very beneficial to the project in two ways: 1) other users who wouldn't normally monitor the GitHuba Issues area can contribute suggestions, and 2) bug reports or feature suggestions can be firmed up more interactively. In many cases the discussion leads to a better outcome that might have ensued with the semi-formal structure of a GitHub Issue.
 
 ### Identifying a minimal reproduction case
 
@@ -31,7 +31,7 @@ Identifying the smallest breaking change may give you insight into what the actu
 
 ## Developing
 
-Before embarking on a non-trivial feature idea, it's a good idea to solicit feedback from someone. Contacting [Jan Miksovsky](https://jan.miksovsky.com) or posting on the [Web Origami room](https://matrix.to/#/%23weborigami:envs.net) are good places to start.
+Before embarking on a non-trivial feature idea, it's a good idea to solicit feedback from someone. Contacting [Jan Miksovsky](https://jan.miksovsky.com) or posting on the [Web Origami chat room](https://weborigami.zulipchat.com/login/) are good places to start.
 
 ### Setup
 

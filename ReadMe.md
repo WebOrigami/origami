@@ -38,7 +38,7 @@ For practical aspects of contributing to the project, see [Contributing](Contrib
 
 # Discussion
 
-If you'd like to ask questions, visit the [Web Origami room](https://matrix.to/#/%23weborigami:envs.net) on [Matrix](https://matrix.org).
+If you'd like to ask questions, visit the [Web Origami chat room](https://weborigami.zulipchat.com/login/).
 
 # Acknowledgments
 
