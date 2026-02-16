@@ -83,9 +83,13 @@ export default {
     }
 
     if (hasOriTags) {
-      // Resolve any promises in the deep data.
+      // Invoke any functions and resolve any promises in the deep data.
       const tree = Tree.from(data, { deep: true });
-      data = await Tree.reduce(tree, (mapped) => castArraylike(mapped));
+      data = await Tree.mapReduce(
+        tree,
+        async (value) => (value instanceof Function ? await value() : value),
+        (mapped) => castArraylike(mapped),
+      );
     }
 
     if (data && typeof data === "object" && Object.isExtensible(data)) {
