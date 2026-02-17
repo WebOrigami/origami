@@ -63,8 +63,8 @@ function beginDrain() {
   setTimeout(() => process.exit(0), HARD_MS).unref();
 }
 
-process.on("message", (message) => {
-  if (message && typeof message === "object" && message.type === "DRAIN") {
+process.on("message", (/** @type {any} */ message) => {
+  if (message?.type === "DRAIN") {
     beginDrain();
   }
 });

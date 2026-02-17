@@ -5,11 +5,16 @@ import http from "node:http";
 const PUBLIC_HOST = "127.0.0.1";
 const PUBLIC_PORT = 5000;
 
-// Module that loads the child server
+// Module that loads the server in the child process
 const childModuleUrl = new URL("./debugChild.js", import.meta.url);
 
-let active = null; // { child, port }
-let childPromise = null; // Promise to start child
+// The active child process and port
+/** @typedef {import("node:child_process").ChildProcess} ChildProcess */
+/** @type {{ process: ChildProcess, port: number } | null} */
+let activeChild = null;
+
+// Promise to start child
+let childPromise = null;
 
 /**
  * Given an Origami function, determine the runtime state's parent container,
@@ -20,6 +25,7 @@ let childPromise = null; // Promise to start child
  */
 export default async function debug2(state) {
   const { parent } = state;
+  // @ts-ignore
   const parentPath = parent?.path;
   if (parentPath === undefined) {
     throw new Error("Dev.debug2 couldn't work out the parent path.");
@@ -47,19 +53,19 @@ export default async function debug2(state) {
 debug2.needsState = true;
 
 /**
- * Give a previously-active child a chance to finish any in-flight requests
- * before we kill it.
+ * Give a child process a chance to finish any in-flight requests before we kill
+ * it.
+ *
+ * @param {ChildProcess} childProcess
  */
-async function drainAndStopChild(previous) {
-  if (!previous?.child || previous.child.killed) {
+async function drainAndStopChild(childProcess) {
+  if (childProcess.killed) {
     return;
   }
 
-  const child = previous.child;
-
   // Ask it to drain first.
   try {
-    child.send({ type: "DRAIN" });
+    childProcess.send({ type: "DRAIN" });
   } catch {
     // ignore
   }
@@ -73,13 +79,13 @@ async function drainAndStopChild(previous) {
     const onExit = () => cleanup(resolve);
 
     function cleanup(done) {
-      child.off("message", onMessage);
-      child.off("exit", onExit);
+      childProcess.off("message", onMessage);
+      childProcess.off("exit", onExit);
       done();
     }
 
-    child.on("message", onMessage);
-    child.on("exit", onExit);
+    childProcess.on("message", onMessage);
+    childProcess.on("exit", onExit);
   });
 
   // Give it a short grace window to finish in-flight work.
@@ -89,14 +95,14 @@ async function drainAndStopChild(previous) {
     new Promise((r) => setTimeout(r, GRACE_MS).unref()),
   ]);
 
-  if (!child.killed) {
-    child.kill("SIGTERM");
+  if (!childProcess.killed) {
+    childProcess.kill("SIGTERM");
   }
 
   // Final escalation.
   setTimeout(() => {
-    if (!child.killed) {
-      child.kill("SIGKILL");
+    if (!childProcess.killed) {
+      childProcess.kill("SIGKILL");
     }
   }, GRACE_MS).unref();
 }
@@ -105,18 +111,18 @@ async function drainAndStopChild(previous) {
  * Proxy incoming requests to the active child server, or return a 503 if not
  * ready.
  *
- * @param {Request} request
- * @param {Response} response
+ * @param {import("node:http").IncomingMessage} request
+ * @param {import("node:http").ServerResponse} response
  */
 function proxyRequest(request, response) {
-  if (!active) {
+  if (!activeChild) {
     response.statusCode = 503;
     response.setHeader("content-type", "text/plain; charset=utf-8");
     response.end("Dev server is starting…\n");
     return;
   }
 
-  const { port } = active;
+  const { port } = activeChild;
 
   // Minimal hop-by-hop header stripping
   const headers = { ...request.headers };
@@ -165,60 +171,69 @@ async function restartChild(serverOptions) {
 }
 
 function startChild(serverOptions) {
-  childPromise ??= new Promise((resolve, reject) => {
-    // Start the child process, passing parent path via an environment variable.
-    const child = fork(childModuleUrl, [], {
-      stdio: ["inherit", "inherit", "inherit", "ipc"],
-      env: {
-        ...process.env,
-        ORIGAMI_PARENT: serverOptions.parent,
-      },
-    });
+  childPromise ??= new Promise(
+    (
+      /** @type {(value?: void | PromiseLike<void>) => void} */ resolve,
+      /** @type {(reason?: any) => void} */ reject,
+    ) => {
+      // Start the child process, passing parent path via an environment variable.
+      const childProcess = fork(childModuleUrl, [], {
+        stdio: ["inherit", "inherit", "inherit", "ipc"],
+        env: {
+          ...process.env,
+          ORIGAMI_PARENT: serverOptions.parent,
+        },
+      });
 
-    let receivedChildReady = false;
+      let receivedChildReady = false;
 
-    child.on("message", (/** @type {any} */ message) => {
-      if (!message || typeof message !== "object") {
-        return;
-      }
-
-      if (message.type === "READY" && typeof message.port === "number") {
-        const previous = active;
-        active = { child, port: message.port };
-
-        // Drain previous child in background.
-        if (previous?.child && previous.child !== child) {
-          drainAndStopChild(previous).catch((err) =>
-            console.error("[drain]", err),
-          );
+      childProcess.on("message", (/** @type {any} */ message) => {
+        if (!message || typeof message !== "object") {
+          return;
         }
 
-        receivedChildReady = true;
-        childPromise = null;
-        resolve();
-      }
+        if (message.type === "READY" && typeof message.port === "number") {
+          // Make this child the active one
+          const previousChild = activeChild;
+          activeChild = { process: childProcess, port: message.port };
 
-      if (message.type === "FATAL") {
-        // Child couldn't start (import error, etc.)
-        // Keep previous active child if any; otherwise we'll serve 500/503.
-        console.error("[child fatal]", message.error ?? message);
-      }
-    });
+          // Drain previous child in background (don't wait)
+          if (
+            previousChild?.process &&
+            previousChild.process !== childProcess
+          ) {
+            drainAndStopChild(previousChild.process).catch((err) =>
+              console.error("[drain]", err),
+            );
+          }
 
-    child.on("exit", (code, signal) => {
-      if (!receivedChildReady) {
-        childPromise = null;
-        reject(
-          new Error(
-            `Child exited before READY (code=${code}, signal=${signal})`,
-          ),
-        );
-      } else if (active?.child === child) {
-        // Active child died unexpectedly.
-        active = null;
-      }
-    });
-  });
+          receivedChildReady = true;
+          childPromise = null;
+          resolve();
+        }
+
+        if (message.type === "FATAL") {
+          // Child couldn't start (import error, etc.)
+          // Keep previous active child if any; otherwise we'll serve 500/503.
+          console.error("[child fatal]", message.error ?? message);
+        }
+      });
+
+      childProcess.on("exit", (code, signal) => {
+        if (!receivedChildReady) {
+          childPromise = null;
+          reject(
+            new Error(
+              `Child exited before READY (code=${code}, signal=${signal})`,
+            ),
+          );
+        } else if (activeChild?.process === childProcess) {
+          // Active child died unexpectedly.
+          activeChild = null;
+        }
+      });
+    },
+  );
 
   return childPromise;
 }
