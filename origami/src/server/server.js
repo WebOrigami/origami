@@ -104,14 +104,7 @@ export function requestListener(maplike) {
   const tree = Tree.from(maplike);
   return async function (request, response) {
     console.log(decodeURI(request.url));
-    const handled = await handleRequest(request, response, tree);
-    if (!handled) {
-      // Ignore exceptions that come up with sending a Not Found response.
-      try {
-        response.writeHead(404, { "Content-Type": "text/html" });
-        response.end(`Not found`, "utf-8");
-      } catch (error) {}
-    }
+    await handleRequest(request, response, tree);
   };
 }
 
