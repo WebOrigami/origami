@@ -43,6 +43,9 @@ let result = await evaluate(expression, { globals, mode: "shell", parent });
 if (isUnpackable(result)) {
   result = await result.unpack;
 }
+if (result instanceof Function) {
+  result = await result();
+}
 if (!Tree.isMaplike(result)) {
   fail("Expression did not evaluate to a maplike resource tree");
 }
