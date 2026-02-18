@@ -6,9 +6,11 @@ import {
   Tree,
 } from "@weborigami/async-tree";
 import http from "node:http";
+import { transformObject } from "../../common/utilities.js";
 import indexPage from "../../origami/indexPage.js";
 import yaml from "../../origami/yaml.js";
 import { requestListener } from "../../server/server.js";
+import ExplorableSiteTransform from "../ExplorableSiteTransform.js";
 
 export default async function debugChildServer(maplike) {
   if (isUnpackable(maplike)) {
@@ -21,8 +23,11 @@ export default async function debugChildServer(maplike) {
     return null; // Caller will handle error
   }
 
+  const tree = Tree.from(maplike, { deep: true });
+  const transformed = transformObject(ExplorableSiteTransform, tree);
+
   // Use the result as the tree of resources
-  const listener = requestListener(maplike);
+  const listener = requestListener(transformed);
   const server = http.createServer(listener);
 
   return server;
