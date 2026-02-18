@@ -1,7 +1,5 @@
-import { isUnpackable, Tree } from "@weborigami/async-tree";
 import { evaluate, OrigamiFileMap, projectGlobals } from "@weborigami/language";
-import http from "node:http";
-import { requestListener } from "../../server/server.js";
+import debugChildServer from "./debugChildServer.js";
 
 /**
  * The debug2 command runs this module in a child process, passing in a parent
@@ -40,19 +38,13 @@ const parent = new OrigamiFileMap(parentPath);
 const globals = await projectGlobals(parent);
 let result = await evaluate(expression, { globals, mode: "shell", parent });
 
-if (isUnpackable(result)) {
-  result = await result.unpack;
-}
-if (result instanceof Function) {
-  result = await result();
-}
-if (!Tree.isMaplike(result)) {
+// Use the result to create the server
+/** @type {import("node:http").Server} */
+// @ts-ignore
+const server = await debugChildServer(result);
+if (!server) {
   fail("Expression did not evaluate to a maplike resource tree");
 }
-
-// Use the result as the tree of resources
-const listener = requestListener(result);
-const server = http.createServer(listener);
 
 // Track live connections so we can drain/close cleanly.
 const sockets = new Set();
