@@ -86,7 +86,9 @@ export function keysFromUrl(url) {
 
   // If the path ends with a trailing slash, the final key will be an empty
   // string. Change that to "index.html".
-  if (keys.at(-1) === "") {
+  if (keys.length === 0) {
+    keys.push("index.html");
+  } else if (keys.at(-1) === "") {
     keys[keys.length - 1] = "index.html";
   }
 
