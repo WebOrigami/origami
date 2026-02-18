@@ -23,6 +23,8 @@ function fail(message) {
   process.exit(1);
 }
 
+/** @type {string} */
+// @ts-ignore
 const expression = process.env.ORIGAMI_EXPRESSION;
 if (expression === undefined) {
   fail("Missing Origami expression");
