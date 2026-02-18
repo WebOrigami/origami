@@ -23,13 +23,22 @@ let pendingChild = null;
  * then start a new debug server with that parent as the root of the resource
  * tree.
  *
+ * This function expects an unevaluated expression. It will obtain the original
+ * source of the expression and pass that to the child for evaluation. This
+ * arrangement ensures the expression is evaluated in a clean Node context (not
+ * polluted by previous evaluations).
+ *
  * @param {import("@weborigami/language").AnnotatedCode} code
  * @param {import("@weborigami/language").RuntimeState} state
  */
 export default async function debug2(code, state) {
-  if (!(code instanceof Array) || arguments.length < 2) {
+  if (
+    !(code instanceof Array) ||
+    code.source === undefined ||
+    arguments.length < 2
+  ) {
     throw new TypeError(
-      "Dev.debug2 expects an expression to evaluate: `debug2 <expression>`",
+      "Dev.debug2 expects an Origami expression to evaluate: `debug2 <expression>`",
     );
   }
   const { parent } = state;
