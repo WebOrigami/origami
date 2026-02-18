@@ -1,4 +1,5 @@
-import { OrigamiFileMap } from "@weborigami/language";
+import { isUnpackable, Tree } from "@weborigami/async-tree";
+import { evaluate, OrigamiFileMap, projectGlobals } from "@weborigami/language";
 import http from "node:http";
 import { requestListener } from "../../server/server.js";
 
@@ -16,15 +17,39 @@ import { requestListener } from "../../server/server.js";
 
 const PUBLIC_HOST = "127.0.0.1";
 
-const parentPath = process.env.ORIGAMI_PARENT;
-if (!parentPath) {
-  process.send?.({ type: "FATAL", error: "Missing ORIGAMI_PARENT" });
+function fail(message) {
+  console.error(message);
+  process.send?.({ type: "FATAL", error: message });
   process.exit(1);
 }
 
-// Create a resource tree that will be used to handle requests.
-const tree = new OrigamiFileMap(parentPath);
-const listener = requestListener(tree);
+const expression = process.env.ORIGAMI_EXPRESSION;
+if (expression === undefined) {
+  fail("Missing Origami expression");
+}
+
+const parentPath = process.env.ORIGAMI_PARENT;
+if (parentPath === undefined) {
+  fail("Missing Origami parent");
+}
+
+// Evaluate the expression
+const parent = new OrigamiFileMap(parentPath);
+const globals = await projectGlobals(parent);
+let result = await evaluate(expression, { globals, mode: "shell", parent });
+
+if (isUnpackable(result)) {
+  result = await result.unpack;
+}
+if (result instanceof Function) {
+  result = await result();
+}
+if (!Tree.isMaplike(result)) {
+  fail("Expression did not evaluate to a maplike resource tree");
+}
+
+// Use the result as the tree of resources
+const listener = requestListener(result);
 const server = http.createServer(listener);
 
 // Track live connections so we can drain/close cleanly.

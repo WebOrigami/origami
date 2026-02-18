@@ -38,7 +38,9 @@ export default async function debug2(code, state) {
   if (parentPath === undefined) {
     throw new Error("Dev.debug2 couldn't work out the parent path.");
   }
+
   const serverOptions = {
+    expression: code.source,
     parent: parentPath,
   };
 
@@ -193,6 +195,8 @@ function proxyRequest(request, response) {
  * it becomes active and any previous active child is drained and stopped.
  */
 function startChild(serverOptions) {
+  const { expression, parent } = serverOptions;
+
   // Start the child process, passing parent path via an environment variable.
   /** @type {ChildProcess} */
   let childProcess;
@@ -201,7 +205,8 @@ function startChild(serverOptions) {
       stdio: ["inherit", "inherit", "inherit", "ipc"],
       env: {
         ...process.env,
-        ORIGAMI_PARENT: serverOptions.parent,
+        ORIGAMI_EXPRESSION: expression,
+        ORIGAMI_PARENT: parent,
       },
     });
   } catch (error) {
