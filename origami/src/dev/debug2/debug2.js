@@ -23,9 +23,15 @@ let pendingChild = null;
  * then start a new debug server with that parent as the root of the resource
  * tree.
  *
+ * @param {import("@weborigami/language").AnnotatedCode} code
  * @param {import("@weborigami/language").RuntimeState} state
  */
-export default async function debug2(state) {
+export default async function debug2(code, state) {
+  if (!(code instanceof Array) || arguments.length < 2) {
+    throw new TypeError(
+      "Dev.debug2 expects an expression to evaluate: `debug2 <expression>`",
+    );
+  }
   const { parent } = state;
   // @ts-ignore
   const parentPath = parent?.path;
@@ -53,6 +59,7 @@ export default async function debug2(state) {
   });
 }
 debug2.needsState = true;
+debug2.unevaluatedArgs = true;
 
 /**
  * Give a child process a chance to finish any in-flight requests before we kill

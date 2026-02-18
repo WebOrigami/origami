@@ -19,23 +19,13 @@ export default async function execute(code, state = {}) {
     return code;
   }
 
-  let evaluated;
-  if (code[0]?.unevaluatedArgs) {
-    // Don't evaluate instructions, use as is.
-    evaluated = code;
-  } else {
-    // Evaluate each instruction in the code.
-    evaluated = await Promise.all(
-      code.map((instruction) => execute(instruction, state)),
-    );
-  }
-
   // Add the code to the runtime state
   /** @type {import("../../index.ts").CodeContext} */
   const context = { state, code };
 
-  // The head of the array is a function or a map; the rest are args or keys.
-  let [fn, ...args] = evaluated;
+  // Start by evaluating the head of the instruction
+  const [head, ...tail] = code;
+  let fn = await execute(head, state);
 
   if (!fn) {
     // The code wants to invoke something that's couldn't be found in scope.
@@ -51,6 +41,17 @@ export default async function execute(code, state = {}) {
   if (isUnpackable(fn)) {
     // Unpack the object and use the result as the function or map.
     fn = await fn.unpack();
+  }
+
+  let args;
+  if (fn?.unevaluatedArgs) {
+    // Don't evaluate instructions, use as is.
+    args = tail;
+  } else {
+    // Evaluate each instruction in the code.
+    args = await Promise.all(
+      tail.map((instruction) => execute(instruction, state)),
+    );
   }
 
   if (fn.needsState) {
