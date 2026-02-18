@@ -2,6 +2,18 @@ import { OrigamiFileMap } from "@weborigami/language";
 import http from "node:http";
 import { requestListener } from "../../server/server.js";
 
+/**
+ * The debug2 command runs this module in a child process, passing in a parent
+ * path in an environment variable.
+ *
+ * This module starts an HTTP server that will serve resources from that tree.
+ * When the server is ready, it sends a message to the parent process with the
+ * port number. The parent then proxies incoming requests to that port.
+ *
+ * If the parent needs to start a new child process, it will tell the old one to
+ * drain any in-flight requests and stop accepting new ones.
+ */
+
 const PUBLIC_HOST = "127.0.0.1";
 
 const parentPath = process.env.ORIGAMI_PARENT;
@@ -10,6 +22,7 @@ if (!parentPath) {
   process.exit(1);
 }
 
+// Create a resource tree that will be used to handle requests.
 const tree = new OrigamiFileMap(parentPath);
 const listener = requestListener(tree);
 const server = http.createServer(listener);
@@ -63,17 +76,24 @@ function beginDrain() {
   setTimeout(() => process.exit(0), HARD_MS).unref();
 }
 
+// Drain when instructed by parent, or if parent dies.
 process.on("message", (/** @type {any} */ message) => {
   if (message?.type === "DRAIN") {
     beginDrain();
   }
 });
-
 process.on("SIGTERM", beginDrain);
 process.on("SIGINT", beginDrain);
 
-// Listen on ephemeral port and announce readiness.
+process.on("disconnect", () => {
+  // Parent process died, exit immediately
+  console.log("Parent process disconnected, exiting...");
+  process.exit(0);
+});
+
+// Listen on ephemeral port
 server.listen(0, PUBLIC_HOST, () => {
+  // Tell parent we're ready to receive requests on our port
   const address = server.address();
   const port = typeof address === "object" && address ? address.port : null;
   process.send?.({ type: "READY", port });

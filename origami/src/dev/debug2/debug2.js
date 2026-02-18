@@ -10,11 +10,13 @@ const childModuleUrl = new URL("./debugChild.js", import.meta.url);
 
 // The active child process and port
 /** @typedef {import("node:child_process").ChildProcess} ChildProcess */
-/** @type {{ process: ChildProcess, port: number } | null} */
+/** @typedef {{ process: ChildProcess, port: number | null }} ChildInfo */
+/** @type {ChildInfo | null} */
 let activeChild = null;
 
-// Promise to start child
-let childPromise = null;
+// The most recently started child (may not be ready yet)
+/** @type {ChildInfo | null} */
+let pendingChild = null;
 
 /**
  * Given an Origami function, determine the runtime state's parent container,
@@ -36,15 +38,15 @@ export default async function debug2(state) {
 
   const tree = new OrigamiFileMap(parentPath);
   tree.watch();
-  tree.addEventListener?.("change", async () => {
+  tree.addEventListener?.("change", () => {
     console.log("File change detected, restarting child server…");
-    await restartChild(serverOptions);
+    startChild(serverOptions);
   });
 
   // ---- Public server
   const publicServer = http.createServer(proxyRequest);
-  publicServer.listen(PUBLIC_PORT, PUBLIC_HOST, async () => {
-    await restartChild(serverOptions);
+  publicServer.listen(PUBLIC_PORT, PUBLIC_HOST, () => {
+    startChild(serverOptions);
     console.log(
       `Server running at http://localhost:${PUBLIC_PORT}. Press Ctrl+C to stop.`,
     );
@@ -101,6 +103,7 @@ async function drainAndStopChild(childProcess) {
 
   // Final escalation.
   setTimeout(() => {
+    // Child should have exited by now, but if not kill it
     if (!childProcess.killed) {
       childProcess.kill("SIGKILL");
     }
@@ -153,87 +156,101 @@ function proxyRequest(request, response) {
   );
 
   upstreamRequest.on("error", (err) => {
-    // Child may be restarting; return a friendly 502.
-    response.statusCode = 502;
-    response.setHeader("content-type", "text/plain; charset=utf-8");
-    response.end(`Upstream error: ${err.message}\n`);
+    // Stop piping the request body
+    request.unpipe(upstreamRequest);
+    upstreamRequest.destroy();
+
+    // Only send error response if headers haven't been sent yet
+    if (!response.headersSent) {
+      response.statusCode = 502;
+      response.setHeader("content-type", "text/plain; charset=utf-8");
+      response.end(`Upstream error: ${err.message}\n`);
+    } else {
+      // Headers already sent, can't send error message - just close
+      response.destroy();
+    }
+  });
+
+  // Also handle errors on the incoming request
+  request.on("error", () => {
+    upstreamRequest.destroy();
   });
 
   request.pipe(upstreamRequest);
 }
 
-async function restartChild(serverOptions) {
-  try {
-    await startChild(serverOptions);
-  } catch (error) {
-    console.error("Dev.debug2: failed to start child server:", error);
-  }
-}
-
+/**
+ * Start a new child process.
+ *
+ * This will be a pending process until it sends a READY message, at which point
+ * it becomes active and any previous active child is drained and stopped.
+ */
 function startChild(serverOptions) {
-  childPromise ??= new Promise(
-    (
-      /** @type {(value?: void | PromiseLike<void>) => void} */ resolve,
-      /** @type {(reason?: any) => void} */ reject,
-    ) => {
-      // Start the child process, passing parent path via an environment variable.
-      const childProcess = fork(childModuleUrl, [], {
-        stdio: ["inherit", "inherit", "inherit", "ipc"],
-        env: {
-          ...process.env,
-          ORIGAMI_PARENT: serverOptions.parent,
-        },
-      });
+  // Start the child process, passing parent path via an environment variable.
+  /** @type {ChildProcess} */
+  let childProcess;
+  try {
+    childProcess = fork(childModuleUrl, [], {
+      stdio: ["inherit", "inherit", "inherit", "ipc"],
+      env: {
+        ...process.env,
+        ORIGAMI_PARENT: serverOptions.parent,
+      },
+    });
+  } catch (error) {
+    throw new Error("Dev.debug2: failed to start child server:", {
+      cause: error,
+    });
+  }
 
-      let receivedChildReady = false;
+  // This becomes the pending child immediately
+  pendingChild = { process: childProcess, port: null };
 
-      childProcess.on("message", (/** @type {any} */ message) => {
-        if (!message || typeof message !== "object") {
-          return;
-        }
+  // Listen for messages from the child about its status
+  childProcess.on("message", (/** @type {any} */ message) => {
+    if (!message || typeof message !== "object") {
+      return;
+    }
 
-        if (message.type === "READY" && typeof message.port === "number") {
-          // Make this child the active one
-          const previousChild = activeChild;
-          activeChild = { process: childProcess, port: message.port };
+    if (message.type === "READY" && typeof message.port === "number") {
+      // Only promote to active if this is still the pending child
+      if (pendingChild?.process === childProcess) {
+        const previousChild = activeChild;
 
-          // Drain previous child in background (don't wait)
-          if (
-            previousChild?.process &&
-            previousChild.process !== childProcess
-          ) {
-            drainAndStopChild(previousChild.process).catch((err) =>
-              console.error("[drain]", err),
-            );
-          }
+        activeChild = pendingChild;
+        pendingChild.port = message.port;
+        pendingChild = null;
 
-          receivedChildReady = true;
-          childPromise = null;
-          resolve();
-        }
-
-        if (message.type === "FATAL") {
-          // Child couldn't start (import error, etc.)
-          // Keep previous active child if any; otherwise we'll serve 500/503.
-          console.error("[child fatal]", message.error ?? message);
-        }
-      });
-
-      childProcess.on("exit", (code, signal) => {
-        if (!receivedChildReady) {
-          childPromise = null;
-          reject(
-            new Error(
-              `Child exited before READY (code=${code}, signal=${signal})`,
-            ),
+        // Drain previous child in background (don't wait)
+        if (previousChild?.process && previousChild.process !== childProcess) {
+          drainAndStopChild(previousChild.process).catch((err) =>
+            console.error("[drain]", err),
           );
-        } else if (activeChild?.process === childProcess) {
-          // Active child died unexpectedly.
-          activeChild = null;
         }
-      });
-    },
-  );
+      } else {
+        // This child was superseded by a newer one, kill it
+        console.log("Child process superseded by newer one, killing it...");
+        childProcess.kill("SIGTERM");
+      }
+    }
 
-  return childPromise;
+    if (message.type === "FATAL") {
+      // Child couldn't start (import error, etc.)
+      // Keep previous active child if any; otherwise we'll serve 500/503.
+      console.error("[child fatal]", message.error ?? message);
+      if (pendingChild?.process === childProcess) {
+        pendingChild = null;
+      }
+    }
+  });
+
+  childProcess.on("exit", (code, signal) => {
+    if (activeChild?.process === childProcess) {
+      // Active child died unexpectedly.
+      activeChild = null;
+    }
+    if (pendingChild?.process === childProcess) {
+      pendingChild = null;
+    }
+  });
 }
