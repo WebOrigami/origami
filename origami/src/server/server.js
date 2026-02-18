@@ -1,4 +1,4 @@
-import { Tree, keysFromPath } from "@weborigami/async-tree";
+import { Tree, keysFromPath, trailingSlash } from "@weborigami/async-tree";
 import { formatError } from "@weborigami/language";
 import { ServerResponse } from "node:http";
 import constructResponse from "./constructResponse.js";
@@ -84,12 +84,10 @@ export function keysFromUrl(url) {
   const encodedKeys = keysFromPath(url.pathname);
   const keys = encodedKeys.map((key) => decodeURIComponent(key));
 
-  // If the path ends with a trailing slash, the final key will be an empty
-  // string. Change that to "index.html".
-  if (keys.length === 0) {
+  // If the keys array is empty (the path was just a trailing slash) or if the
+  // path ended with a slash, add "index.html" to the end of the keys.
+  if (keys.length === 0 || trailingSlash.has(keys.at(-1))) {
     keys.push("index.html");
-  } else if (keys.at(-1) === "") {
-    keys[keys.length - 1] = "index.html";
   }
 
   return keys;
