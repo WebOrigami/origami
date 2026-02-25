@@ -1039,9 +1039,9 @@ uriKey
 
 // A single character in a URI key
 uriKeyChar
-  // Accept anything that doesn't end the URI key or path
-  // Reject whitespace; see notes for `whitespace` term
-  = char:[^/,\)\]\}] !&{ return /\s/.test(char); } { return char; }
+  // Accept anything except whitespace (see notes for `whitespace` term),
+  // brackets, comma, or slash
+  = char:[^/,\(\[\{\)\]\}] !&{ return /\s/.test(char); } { return char; }
   / escapedChar
 
 // A slash-separated path of keys: `a/b/c`

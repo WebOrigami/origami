@@ -459,7 +459,7 @@ function peg$parse(input, options) {
   const peg$r19 = /^[^\n\r]/;
   const peg$r20 = /^[!+]/;
   const peg$r21 = /^[\/)\]}]/;
-  const peg$r22 = /^[^\/,)\]}]/;
+  const peg$r22 = /^[^\/,([{)\]}]/;
   const peg$r23 = /^[a-z]/;
   const peg$r24 = /^[a-z0-9+-.]/;
   const peg$r25 = /^[:]/;
@@ -589,7 +589,7 @@ function peg$parse(input, options) {
   const peg$e122 = peg$literalExpectation("await", false);
   const peg$e123 = peg$literalExpectation("typeof", false);
   const peg$e124 = peg$literalExpectation("void", false);
-  const peg$e125 = peg$classExpectation(["/", ",", ")", "]", "}"], true, false, false);
+  const peg$e125 = peg$classExpectation(["/", ",", "(", "[", "{", ")", "]", "}"], true, false, false);
   const peg$e126 = peg$otherExpectation("slash-separated path");
   const peg$e127 = peg$classExpectation([["a", "z"]], false, false, false);
   const peg$e128 = peg$classExpectation([["a", "z"], ["0", "9"], ["+", "."]], false, false, false);
