@@ -26,10 +26,15 @@ export default {
  * Supports multiple commands, pipelines, redirects, etc.
  *
  * @param {string} scriptText - Shell code (may contain newlines/side effects)
- * @param {string} inputText  - Text to pipe to the script's stdin
+ * @param {import("@weborigami/async-tree").Stringlike} inputText  - Text to pipe to the script's stdin
  * @returns {Promise<string>}
  */
 function runShellScript(scriptText, inputText) {
+  if (inputText instanceof Function) {
+    throw new Error(
+      "A .sh file expects text input but got a function instead. Did you mean to invoke the function?",
+    );
+  }
   return new Promise((resolve, reject) => {
     // Use sh -c "<scriptText>" so stdin is free for inputText
     const child = spawn("sh", ["-c", scriptText], {
@@ -49,7 +54,7 @@ function runShellScript(scriptText, inputText) {
       if (code !== 0) {
         /** @type {any} */
         const err = new Error(
-          `Shell exited with code ${code}${stderr ? `: ${stderr}` : ""}`
+          `Shell exited with code ${code}${stderr ? `: ${stderr}` : ""}`,
         );
         err.code = code;
         err.stdout = stdout;
