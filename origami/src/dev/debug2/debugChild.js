@@ -1,3 +1,5 @@
+import http from "node:http";
+import { requestListener } from "../../server/server.js";
 import debugChildServer from "./debugChildServer.js";
 
 /**
@@ -32,13 +34,15 @@ if (parentPath === undefined) {
   fail("Missing Origami parent");
 }
 
-// Use the result to create the server
-/** @type {import("node:http").Server} */
-// @ts-ignore
-const server = await debugChildServer(expression, parentPath);
-if (!server) {
-  fail("Dev.debug2: expression did not evaluate to a maplike resource tree");
-}
+// An indirect pointer to the tree of resources;
+let treeHandle = {};
+
+// Initial evaluation of the expression
+await evaluateExpression();
+
+// Serve the tree of resources
+const listener = requestListener(treeHandle);
+const server = http.createServer(listener);
 
 // Track live connections so we can drain/close cleanly.
 const sockets = new Set();
@@ -54,14 +58,6 @@ server.headersTimeout = 5000;
 // Draining state
 let draining = false;
 let serverClosed = false;
-
-function maybeFinishDrain() {
-  if (!draining) return;
-  if (serverClosed && sockets.size === 0) {
-    process.send?.({ type: "DRAINED" });
-    process.exit(0);
-  }
-}
 
 function beginDrain() {
   if (draining) return;
@@ -89,10 +85,28 @@ function beginDrain() {
   setTimeout(() => process.exit(0), HARD_MS).unref();
 }
 
+async function evaluateExpression() {
+  const tree = await debugChildServer(expression, parentPath);
+  if (!tree) {
+    fail("Dev.debug2: expression did not evaluate to a maplike resource tree");
+  }
+  Object.setPrototypeOf(treeHandle, tree);
+}
+
+function maybeFinishDrain() {
+  if (!draining) return;
+  if (serverClosed && sockets.size === 0) {
+    process.send?.({ type: "DRAINED" });
+    process.exit(0);
+  }
+}
+
 // Drain when instructed by parent, or if parent dies.
-process.on("message", (/** @type {any} */ message) => {
+process.on("message", async (/** @type {any} */ message) => {
   if (message?.type === "DRAIN") {
     beginDrain();
+  } else if (message?.type === "REEVALUATE") {
+    await evaluateExpression();
   }
 });
 process.on("SIGTERM", beginDrain);

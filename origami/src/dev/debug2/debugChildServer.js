@@ -6,10 +6,8 @@ import {
   Tree,
 } from "@weborigami/async-tree";
 import { evaluate, OrigamiFileMap, projectGlobals } from "@weborigami/language";
-import http from "node:http";
 import indexPage from "../../origami/indexPage.js";
 import yaml from "../../origami/yaml.js";
-import { requestListener } from "../../server/server.js";
 import mergeDebugResources from "./mergeDebugResources.js";
 
 export default async function debugChildServer(expression, parentPath) {
@@ -32,11 +30,7 @@ export default async function debugChildServer(expression, parentPath) {
   // Add debugging resources
   const merged = mergeDebugResources(maplike);
 
-  // Use the result as the tree of resources
-  const listener = requestListener(merged);
-  const server = http.createServer(listener);
-
-  return server;
+  return merged;
 }
 
 /**

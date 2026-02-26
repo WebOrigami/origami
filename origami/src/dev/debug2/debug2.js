@@ -60,8 +60,13 @@ export default async function debug2(code, state) {
     // @ts-ignore
     const { filePath } = event.options;
     if (isJavaScriptFile(filePath) || isPackageJsonFile(filePath)) {
+      // Need to restart the child process
       console.log("Node.js file changed, restarting child server…");
       startChild(serverOptions);
+    } else {
+      // Just have the child reevaluate the expression
+      console.log("File changed, reevaluating expression…");
+      activeChild?.process.send({ type: "REEVALUATE" });
     }
   });
 
