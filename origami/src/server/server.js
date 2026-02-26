@@ -64,11 +64,12 @@ export async function handleRequest(request, response, map) {
       resource = data ? await resource(data) : await resource();
     }
 
-    // Construct the response.
-    const constructed = await constructResponse(request, resource);
-    if (!constructed) {
+    if (resource == null) {
       return false;
     }
+
+    // Construct the response.
+    const constructed = await constructResponse(request, resource);
 
     // Copy the construct response to the ServerResponse and return true if
     // the response was valid.
@@ -104,7 +105,13 @@ export function requestListener(maplike) {
   const tree = Tree.from(maplike);
   return async function (request, response) {
     console.log(decodeURI(request.url));
-    await handleRequest(request, response, tree);
+    const handled = await handleRequest(request, response, tree);
+    if (!handled) {
+      // Not found, return a 404.
+      response.statusCode = 404;
+      response.statusMessage = "Not Found";
+      response.end("Not Found", "utf-8");
+    }
   };
 }
 

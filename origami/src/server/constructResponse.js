@@ -14,19 +14,16 @@ const TypedArray = Object.getPrototypeOf(Uint8Array);
 
 /**
  * Given a resource that was returned from a route, construct an appropriate
- * HTTP Response indicating what should be sent to the client. Return null
- * if the resource is not a valid response.
+ * HTTP Response indicating what should be sent to the client.
  *
  * @param {import("node:http").IncomingMessage} request
  * @param {any} resource
- * @returns {Promise<Response|null>}
+ * @returns {Promise<Response>}
  */
 export default async function constructResponse(request, resource) {
   if (resource instanceof Response) {
     // Already a Response, return as is.
     return resource;
-  } else if (resource == null) {
-    return null;
   }
 
   // Determine media type, what data we'll send, and encoding.
@@ -114,10 +111,9 @@ export default async function constructResponse(request, resource) {
   const validResponse = isPacked(body);
   if (!validResponse) {
     const typeName = body?.constructor?.name ?? typeof body;
-    console.error(
+    throw new Error(
       `A served tree must return a string or a TypedArray but returned an instance of ${typeName}.`,
     );
-    return null;
   }
 
   const options = mediaType ? { headers: { "Content-Type": mediaType } } : {};
