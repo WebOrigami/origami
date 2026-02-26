@@ -91,6 +91,19 @@ async function evaluateExpression() {
     fail("Dev.debug2: expression did not evaluate to a maplike resource tree");
   }
   Object.setPrototypeOf(treeHandle, tree);
+
+  // Clean the handle of any named properties or symbols that have been set
+  // directly on it.
+  try {
+    for (const key of Object.getOwnPropertyNames(treeHandle)) {
+      delete treeHandle[key];
+    }
+    for (const key of Object.getOwnPropertySymbols(treeHandle)) {
+      delete treeHandle[key];
+    }
+  } catch {
+    // Ignore errors.
+  }
 }
 
 function maybeFinishDrain() {

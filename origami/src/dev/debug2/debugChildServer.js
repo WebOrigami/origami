@@ -10,6 +10,8 @@ import indexPage from "../../origami/indexPage.js";
 import yaml from "../../origami/yaml.js";
 import mergeDebugResources from "./mergeDebugResources.js";
 
+let version = 0;
+
 export default async function debugChildServer(expression, parentPath) {
   // Evaluate the expression
   const parent = new OrigamiFileMap(parentPath);
@@ -29,6 +31,8 @@ export default async function debugChildServer(expression, parentPath) {
 
   // Add debugging resources
   const merged = mergeDebugResources(maplike);
+
+  merged.version = version++;
 
   return merged;
 }
