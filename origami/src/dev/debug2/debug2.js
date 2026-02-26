@@ -1,6 +1,7 @@
 import { OrigamiFileMap } from "@weborigami/language";
 import { fork } from "node:child_process";
 import http from "node:http";
+import path from "node:path";
 
 const PUBLIC_HOST = "127.0.0.1";
 const PUBLIC_PORT = 5000;
@@ -55,9 +56,13 @@ export default async function debug2(code, state) {
 
   const tree = new OrigamiFileMap(parentPath);
   tree.watch();
-  tree.addEventListener?.("change", () => {
-    console.log("File change detected, restarting child server…");
-    startChild(serverOptions);
+  tree.addEventListener?.("change", (event) => {
+    // @ts-ignore
+    const { filePath } = event.options;
+    if (isJavaScriptFile(filePath) || isPackageJsonFile(filePath)) {
+      console.log("Node.js file changed, restarting child server…");
+      startChild(serverOptions);
+    }
   });
 
   // ---- Public server
@@ -126,6 +131,16 @@ async function drainAndStopChild(childProcess) {
       childProcess.kill("SIGKILL");
     }
   }, GRACE_MS).unref();
+}
+
+function isJavaScriptFile(filePath) {
+  const extname = path.extname(filePath).toLowerCase();
+  const jsExtensions = [".cjs", ".js", ".mjs", ".ts"];
+  return jsExtensions.includes(extname);
+}
+
+function isPackageJsonFile(filePath) {
+  return path.basename(filePath).toLowerCase() === "package.json";
 }
 
 /**
