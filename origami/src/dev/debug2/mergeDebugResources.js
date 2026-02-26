@@ -1,14 +1,28 @@
-import { Tree, jsonKeys } from "@weborigami/async-tree";
+import {
+  AsyncMap,
+  Tree,
+  isUnpackable,
+  jsonKeys,
+  scope,
+  trailingSlash,
+} from "@weborigami/async-tree";
+import { projectGlobals } from "@weborigami/language";
 import indexPage from "../../origami/indexPage.js";
 
 /**
- * Extend the given map-based tree with debugging resources
+ * Extend the given map-based tree with debugging resources:
+ *
+ * - default index.html page
+ * - default .keys.json resource
+ * - support for invoking Origami commands via keys starting with '!'
  *
  * @param {import("@weborigami/async-tree").Maplike} maplike
  */
 export default function mergeDebugResources(maplike) {
   const source = Tree.from(maplike);
-  return {
+  return Object.assign(new AsyncMap(), {
+    description: "debug resources",
+
     async get(key) {
       // Ask the tree if it has the key.
       let value = await source.get(key);
@@ -20,6 +34,8 @@ export default function mergeDebugResources(maplike) {
           value = await indexPage(source);
         } else if (key === ".keys.json") {
           value = await jsonKeys.stringify(source);
+        } else if (typeof key === "string" && key.startsWith("!")) {
+          return await invokeOrigamiCommand(source, key);
         }
       }
 
@@ -54,5 +70,32 @@ export default function mergeDebugResources(maplike) {
     },
 
     source,
-  };
+  });
+}
+
+async function invokeOrigamiCommand(tree, key) {
+  // Key is an Origami command; invoke it.
+  const globals = await projectGlobals(tree);
+  const commandName = trailingSlash.remove(key.slice(1).trim());
+
+  // Look for command as a global or Dev command
+  const command = globals[commandName] ?? globals.Dev?.[commandName];
+  let value;
+  if (command) {
+    value = await command(tree);
+  } else {
+    // Look for command in scope
+    const parentScope = await scope(tree);
+    value = await parentScope.get(commandName);
+
+    if (value === undefined) {
+      throw new Error(`Unknown Origami command: ${commandName}`);
+    }
+  }
+
+  if (trailingSlash.has(key) && isUnpackable(value)) {
+    value = await value.unpack();
+  }
+
+  return value;
 }

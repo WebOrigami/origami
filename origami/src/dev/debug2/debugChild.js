@@ -36,7 +36,7 @@ if (parentPath === undefined) {
 // Evaluate the expression
 const parent = new OrigamiFileMap(parentPath);
 const globals = await projectGlobals(parent);
-let result = await evaluate(expression, { globals, mode: "shell", parent });
+const result = await evaluate(expression, { globals, mode: "shell", parent });
 
 // Use the result to create the server
 /** @type {import("node:http").Server} */

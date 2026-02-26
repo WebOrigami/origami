@@ -6,15 +6,14 @@ import {
   Tree,
 } from "@weborigami/async-tree";
 import http from "node:http";
-import { transformObject } from "../../common/utilities.js";
 import indexPage from "../../origami/indexPage.js";
 import yaml from "../../origami/yaml.js";
 import { requestListener } from "../../server/server.js";
-import ExplorableSiteTransform from "../ExplorableSiteTransform.js";
+import mergeDebugResources from "./mergeDebugResources.js";
 
 export default async function debugChildServer(maplike) {
   if (isUnpackable(maplike)) {
-    maplike = await maplike.unpack;
+    maplike = await maplike.unpack();
   }
   if (maplike instanceof Function) {
     maplike = await maplike();
@@ -24,10 +23,12 @@ export default async function debugChildServer(maplike) {
   }
 
   const tree = Tree.from(maplike, { deep: true });
-  const transformed = transformObject(ExplorableSiteTransform, tree);
+
+  // Add debugging resources
+  const merged = mergeDebugResources(tree);
 
   // Use the result as the tree of resources
-  const listener = requestListener(transformed);
+  const listener = requestListener(merged);
   const server = http.createServer(listener);
 
   return server;

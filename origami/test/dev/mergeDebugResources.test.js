@@ -8,9 +8,26 @@ describe("mergeDebugResources", () => {
       firstKey: 1,
       secondKey: 2,
     };
-    const merged = mergeDebugResources(obj);
-    const indexHtml = await merged.get("index.html");
+    const tree = mergeDebugResources(obj);
+    const indexHtml = await tree.get("index.html");
     assert(indexHtml.includes("firstKey"));
     assert(indexHtml.includes("secondKey"));
+  });
+
+  test("prefers value defined by base tree even if it starts with '!'", async () => {
+    const tree = mergeDebugResources({
+      "!yaml": "foo",
+    });
+    const value = await tree.get("!yaml");
+    assert.equal(value, "foo");
+  });
+
+  test("evaluates an Origami expression using the current tree", async () => {
+    const tree = mergeDebugResources({
+      a: 1,
+      b: 2,
+    });
+    const value = await tree.get("!keys");
+    assert.deepEqual(value, ["a", "b"]);
   });
 });
