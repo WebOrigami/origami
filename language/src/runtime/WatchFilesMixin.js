@@ -1,4 +1,5 @@
 import * as fs from "node:fs";
+import path from "node:path";
 import Watcher from "watcher";
 import TreeEvent from "./TreeEvent.js";
 
@@ -17,6 +18,12 @@ export default function WatchFilesMixin(Base) {
     onChange(filePath) {
       // Reset cached values.
       this.subfoldersMap = new Map();
+
+      // Special case: ignore events in .git folder
+      if (filePath.includes(`${path.sep}.git${path.sep}`)) {
+        return;
+      }
+
       this.dispatchEvent(new TreeEvent("change", { filePath }));
     }
 
