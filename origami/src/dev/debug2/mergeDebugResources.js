@@ -19,7 +19,7 @@ import indexPage from "../../origami/indexPage.js";
  * @param {import("@weborigami/async-tree").Maplike} maplike
  */
 export default function mergeDebugResources(maplike) {
-  const source = Tree.from(maplike);
+  const source = Tree.from(maplike, { deep: true });
   return Object.assign(new AsyncMap(), {
     description: "debug resources",
 

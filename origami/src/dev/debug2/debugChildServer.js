@@ -5,16 +5,23 @@ import {
   isUnpackable,
   Tree,
 } from "@weborigami/async-tree";
+import { evaluate, OrigamiFileMap, projectGlobals } from "@weborigami/language";
 import http from "node:http";
 import indexPage from "../../origami/indexPage.js";
 import yaml from "../../origami/yaml.js";
 import { requestListener } from "../../server/server.js";
 import mergeDebugResources from "./mergeDebugResources.js";
 
-export default async function debugChildServer(maplike) {
+export default async function debugChildServer(expression, parentPath) {
+  // Evaluate the expression
+  const parent = new OrigamiFileMap(parentPath);
+  const globals = await projectGlobals(parent);
+  let maplike = await evaluate(expression, { globals, mode: "shell", parent });
+
   if (isUnpackable(maplike)) {
     maplike = await maplike.unpack();
   }
+  // REVIEW: why did we need this?
   if (maplike instanceof Function) {
     maplike = await maplike();
   }
@@ -22,10 +29,8 @@ export default async function debugChildServer(maplike) {
     return null; // Caller will handle error
   }
 
-  const tree = Tree.from(maplike, { deep: true });
-
   // Add debugging resources
-  const merged = mergeDebugResources(tree);
+  const merged = mergeDebugResources(maplike);
 
   // Use the result as the tree of resources
   const listener = requestListener(merged);

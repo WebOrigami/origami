@@ -1,4 +1,3 @@
-import { evaluate, OrigamiFileMap, projectGlobals } from "@weborigami/language";
 import debugChildServer from "./debugChildServer.js";
 
 /**
@@ -33,17 +32,12 @@ if (parentPath === undefined) {
   fail("Missing Origami parent");
 }
 
-// Evaluate the expression
-const parent = new OrigamiFileMap(parentPath);
-const globals = await projectGlobals(parent);
-const result = await evaluate(expression, { globals, mode: "shell", parent });
-
 // Use the result to create the server
 /** @type {import("node:http").Server} */
 // @ts-ignore
-const server = await debugChildServer(result);
+const server = await debugChildServer(expression, parentPath);
 if (!server) {
-  fail("Expression did not evaluate to a maplike resource tree");
+  fail("Dev.debug2: expression did not evaluate to a maplike resource tree");
 }
 
 // Track live connections so we can drain/close cleanly.
