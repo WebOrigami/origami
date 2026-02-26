@@ -45,6 +45,9 @@ Dev:
     version:
       args: ()
       description: Return the version number of the Origami language
+    visit:
+      args: (tree)
+      description: Force reading of all values from the tree
     watch:
       args: (tree, fn)
       description: Reevaluate fn when tree changes
