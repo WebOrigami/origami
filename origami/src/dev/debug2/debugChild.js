@@ -1,6 +1,6 @@
 import http from "node:http";
 import { requestListener } from "../../server/server.js";
-import debugChildServer from "./debugChildServer.js";
+import expressionTree from "./expressionTree.js";
 
 /**
  * The debug2 command runs this module in a child process, passing in a parent
@@ -29,6 +29,8 @@ if (expression === undefined) {
   fail("Missing Origami expression");
 }
 
+/** @type {string} */
+// @ts-ignore
 const parentPath = process.env.ORIGAMI_PARENT;
 if (parentPath === undefined) {
   fail("Missing Origami parent");
@@ -86,7 +88,7 @@ function beginDrain() {
 }
 
 async function evaluateExpression() {
-  const tree = await debugChildServer(expression, parentPath);
+  const tree = await expressionTree(expression, parentPath);
   if (!tree) {
     fail("Dev.debug2: expression did not evaluate to a maplike resource tree");
   }
