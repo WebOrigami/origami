@@ -1,16 +1,6 @@
-import {
-  extension,
-  isPacked,
-  isPlainObject,
-  isStringlike,
-  SiteMap,
-  toString,
-  Tree,
-} from "@weborigami/async-tree";
-import * as serialize from "../common/serialize.js";
+import { extension, isPacked, toString, Tree } from "@weborigami/async-tree";
+import { computedMIMEType } from "whatwg-mimetype";
 import { mediaTypeForExtension } from "./mediaTypes.js";
-
-const TypedArray = Object.getPrototypeOf(Uint8Array);
 
 /**
  * Given a resource that was returned from a route, construct an appropriate
@@ -50,59 +40,47 @@ export default async function constructResponse(request, resource) {
     }
   }
 
+  let body = resource;
+  if (!isPacked(resource)) {
+    // Can we treat it as text?
+    const text = toString(resource);
+    if (text) {
+      body = text;
+    }
+  }
+
+  // Determine MIME type
   let mediaType;
   if (resource.mediaType) {
     // Resource indicates its own media type.
     mediaType = resource.mediaType;
   } else {
-    // Infer expected media type from file extension on request URL.
+    // Do we know the media type based on the URL extension?
     const ext = extension.extname(url.pathname).toLowerCase();
-    mediaType = ext ? mediaTypeForExtension[ext] : undefined;
-  }
-
-  if (
-    (mediaType === "application/json" || mediaType === "text/yaml") &&
-    !isStringlike(resource)
-  ) {
-    // The request is for a JSON or YAML result, and the resource we got isn't
-    // yet a string: convert the resource to JSON or YAML now.
-    const tree = Tree.from(resource);
-    resource =
-      mediaType === "text/yaml"
-        ? await serialize.toYaml(tree)
-        : await serialize.toJson(tree);
-  } else if (
-    mediaType === undefined &&
-    (isPlainObject(resource) || resource instanceof Array)
-  ) {
-    // The resource is data, try showing it as YAML.
-    const tree = Tree.from(resource);
-    resource = await serialize.toYaml(tree);
-    mediaType = "text/yaml";
-  }
-
-  // By default, the body will be the resource we got
-  let body = resource;
-  if (!mediaType) {
-    // Maybe it's HTML?
-    const text = toString(resource);
-    if (text) {
-      mediaType = maybeHtml(text) ? "text/html" : "text/plain";
-      mediaType += "; charset=utf-8";
-      body = text;
-    }
-  } else if (
-    body instanceof TypedArray &&
-    mediaType &&
-    SiteMap.mediaTypeIsText(mediaType) &&
-    !mediaType.includes("charset")
-  ) {
-    // See if text is encoded in UTF-8.
-    const text = toString(resource);
-    if (text !== null) {
-      // We were able to decode the TypedArray as UTF-8 text.
-      body = text;
-      mediaType += "; charset=utf-8";
+    const extensionMediaType = ext ? mediaTypeForExtension[ext] : undefined;
+    if (extensionMediaType) {
+      mediaType = extensionMediaType;
+    } else {
+      // Use MIME Sniffing Standard to determine media type
+      const bytes =
+        typeof body === "string" ? new TextEncoder().encode(body) : body;
+      let sniffedType;
+      try {
+        sniffedType = computedMIMEType(bytes);
+      } catch (error) {
+        // Ignore sniffing errors
+      }
+      if (sniffedType) {
+        if (
+          typeof body === "string" &&
+          sniffedType.essence === "application/octet-stream"
+        ) {
+          // Prefer text/plain for strings
+          mediaType = "text/plain";
+        } else {
+          mediaType = sniffedType.toString();
+        }
+      }
     }
   }
 
@@ -119,26 +97,4 @@ export default async function constructResponse(request, resource) {
   const options = mediaType ? { headers: { "Content-Type": mediaType } } : {};
   const response = new Response(body, options);
   return response;
-}
-
-// Return true if the resource appears to represent HTML
-function maybeHtml(text) {
-  if (!text) {
-    return false;
-  }
-  if (text.startsWith("<!DOCTYPE html>")) {
-    return true;
-  }
-  if (text.startsWith("<!--")) {
-    return true;
-  }
-  // Check if the text starts with an HTML tag.
-  // - start with possible whitespace
-  // - followed by '<'
-  // - followed by a letter
-  // - followed maybe by letters, digits, hyphens, underscores, colons, or periods
-  // - followed by '>', or
-  // - followed by whitespace, anything that's not '>', then a '>'
-  const tagRegex = /^\s*<[a-zA-Z][a-zA-Z0-9-_:\.]*(>|[\s]+[^>]*>)/;
-  return tagRegex.test(text);
 }
