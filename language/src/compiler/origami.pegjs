@@ -845,8 +845,10 @@ relationalExpression
   // We disallow a newline before the relational operator to support a newline
   // as a separator in an object literal that has an object shorthand property
   // with an angle bracket path. Otherwise the opening angle bracket would be
-  // interpreted as a relational operator.
-  = head:shiftExpression tail:(inlineSpace @relationalOperator __ @shiftExpression)* {
+  // interpreted as a relational operator. In shell mode we require a space to
+  // avoid ambiguity with an angle bracket literal as an argument in an implicit
+  // parentheses call.
+  = head:shiftExpression tail:(inlineSpace @relationalOperator whitespaceRequiredForShell @shiftExpression)* {
       return tail.reduce(makeBinaryOperation, head);
     }
 
@@ -1070,6 +1072,10 @@ whitespaceChar
 whitespaceOptionalForProgram
   = programMode __
   / shellMode
+
+whitespaceRequiredForShell
+  = shellMode whitespace
+  / programMode __
 
 whitespaceOrParenthesis
   = whitespace

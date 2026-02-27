@@ -357,6 +357,7 @@ function peg$parse(input, options) {
     whitespace: peg$parsewhitespace,
     whitespaceChar: peg$parsewhitespaceChar,
     whitespaceOptionalForProgram: peg$parsewhitespaceOptionalForProgram,
+    whitespaceRequiredForShell: peg$parsewhitespaceRequiredForShell,
     whitespaceOrParenthesis: peg$parsewhitespaceOrParenthesis,
     whitespaceWithNewLine: peg$parsewhitespaceWithNewLine,
   };
@@ -6313,10 +6314,15 @@ function peg$parse(input, options) {
       if (s4 !== peg$FAILED) {
         s5 = peg$parserelationalOperator();
         if (s5 !== peg$FAILED) {
-          s6 = peg$parse__();
-          s7 = peg$parseshiftExpression();
-          if (s7 !== peg$FAILED) {
-            s3 = [ s5, s7 ];
+          s6 = peg$parsewhitespaceRequiredForShell();
+          if (s6 !== peg$FAILED) {
+            s7 = peg$parseshiftExpression();
+            if (s7 !== peg$FAILED) {
+              s3 = [ s5, s7 ];
+            } else {
+              peg$currPos = s3;
+              s3 = peg$FAILED;
+            }
           } else {
             peg$currPos = s3;
             s3 = peg$FAILED;
@@ -6336,10 +6342,15 @@ function peg$parse(input, options) {
         if (s4 !== peg$FAILED) {
           s5 = peg$parserelationalOperator();
           if (s5 !== peg$FAILED) {
-            s6 = peg$parse__();
-            s7 = peg$parseshiftExpression();
-            if (s7 !== peg$FAILED) {
-              s3 = [ s5, s7 ];
+            s6 = peg$parsewhitespaceRequiredForShell();
+            if (s6 !== peg$FAILED) {
+              s7 = peg$parseshiftExpression();
+              if (s7 !== peg$FAILED) {
+                s3 = [ s5, s7 ];
+              } else {
+                peg$currPos = s3;
+                s3 = peg$FAILED;
+              }
             } else {
               peg$currPos = s3;
               s3 = peg$FAILED;
@@ -7834,6 +7845,40 @@ function peg$parse(input, options) {
     return s0;
   }
 
+  function peg$parsewhitespaceRequiredForShell() {
+    let s0, s1, s2;
+
+    s0 = peg$currPos;
+    s1 = peg$parseshellMode();
+    if (s1 !== peg$FAILED) {
+      s2 = peg$parsewhitespace();
+      if (s2 !== peg$FAILED) {
+        s1 = [s1, s2];
+        s0 = s1;
+      } else {
+        peg$currPos = s0;
+        s0 = peg$FAILED;
+      }
+    } else {
+      peg$currPos = s0;
+      s0 = peg$FAILED;
+    }
+    if (s0 === peg$FAILED) {
+      s0 = peg$currPos;
+      s1 = peg$parseprogramMode();
+      if (s1 !== peg$FAILED) {
+        s2 = peg$parse__();
+        s1 = [s1, s2];
+        s0 = s1;
+      } else {
+        peg$currPos = s0;
+        s0 = peg$FAILED;
+      }
+    }
+
+    return s0;
+  }
+
   function peg$parsewhitespaceOrParenthesis() {
     let s0;
 
@@ -8075,6 +8120,7 @@ const peg$allowedStartRules = [
   "whitespace",
   "whitespaceChar",
   "whitespaceOptionalForProgram",
+  "whitespaceRequiredForShell",
   "whitespaceOrParenthesis",
   "whitespaceWithNewLine"
 ];
