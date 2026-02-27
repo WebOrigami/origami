@@ -1,6 +1,9 @@
 import {
   AsyncMap,
   Tree,
+  box,
+  isPlainObject,
+  isPrimitive,
   isUnpackable,
   jsonKeys,
   scope,
@@ -8,17 +11,20 @@ import {
 } from "@weborigami/async-tree";
 import { projectGlobals } from "@weborigami/language";
 import indexPage from "../../origami/indexPage.js";
+import yaml from "../../origami/yaml.js";
 
 /**
- * Extend the given map-based tree with debugging resources:
+ * Transform the given map-based tree to add debugging resources:
  *
  * - default index.html page
  * - default .keys.json resource
  * - support for invoking Origami commands via keys starting with '!'
  *
+ * Also transform a simple object result to YAML for viewing.
+ *
  * @param {import("@weborigami/async-tree").Maplike} maplike
  */
-export default function mergeDebugResources(maplike) {
+export default function debugTransform(maplike) {
   const source = Tree.from(maplike, { deep: true });
   return Object.assign(new AsyncMap(), {
     description: "debug resources",
@@ -35,13 +41,27 @@ export default function mergeDebugResources(maplike) {
         } else if (key === ".keys.json") {
           value = await jsonKeys.stringify(source);
         } else if (typeof key === "string" && key.startsWith("!")) {
-          return await invokeOrigamiCommand(source, key);
+          value = await invokeOrigamiCommand(source, key);
         }
+      }
+
+      if (isSimpleObject(value)) {
+        // Serialize to YAML, but also allow the result to be further traversed
+        const object = value;
+        const yamlText = await yaml(object);
+        value = box(yamlText);
+        value.unpack = () =>
+          Tree.merge(object, {
+            "index.html": yamlText,
+          });
+      } else if (Tree.isMaplike(value) && !Tree.isMap(value)) {
+        // Make it a map so we can debug it
+        value = Tree.from(value);
       }
 
       if (Tree.isMap(value)) {
         // Ensure this transform is applied to any map result
-        value = mergeDebugResources(value);
+        value = debugTransform(value);
       } else if (value?.unpack) {
         // If the value isn't a tree, but has a tree attached via an `unpack`
         // method, wrap the unpack method to add this transform.
@@ -53,7 +73,7 @@ export default function mergeDebugResources(maplike) {
           }
           /** @type {any} */
           let tree = Tree.from(content);
-          return mergeDebugResources(tree);
+          return debugTransform(tree);
         };
       }
       return value;
@@ -70,6 +90,8 @@ export default function mergeDebugResources(maplike) {
     },
 
     source,
+
+    trailingSlashKeys: true,
   });
 }
 
@@ -98,4 +120,33 @@ async function invokeOrigamiCommand(tree, key) {
   }
 
   return value;
+}
+
+/**
+ * Returns true if the object is "simple": a plain object or array that does not
+ * have any getters in its deep structure.
+ *
+ * This test is used to avoid serializing complex objects to YAML.
+ *
+ * @param {any} object
+ */
+function isSimpleObject(object) {
+  if (!(object instanceof Array || isPlainObject(object))) {
+    return false;
+  }
+
+  for (const key of Object.keys(object)) {
+    const descriptor = Object.getOwnPropertyDescriptor(object, key);
+    if (!descriptor) {
+      continue; // not sure why this would happen
+    } else if (typeof descriptor.get === "function") {
+      return false; // Getters aren't simple
+    } else if (isPrimitive(descriptor.value)) {
+      continue; // Primitives are simple
+    } else if (!isSimpleObject(descriptor.value)) {
+      return false; // Deep structure wasn't simple
+    }
+  }
+
+  return true;
 }

@@ -61,6 +61,7 @@ ${list}
 
   /** @type {any} */
   const result = new String(html);
+  result.mediaType = "text/html; charset=utf-8";
   result.unpack = () => tree;
   return result;
 }
