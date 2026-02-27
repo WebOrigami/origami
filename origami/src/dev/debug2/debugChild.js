@@ -129,7 +129,7 @@ process.on("SIGINT", beginDrain);
 
 process.on("disconnect", () => {
   // Parent process died, exit immediately
-  console.log("Parent process disconnected, exiting...");
+  // console.log("Parent process disconnected, exiting...");
   process.exit(0);
 });
 
@@ -139,5 +139,5 @@ server.listen(0, PUBLIC_HOST, () => {
   const address = server.address();
   const port = typeof address === "object" && address ? address.port : null;
   process.send?.({ type: "READY", port });
-  console.log(`Child server running at http://${PUBLIC_HOST}:${port}.`);
+  // console.log(`Child server running at http://${PUBLIC_HOST}:${port}.`);
 });

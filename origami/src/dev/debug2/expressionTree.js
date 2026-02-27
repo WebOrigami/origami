@@ -18,12 +18,12 @@ let version = 0;
  * @param {string} parentPath
  */
 export default async function expressionTree(expression, parentPath) {
-  // Evaluate the expression
   const parent = new OrigamiFileMap(parentPath);
   const globals = await projectGlobals(parent);
 
   let maplike;
   try {
+    // Evaluate the expression
     maplike = await evaluate(expression, { globals, mode: "shell", parent });
     if (isUnpackable(maplike)) {
       maplike = await maplike.unpack();
@@ -31,11 +31,6 @@ export default async function expressionTree(expression, parentPath) {
   } catch (/** @type {any} */ error) {
     return new ConstantMap(error.message);
   }
-
-  // REVIEW: why did we need this?
-  // if (maplike instanceof Function) {
-  //   maplike = await maplike();
-  // }
 
   if (!Tree.isMaplike(maplike)) {
     return new ConstantMap(
@@ -47,9 +42,9 @@ export default async function expressionTree(expression, parentPath) {
   setParent(maplike, parent);
 
   // Add debugging resources
-  const merged = debugTransform(maplike);
+  const tree = debugTransform(maplike);
 
-  /** @type {any} */ (merged).version = version++;
+  /** @type {any} */ (tree).version = version++;
 
-  return merged;
+  return tree;
 }

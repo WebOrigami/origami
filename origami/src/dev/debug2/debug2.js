@@ -59,13 +59,17 @@ export default async function debug2(code, state) {
   tree.addEventListener?.("change", (event) => {
     // @ts-ignore
     const { filePath } = event.options;
-    if (isJavaScriptFile(filePath) || isPackageJsonFile(filePath)) {
+    if (isJavaScriptFile(filePath)) {
       // Need to restart the child process
-      console.log("Node.js file changed, restarting child server…");
+      console.log("JavaScript file changed, restarting server…");
+      startChild(serverOptions);
+    } else if (isPackageJsonFile(filePath)) {
+      // Need to restart the child process
+      console.log("package.json changed, restarting server…");
       startChild(serverOptions);
     } else {
       // Just have the child reevaluate the expression
-      console.log("File changed, reevaluating expression…");
+      console.log("File changed, reloading site…");
       activeChild?.process.send({ type: "REEVALUATE" });
     }
   });
@@ -270,7 +274,7 @@ function startChild(serverOptions) {
         }
       } else {
         // This child was superseded by a newer one, kill it
-        console.log("Child process superseded by newer one, killing it...");
+        // console.log("Child process superseded by newer one, killing it...");
         childProcess.kill("SIGTERM");
       }
     }
