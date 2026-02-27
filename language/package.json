@@ -6,7 +6,7 @@
   "main": "./main.js",
   "types": "./index.ts",
   "devDependencies": {
-    "@types/node": "24.10.1",
+    "@types/node": "25.3.2",
     "peggy": "5.0.6",
     "typescript": "5.9.3"
   },
@@ -14,7 +14,7 @@
     "@weborigami/async-tree": "0.6.11",
     "exif-parser": "0.1.12",
     "watcher": "2.3.1",
-    "yaml": "2.8.1"
+    "yaml": "2.8.2"
   },
   "scripts": {
     "build": "peggy --allowed-start-rules=\"*\" --format es src/compiler/origami.pegjs --output src/compiler/parse.js",
