@@ -17,11 +17,11 @@
     "typescript": "5.9.3"
   },
   "dependencies": {
+    "@hpcc-js/wasm-graphviz": "^1.21.0",
     "@weborigami/async-tree": "0.6.11",
     "@weborigami/json-feed-to-rss": "1.0.1",
     "@weborigami/language": "0.6.11",
     "css-tree": "3.1.0",
-    "graphviz-wasm": "3.0.2",
     "highlight.js": "11.11.1",
     "jsdom": "27.2.0",
     "marked": "17.0.0",

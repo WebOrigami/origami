@@ -1,9 +1,9 @@
+import { Graphviz } from "@hpcc-js/wasm-graphviz";
 import { args } from "@weborigami/async-tree";
-import graphviz from "graphviz-wasm";
 
 import dot from "./treeDot.js";
 
-let graphvizLoaded = false;
+let graphviz;
 
 /**
  * Render a tree visually in SVG format.
@@ -15,16 +15,15 @@ let graphvizLoaded = false;
  * @param {PlainObject} [options]
  */
 export default async function svg(maplike, options = {}) {
-  if (!graphvizLoaded) {
-    await graphviz.loadWASM();
-    graphvizLoaded = true;
+  if (!graphviz) {
+    graphviz = await Graphviz.load();
   }
   const tree = await args.map(maplike, "Dev.svg", { deep: true });
   const dotText = await dot(tree, options);
   if (dotText === undefined) {
     return undefined;
   }
-  const svgText = await graphviz.layout(dotText, "svg");
+  const svgText = await graphviz.dot(dotText);
   /** @type {any} */
   const result = new String(svgText);
   result.mediaType = "image/svg+xml";
