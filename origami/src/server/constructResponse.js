@@ -62,8 +62,8 @@ export default async function constructResponse(request, resource) {
       mediaType = extensionMediaType;
     } else {
       // Use MIME Sniffing Standard to determine media type
-      const bytes =
-        typeof body === "string" ? new TextEncoder().encode(body) : body;
+      const isString = typeof body === "string" || body instanceof String;
+      const bytes = isString ? new TextEncoder().encode(String(body)) : body;
       let sniffedType;
       try {
         sniffedType = computedMIMEType(bytes);
@@ -71,10 +71,7 @@ export default async function constructResponse(request, resource) {
         // Ignore sniffing errors
       }
       if (sniffedType) {
-        if (
-          typeof body === "string" &&
-          sniffedType.essence === "application/octet-stream"
-        ) {
+        if (isString && sniffedType.essence === "application/octet-stream") {
           // Prefer text/plain for strings
           mediaType = "text/plain";
         } else {
