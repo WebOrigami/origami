@@ -140,6 +140,50 @@ export default class SyncMap extends Map {
   }
 
   /**
+   * Returns the value associated with the key, or defaultValue if there is
+   * none. If defaultValue is returned, it is also inserted into the map for the
+   * given key. If the `readOnly` property is true, calling this method throws a
+   * `TypeError` if the key is not already present in the map.
+   */
+  getOrInsert(key, defaultValue) {
+    let value = this.get(key);
+    if (value === undefined) {
+      if (this.readOnly) {
+        throw new TypeError(
+          "getOrInsert() can't insert into a new value into a read-only map.",
+        );
+      }
+      this.set(key, defaultValue);
+      value = defaultValue;
+    }
+    return value;
+  }
+
+  /**
+   * Returns the value associated with the key, or the result of calling
+   * `defaultValueFn` if there is none. If the `readOnly` property is true,
+   * calling this method throws a `TypeError` if the key is not already present
+   * in the map.
+   *
+   * @param {any} key
+   * @param {() => any} defaultValueFn
+   */
+  getOrInsertComputed(key, defaultValueFn) {
+    let value = this.get(key);
+    if (value === undefined) {
+      if (this.readOnly) {
+        throw new TypeError(
+          "getOrInsertComputed() can't insert into a new value into a read-only map.",
+        );
+      }
+      const defaultValue = defaultValueFn();
+      this.set(key, defaultValue);
+      value = defaultValue;
+    }
+    return value;
+  }
+
+  /**
    * Returns true if the given key appears in the set returned by keys().
    *
    * It doesn't matter whether the value returned by get() is defined or not.

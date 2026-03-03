@@ -16,6 +16,7 @@ export default function isMap(object) {
   }
 
   // Check for Map-like interface
+  // Note: doesn't require the getOrInsert or getOrInsertComputed members.
   if (
     object &&
     object.clear instanceof Function &&

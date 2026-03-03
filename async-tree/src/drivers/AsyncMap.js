@@ -107,6 +107,49 @@ export default class AsyncMap {
   }
 
   /**
+   * Returns the value associated with the key, or defaultValue if there is
+   * none. If defaultValue is returned, it is also inserted into the map for the
+   * given key. If the `readOnly` property is true, calling this method throws a
+   * `TypeError` if the key is not already present in the map.
+   */
+  async getOrInsert(key, defaultValue) {
+    let value = await this.get(key);
+    if (value === undefined) {
+      if (this.readOnly) {
+        throw new TypeError(
+          "getOrInsert() can't insert into a new value into a read-only map.",
+        );
+      }
+      await this.set(key, defaultValue);
+      value = defaultValue;
+    }
+    return value;
+  }
+
+  /**
+   * Returns the value associated with the key, or the result of calling
+   * `defaultValueFn` if there is none. If the `readOnly` property is true,
+   * calling this method throws a `TypeError` if the key is not already present
+   * in the map.
+   *
+   * @param {any} key
+   * @param {() => any} defaultValueFn
+   */
+  async getOrInsertComputed(key, defaultValueFn) {
+    let value = await this.get(key);
+    if (value === undefined) {
+      if (this.readOnly) {
+        throw new TypeError(
+          "getOrInsertComputed() can't insert into a new value into a read-only map.",
+        );
+      }
+      const defaultValue = await defaultValueFn();
+      await this.set(key, defaultValue);
+      value = defaultValue;
+    }
+    return value;
+  }
+  /**
    * Groups items from an async iterable into an AsyncMap according to the keys
    * returned by the given function.
    *

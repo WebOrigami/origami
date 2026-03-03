@@ -44,6 +44,55 @@ describe("AsyncMap", () => {
     ]);
   });
 
+  test("getOrInsert", async () => {
+    const map = new SampleAsyncMap([
+      ["a", 1],
+      ["b", 2],
+    ]);
+    assert.strictEqual(await map.getOrInsert("a", 100), 1);
+    assert.strictEqual(await map.getOrInsert("c", 3), 3);
+    assert.strictEqual(await map.get("c"), 3);
+  });
+
+  test("getOrInsert on read-only map throws if key doesn't exist", async () => {
+    class Fixture extends AsyncMap {
+      constructor(entries) {
+        super();
+        this.map = new Map(entries);
+      }
+
+      async get(key) {
+        let value = this.map.get(key);
+        if (value instanceof Array) {
+          value = Reflect.construct(this.constructor, [value]);
+        }
+        return value;
+      }
+    }
+
+    const map = new Fixture([
+      ["a", 1],
+      ["b", 2],
+    ]);
+
+    assert.strictEqual(await map.getOrInsert("a", 100), 1);
+    await assert.rejects(async () => await map.getOrInsert("c", 3), {
+      name: "TypeError",
+      message:
+        "getOrInsert() can't insert into a new value into a read-only map.",
+    });
+  });
+
+  test("getOrInsertComputed", async () => {
+    const map = new SampleAsyncMap([
+      ["a", 1],
+      ["b", 2],
+    ]);
+    assert.strictEqual(await map.getOrInsertComputed("a", async () => 100), 1);
+    assert.strictEqual(await map.getOrInsertComputed("c", async () => 3), 3);
+    assert.strictEqual(await map.get("c"), 3);
+  });
+
   test("static groupBy", async () => {
     const items = [
       { name: "apple", type: "fruit" },
@@ -52,7 +101,7 @@ describe("AsyncMap", () => {
     ];
     const map = await AsyncMap.groupBy(
       items,
-      async (element, index) => element.type
+      async (element, index) => element.type,
     );
     assert.deepStrictEqual(Array.from(map.entries()), [
       [

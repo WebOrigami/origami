@@ -133,6 +133,50 @@ describe("SyncMap", () => {
     assert.strictEqual(map.get("c"), undefined);
   });
 
+  test("getOrInsert", () => {
+    const map = new SyncMap([
+      ["a", 1],
+      ["b", 2],
+    ]);
+    assert.strictEqual(map.getOrInsert("a", 100), 1);
+    assert.strictEqual(map.getOrInsert("c", 3), 3);
+    assert.strictEqual(map.get("c"), 3);
+  });
+
+  test("getOrInsert on read-only map throws if key doesn't exist", () => {
+    class Fixture extends SyncMap {
+      get(key) {
+        return super.get(key);
+      }
+    }
+    const map = new Fixture([
+      ["a", 1],
+      ["b", 2],
+    ]);
+    assert.strictEqual(map.getOrInsert("a", 100), 1);
+    assert.throws(() => map.getOrInsert("c", 3), {
+      name: "TypeError",
+      message:
+        "getOrInsert() can't insert into a new value into a read-only map.",
+    });
+  });
+
+  test("getOrInsertComputed", () => {
+    const map = new SyncMap([
+      ["a", 1],
+      ["b", 2],
+    ]);
+    assert.strictEqual(
+      map.getOrInsertComputed("a", () => 100),
+      1,
+    );
+    assert.strictEqual(
+      map.getOrInsertComputed("c", () => 3),
+      3,
+    );
+    assert.strictEqual(map.get("c"), 3);
+  });
+
   test("has returns true if key exists in keys()", () => {
     const map = new SyncMap();
     map.keys = () => {
@@ -321,7 +365,7 @@ describe("SyncMap", () => {
       ]);
       // @ts-ignore
       const grouped = Map.groupBy(map, ([key, value]) =>
-        value % 2 === 0 ? "even" : "odd"
+        value % 2 === 0 ? "even" : "odd",
       );
       assert(grouped instanceof Map);
       assert.strictEqual(grouped.size, 2);
