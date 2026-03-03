@@ -19,7 +19,10 @@ export default function getParent(packed, options = {}) {
 
   // If the packed object has a `parent` property, use that. Exception: Node
   // Buffer objects have a `parent` property that we ignore.
-  if (packed.parent && !(packed instanceof Buffer)) {
+  if (
+    packed.parent &&
+    !(typeof Buffer !== "undefined" && packed instanceof Buffer)
+  ) {
     return packed.parent;
   }
 
