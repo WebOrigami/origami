@@ -43,4 +43,23 @@ describe("deepValuesIterator", () => {
     }
     assert.deepEqual(values, [1, 2, 3, { d: 4 }]);
   });
+
+  test("can optionally unpack a packed value", async () => {
+    /** @type {any} */
+    const packed = new String("String that unpacks to data");
+    packed.unpack = async function () {
+      return {
+        message: "Hello",
+      };
+    };
+    const tree = {
+      a: 1,
+      packed,
+    };
+    const values = [];
+    for await (const value of deepValuesIterator(tree, { expand: true })) {
+      values.push(value);
+    }
+    assert.deepEqual(values, [1, "Hello"]);
+  });
 });

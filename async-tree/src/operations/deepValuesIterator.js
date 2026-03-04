@@ -1,4 +1,5 @@
 import * as args from "../utilities/args.js";
+import isUnpackable from "../utilities/isUnpackable.js";
 import isMap from "./isMap.js";
 import isMaplike from "./isMaplike.js";
 
@@ -6,7 +7,11 @@ import isMaplike from "./isMaplike.js";
  * Return an iterator that yields all values in a tree, including nested trees.
  *
  * If the `expand` option is true, maplike values (but not functions) will be
- * expanded into nested trees and their values will be yielded.
+ * expanded into nested trees and their values will be yielded. Packed values
+ * will be unpacked before expanding.
+ *
+ * If the `depth` option is specified, the iterator will only descend to the
+ * specified depth. A depth of 1 will yield values only at the tree's top level.
  *
  * @param {import("../../index.ts").Maplike} maplike
  * @param {{ depth?: number, expand?: boolean }} [options]
@@ -17,11 +22,15 @@ export default async function* deepValuesIterator(maplike, options = {}) {
     deep: !options.expand,
   });
 
-  let depth = options.depth ?? Infinity;
-  let expand = options.expand ?? false;
+  const depth = options.depth ?? Infinity;
+  const expand = options.expand ?? false;
 
   for await (const key of tree.keys()) {
-    const value = await tree.get(key);
+    let value = await tree.get(key);
+
+    if (expand && isUnpackable(value)) {
+      value = await value.unpack();
+    }
 
     // Recurse into child trees, but don't expand functions.
     const recurse =
