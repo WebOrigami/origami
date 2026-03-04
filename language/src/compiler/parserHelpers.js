@@ -316,21 +316,21 @@ export function makeLambda(params, body, location) {
  *
  *      {
  *        x = { a: 1 }
- *        ...x
- *        y = x
+ *        ...y
+ *        z = { b: 2}
  *      }
  *
  *  will be treated as:
  *
  *      {
  *        x = { a: 1 }
- *        y = x
- *        _result: {
- *          x
- *          ...x
+ *        z = { b: 2}
+ *        _result: ops.merge(
+ *          { x }
  *          y
- *        }
- *      }.result
+ *          { z }
+ *        )
+ *      }._result
  *
  * @param {*} spreads
  * @param {CodeLocation} location
@@ -338,6 +338,7 @@ export function makeLambda(params, body, location) {
 function makeMerge(spreads, location) {
   const topEntries = [];
   const resultEntries = [];
+
   for (const spread of spreads) {
     if (spread[0] === ops.object) {
       topEntries.push(...spread.slice(1));

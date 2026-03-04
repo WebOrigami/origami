@@ -9,26 +9,27 @@ import isMaplike from "./isMaplike.js";
  * expanded into nested trees and their values will be yielded.
  *
  * @param {import("../../index.ts").Maplike} maplike
- * @param {{ expand?: boolean }} [options]
+ * @param {{ depth?: number, expand?: boolean }} [options]
  * @returns {AsyncGenerator<any, void, undefined>}
  */
-export default async function* deepValuesIterator(
-  maplike,
-  options = { expand: false },
-) {
+export default async function* deepValuesIterator(maplike, options = {}) {
   const tree = await args.map(maplike, "Tree.deepValuesIterator", {
-    deep: true,
+    deep: !options.expand,
   });
+
+  let depth = options.depth ?? Infinity;
+  let expand = options.expand ?? false;
 
   for await (const key of tree.keys()) {
     const value = await tree.get(key);
 
     // Recurse into child trees, but don't expand functions.
     const recurse =
-      isMap(value) ||
-      (options.expand && typeof value !== "function" && isMaplike(value));
+      depth > 1 &&
+      (isMap(value) ||
+        (expand && typeof value !== "function" && isMaplike(value)));
     if (recurse) {
-      yield* deepValuesIterator(value, options);
+      yield* deepValuesIterator(value, { depth: depth - 1, expand });
     } else {
       yield value;
     }

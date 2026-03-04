@@ -20,4 +20,27 @@ describe("deepValuesIterator", () => {
     }
     assert.deepEqual(values, [1, 2, 3, 4]);
   });
+
+  test("if depth is specified, only descends to specified depth", async () => {
+    const tree = new ObjectMap({
+      a: 1,
+      sub: {
+        b: 2,
+        more: {
+          c: 3,
+          deeper: {
+            d: 4,
+          },
+        },
+      },
+    });
+    const values = [];
+    for await (const value of deepValuesIterator(tree, {
+      depth: 3,
+      expand: true,
+    })) {
+      values.push(value);
+    }
+    assert.deepEqual(values, [1, 2, 3, { d: 4 }]);
+  });
 });
