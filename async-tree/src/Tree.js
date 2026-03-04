@@ -21,6 +21,7 @@ export { default as delete } from "./operations/delete.js";
 export { default as entries } from "./operations/entries.js";
 export { default as filter } from "./operations/filter.js";
 export { default as first } from "./operations/first.js";
+export { default as flat } from "./operations/flat.js";
 export { default as forEach } from "./operations/forEach.js";
 export { default as from } from "./operations/from.js";
 export { default as globKeys } from "./operations/globKeys.js";
