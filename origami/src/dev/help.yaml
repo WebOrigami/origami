@@ -190,6 +190,9 @@ Tree:
     clear:
       args: (map)
       description: Remove all values from the map
+    concat:
+      args: (...trees)
+      description: Merge trees, renumbering numeric keys
     constant:
       args: (value)
       description: Return a deep tree with a single constant value
@@ -223,6 +226,9 @@ Tree:
     first:
       args: (map)
       description: The first value in the map
+    flat:
+      args: (tree, [depth])
+      description: Flatten the tree to the indicated depth
     forEach:
       args: (map, fn)
       description: Apply fn to each (value, key)
