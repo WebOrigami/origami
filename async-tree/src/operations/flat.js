@@ -9,7 +9,7 @@ import deepValuesIterator from "./deepValuesIterator.js";
  * @param {Maplike} maplike
  * @param {number} [depth] The maximum depth to flatten
  */
-export default async function flat(maplike, depth = Infinity) {
+export default async function flat(maplike, depth = 1) {
   const map = await args.map(maplike, "Tree.flat", { deep: true });
   /** @type {any} */
   const iterator = deepValuesIterator(map, { depth, expand: true });

@@ -1,5 +1,5 @@
-import { isUnpackable, toPlainValue } from "@weborigami/async-tree";
-import YAML from "yaml";
+import { isUnpackable } from "@weborigami/async-tree";
+import { toYaml } from "../common/serialize.js";
 
 /**
  * Render the object as text in YAML format.
@@ -13,6 +13,5 @@ export default async function yamlBuiltin(obj) {
   if (isUnpackable(obj)) {
     obj = await obj.unpack();
   }
-  const value = await toPlainValue(obj);
-  return YAML.stringify(value);
+  return toYaml(obj);
 }
