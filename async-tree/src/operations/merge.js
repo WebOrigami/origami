@@ -48,7 +48,7 @@ export default async function merge(...treelikes) {
   const sources = unpacked.map((maplike) => from(maplike));
 
   if (sources.length === 0) {
-    throw new TypeError("merge: all trees are null or undefined");
+    throw new TypeError("Tree.merge: all trees are null or undefined");
   } else if (sources.length === 1) {
     // Only one tree, no need to merge
     return sources[0];

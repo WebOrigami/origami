@@ -173,12 +173,12 @@ export function exponentiation(a, b) {
 addOpLabel(exponentiation, "«ops.exponentiation»");
 
 /**
- * Flatten the values of the given trees
+ * Flatten the values of the given trees to a depth of 1
  *
  * @param {...any} args
  */
 export async function flat(...args) {
-  return Tree.flat(args);
+  return Tree.flat(args, 2); // add 1 to account for the array of arguments
 }
 addOpLabel(flat, "«ops.flat»");
 
