@@ -1,7 +1,13 @@
 import { pathFromKeys, symbols, Tree } from "@weborigami/async-tree";
+import * as YAMLModule from "yaml";
 import crawlResources from "./crawlResources.js";
 import getSiteArgument from "./getSiteArgument.js";
 import { getBaseUrl } from "./utilities.js";
+
+// The "yaml" package doesn't seem to provide a default export that the browser can
+// recognize, so we have to handle two ways to accommodate Node and the browser.
+// @ts-ignore
+const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
 /**
  * Crawl the indicated tree and return an audit of any broken links to internal
@@ -43,10 +49,10 @@ export default async function audit(maplike, baseHref) {
         // Start request, don't wait for it to complete yet
         resourcePromises[resourcePath] ??= Tree.traversePath(
           tree,
-          resourcePath
+          resourcePath,
         ).then(
           // Just return true or false to indicate if value is defined
-          (value) => value !== undefined
+          (value) => value !== undefined,
         );
       }
     }
@@ -54,7 +60,7 @@ export default async function audit(maplike, baseHref) {
 
   // Add any references to missing resources to the errors
   for (const [refererPath, resourcePaths] of Object.entries(
-    resourceReferences
+    resourceReferences,
   )) {
     for (const resourcePath of resourcePaths) {
       const found = await resourcePromises[resourcePath];
@@ -76,5 +82,20 @@ export default async function audit(maplike, baseHref) {
     value: true,
   });
 
-  return errors;
+  // Attach a string method that adds a comment. This will be used if the result
+  // is rendered in the console.
+  const result = Object.create(errors);
+  Object.defineProperty(result, "toString", {
+    enumerable: false,
+    value: () => {
+      const yamlText = YAML.stringify(errors);
+      const message = `
+# Pages with broken internal links, with the missing destinations indented:
+
+`;
+      return `${message}${yamlText}`;
+    },
+  });
+
+  return result;
 }
