@@ -82,10 +82,9 @@ export default async function audit(maplike, baseHref) {
     value: true,
   });
 
-  // Attach a string method that adds a comment. This will be used if the result
-  // is rendered in the console.
-  const result = Object.create(errors);
-  Object.defineProperty(result, "toString", {
+  // Attach a string method to include an explanatory comment. This will be used
+  // if the result is rendered in the console.
+  Object.defineProperty(errors, "toString", {
     enumerable: false,
     value: () => {
       const yamlText = YAML.stringify(errors);
@@ -97,5 +96,5 @@ export default async function audit(maplike, baseHref) {
     },
   });
 
-  return result;
+  return errors;
 }
