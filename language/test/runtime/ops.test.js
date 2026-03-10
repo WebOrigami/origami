@@ -159,7 +159,14 @@ describe("ops", () => {
       });
       const array = [5, 6];
       const result = await ops.flat(object, tree, array);
-      assert.deepEqual(result, [1, 2, 3, 4, 5, 6]);
+      assert.deepEqual(await Tree.plain(result), {
+        a: 1,
+        b: 2,
+        c: 3,
+        d: 4,
+        0: 5,
+        1: 6,
+      });
     });
   });
 

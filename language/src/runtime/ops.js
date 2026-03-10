@@ -178,7 +178,7 @@ addOpLabel(exponentiation, "«ops.exponentiation»");
  * @param {...any} args
  */
 export async function flat(...args) {
-  return Tree.flat(args, 2); // add 1 to account for the array of arguments
+  return Tree.flat(args);
 }
 addOpLabel(flat, "«ops.flat»");
 
