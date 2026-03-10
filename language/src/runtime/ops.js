@@ -173,7 +173,7 @@ export function exponentiation(a, b) {
 addOpLabel(exponentiation, "«ops.exponentiation»");
 
 /**
- * Flatten the values of the given trees to a depth of 1
+ * Flatten the values of the given trees by one level.
  *
  * @param {...any} args
  */

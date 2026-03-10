@@ -10,7 +10,7 @@ import isMaplike from "./isMaplike.js";
  * will be unpacked before expanding.
  *
  * If the `depth` option is specified, the iterator will only descend to the
- * specified depth. A depth of 1 will yield values only at the tree's top level.
+ * specified depth. A depth of 0 will yield values only at the tree's top level.
  *
  * @param {import("../../index.ts").Maplike} maplike
  * @param {{ depth?: number, expand?: boolean }} [options]
@@ -31,7 +31,7 @@ export default async function* deepEntriesIterator(maplike, options = {}) {
 
     // Recurse into child trees, but don't expand functions.
     const recurse =
-      depth > 1 &&
+      depth > 0 &&
       (isMap(value) ||
         (expand && typeof value !== "function" && isMaplike(value)));
     if (recurse) {

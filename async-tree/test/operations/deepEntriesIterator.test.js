@@ -41,7 +41,7 @@ describe("deepEntriesIterator", () => {
     });
     const entries = [];
     for await (const entry of deepEntriesIterator(tree, {
-      depth: 3,
+      depth: 2,
       expand: true,
     })) {
       entries.push(entry);

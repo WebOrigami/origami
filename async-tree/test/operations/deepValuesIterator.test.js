@@ -36,7 +36,7 @@ describe("deepValuesIterator", () => {
     });
     const values = [];
     for await (const value of deepValuesIterator(tree, {
-      depth: 3,
+      depth: 2,
       expand: true,
     })) {
       values.push(value);
