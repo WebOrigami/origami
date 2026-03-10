@@ -3,8 +3,8 @@ import { describe, test } from "node:test";
 import ObjectMap from "../../src/drivers/ObjectMap.js";
 import SyncMap from "../../src/drivers/SyncMap.js";
 import assign from "../../src/operations/assign.js";
+import deepArrays from "../../src/operations/deepArrays.js";
 import plain from "../../src/operations/plain.js";
-import { deepEntries } from "../../src/Tree.js";
 import SampleAsyncMap from "../SampleAsyncMap.js";
 
 describe("assign", () => {
@@ -26,7 +26,7 @@ describe("assign", () => {
     const result = await assign(target, source);
 
     assert.equal(result, target);
-    assert.deepEqual(await deepEntries(target), [
+    assert.deepEqual(await deepArrays(target), [
       ["a", 4],
       ["b", 2],
       [

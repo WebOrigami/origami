@@ -5,20 +5,23 @@ import flat from "../../src/operations/flat.js";
 import plain from "../../src/operations/plain.js";
 
 describe("flat", () => {
-  test("flattens the tree's values into an array", async () => {
-    const fixture = {
-      a: 1,
-      sub: {
-        b: 2,
-        more: {
-          c: 3,
-        },
-      },
-    };
-    assert.deepEqual(await flat(fixture, Infinity), [1, 2, 3]);
+  test.only("flattens an array one level by default", async () => {
+    assert.deepEqual(await flat([1, 2, [3], [[4, [5]]]], 1), [
+      1,
+      2,
+      3,
+      [4, [5]],
+    ]);
   });
 
-  test("flattens one level by default", async () => {
+  test("flattens deep arrays", async () => {
+    assert.deepEqual(
+      await flat([1, 2, [3], [[4, [5]]]], Infinity),
+      [1, 2, 3, 4, 5],
+    );
+  });
+
+  test("flattens an object one level by default", async () => {
     const fixture = {
       a: 1,
       sub: {
@@ -34,8 +37,17 @@ describe("flat", () => {
     ]);
   });
 
-  test("flattens arrays", async () => {
-    assert.deepEqual(await flat([1, 2, [3]], Infinity), [1, 2, 3]);
+  test("flattens objects", async () => {
+    const fixture = {
+      a: 1,
+      sub: {
+        b: 2,
+        more: {
+          c: 3,
+        },
+      },
+    };
+    assert.deepEqual(await flat(fixture, Infinity), [1, 2, 3]);
   });
 
   test("flattens maplike objects", async () => {

@@ -10,9 +10,9 @@ import deepValuesIterator from "./deepValuesIterator.js";
  * @param {number} [depth] The maximum depth to flatten
  */
 export default async function flat(maplike, depth = 1) {
-  const map = await args.map(maplike, "Tree.flat", { deep: true });
+  const map = await args.map(maplike, "Tree.flat");
   /** @type {any} */
-  const iterator = deepValuesIterator(map, { depth, expand: true });
+  const iterator = deepValuesIterator(map, { depth });
   const result = [];
   for await (const key of iterator) {
     result.push(key);
