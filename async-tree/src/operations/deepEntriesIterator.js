@@ -1,5 +1,7 @@
-import { args, isUnpackable, Tree } from "@weborigami/async-tree";
-
+import * as args from "../utilities/args.js";
+import isUnpackable from "../utilities/isUnpackable.js";
+import isMap from "./isMap.js";
+import isMaplike from "./isMaplike.js";
 /**
  * Return an iterator that yields all entries in a tree, including nested trees.
  *
@@ -30,8 +32,8 @@ export default async function* deepEntriesIterator(maplike, options = {}) {
     // Recurse into child trees, but don't expand functions.
     const recurse =
       depth > 1 &&
-      (Tree.isMap(value) ||
-        (expand && typeof value !== "function" && Tree.isMaplike(value)));
+      (isMap(value) ||
+        (expand && typeof value !== "function" && isMaplike(value)));
     if (recurse) {
       yield* deepEntriesIterator(value, { depth: depth - 1, expand });
     } else {

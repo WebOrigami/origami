@@ -72,7 +72,7 @@ describe("deepEntriesIterator", () => {
     }
     assert.deepEqual(entries, [
       ["a", 1],
-      ["packed", { message: "Hello" }],
+      ["message", "Hello"],
     ]);
   });
 });
