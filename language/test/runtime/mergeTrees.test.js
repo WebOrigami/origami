@@ -1,4 +1,4 @@
-import { ObjectMap, Tree } from "@weborigami/async-tree";
+import { ObjectMap, symbols, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import mergeTrees from "../../src/runtime/mergeTrees.js";
@@ -23,7 +23,7 @@ describe("mergeTrees", () => {
           calledBar = true;
           return true;
         },
-      }
+      },
     );
 
     // Shouldn't call functions when just getting keys
@@ -40,6 +40,22 @@ describe("mergeTrees", () => {
     });
   });
 
+  test("respects trailing slashes in keys", async () => {
+    const result = await mergeTrees(
+      {
+        "a/": 1, // key will be overwritten
+        b: 2, // key will be overwritten
+        c: 3,
+      },
+      {
+        a: 4,
+        "b/": 5,
+      },
+    );
+    const keys = result[symbols.keys]();
+    assert.deepEqual(keys, ["c", "a", "b/"]);
+  });
+
   test("merges heterogenous arguments as trees", async () => {
     const tree = await mergeTrees(
       new ObjectMap({
@@ -49,7 +65,7 @@ describe("mergeTrees", () => {
       {
         b: 3,
         c: 4,
-      }
+      },
     );
     assert.deepEqual(await Tree.plain(tree), {
       a: 1,
