@@ -57,7 +57,7 @@ export default async function handleExtension(value, key, parent = null) {
       }
     }
   }
-  value;
+
   return value;
 }
 
