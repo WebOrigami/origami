@@ -25,6 +25,8 @@ export default async function* deepEntriesIterator(maplike, options = {}) {
   const expand = options.expand ?? false;
 
   for await (let [key, value] of tree.entries()) {
+    value = await value;
+
     if (expand && isUnpackable(value)) {
       value = await value.unpack();
     }
