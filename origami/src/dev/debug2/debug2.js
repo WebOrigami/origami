@@ -1,10 +1,11 @@
 import { OrigamiFileMap } from "@weborigami/language";
 import { fork } from "node:child_process";
 import http from "node:http";
+import net from "node:net";
 import path from "node:path";
 
 const PUBLIC_HOST = "127.0.0.1";
-const PUBLIC_PORT = 5000;
+const DEFAULT_PORT = 5000;
 
 // Module that loads the server in the child process
 const childModuleUrl = new URL("./debugChild.js", import.meta.url);
@@ -74,12 +75,14 @@ export default async function debug2(code, state) {
     }
   });
 
+  const port = await findOpenPort(PUBLIC_HOST);
+
   // ---- Public server
   const publicServer = http.createServer(proxyRequest);
-  publicServer.listen(PUBLIC_PORT, PUBLIC_HOST, () => {
+  publicServer.listen(port, PUBLIC_HOST, () => {
     startChild(serverOptions);
     console.log(
-      `Server running at http://localhost:${PUBLIC_PORT}. Press Ctrl+C to stop.`,
+      `Server running at http://localhost:${port}. Press Ctrl+C to stop.`,
     );
   });
 }
@@ -142,6 +145,18 @@ async function drainAndStopChild(childProcess) {
   }, GRACE_MS).unref();
 }
 
+// Return the first open port number on or after the given port number.
+async function findOpenPort(host, startPort = DEFAULT_PORT) {
+  for (let port = startPort; port <= 65535; port++) {
+    const open = await isPortAvailable(host, port);
+    if (open) {
+      return port;
+    }
+  }
+
+  throw new Error(`No open port found on or after ${startPort}`);
+}
+
 function isJavaScriptFile(filePath) {
   const extname = path.extname(filePath).toLowerCase();
   const jsExtensions = [".cjs", ".js", ".mjs", ".ts"];
@@ -150,6 +165,40 @@ function isJavaScriptFile(filePath) {
 
 function isPackageJsonFile(filePath) {
   return path.basename(filePath).toLowerCase() === "package.json";
+}
+
+/**
+ * Check whether a TCP port can be bound.
+ *
+ * @param {string} host
+ * @param {number} port
+ * @returns {Promise<boolean>}
+ */
+async function isPortAvailable(host, port) {
+  return new Promise((resolve) => {
+    const server = net.createServer();
+
+    server.unref();
+
+    server.once("error", (/** @type {any} */ error) => {
+      // Port is unavailable or cannot be bound on this host.
+      if (
+        error.code === "EADDRINUSE" ||
+        error.code === "EACCES" ||
+        error.code === "EADDRNOTAVAIL"
+      ) {
+        resolve(false);
+      } else {
+        resolve(false);
+      }
+    });
+
+    server.once("listening", () => {
+      server.close(() => resolve(true));
+    });
+
+    server.listen(port, host);
+  });
 }
 
 /**
