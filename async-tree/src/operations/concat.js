@@ -1,11 +1,14 @@
-import { isUnpackable, SyncMap, Tree } from "@weborigami/async-tree";
-// import assignPropertyDescriptors from "./assignPropertyDescriptors.js";
+import SyncMap from "../drivers/SyncMap.js";
+import isUnpackable from "../utilities/isUnpackable.js";
+import entries from "./entries.js";
 
 /**
  * Concatenate the given trees. This is similar to a merge, but numeric keys
  * will be renumbered starting with 0 and incrementing by 1.
  *
- * @typedef {import("@weborigami/async-tree").Maplike} Maplike
+ * If the final result is array-like, returns an array, otherwise returns a map.
+ *
+ * @typedef {import("../../index.ts").Maplike} Maplike
  *
  * @param {(Maplike|null)[]} trees
  */
@@ -30,8 +33,8 @@ export default async function concat(...trees) {
   let onlyNumericKeys = true;
   const map = new SyncMap();
   for (const source of sources) {
-    const entries = await Tree.entries(source);
-    for (const [entryKey, entryValue] of entries) {
+    const sourceEntries = await entries(source);
+    for (const [entryKey, entryValue] of sourceEntries) {
       let key;
       if (!isNaN(parseInt(entryKey))) {
         // Numeric key, renumber it.
