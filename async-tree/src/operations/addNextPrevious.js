@@ -51,6 +51,8 @@ export default async function addNextPrevious(maplike) {
       yield* sourceKeys;
     },
 
+    source,
+
     trailingSlashKeys: /** @type {any} */ (source).trailingSlashKeys,
   });
 }
