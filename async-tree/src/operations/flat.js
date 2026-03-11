@@ -1,4 +1,5 @@
 import SyncMap from "../drivers/SyncMap.js";
+import * as trailingSlash from "../trailingSlash.js";
 import * as args from "../utilities/args.js";
 import deepEntriesIterator from "./deepEntriesIterator.js";
 
@@ -22,7 +23,8 @@ export default async function flat(maplike, depth = 1) {
   let onlyNumericKeys = true;
   const result = new SyncMap();
   for await (let [key, value] of deepEntriesIterator(map, { depth })) {
-    if (!isNaN(parseInt(key))) {
+    key = trailingSlash.remove(key);
+    if (typeof key === "number" || /^\d+$/.test(key)) {
       // Numeric key, renumber it.
       key = String(index);
       index++;

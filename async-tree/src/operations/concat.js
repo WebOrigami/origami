@@ -1,4 +1,5 @@
 import SyncMap from "../drivers/SyncMap.js";
+import * as trailingSlash from "../trailingSlash.js";
 import isUnpackable from "../utilities/isUnpackable.js";
 import entries from "./entries.js";
 
@@ -34,18 +35,17 @@ export default async function concat(...trees) {
   const map = new SyncMap();
   for (const source of sources) {
     const sourceEntries = await entries(source);
-    for (const [entryKey, entryValue] of sourceEntries) {
-      let key;
-      if (!isNaN(parseInt(entryKey))) {
+    for (let [key, value] of sourceEntries) {
+      key = trailingSlash.remove(key);
+      if (typeof key === "number" || /^\d+$/.test(key)) {
         // Numeric key, renumber it.
         key = String(index);
         index++;
       } else {
         // Non-numeric key, keep it as is.
-        key = entryKey;
         onlyNumericKeys = false;
       }
-      map.set(key, entryValue);
+      map.set(key, value);
     }
   }
 
