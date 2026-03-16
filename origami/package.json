@@ -1,6 +1,6 @@
 {
   "name": "@weborigami/origami",
-  "version": "0.6.13",
+  "version": "0.6.14",
   "description": "Web Origami language, CLI, framework, and server",
   "type": "module",
   "repository": {
@@ -18,9 +18,9 @@
   },
   "dependencies": {
     "@hpcc-js/wasm-graphviz": "^1.21.0",
-    "@weborigami/async-tree": "0.6.13",
+    "@weborigami/async-tree": "0.6.14",
     "@weborigami/json-feed-to-rss": "1.0.1",
-    "@weborigami/language": "0.6.13",
+    "@weborigami/language": "0.6.14",
     "css-tree": "3.1.0",
     "highlight.js": "11.11.1",
     "jsdom": "28.1.0",
