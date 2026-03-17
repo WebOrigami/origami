@@ -27,8 +27,9 @@ export default async function explainTraverseError(error) {
   }
 
   // The key that caused the error is the one before the current position
-  const path = pathFromKeys(keys.slice(0, position));
-  let message = `The path traversal ended unexpectedly at: ${path}`;
+  const path = pathFromKeys(keys);
+  const problemKey = keys[position - 1];
+  let message = `Tried to traverse path:  ${path}\nStopped unexpectedly at: ${problemKey}`;
 
   const key = trailingSlash.remove(keys[position - 1]);
 
