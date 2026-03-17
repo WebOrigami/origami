@@ -211,6 +211,9 @@ Tree:
     deepValues:
       args: (tree)
       description: The in-order leaf values of the tree
+    deflatePaths:
+      args: (tree)
+      description: Convert a tree to a mapping of paths to values
     delete:
       args: (map, key)
       description: Delete the value for the key from map
