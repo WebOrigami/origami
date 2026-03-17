@@ -18,7 +18,11 @@ export default async function deflatePaths(maplike, basePath = "") {
   const result = new SyncMap();
   for await (let [key, value] of tree) {
     const normalizedKey = trailingSlash.remove(key);
-    const path = basePath ? `${basePath}/${normalizedKey}` : normalizedKey;
+    let path = basePath;
+    if (path && !path.endsWith("/")) {
+      path += "/";
+    }
+    path += normalizedKey;
     value = await value;
     if (isMap(value)) {
       const subResult = await deflatePaths(value, path);
