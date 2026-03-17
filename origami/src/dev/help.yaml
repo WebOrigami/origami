@@ -244,6 +244,9 @@ Tree:
     indent:
       args: "`…`"
       description: Tagged template literal for normalizing indentation
+    inflatePaths:
+      args: (map)
+      description: Convert mapping of paths to values into a tree
     inners:
       args: (tree)
       description: The tree's interior nodes
