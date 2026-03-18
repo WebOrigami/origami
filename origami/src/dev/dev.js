@@ -12,6 +12,7 @@ export { default as audit } from "./crawler/audit.js";
 export { default as crawl } from "./crawler/crawl.js";
 export { default as debug } from "./debug.js";
 export { default as debug2 } from "./debug2/debug2.js";
+export { default as oriEval } from "./debug2/oriEval.js";
 export { default as explore } from "./explore.js";
 export { default as help } from "./help.js";
 export { default as log } from "./log.js";

@@ -76,14 +76,13 @@ export default async function debug2(code, state) {
   });
 
   const port = await findOpenPort(PUBLIC_HOST);
+  const href = `http://${PUBLIC_HOST}:${port}/`;
 
   // ---- Public server
   const publicServer = http.createServer(proxyRequest);
   publicServer.listen(port, PUBLIC_HOST, () => {
     startChild(serverOptions);
-    console.log(
-      `Server running at http://localhost:${port}. Press Ctrl+C to stop.`,
-    );
+    console.log(`Server running at ${href}. Press Ctrl+C to stop.`);
   });
 }
 debug2.needsState = true;
