@@ -10,6 +10,12 @@ const DEFAULT_PORT = 5000;
 // Module that loads the server in the child process
 const childModuleUrl = new URL("./debugChild.js", import.meta.url);
 
+// The public-facing server that proxies to the child process
+let publicServer;
+
+// The tree of files in the parent path, which we watch for changes
+let tree;
+
 // The active child process and port
 /** @typedef {import("node:child_process").ChildProcess} ChildProcess */
 /** @typedef {{ process: ChildProcess, port: number | null }} ChildInfo */
@@ -51,7 +57,7 @@ let pendingChild = null;
 export default async function debugParent(options) {
   const { parentPath } = options;
 
-  const tree = new OrigamiFileMap(parentPath);
+  tree = new OrigamiFileMap(parentPath);
   tree.watch();
   tree.addEventListener?.("change", (event) => {
     // @ts-ignore
@@ -74,14 +80,37 @@ export default async function debugParent(options) {
   const port = await findOpenPort();
   const origin = `http://${PUBLIC_HOST}:${port}`;
 
-  // ---- Public server
-  const publicServer = http.createServer(proxyRequest);
+  publicServer = http.createServer(proxyRequest);
   publicServer.listen(port, PUBLIC_HOST, () => {
     startChild(options);
     console.log(`Server running at ${origin}. Press Ctrl+C to stop.`);
   });
 
-  return { origin };
+  return {
+    close,
+    origin,
+  };
+}
+
+/**
+ * Gracefully stop the parent server and any active child server, giving the
+ * child a chance to finish any in-flight requests before exiting.
+ */
+async function close() {
+  // Stop accepting new connections
+  await new Promise((resolve) => publicServer.close(resolve));
+
+  // Drain and stop any children concurrently
+  const children = [pendingChild?.process, activeChild?.process].filter(
+    /** @returns {child is ChildProcess} */
+    (child) => child !== undefined,
+  );
+  pendingChild = null;
+  activeChild = null;
+  await Promise.all(children.map(drainAndStopChild));
+
+  // Stop watching for file changes
+  await tree.unwatch();
 }
 
 /**
