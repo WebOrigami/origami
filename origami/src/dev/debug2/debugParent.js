@@ -71,7 +71,7 @@ export default async function debugParent(options) {
     }
   });
 
-  const port = await findOpenPort(PUBLIC_HOST);
+  const port = await findOpenPort();
   const origin = `http://${PUBLIC_HOST}:${port}`;
 
   // ---- Public server
@@ -141,14 +141,9 @@ async function drainAndStopChild(childProcess) {
 }
 
 // Return the first open port number on or after the given port number.
-async function findOpenPort(host, startPort = DEFAULT_PORT) {
+async function findOpenPort(startPort = DEFAULT_PORT) {
   for (let port = startPort; port <= 65535; port++) {
-    // Check the target IPv4 host, and also check IPv6 — on macOS, IPv4 and
-    // IPv6 port spaces are independent (IPV6_V6ONLY=1 by default), so a server
-    // bound to [::]:PORT is invisible to a 127.0.0.1 bind check.
-    const open =
-      (await isPortAvailable(host, port)) && !(await isPortListening("::1", port));
-    if (open) {
+    if (await isPortAvailable(port)) {
       return port;
     }
   }
@@ -167,45 +162,26 @@ function isPackageJsonFile(filePath) {
 }
 
 /**
- * Check whether a TCP port can be bound.
+ * Check whether a port is available on both IPv4 and IPv6 loopback addresses
+ * by attempting TCP connections. On macOS, IPv4 and IPv6 port spaces are
+ * independent (IPV6_V6ONLY=1 by default), so a server bound to [::]:PORT is
+ * invisible to a 127.0.0.1 bind check. Using connect probes on both loopbacks
+ * catches servers regardless of which protocol family they listen on. Any
+ * connection error (ECONNREFUSED, EADDRNOTAVAIL, etc.) means nothing is
+ * listening there, so the function is safe on systems without IPv6.
  *
- * @param {string} host
  * @param {number} port
  * @returns {Promise<boolean>}
  */
-async function isPortAvailable(host, port) {
-  return new Promise((resolve) => {
-    const server = net.createServer();
-
-    server.unref();
-
-    server.once("error", (/** @type {any} */ error) => {
-      // Port is unavailable or cannot be bound on this host.
-      if (
-        error.code === "EADDRINUSE" ||
-        error.code === "EACCES" ||
-        error.code === "EADDRNOTAVAIL"
-      ) {
-        resolve(false);
-      } else {
-        resolve(false);
-      }
-    });
-
-    server.once("listening", () => {
-      server.close(() => resolve(true));
-    });
-
-    server.listen(port, host);
-  });
+async function isPortAvailable(port) {
+  const [v4, v6] = await Promise.all([
+    isPortListening("127.0.0.1", port),
+    isPortListening("::1", port),
+  ]);
+  return !v4 && !v6;
 }
 
 /**
- * Check whether something is already listening on the given host/port by
- * attempting a TCP connection. Returns false for any error (including
- * ECONNREFUSED and EADDRNOTAVAIL), so it is safe to call with ::1 on systems
- * that have no IPv6 support.
- *
  * @param {string} host
  * @param {number} port
  * @returns {Promise<boolean>}
