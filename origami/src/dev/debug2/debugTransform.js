@@ -11,7 +11,7 @@ import {
 } from "@weborigami/async-tree";
 import indexPage from "../../origami/indexPage.js";
 import yaml from "../../origami/yaml.js";
-import * as commands from "./debugCommands.js";
+import debugCommands from "./debugCommands.js";
 
 /**
  * Transform the given map-based tree to add debugging resources:
@@ -23,9 +23,11 @@ import * as commands from "./debugCommands.js";
  * Also transform a simple object result to YAML for viewing.
  *
  * @param {import("@weborigami/async-tree").Maplike} maplike
+ * @param {boolean} enableUnsafeEval
  */
-export default function debugTransform(maplike) {
+export default function debugTransform(maplike, enableUnsafeEval = false) {
   const source = Tree.from(maplike, { deep: true });
+  const commands = debugCommands(enableUnsafeEval);
   return Object.assign(new AsyncMap(), {
     description: "debug resources",
 
@@ -41,7 +43,7 @@ export default function debugTransform(maplike) {
         } else if (key === ".keys.json") {
           value = await jsonKeys.stringify(source);
         } else if (typeof key === "string" && key.startsWith("!")) {
-          value = await invokeOrigamiCommand(source, key);
+          value = await invokeOrigamiCommand(commands, source, key);
         }
       }
 
@@ -95,7 +97,7 @@ export default function debugTransform(maplike) {
   });
 }
 
-async function invokeOrigamiCommand(tree, key) {
+async function invokeOrigamiCommand(commands, tree, key) {
   // Key is an Origami command; invoke it.
   const commandName = trailingSlash.remove(key.slice(1).trim());
 

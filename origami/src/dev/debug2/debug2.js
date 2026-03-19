@@ -1,4 +1,4 @@
-import { OrigamiFileMap } from "@weborigami/language";
+import { execute, OrigamiFileMap } from "@weborigami/language";
 import { fork } from "node:child_process";
 import http from "node:http";
 import net from "node:net";
@@ -30,10 +30,21 @@ let pendingChild = null;
  * arrangement ensures the expression is evaluated in a clean Node context (not
  * polluted by previous evaluations).
  *
- * @param {import("@weborigami/language").AnnotatedCode} code
- * @param {import("@weborigami/language").RuntimeState} state
+ * @typedef {import("@weborigami/language").RuntimeState} RuntimeState
+ * @typedef {import("@weborigami/language").AnnotatedCode} AnnotatedCode
+ *
+ * @param {AnnotatedCode} code
+ * @param {any | RuntimeState} options
+ * @param {RuntimeState} state
  */
-export default async function debug2(code, state) {
+export default async function debug2(code, options, state) {
+  if (state === undefined) {
+    // Options were omitted
+    // @ts-ignore
+    state = options;
+    options = [];
+  }
+
   if (
     !(code instanceof Array) ||
     code.source === undefined ||
@@ -43,6 +54,7 @@ export default async function debug2(code, state) {
       "Dev.debug2 expects an Origami expression to evaluate: `debug2 <expression>`",
     );
   }
+
   const { parent } = state;
   // @ts-ignore
   const parentPath = parent?.path;
@@ -50,7 +62,18 @@ export default async function debug2(code, state) {
     throw new Error("Dev.debug2 couldn't work out the parent path.");
   }
 
+  // Need to evaluate options object
+  if (options.length > 0) {
+    options = await execute(options, state);
+  } else {
+    options = {};
+  }
+
+  // @ts-ignore
+  const enableUnsafeEval = options.enableUnsafeEval ?? false;
+
   const serverOptions = {
+    enableUnsafeEval,
     expression: code.source,
     parent: parentPath,
   };
@@ -276,7 +299,7 @@ function proxyRequest(request, response) {
  * it becomes active and any previous active child is drained and stopped.
  */
 function startChild(serverOptions) {
-  const { expression, parent } = serverOptions;
+  const { enableUnsafeEval, expression, parent } = serverOptions;
 
   // Start the child process, passing parent path via an environment variable.
   /** @type {ChildProcess} */
@@ -286,6 +309,7 @@ function startChild(serverOptions) {
       stdio: ["inherit", "inherit", "inherit", "ipc"],
       env: {
         ...process.env,
+        ORIGAMI_ENABLE_UNSAFE_EVAL: enableUnsafeEval ? "1" : "0",
         ORIGAMI_EXPRESSION: expression,
         ORIGAMI_PARENT: parent,
       },

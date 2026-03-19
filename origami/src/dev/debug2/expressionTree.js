@@ -16,8 +16,13 @@ let version = 0;
  *
  * @param {string} expression
  * @param {string} parentPath
+ * @param {boolean} enableUnsafeEval
  */
-export default async function expressionTree(expression, parentPath) {
+export default async function expressionTree(
+  expression,
+  parentPath,
+  enableUnsafeEval,
+) {
   const parent = new OrigamiFileMap(parentPath);
   const globals = await projectGlobals(parent);
 
@@ -42,7 +47,7 @@ export default async function expressionTree(expression, parentPath) {
   setParent(maplike, parent);
 
   // Add debugging resources
-  const tree = debugTransform(maplike);
+  const tree = debugTransform(maplike, enableUnsafeEval);
 
   /** @type {any} */ (tree).version = version++;
 

@@ -2,12 +2,28 @@
 
 import { Tree } from "@weborigami/async-tree";
 
-export const keys = Tree.keys;
-export const json = Tree.json;
+import index from "../../origami/indexPage.js";
+import yaml from "../../origami/yaml.js";
+import explore from "../explore.js";
+import svg from "../svg.js";
+import version from "../version.js";
+import oriEval from "./oriEval.js";
 
-export { default as index } from "../../origami/indexPage.js";
-export { default as yaml } from "../../origami/yaml.js";
-export { default as explore } from "../explore.js";
-export { default as svg } from "../svg.js";
-export { default as version } from "../version.js";
-export { default as eval } from "./oriEval.js";
+export default function debugCommands(enableUnsafeEval = false) {
+  return Object.assign(
+    {
+      keys: Tree.keys,
+      json: Tree.json,
+      index,
+      yaml,
+      explore,
+      svg,
+      version,
+    },
+    enableUnsafeEval
+      ? {
+          eval: oriEval,
+        }
+      : {},
+  );
+}
