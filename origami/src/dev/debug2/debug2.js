@@ -30,6 +30,11 @@ let pendingChild = null;
  * arrangement ensures the expression is evaluated in a clean Node context (not
  * polluted by previous evaluations).
  *
+ * The `options` argument can include:
+ * - `enableUnsafeEval`: if true, enables the `!eval` debug command in the child
+ *   process; default is false
+ * - `debugFilesPath`: path to resources that will be added to the served tree
+ *
  * @typedef {import("@weborigami/language").RuntimeState} RuntimeState
  * @typedef {import("@weborigami/language").AnnotatedCode} AnnotatedCode
  *
@@ -71,8 +76,10 @@ export default async function debug2(code, options, state) {
 
   // @ts-ignore
   const enableUnsafeEval = options.enableUnsafeEval ?? false;
+  const debugFilesPath = options.debugFilesPath ?? "";
 
   const serverOptions = {
+    debugFilesPath,
     enableUnsafeEval,
     expression: code.source,
     parent: parentPath,
@@ -299,7 +306,8 @@ function proxyRequest(request, response) {
  * it becomes active and any previous active child is drained and stopped.
  */
 function startChild(serverOptions) {
-  const { enableUnsafeEval, expression, parent } = serverOptions;
+  const { debugFilesPath, enableUnsafeEval, expression, parent } =
+    serverOptions;
 
   // Start the child process, passing parent path via an environment variable.
   /** @type {ChildProcess} */
@@ -309,6 +317,7 @@ function startChild(serverOptions) {
       stdio: ["inherit", "inherit", "inherit", "ipc"],
       env: {
         ...process.env,
+        ORIGAMI_DEBUG_FILES_PATH: debugFilesPath,
         ORIGAMI_ENABLE_UNSAFE_EVAL: enableUnsafeEval ? "1" : "0",
         ORIGAMI_EXPRESSION: expression,
         ORIGAMI_PARENT: parent,

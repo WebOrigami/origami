@@ -9,6 +9,7 @@ import {
   scope,
   trailingSlash,
 } from "@weborigami/async-tree";
+import { OrigamiFileMap } from "@weborigami/language";
 import indexPage from "../../origami/indexPage.js";
 import yaml from "../../origami/yaml.js";
 import debugCommands from "./debugCommands.js";
@@ -23,11 +24,19 @@ import debugCommands from "./debugCommands.js";
  * Also transform a simple object result to YAML for viewing.
  *
  * @param {import("@weborigami/async-tree").Maplike} maplike
+ * @param {string} debugFilesPath
  * @param {boolean} enableUnsafeEval
  */
-export default function debugTransform(maplike, enableUnsafeEval = false) {
+export default function debugTransform(
+  maplike,
+  debugFilesPath = "",
+  enableUnsafeEval = false,
+) {
   const source = Tree.from(maplike, { deep: true });
   const commands = debugCommands(enableUnsafeEval);
+
+  const debugFiles = debugFilesPath ? new OrigamiFileMap(debugFilesPath) : null;
+
   return Object.assign(new AsyncMap(), {
     description: "debug resources",
 
@@ -35,8 +44,13 @@ export default function debugTransform(maplike, enableUnsafeEval = false) {
       // Ask the tree if it has the key.
       let value = await source.get(key);
 
+      if (value === undefined && debugFiles) {
+        // Try the debug files
+        value = await debugFiles.get(key);
+      }
+
       if (value === undefined) {
-        // The tree doesn't have the key; try the defaults.
+        // Try the defaults and commands
         if (key === "index.html") {
           // Generate an index page for this site
           value = await indexPage(source);
@@ -62,8 +76,9 @@ export default function debugTransform(maplike, enableUnsafeEval = false) {
       }
 
       if (Tree.isMap(value)) {
-        // Ensure this transform is applied to any map result
-        value = debugTransform(value);
+        // Ensure this transform is applied to any map result.
+        // Note: debugFilesPath only needed at top level.
+        value = debugTransform(value, "", enableUnsafeEval);
       } else if (value?.unpack) {
         // If the value isn't a tree, but has a tree attached via an `unpack`
         // method, wrap the unpack method to add this transform.

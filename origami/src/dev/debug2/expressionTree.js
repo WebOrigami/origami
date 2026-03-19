@@ -14,15 +14,15 @@ let version = 0;
  * Evaluate the given expression using the indicated parent path to produce a
  * resource tree, then transform that tree with debug resources and return it.
  *
- * @param {string} expression
- * @param {string} parentPath
- * @param {boolean} enableUnsafeEval
+ * @param {Object} options
+ * @param {string} options.debugFilesPath
+ * @param {string} options.expression
+ * @param {string} options.parentPath
+ * @param {boolean} options.enableUnsafeEval
  */
-export default async function expressionTree(
-  expression,
-  parentPath,
-  enableUnsafeEval,
-) {
+export default async function expressionTree(options) {
+  const { debugFilesPath, expression, parentPath, enableUnsafeEval } = options;
+
   const parent = new OrigamiFileMap(parentPath);
   const globals = await projectGlobals(parent);
 
@@ -47,7 +47,7 @@ export default async function expressionTree(
   setParent(maplike, parent);
 
   // Add debugging resources
-  const tree = debugTransform(maplike, enableUnsafeEval);
+  const tree = debugTransform(maplike, debugFilesPath, enableUnsafeEval);
 
   /** @type {any} */ (tree).version = version++;
 

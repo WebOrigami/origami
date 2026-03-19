@@ -27,6 +27,9 @@ function fail(message) {
 const enableUnsafeEval = process.env.ORIGAMI_ENABLE_UNSAFE_EVAL === "1";
 
 /** @type {string} */
+const debugFilesPath = process.env.ORIGAMI_DEBUG_FILES_PATH ?? "";
+
+/** @type {string} */
 // @ts-ignore
 const expression = process.env.ORIGAMI_EXPRESSION;
 if (expression === undefined) {
@@ -92,7 +95,12 @@ function beginDrain() {
 }
 
 async function evaluateExpression() {
-  const tree = await expressionTree(expression, parentPath, enableUnsafeEval);
+  const tree = await expressionTree({
+    debugFilesPath,
+    expression,
+    parentPath,
+    enableUnsafeEval,
+  });
   if (!tree) {
     fail("Dev.debug2: expression did not evaluate to a maplike resource tree");
   }
