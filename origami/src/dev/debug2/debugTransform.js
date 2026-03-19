@@ -9,9 +9,9 @@ import {
   scope,
   trailingSlash,
 } from "@weborigami/async-tree";
-import { projectGlobals } from "@weborigami/language";
 import indexPage from "../../origami/indexPage.js";
 import yaml from "../../origami/yaml.js";
+import * as commands from "./debugCommands.js";
 
 /**
  * Transform the given map-based tree to add debugging resources:
@@ -97,11 +97,10 @@ export default function debugTransform(maplike) {
 
 async function invokeOrigamiCommand(tree, key) {
   // Key is an Origami command; invoke it.
-  const globals = await projectGlobals(tree);
   const commandName = trailingSlash.remove(key.slice(1).trim());
 
-  // Look for command as a global or Dev command
-  const command = globals[commandName] ?? globals.Dev?.[commandName];
+  // Look for the indicated command
+  const command = commands[commandName];
   let value;
   if (command) {
     value = await command(tree);
