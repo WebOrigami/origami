@@ -3,7 +3,7 @@ import { requestListener } from "../../server/server.js";
 import expressionTree from "./expressionTree.js";
 
 /**
- * The debug2 command runs this module in a child process, passing in a parent
+ * The debug parent runs this module in a child process, passing in a parent
  * path in an environment variable.
  *
  * This module starts an HTTP server that will serve resources from that tree.
@@ -22,12 +22,12 @@ function fail(message) {
   process.exit(1);
 }
 
+/** @type {string} */
+const debugFilesPath = process.env.ORIGAMI_DEBUG_FILES_PATH ?? "";
+
 /** @type {boolean} */
 // @ts-ignore
 const enableUnsafeEval = process.env.ORIGAMI_ENABLE_UNSAFE_EVAL === "1";
-
-/** @type {string} */
-const debugFilesPath = process.env.ORIGAMI_DEBUG_FILES_PATH ?? "";
 
 /** @type {string} */
 // @ts-ignore
@@ -38,7 +38,7 @@ if (expression === undefined) {
 
 /** @type {string} */
 // @ts-ignore
-const parentPath = process.env.ORIGAMI_PARENT;
+const parentPath = process.env.ORIGAMI_PARENT_PATH;
 if (parentPath === undefined) {
   fail("Missing Origami parent");
 }

@@ -1,34 +1,13 @@
-import { execute, OrigamiFileMap } from "@weborigami/language";
-import { fork } from "node:child_process";
-import http from "node:http";
-import net from "node:net";
-import path from "node:path";
-
-const PUBLIC_HOST = "127.0.0.1";
-const DEFAULT_PORT = 5000;
-
-// Module that loads the server in the child process
-const childModuleUrl = new URL("./debugChild.js", import.meta.url);
-
-// The active child process and port
-/** @typedef {import("node:child_process").ChildProcess} ChildProcess */
-/** @typedef {{ process: ChildProcess, port: number | null }} ChildInfo */
-/** @type {ChildInfo | null} */
-let activeChild = null;
-
-// The most recently started child (may not be ready yet)
-/** @type {ChildInfo | null} */
-let pendingChild = null;
+import { execute } from "@weborigami/language";
+import debugParent from "./debugParent.js";
 
 /**
- * Given an Origami function, determine the runtime state's parent container,
- * then start a new debug server with that parent as the root of the resource
- * tree.
+ * Given an Origami expression, start a new debug server with that parent as the
+ * root of the resource tree.
  *
- * This function expects an unevaluated expression. It will obtain the original
- * source of the expression and pass that to the child for evaluation. This
- * arrangement ensures the expression is evaluated in a clean Node context (not
- * polluted by previous evaluations).
+ * This function expects unevaluated arguments. This is what it allows it to
+ * extract the source code of the expression to be debugged. (If it were
+ * evaluated, the function will be called with the result of the expression.)
  *
  * The `options` argument can include:
  * - `enableUnsafeEval`: if true, enables the `!eval` debug command in the child
@@ -44,8 +23,7 @@ let pendingChild = null;
  */
 export default async function debug2(code, options, state) {
   if (state === undefined) {
-    // Options were omitted
-    // @ts-ignore
+    // Options were omitted; shift arguments
     state = options;
     options = [];
   }
@@ -59,6 +37,8 @@ export default async function debug2(code, options, state) {
       "Dev.debug2 expects an Origami expression to evaluate: `debug2 <expression>`",
     );
   }
+
+  const expression = code.source;
 
   const { parent } = state;
   // @ts-ignore
@@ -78,305 +58,12 @@ export default async function debug2(code, options, state) {
   const enableUnsafeEval = options.enableUnsafeEval ?? false;
   const debugFilesPath = options.debugFilesPath ?? "";
 
-  const serverOptions = {
+  await debugParent({
     debugFilesPath,
     enableUnsafeEval,
-    expression: code.source,
-    parent: parentPath,
-  };
-
-  const tree = new OrigamiFileMap(parentPath);
-  tree.watch();
-  tree.addEventListener?.("change", (event) => {
-    // @ts-ignore
-    const { filePath } = event.options;
-    if (isJavaScriptFile(filePath)) {
-      // Need to restart the child process
-      console.log("JavaScript file changed, restarting server…");
-      startChild(serverOptions);
-    } else if (isPackageJsonFile(filePath)) {
-      // Need to restart the child process
-      console.log("package.json changed, restarting server…");
-      startChild(serverOptions);
-    } else {
-      // Just have the child reevaluate the expression
-      console.log("File changed, reloading site…");
-      activeChild?.process.send({ type: "REEVALUATE" });
-    }
-  });
-
-  const port = await findOpenPort(PUBLIC_HOST);
-  const href = `http://${PUBLIC_HOST}:${port}/`;
-
-  // ---- Public server
-  const publicServer = http.createServer(proxyRequest);
-  publicServer.listen(port, PUBLIC_HOST, () => {
-    startChild(serverOptions);
-    console.log(`Server running at ${href}. Press Ctrl+C to stop.`);
+    expression,
+    parentPath,
   });
 }
 debug2.needsState = true;
 debug2.unevaluatedArgs = true;
-
-/**
- * Give a child process a chance to finish any in-flight requests before we kill
- * it.
- *
- * @param {ChildProcess} childProcess
- */
-async function drainAndStopChild(childProcess) {
-  if (childProcess.killed) {
-    return;
-  }
-
-  // Ask it to drain first.
-  try {
-    childProcess.send({ type: "DRAIN" });
-  } catch {
-    // ignore
-  }
-
-  const drained = new Promise((resolve) => {
-    const onMessage = (msg) => {
-      if (msg && typeof msg === "object" && msg.type === "DRAINED") {
-        cleanup(resolve);
-      }
-    };
-    const onExit = () => cleanup(resolve);
-
-    function cleanup(done) {
-      childProcess.off("message", onMessage);
-      childProcess.off("exit", onExit);
-      done();
-    }
-
-    childProcess.on("message", onMessage);
-    childProcess.on("exit", onExit);
-  });
-
-  // Give it a short grace window to finish in-flight work.
-  const GRACE_MS = 1500;
-  await Promise.race([
-    drained,
-    new Promise((r) => setTimeout(r, GRACE_MS).unref()),
-  ]);
-
-  if (!childProcess.killed) {
-    childProcess.kill("SIGTERM");
-  }
-
-  // Final escalation.
-  setTimeout(() => {
-    // Child should have exited by now, but if not kill it
-    if (!childProcess.killed) {
-      childProcess.kill("SIGKILL");
-    }
-  }, GRACE_MS).unref();
-}
-
-// Return the first open port number on or after the given port number.
-async function findOpenPort(host, startPort = DEFAULT_PORT) {
-  for (let port = startPort; port <= 65535; port++) {
-    const open = await isPortAvailable(host, port);
-    if (open) {
-      return port;
-    }
-  }
-
-  throw new Error(`No open port found on or after ${startPort}`);
-}
-
-function isJavaScriptFile(filePath) {
-  const extname = path.extname(filePath).toLowerCase();
-  const jsExtensions = [".cjs", ".js", ".mjs", ".ts"];
-  return jsExtensions.includes(extname);
-}
-
-function isPackageJsonFile(filePath) {
-  return path.basename(filePath).toLowerCase() === "package.json";
-}
-
-/**
- * Check whether a TCP port can be bound.
- *
- * @param {string} host
- * @param {number} port
- * @returns {Promise<boolean>}
- */
-async function isPortAvailable(host, port) {
-  return new Promise((resolve) => {
-    const server = net.createServer();
-
-    server.unref();
-
-    server.once("error", (/** @type {any} */ error) => {
-      // Port is unavailable or cannot be bound on this host.
-      if (
-        error.code === "EADDRINUSE" ||
-        error.code === "EACCES" ||
-        error.code === "EADDRNOTAVAIL"
-      ) {
-        resolve(false);
-      } else {
-        resolve(false);
-      }
-    });
-
-    server.once("listening", () => {
-      server.close(() => resolve(true));
-    });
-
-    server.listen(port, host);
-  });
-}
-
-/**
- * Proxy incoming requests to the active child server, or return a 503 if not
- * ready.
- *
- * @param {import("node:http").IncomingMessage} request
- * @param {import("node:http").ServerResponse} response
- */
-function proxyRequest(request, response) {
-  if (!activeChild) {
-    response.statusCode = 503;
-    response.setHeader("content-type", "text/plain; charset=utf-8");
-    response.end("Dev server is starting…\n");
-    return;
-  }
-
-  const { port } = activeChild;
-
-  // Minimal hop-by-hop header stripping
-  const headers = { ...request.headers };
-  delete headers.connection;
-  delete headers["proxy-connection"];
-  delete headers["keep-alive"];
-  delete headers.te;
-  delete headers.trailer;
-  delete headers["transfer-encoding"];
-  delete headers.upgrade;
-
-  const upstreamRequest = http.request(
-    {
-      host: PUBLIC_HOST,
-      port,
-      method: request.method,
-      path: request.url,
-      headers,
-    },
-    (upstreamResponse) => {
-      response.writeHead(
-        upstreamResponse.statusCode ?? 502,
-        upstreamResponse.statusMessage,
-        upstreamResponse.headers,
-      );
-      upstreamResponse.pipe(response);
-    },
-  );
-
-  upstreamRequest.on("error", (err) => {
-    // Stop piping the request body
-    request.unpipe(upstreamRequest);
-    upstreamRequest.destroy();
-
-    // Only send error response if headers haven't been sent yet
-    if (!response.headersSent) {
-      response.statusCode = 502;
-      response.setHeader("content-type", "text/plain; charset=utf-8");
-      response.end(`Upstream error: ${err.message}\n`);
-    } else {
-      // Headers already sent, can't send error message - just close
-      response.destroy();
-    }
-  });
-
-  // Also handle errors on the incoming request
-  request.on("error", () => {
-    upstreamRequest.destroy();
-  });
-
-  request.pipe(upstreamRequest);
-}
-
-/**
- * Start a new child process.
- *
- * This will be a pending process until it sends a READY message, at which point
- * it becomes active and any previous active child is drained and stopped.
- */
-function startChild(serverOptions) {
-  const { debugFilesPath, enableUnsafeEval, expression, parent } =
-    serverOptions;
-
-  // Start the child process, passing parent path via an environment variable.
-  /** @type {ChildProcess} */
-  let childProcess;
-  try {
-    childProcess = fork(childModuleUrl, [], {
-      stdio: ["inherit", "inherit", "inherit", "ipc"],
-      env: {
-        ...process.env,
-        ORIGAMI_DEBUG_FILES_PATH: debugFilesPath,
-        ORIGAMI_ENABLE_UNSAFE_EVAL: enableUnsafeEval ? "1" : "0",
-        ORIGAMI_EXPRESSION: expression,
-        ORIGAMI_PARENT: parent,
-      },
-    });
-  } catch (error) {
-    throw new Error("Dev.debug2: failed to start child server:", {
-      cause: error,
-    });
-  }
-
-  // This becomes the pending child immediately
-  pendingChild = { process: childProcess, port: null };
-
-  // Listen for messages from the child about its status
-  childProcess.on("message", (/** @type {any} */ message) => {
-    if (!message || typeof message !== "object") {
-      return;
-    }
-
-    if (message.type === "READY" && typeof message.port === "number") {
-      // Only promote to active if this is still the pending child
-      if (pendingChild?.process === childProcess) {
-        const previousChild = activeChild;
-
-        activeChild = pendingChild;
-        pendingChild.port = message.port;
-        pendingChild = null;
-
-        // Drain previous child in background (don't wait)
-        if (previousChild?.process && previousChild.process !== childProcess) {
-          drainAndStopChild(previousChild.process).catch((err) =>
-            console.error("[drain]", err),
-          );
-        }
-      } else {
-        // This child was superseded by a newer one, kill it
-        // console.log("Child process superseded by newer one, killing it...");
-        childProcess.kill("SIGTERM");
-      }
-    }
-
-    if (message.type === "FATAL") {
-      // Child couldn't start (import error, etc.)
-      // Keep previous active child if any; otherwise we'll serve 500/503.
-      console.error("[child fatal]", message.error ?? message);
-      if (pendingChild?.process === childProcess) {
-        pendingChild = null;
-      }
-    }
-  });
-
-  childProcess.on("exit", (code, signal) => {
-    if (activeChild?.process === childProcess) {
-      // Active child died unexpectedly.
-      activeChild = null;
-    }
-    if (pendingChild?.process === childProcess) {
-      pendingChild = null;
-    }
-  });
-}

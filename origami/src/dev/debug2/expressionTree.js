@@ -16,9 +16,9 @@ let version = 0;
  *
  * @param {Object} options
  * @param {string} options.debugFilesPath
+ * @param {boolean} options.enableUnsafeEval
  * @param {string} options.expression
  * @param {string} options.parentPath
- * @param {boolean} options.enableUnsafeEval
  */
 export default async function expressionTree(options) {
   const { debugFilesPath, expression, parentPath, enableUnsafeEval } = options;
