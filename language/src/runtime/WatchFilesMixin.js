@@ -27,7 +27,7 @@ export default function WatchFilesMixin(Base) {
       this.dispatchEvent(new TreeEvent("change", { filePath }));
     }
 
-    async unwatch() {
+    unwatch() {
       if (!this.watching) {
         return;
       }
@@ -37,7 +37,7 @@ export default function WatchFilesMixin(Base) {
     }
 
     // Turn on watching for the directory.
-    async watch() {
+    watch() {
       if (this.watching) {
         return;
       }

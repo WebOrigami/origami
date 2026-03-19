@@ -1,8 +1,8 @@
 import { Mixin } from "../../index.ts";
 
 declare const WatchFilesMixin: Mixin<{
-  unwatch(): Promise<void>;
-  watch(): Promise<void>;
+  unwatch(): void;
+  watch(): void;
 }>;
 
 export default WatchFilesMixin;

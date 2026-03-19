@@ -97,8 +97,12 @@ export default async function debugParent(options) {
  * child a chance to finish any in-flight requests before exiting.
  */
 async function close() {
-  // Stop accepting new connections
-  await new Promise((resolve) => publicServer.close(resolve));
+  // Stop accepting new connections and force-close any keep-alive connections
+  // so the close callback fires promptly.
+  const closed = new Promise((resolve) => publicServer.close(resolve));
+  publicServer.closeAllConnections();
+  await closed;
+  publicServer = null;
 
   // Drain and stop any children concurrently
   const children = [pendingChild?.process, activeChild?.process].filter(
@@ -110,7 +114,8 @@ async function close() {
   await Promise.all(children.map(drainAndStopChild));
 
   // Stop watching for file changes
-  await tree.unwatch();
+  tree.unwatch();
+  tree = null;
 }
 
 /**
