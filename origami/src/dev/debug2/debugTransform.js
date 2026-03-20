@@ -51,7 +51,9 @@ export default function debugTransform(
 
       if (value === undefined) {
         // Try the defaults and commands
-        if (key === "index.html") {
+        if (key === "_debugger/") {
+          return debugFiles;
+        } else if (key === "index.html") {
           // Generate an index page for this site
           value = await indexPage(source);
         } else if (key === ".keys.json") {

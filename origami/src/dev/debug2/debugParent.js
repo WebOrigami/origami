@@ -13,6 +13,7 @@ const childModuleUrl = new URL("./debugChild.js", import.meta.url);
 
 // The public-facing server that proxies to the child process
 let publicServer;
+let publicOrigin;
 
 // The tree of files in the parent path, which we watch for changes
 let tree;
@@ -83,17 +84,16 @@ export default async function debugParent(options) {
   });
 
   const port = await findOpenPort();
-  const origin = `http://${PUBLIC_HOST}:${port}`;
+  publicOrigin = `http://${PUBLIC_HOST}:${port}`;
 
   publicServer = http.createServer(proxyRequest);
   publicServer.listen(port, PUBLIC_HOST, () => {
     startChild(options);
-    console.log(`Server running at ${origin}. Press Ctrl+C to stop.`);
+    console.log(`Server running at ${publicOrigin}. Press Ctrl+C to stop.`);
   });
 
   emitter = Object.assign(new EventEmitter(), {
     close,
-    origin,
   });
 
   return emitter;
@@ -375,6 +375,16 @@ function startChild(options) {
             console.error("[drain]", err),
           );
         }
+
+        if (!emitter) {
+          console.warn(
+            "Dev.debug2: child server is ready but parent emitter is gone, cannot emit ready event",
+          );
+          return;
+        }
+        emitter.emit("ready", {
+          origin: publicOrigin,
+        });
       } else {
         // This child was superseded by a newer one, kill it
         // console.log("Child process superseded by newer one, killing it...");
