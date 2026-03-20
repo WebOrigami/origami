@@ -1,5 +1,6 @@
 import { OrigamiFileMap } from "@weborigami/language";
 import { fork } from "node:child_process";
+import { EventEmitter } from "node:events";
 import http from "node:http";
 import net from "node:net";
 import path from "node:path";
@@ -26,6 +27,9 @@ let activeChild = null;
 /** @type {ChildInfo | null} */
 let pendingChild = null;
 
+// Used to communicate errors to caller
+let emitter = null;
+
 /**
  * Start a new debug parent server for the given Origami expression and runtime
  * state.
@@ -46,7 +50,8 @@ let pendingChild = null;
  *   process
  * - `parentPath` (required): the path to the parent tree used for evaluation
  *
- * @typedef {import("@weborigami/language").RuntimeState} RuntimeState
+ * The returned `emitter` is an EventEmitter that emits "error" events when the
+ * child server encounters an Origami error while handling a request.
  *
  * @param {Object} options
  * @param {string} options.debugFilesPath
@@ -86,10 +91,12 @@ export default async function debugParent(options) {
     console.log(`Server running at ${origin}. Press Ctrl+C to stop.`);
   });
 
-  return {
+  emitter = Object.assign(new EventEmitter(), {
     close,
     origin,
-  };
+  });
+
+  return emitter;
 }
 
 /**
@@ -103,6 +110,7 @@ async function close() {
   publicServer.closeAllConnections();
   await closed;
   publicServer = null;
+  emitter = null;
 
   // Drain and stop any children concurrently
   const children = [pendingChild?.process, activeChild?.process].filter(
@@ -270,12 +278,23 @@ function proxyRequest(request, response) {
       headers,
     },
     (upstreamResponse) => {
+      const { statusCode } = upstreamResponse;
       response.writeHead(
-        upstreamResponse.statusCode ?? 502,
+        statusCode ?? 502,
         upstreamResponse.statusMessage,
         upstreamResponse.headers,
       );
       upstreamResponse.pipe(response);
+
+      // Let caller know about the Origami error messages
+      if (statusCode !== undefined && statusCode >= 500 && emitter) {
+        const rawHeader = upstreamResponse.headers["x-error-details"];
+        const raw = Array.isArray(rawHeader) ? rawHeader[0] : rawHeader;
+        const message = raw ? decodeURIComponent(raw) : undefined;
+        if (message) {
+          emitter.emit("error", message);
+        }
+      }
     },
   );
 

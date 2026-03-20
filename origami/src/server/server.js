@@ -138,7 +138,10 @@ ${message}
 </body>
 </html>
 `;
-  response.writeHead(500, { "Content-Type": "text/html" });
+  response.writeHead(500, {
+    "Content-Type": "text/html",
+    "x-error-details": encodeURIComponent(message),
+  });
   response.end(html, "utf-8");
   console.error(message);
 }
