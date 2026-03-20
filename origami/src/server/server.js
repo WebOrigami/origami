@@ -1,4 +1,9 @@
-import { Tree, keysFromPath, trailingSlash } from "@weborigami/async-tree";
+import {
+  TraverseError,
+  Tree,
+  keysFromPath,
+  trailingSlash,
+} from "@weborigami/async-tree";
 import { formatError } from "@weborigami/language";
 import { ServerResponse } from "node:http";
 import constructResponse from "./constructResponse.js";
@@ -143,7 +148,11 @@ ${message}
     "x-error-details": encodeURIComponent(message),
   });
   response.end(html, "utf-8");
-  console.error(message);
+
+  // Don't log traverse errors for requests like favicon.ico, com.chrome.devtools.json, etc.
+  if (!(error instanceof TraverseError)) {
+    console.error(message);
+  }
 }
 
 // Asynchronous tree router as Express middleware.
