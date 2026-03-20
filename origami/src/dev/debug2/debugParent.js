@@ -292,7 +292,7 @@ function proxyRequest(request, response) {
         const raw = Array.isArray(rawHeader) ? rawHeader[0] : rawHeader;
         const message = raw ? decodeURIComponent(raw) : undefined;
         if (message) {
-          emitter.emit("error", message);
+          emitter.emit("origami-error", message);
         }
       }
     },
