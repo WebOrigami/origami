@@ -23,6 +23,7 @@ export { default as pack } from "./pack.js";
 export { default as post } from "./post.js";
 export { default as project } from "./project.js";
 export { default as projectRoot } from "./projectRoot.js";
+export { default as randomBasedOn } from "./randomBasedOn.js";
 export { default as redirect } from "./redirect.js";
 export { default as repeat } from "./repeat.js";
 export { default as rss } from "./rss.js";
