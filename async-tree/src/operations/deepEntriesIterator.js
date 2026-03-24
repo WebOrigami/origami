@@ -13,7 +13,7 @@ import isMaplike from "./isMaplike.js";
  * specified depth. A depth of 0 will yield values only at the tree's top level.
  *
  * @param {import("../../index.ts").Maplike} maplike
- * @param {{ depth?: number, expand?: boolean }} [options]
+ * @param {{ depth?: number, expand?: boolean, unpack?: boolean }} [options]
  * @returns {AsyncGenerator<[any, any], void, undefined>}
  */
 export default async function* deepEntriesIterator(maplike, options = {}) {
@@ -22,12 +22,13 @@ export default async function* deepEntriesIterator(maplike, options = {}) {
   });
 
   const depth = options.depth ?? Infinity;
-  const expand = options.expand ?? false;
+  const expand = options.expand ?? true;
+  const unpack = options.unpack ?? false;
 
   for await (let [key, value] of tree.entries()) {
     value = await value;
 
-    if (expand && isUnpackable(value)) {
+    if (unpack && isUnpackable(value)) {
       value = await value.unpack();
     }
 
@@ -37,7 +38,7 @@ export default async function* deepEntriesIterator(maplike, options = {}) {
       (isMap(value) ||
         (expand && typeof value !== "function" && isMaplike(value)));
     if (recurse) {
-      yield* deepEntriesIterator(value, { depth: depth - 1, expand });
+      yield* deepEntriesIterator(value, { depth: depth - 1, expand, unpack });
     } else {
       yield [key, value];
     }

@@ -6,7 +6,7 @@ import plain from "../../src/operations/plain.js";
 
 describe("flat", () => {
   test("flattens an array one level by default", async () => {
-    const result = await flat([1, 2, [3], [[4, [5]]]], 1);
+    const result = await flat([1, 2, [3], [[4, [5]]]]);
     assert.deepEqual(await plain(result), [1, 2, 3, [4, [5]]]);
   });
 

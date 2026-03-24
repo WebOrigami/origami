@@ -178,11 +178,10 @@ addOpLabel(exponentiation, "«ops.exponentiation»");
  * @param {...any} args
  */
 export async function flat(...args) {
-  // Coercise maplike arguments to maps so they can be flattened
-  const mapped = args.map((arg) =>
-    Tree.isMaplike(arg) ? Tree.from(arg, { deep: true }) : arg,
-  );
-  return Tree.flat(mapped);
+  // Unpack packed arguments so they can be flattened
+  const unpacked = args.map((arg) => (isUnpackable(arg) ? arg.unpack() : arg));
+  // Flatten to depth 2: 1 for args array, 1 for flattening
+  return Tree.flat(unpacked, 2);
 }
 addOpLabel(flat, "«ops.flat»");
 

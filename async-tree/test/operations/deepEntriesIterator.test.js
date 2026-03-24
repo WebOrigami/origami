@@ -67,7 +67,7 @@ describe("deepEntriesIterator", () => {
       packed,
     };
     const entries = [];
-    for await (const entry of deepEntriesIterator(tree, { expand: true })) {
+    for await (const entry of deepEntriesIterator(tree, { unpack: true })) {
       entries.push(entry);
     }
     assert.deepEqual(entries, [
