@@ -1,11 +1,14 @@
 import * as Tree from "./Tree.js";
 
-function wrap([name, fn]) {
-  const plainFn = async (...args) => Tree.plain(await fn(...args));
-  return [name, plainFn];
-}
+const Plain = {};
 
-const wrapped = Object.entries(Tree).map(wrap);
-const Plain = Object.fromEntries(wrapped);
+// Wrap each Tree method to return a plain value instead of a map-based tree
+for (const name of Object.keys(Tree)) {
+  Object.defineProperty(Plain, name, {
+    get() {
+      return async (...args) => Tree.plain(await Tree[name](...args));
+    },
+  });
+}
 
 export default Plain;
