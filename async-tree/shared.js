@@ -15,6 +15,7 @@ export * as extension from "./src/extension.js";
 export * as jsonKeys from "./src/jsonKeys.js";
 export { default as reduce } from "./src/operations/reduce.js";
 export { default as scope } from "./src/operations/scope.js";
+export { default as Plain } from "./src/Plain.js";
 export * as symbols from "./src/symbols.js";
 export * as trailingSlash from "./src/trailingSlash.js";
 export { default as TraverseError } from "./src/TraverseError.js";
