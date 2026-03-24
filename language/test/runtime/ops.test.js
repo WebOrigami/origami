@@ -158,7 +158,8 @@ describe("ops", () => {
         d: 4,
       });
       const array = [5, 6];
-      const result = await ops.flat(object, tree, array);
+      const set = new Set([7, 8]);
+      const result = await ops.flat(object, tree, array, set);
       assert.deepEqual(await Tree.plain(result), {
         a: 1,
         b: 2,
@@ -166,6 +167,8 @@ describe("ops", () => {
         d: 4,
         0: 5,
         1: 6,
+        2: 7,
+        3: 8,
       });
     });
   });
