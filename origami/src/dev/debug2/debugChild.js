@@ -118,6 +118,8 @@ async function evaluateExpression() {
   } catch {
     // Ignore errors.
   }
+
+  process.send?.({ type: "EVALUATED" });
 }
 
 function maybeFinishDrain() {

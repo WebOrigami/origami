@@ -4,7 +4,6 @@ let mapParentToResults = new WeakMap();
 
 export default async function oriEval(parent) {
   return async (encodedExpression) => {
-    console.log(encodedExpression);
     const expression = decodeURIComponent(encodedExpression);
 
     let lastResult = mapParentToResults.get(parent);

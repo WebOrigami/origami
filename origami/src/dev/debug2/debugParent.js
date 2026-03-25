@@ -390,9 +390,12 @@ function startChild(options) {
         // console.log("Child process superseded by newer one, killing it...");
         childProcess.kill("SIGTERM");
       }
-    }
-
-    if (message.type === "FATAL") {
+    } else if (message.type === "EVALUATED") {
+      // Let caller know child has reevaluated the expression (after a file change)
+      if (emitter) {
+        emitter.emit("evaluated");
+      }
+    } else if (message.type === "FATAL") {
       // Child couldn't start (import error, etc.)
       // Keep previous active child if any; otherwise we'll serve 500/503.
       console.error("[child fatal]", message.error ?? message);
