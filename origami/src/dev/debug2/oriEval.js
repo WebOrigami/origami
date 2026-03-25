@@ -1,17 +1,23 @@
 import ori from "../../origami/ori.js";
 
-let lastExpression;
-let lastResult;
+let mapParentToResults = new WeakMap();
 
 export default async function oriEval(parent) {
   return async (encodedExpression) => {
     console.log(encodedExpression);
     const expression = decodeURIComponent(encodedExpression);
-    if (expression === lastExpression) {
-      return lastResult;
+
+    let lastResult = mapParentToResults.get(parent);
+    if (lastResult) {
+      const { expression, value } = lastResult;
+      if (expression === encodedExpression) {
+        return value;
+      }
     }
-    lastExpression = expression;
-    lastResult = await ori(expression, { parent });
-    return lastResult;
+
+    const value = await ori(expression, { parent });
+    const result = { expression, value };
+    mapParentToResults.set(parent, result);
+    return value;
   };
 }
