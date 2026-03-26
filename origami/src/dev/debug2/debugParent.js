@@ -1,12 +1,9 @@
-import { OrigamiFileMap } from "@weborigami/language";
 import { fork } from "node:child_process";
 import { EventEmitter } from "node:events";
 import http from "node:http";
-import net from "node:net";
-import path from "node:path";
+import { findOpenPort } from "../../common/findOpenPort.js";
 
 const PUBLIC_HOST = "127.0.0.1";
-const DEFAULT_PORT = 5000;
 
 // Module that loads the server in the child process
 const childModuleUrl = new URL("./debugChild.js", import.meta.url);
@@ -14,9 +11,6 @@ const childModuleUrl = new URL("./debugChild.js", import.meta.url);
 // The public-facing server that proxies to the child process
 let publicServer;
 let publicOrigin;
-
-// The tree of files in the parent path, which we watch for changes
-let tree;
 
 // The active child process and port
 /** @typedef {import("node:child_process").ChildProcess} ChildProcess */
@@ -55,47 +49,34 @@ let emitter = null;
  * child server encounters an Origami error while handling a request.
  *
  * @param {Object} options
- * @param {string} options.debugFilesPath
- * @param {boolean} options.enableUnsafeEval
+ * @param {string} [options.debugFilesPath]
+ * @param {boolean} [options.enableUnsafeEval]
  * @param {string} options.expression
  * @param {string} options.parentPath
+ * @param {number} [options.port]
+ * @param {boolean} [options.quiet]
  */
 export default async function debugParent(options) {
   const { parentPath } = options;
+  if (parentPath === undefined) {
+    throw new Error("Debugger couldn't work out the parent path.");
+  }
 
-  tree = new OrigamiFileMap(parentPath);
-  tree.watch();
-  tree.addEventListener?.("change", (event) => {
-    // @ts-ignore
-    const { filePath } = event.options;
-    if (isJavaScriptFile(filePath)) {
-      // Need to restart the child process
-      console.log("JavaScript file changed, restarting server…");
-      startChild(options);
-    } else if (isPackageJsonFile(filePath)) {
-      // Need to restart the child process
-      console.log("package.json changed, restarting server…");
-      startChild(options);
-    } else {
-      // Just have the child reevaluate the expression
-      console.log("File changed, reloading site…");
-      activeChild?.process.send({ type: "REEVALUATE" });
-    }
-  });
-
-  const port = await findOpenPort();
+  const port = options.port ?? (await findOpenPort());
   publicOrigin = `http://${PUBLIC_HOST}:${port}`;
 
   publicServer = http.createServer(proxyRequest);
-  publicServer.listen(port, PUBLIC_HOST, () => {
-    startChild(options);
-    console.log(`Server running at ${publicOrigin}. Press Ctrl+C to stop.`);
-  });
+  await new Promise((resolve) =>
+    publicServer.listen(port, PUBLIC_HOST, resolve),
+  );
+  await startChild(options);
 
   emitter = Object.assign(new EventEmitter(), {
     close,
+    origin: publicOrigin,
+    reevaluate,
+    restart: () => startChild(options),
   });
-
   return emitter;
 }
 
@@ -110,7 +91,6 @@ async function close() {
   publicServer.closeAllConnections();
   await closed;
   publicServer = null;
-  emitter = null;
 
   // Drain and stop any children concurrently
   const children = [pendingChild?.process, activeChild?.process].filter(
@@ -121,9 +101,9 @@ async function close() {
   activeChild = null;
   await Promise.all(children.map(drainAndStopChild));
 
-  // Stop watching for file changes
-  tree.unwatch();
-  tree = null;
+  emitter.emit("close");
+  emitter.removeAllListeners();
+  emitter = null;
 }
 
 /**
@@ -180,66 +160,6 @@ async function drainAndStopChild(childProcess) {
       childProcess.kill("SIGKILL");
     }
   }, GRACE_MS).unref();
-}
-
-// Return the first open port number on or after the given port number.
-async function findOpenPort(startPort = DEFAULT_PORT) {
-  for (let port = startPort; port <= 65535; port++) {
-    if (await isPortAvailable(port)) {
-      return port;
-    }
-  }
-
-  throw new Error(`No open port found on or after ${startPort}`);
-}
-
-function isJavaScriptFile(filePath) {
-  const extname = path.extname(filePath).toLowerCase();
-  const jsExtensions = [".cjs", ".js", ".mjs", ".ts"];
-  return jsExtensions.includes(extname);
-}
-
-function isPackageJsonFile(filePath) {
-  return path.basename(filePath).toLowerCase() === "package.json";
-}
-
-/**
- * Check whether a port is available on both IPv4 and IPv6 loopback addresses
- * by attempting TCP connections. On macOS, IPv4 and IPv6 port spaces are
- * independent (IPV6_V6ONLY=1 by default), so a server bound to [::]:PORT is
- * invisible to a 127.0.0.1 bind check. Using connect probes on both loopbacks
- * catches servers regardless of which protocol family they listen on. Any
- * connection error (ECONNREFUSED, EADDRNOTAVAIL, etc.) means nothing is
- * listening there, so the function is safe on systems without IPv6.
- *
- * @param {number} port
- * @returns {Promise<boolean>}
- */
-async function isPortAvailable(port) {
-  const [v4, v6] = await Promise.all([
-    isPortListening("127.0.0.1", port),
-    isPortListening("::1", port),
-  ]);
-  return !v4 && !v6;
-}
-
-/**
- * @param {string} host
- * @param {number} port
- * @returns {Promise<boolean>}
- */
-function isPortListening(host, port) {
-  return new Promise((resolve) => {
-    const socket = net.createConnection(port, host);
-    socket.once("connect", () => {
-      socket.destroy();
-      resolve(true);
-    });
-    socket.once("error", () => {
-      socket.destroy();
-      resolve(false);
-    });
-  });
 }
 
 /**
@@ -322,6 +242,30 @@ function proxyRequest(request, response) {
   request.pipe(upstreamRequest);
 }
 
+async function reevaluate() {
+  if (!activeChild) {
+    return;
+  }
+
+  const child = activeChild;
+
+  // Wait for the next EVALUATED message from the child
+  const evaluated = /** @type {Promise<void>} */ (
+    new Promise((resolve) => {
+      const onMessage = (/** @type {any} */ msg) => {
+        if (msg && typeof msg === "object" && msg.type === "EVALUATED") {
+          child.process.off("message", onMessage);
+          resolve();
+        }
+      };
+      child.process.on("message", onMessage);
+    })
+  );
+
+  child.process.send({ type: "REEVALUATE" });
+  await evaluated;
+}
+
 /**
  * Start a new child process.
  *
@@ -329,7 +273,10 @@ function proxyRequest(request, response) {
  * it becomes active and any previous active child is drained and stopped.
  */
 function startChild(options) {
-  const { debugFilesPath, enableUnsafeEval, expression, parentPath } = options;
+  const { expression, parentPath } = options;
+  const debugFilesPath = options.debugFilesPath ?? "";
+  const enableUnsafeEval = options.enableUnsafeEval ?? false;
+  const quiet = options.quiet ?? false;
 
   // Start the child process, passing parent path via an environment variable.
   /** @type {ChildProcess} */
@@ -343,6 +290,7 @@ function startChild(options) {
         ORIGAMI_ENABLE_UNSAFE_EVAL: enableUnsafeEval ? "1" : "0",
         ORIGAMI_EXPRESSION: expression,
         ORIGAMI_PARENT_PATH: parentPath,
+        ORIGAMI_QUIET: quiet ? "1" : "0",
       },
     });
   } catch (error) {
@@ -354,61 +302,77 @@ function startChild(options) {
   // This becomes the pending child immediately
   pendingChild = { process: childProcess, port: null };
 
-  // Listen for messages from the child about its status
-  childProcess.on("message", (/** @type {any} */ message) => {
-    if (!message || typeof message !== "object") {
-      return;
-    }
-
-    if (message.type === "READY" && typeof message.port === "number") {
-      // Only promote to active if this is still the pending child
-      if (pendingChild?.process === childProcess) {
-        const previousChild = activeChild;
-
-        activeChild = pendingChild;
-        pendingChild.port = message.port;
-        pendingChild = null;
-
-        // Drain previous child in background (don't wait)
-        if (previousChild?.process && previousChild.process !== childProcess) {
-          drainAndStopChild(previousChild.process).catch((err) =>
-            console.error("[drain]", err),
-          );
-        }
-
-        if (!emitter) {
-          console.warn(
-            "Dev.debug2: child server is ready but parent emitter is gone, cannot emit ready event",
-          );
+  // Returns a Promise that resolves when the child signals READY, or rejects
+  // on FATAL or unexpected exit before ready.
+  return /** @type {Promise<void>} */ (
+    new Promise((resolve, reject) => {
+      // Listen for messages from the child about its status
+      childProcess.on("message", (/** @type {any} */ message) => {
+        if (!message || typeof message !== "object") {
           return;
+        } else if (
+          message.type === "READY" &&
+          typeof message.port === "number"
+        ) {
+          // Only promote to active if this is still the pending child
+          if (pendingChild?.process === childProcess) {
+            const previousChild = activeChild;
+
+            activeChild = pendingChild;
+            pendingChild.port = message.port;
+            pendingChild = null;
+
+            // Drain previous child in background (don't wait)
+            if (
+              previousChild?.process &&
+              previousChild.process !== childProcess
+            ) {
+              drainAndStopChild(previousChild.process).catch((err) =>
+                console.error("[drain]", err),
+              );
+            }
+
+            if (emitter) {
+              emitter.emit("ready", { origin: publicOrigin });
+            }
+            resolve();
+          } else {
+            // This child was superseded by a newer one, kill it
+            // console.log("Child process superseded by newer one, killing it...");
+            childProcess.kill("SIGTERM");
+          }
+        } else if (message.type === "EVALUATED") {
+          // Let caller know child has reevaluated the expression (after a file change)
+          if (emitter) {
+            emitter.emit("evaluated");
+          }
+        } else if (message.type === "FATAL") {
+          // Child couldn't start (import error, etc.)
+          // Keep previous active child if any; otherwise we'll serve 500/503.
+          console.error("[child fatal]", message.error ?? message);
+          if (pendingChild?.process === childProcess) {
+            pendingChild = null;
+          }
+          reject(new Error(message.error ?? "Child server failed to start"));
         }
-        emitter.emit("ready", {
-          origin: publicOrigin,
-        });
-      } else {
-        // This child was superseded by a newer one, kill it
-        // console.log("Child process superseded by newer one, killing it...");
-        childProcess.kill("SIGTERM");
-      }
-    }
+      });
 
-    if (message.type === "FATAL") {
-      // Child couldn't start (import error, etc.)
-      // Keep previous active child if any; otherwise we'll serve 500/503.
-      console.error("[child fatal]", message.error ?? message);
-      if (pendingChild?.process === childProcess) {
-        pendingChild = null;
-      }
-    }
-  });
-
-  childProcess.on("exit", (code, signal) => {
-    if (activeChild?.process === childProcess) {
-      // Active child died unexpectedly.
-      activeChild = null;
-    }
-    if (pendingChild?.process === childProcess) {
-      pendingChild = null;
-    }
-  });
+      childProcess.on("exit", (code, signal) => {
+        if (activeChild?.process === childProcess) {
+          // Active child died unexpectedly.
+          activeChild = null;
+        }
+        if (pendingChild?.process === childProcess) {
+          pendingChild = null;
+          // Child died before it was ready. If child was ready and resolve()
+          // was called, when the child exits, then reject() is a no-op.
+          reject(
+            new Error(
+              `Child exited before ready (code=${code}, signal=${signal})`,
+            ),
+          );
+        }
+      });
+    })
+  );
 }

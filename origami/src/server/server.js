@@ -88,7 +88,14 @@ export async function handleRequest(request, response, map) {
 
 export function keysFromUrl(url) {
   const encodedKeys = keysFromPath(url.pathname);
-  const keys = encodedKeys.map((key) => decodeURIComponent(key));
+  // Decode the keys, but stop decoding if we encounter an Origami debugger command
+  let foundCommand = false;
+  const keys = encodedKeys.map((key) => {
+    if (key.startsWith("!")) {
+      foundCommand = true;
+    }
+    return foundCommand ? key : decodeURIComponent(key);
+  });
 
   // If the keys array is empty (the path was just a trailing slash) or if the
   // path ended with a slash, add "index.html" to the end of the keys.
@@ -104,12 +111,17 @@ export function keysFromUrl(url) {
  * https.createServer calls, letting you serve an async tree as a set of pages.
  *
  * @typedef {import("@weborigami/async-tree").Maplike} Maplike
+ * @param {object} options
+ * @param {boolean} [options.quiet] If true, suppresses logging of incoming requests.
  * @param {Maplike} maplike
  */
-export function requestListener(maplike) {
+export function requestListener(maplike, options = {}) {
+  const quiet = options.quiet ?? false;
   const tree = Tree.from(maplike);
   return async function (request, response) {
-    console.log(decodeURI(request.url));
+    if (!quiet) {
+      console.log(decodeURI(request.url));
+    }
     const handled = await handleRequest(request, response, tree);
     if (!handled) {
       // Not found, return a 404.
