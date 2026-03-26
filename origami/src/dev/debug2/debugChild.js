@@ -43,6 +43,8 @@ if (parentPath === undefined) {
   fail("Missing Origami parent");
 }
 
+const quiet = process.env.ORIGAMI_QUIET === "1";
+
 // An indirect pointer to the tree of resources;
 let treeHandle = {};
 
@@ -50,7 +52,7 @@ let treeHandle = {};
 await evaluateExpression();
 
 // Serve the tree of resources
-const listener = requestListener(treeHandle);
+const listener = requestListener(treeHandle, { quiet });
 const server = http.createServer(listener);
 
 // Track live connections so we can drain/close cleanly.

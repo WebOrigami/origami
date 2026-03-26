@@ -54,6 +54,7 @@ let emitter = null;
  * @param {string} options.expression
  * @param {string} options.parentPath
  * @param {number} [options.port]
+ * @param {boolean} [options.quiet]
  */
 export default async function debugParent(options) {
   const { parentPath } = options;
@@ -69,7 +70,6 @@ export default async function debugParent(options) {
     publicServer.listen(port, PUBLIC_HOST, resolve),
   );
   await startChild(options);
-  console.log(`Server running at ${publicOrigin}. Press Ctrl+C to stop.`);
 
   emitter = Object.assign(new EventEmitter(), {
     close,
@@ -267,11 +267,6 @@ async function reevaluate() {
 }
 
 /**
- * Restart the child server
- */
-async function restart(options) {}
-
-/**
  * Start a new child process.
  *
  * This will be a pending process until it sends a READY message, at which point
@@ -281,6 +276,7 @@ function startChild(options) {
   const { expression, parentPath } = options;
   const debugFilesPath = options.debugFilesPath ?? "";
   const enableUnsafeEval = options.enableUnsafeEval ?? false;
+  const quiet = options.quiet ?? false;
 
   // Start the child process, passing parent path via an environment variable.
   /** @type {ChildProcess} */
@@ -294,6 +290,7 @@ function startChild(options) {
         ORIGAMI_ENABLE_UNSAFE_EVAL: enableUnsafeEval ? "1" : "0",
         ORIGAMI_EXPRESSION: expression,
         ORIGAMI_PARENT_PATH: parentPath,
+        ORIGAMI_QUIET: quiet ? "1" : "0",
       },
     });
   } catch (error) {

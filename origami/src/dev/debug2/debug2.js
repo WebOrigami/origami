@@ -92,6 +92,9 @@ export default async function debug2(code, options, state) {
   server.on("close", () => {
     tree.unwatch();
   });
+
+  console.log(`Server running at ${server.origin}. Press Ctrl+C to stop.`);
+  return server;
 }
 debug2.needsState = true;
 debug2.unevaluatedArgs = true;

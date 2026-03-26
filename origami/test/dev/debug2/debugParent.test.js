@@ -10,6 +10,7 @@ describe("debugParent", () => {
     server = await debugParent({
       expression: "{ index.html: counter.js() }",
       parentPath: fixturesPath,
+      quiet: true,
     });
   });
 

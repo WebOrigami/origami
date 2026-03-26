@@ -104,12 +104,17 @@ export function keysFromUrl(url) {
  * https.createServer calls, letting you serve an async tree as a set of pages.
  *
  * @typedef {import("@weborigami/async-tree").Maplike} Maplike
+ * @param {object} options
+ * @param {boolean} [options.quiet] If true, suppresses logging of incoming requests.
  * @param {Maplike} maplike
  */
-export function requestListener(maplike) {
+export function requestListener(maplike, options = {}) {
+  const quiet = options.quiet ?? false;
   const tree = Tree.from(maplike);
   return async function (request, response) {
-    console.log(decodeURI(request.url));
+    if (!quiet) {
+      console.log(decodeURI(request.url));
+    }
     const handled = await handleRequest(request, response, tree);
     if (!handled) {
       // Not found, return a 404.
