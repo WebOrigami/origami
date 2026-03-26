@@ -2,11 +2,10 @@ import { OrigamiFileMap } from "@weborigami/language";
 import { fork } from "node:child_process";
 import { EventEmitter } from "node:events";
 import http from "node:http";
-import net from "node:net";
 import path from "node:path";
+import { findOpenPort } from "../../common/findOpenPort.js";
 
 const PUBLIC_HOST = "127.0.0.1";
-const DEFAULT_PORT = 5000;
 
 // Module that loads the server in the child process
 const childModuleUrl = new URL("./debugChild.js", import.meta.url);
@@ -55,13 +54,17 @@ let emitter = null;
  * child server encounters an Origami error while handling a request.
  *
  * @param {Object} options
- * @param {string} options.debugFilesPath
- * @param {boolean} options.enableUnsafeEval
+ * @param {string} [options.debugFilesPath]
+ * @param {boolean} [options.enableUnsafeEval]
  * @param {string} options.expression
  * @param {string} options.parentPath
+ * @param {number} [options.port]
  */
 export default async function debugParent(options) {
   const { parentPath } = options;
+  if (parentPath === undefined) {
+    throw new Error("Debugger couldn't work out the parent path.");
+  }
 
   tree = new OrigamiFileMap(parentPath);
   tree.watch();
@@ -79,11 +82,11 @@ export default async function debugParent(options) {
     } else {
       // Just have the child reevaluate the expression
       console.log("File changed, reloading site…");
-      activeChild?.process.send({ type: "REEVALUATE" });
+      reevaluate();
     }
   });
 
-  const port = await findOpenPort();
+  const port = options.port ?? (await findOpenPort());
   publicOrigin = `http://${PUBLIC_HOST}:${port}`;
 
   publicServer = http.createServer(proxyRequest);
@@ -94,6 +97,8 @@ export default async function debugParent(options) {
 
   emitter = Object.assign(new EventEmitter(), {
     close,
+    reevaluate,
+    restart: () => startChild(options),
   });
 
   return emitter;
@@ -182,17 +187,6 @@ async function drainAndStopChild(childProcess) {
   }, GRACE_MS).unref();
 }
 
-// Return the first open port number on or after the given port number.
-async function findOpenPort(startPort = DEFAULT_PORT) {
-  for (let port = startPort; port <= 65535; port++) {
-    if (await isPortAvailable(port)) {
-      return port;
-    }
-  }
-
-  throw new Error(`No open port found on or after ${startPort}`);
-}
-
 function isJavaScriptFile(filePath) {
   const extname = path.extname(filePath).toLowerCase();
   const jsExtensions = [".cjs", ".js", ".mjs", ".ts"];
@@ -201,45 +195,6 @@ function isJavaScriptFile(filePath) {
 
 function isPackageJsonFile(filePath) {
   return path.basename(filePath).toLowerCase() === "package.json";
-}
-
-/**
- * Check whether a port is available on both IPv4 and IPv6 loopback addresses
- * by attempting TCP connections. On macOS, IPv4 and IPv6 port spaces are
- * independent (IPV6_V6ONLY=1 by default), so a server bound to [::]:PORT is
- * invisible to a 127.0.0.1 bind check. Using connect probes on both loopbacks
- * catches servers regardless of which protocol family they listen on. Any
- * connection error (ECONNREFUSED, EADDRNOTAVAIL, etc.) means nothing is
- * listening there, so the function is safe on systems without IPv6.
- *
- * @param {number} port
- * @returns {Promise<boolean>}
- */
-async function isPortAvailable(port) {
-  const [v4, v6] = await Promise.all([
-    isPortListening("127.0.0.1", port),
-    isPortListening("::1", port),
-  ]);
-  return !v4 && !v6;
-}
-
-/**
- * @param {string} host
- * @param {number} port
- * @returns {Promise<boolean>}
- */
-function isPortListening(host, port) {
-  return new Promise((resolve) => {
-    const socket = net.createConnection(port, host);
-    socket.once("connect", () => {
-      socket.destroy();
-      resolve(true);
-    });
-    socket.once("error", () => {
-      socket.destroy();
-      resolve(false);
-    });
-  });
 }
 
 /**
@@ -322,6 +277,30 @@ function proxyRequest(request, response) {
   request.pipe(upstreamRequest);
 }
 
+async function reevaluate() {
+  if (!activeChild) {
+    return;
+  }
+
+  const child = activeChild;
+
+  // Wait for the next EVALUATED message from the child
+  const evaluated = /** @type {Promise<void>} */ (
+    new Promise((resolve) => {
+      const onMessage = (/** @type {any} */ msg) => {
+        if (msg && typeof msg === "object" && msg.type === "EVALUATED") {
+          child.process.off("message", onMessage);
+          resolve();
+        }
+      };
+      child.process.on("message", onMessage);
+    })
+  );
+
+  child.process.send({ type: "REEVALUATE" });
+  await evaluated;
+}
+
 /**
  * Start a new child process.
  *
@@ -329,7 +308,9 @@ function proxyRequest(request, response) {
  * it becomes active and any previous active child is drained and stopped.
  */
 function startChild(options) {
-  const { debugFilesPath, enableUnsafeEval, expression, parentPath } = options;
+  const { expression, parentPath } = options;
+  const debugFilesPath = options.debugFilesPath ?? "";
+  const enableUnsafeEval = options.enableUnsafeEval ?? false;
 
   // Start the child process, passing parent path via an environment variable.
   /** @type {ChildProcess} */
