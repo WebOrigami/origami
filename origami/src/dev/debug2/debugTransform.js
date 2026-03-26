@@ -72,7 +72,11 @@ export default function debugTransform(
           Tree.merge(object, {
             "index.html": yamlText,
           });
-      } else if (Tree.isMaplike(value) && !Tree.isMap(value)) {
+      } else if (
+        Tree.isMaplike(value) &&
+        !Tree.isMap(value) &&
+        typeof value !== "function"
+      ) {
         // Make it a map so we can debug it
         value = Tree.from(value);
       }
