@@ -4,7 +4,6 @@ import debugParent from "../../../src/dev/debug2/debugParent.js";
 
 describe("debugParent", () => {
   let server;
-  let origin;
 
   before(async () => {
     const fixturesPath = new URL("./fixtures", import.meta.url).pathname;
@@ -12,35 +11,33 @@ describe("debugParent", () => {
       expression: "{ index.html: counter.js() }",
       parentPath: fixturesPath,
     });
-    origin = await new Promise((resolve) => {
-      server.once("ready", (event) => resolve(event.origin));
-    });
   });
 
   after(() => server.close());
 
   test("starts a debug server", async () => {
-    const response = await fetch(origin);
+    const response = await fetch(server.origin);
     const text = await response.text();
     assert.equal(text, "0");
     // Expect same response
-    const response2 = await fetch(origin);
+    const response2 = await fetch(server.origin);
     const text2 = await response2.text();
     assert.equal(text2, "0");
   });
 
   test("can reevaluate the expression", async () => {
     await server.reevaluate();
-    const response = await fetch(origin);
+    const response = await fetch(server.origin);
     const text = await response.text();
+    // counter.js should preserve state, index.html should be recalculated
     assert.equal(text, "1");
   });
 
-  // test("can reevaluate the expression", async () => {
-  //   await server.reevaluate();
-  //   const response = await fetch(origin);
-  //   const text = await response.text();
-  //   // JS should have reloaded, resetting the counter
-  //   assert.equal(text, "0");
-  // });
+  test("can restart the child server for a Node environment reset", async () => {
+    await server.restart();
+    const response = await fetch(server.origin);
+    const text = await response.text();
+    // JS should have reloaded, resetting the counter
+    assert.equal(text, "0");
+  });
 });

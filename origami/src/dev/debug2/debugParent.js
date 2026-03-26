@@ -74,11 +74,11 @@ export default async function debugParent(options) {
     if (isJavaScriptFile(filePath)) {
       // Need to restart the child process
       console.log("JavaScript file changed, restarting server…");
-      startChild(options);
+      startChild(options).catch((err) => console.error("[restart]", err));
     } else if (isPackageJsonFile(filePath)) {
       // Need to restart the child process
       console.log("package.json changed, restarting server…");
-      startChild(options);
+      startChild(options).catch((err) => console.error("[restart]", err));
     } else {
       // Just have the child reevaluate the expression
       console.log("File changed, reloading site…");
@@ -90,17 +90,18 @@ export default async function debugParent(options) {
   publicOrigin = `http://${PUBLIC_HOST}:${port}`;
 
   publicServer = http.createServer(proxyRequest);
-  publicServer.listen(port, PUBLIC_HOST, () => {
-    startChild(options);
-    console.log(`Server running at ${publicOrigin}. Press Ctrl+C to stop.`);
-  });
+  await new Promise((resolve) =>
+    publicServer.listen(port, PUBLIC_HOST, resolve),
+  );
+  await startChild(options);
+  console.log(`Server running at ${publicOrigin}. Press Ctrl+C to stop.`);
 
   emitter = Object.assign(new EventEmitter(), {
     close,
+    origin: publicOrigin,
     reevaluate,
     restart: () => startChild(options),
   });
-
   return emitter;
 }
 
@@ -302,6 +303,11 @@ async function reevaluate() {
 }
 
 /**
+ * Restart the child server
+ */
+async function restart(options) {}
+
+/**
  * Start a new child process.
  *
  * This will be a pending process until it sends a READY message, at which point
@@ -335,64 +341,77 @@ function startChild(options) {
   // This becomes the pending child immediately
   pendingChild = { process: childProcess, port: null };
 
-  // Listen for messages from the child about its status
-  childProcess.on("message", (/** @type {any} */ message) => {
-    if (!message || typeof message !== "object") {
-      return;
-    }
-
-    if (message.type === "READY" && typeof message.port === "number") {
-      // Only promote to active if this is still the pending child
-      if (pendingChild?.process === childProcess) {
-        const previousChild = activeChild;
-
-        activeChild = pendingChild;
-        pendingChild.port = message.port;
-        pendingChild = null;
-
-        // Drain previous child in background (don't wait)
-        if (previousChild?.process && previousChild.process !== childProcess) {
-          drainAndStopChild(previousChild.process).catch((err) =>
-            console.error("[drain]", err),
-          );
-        }
-
-        if (!emitter) {
-          console.warn(
-            "Dev.debug2: child server is ready but parent emitter is gone, cannot emit ready event",
-          );
+  // Returns a Promise that resolves when the child signals READY, or rejects
+  // on FATAL or unexpected exit before ready.
+  return /** @type {Promise<void>} */ (
+    new Promise((resolve, reject) => {
+      // Listen for messages from the child about its status
+      childProcess.on("message", (/** @type {any} */ message) => {
+        if (!message || typeof message !== "object") {
           return;
-        }
-        emitter.emit("ready", {
-          origin: publicOrigin,
-        });
-      } else {
-        // This child was superseded by a newer one, kill it
-        // console.log("Child process superseded by newer one, killing it...");
-        childProcess.kill("SIGTERM");
-      }
-    } else if (message.type === "EVALUATED") {
-      // Let caller know child has reevaluated the expression (after a file change)
-      if (emitter) {
-        emitter.emit("evaluated");
-      }
-    } else if (message.type === "FATAL") {
-      // Child couldn't start (import error, etc.)
-      // Keep previous active child if any; otherwise we'll serve 500/503.
-      console.error("[child fatal]", message.error ?? message);
-      if (pendingChild?.process === childProcess) {
-        pendingChild = null;
-      }
-    }
-  });
+        } else if (
+          message.type === "READY" &&
+          typeof message.port === "number"
+        ) {
+          // Only promote to active if this is still the pending child
+          if (pendingChild?.process === childProcess) {
+            const previousChild = activeChild;
 
-  childProcess.on("exit", (code, signal) => {
-    if (activeChild?.process === childProcess) {
-      // Active child died unexpectedly.
-      activeChild = null;
-    }
-    if (pendingChild?.process === childProcess) {
-      pendingChild = null;
-    }
-  });
+            activeChild = pendingChild;
+            pendingChild.port = message.port;
+            pendingChild = null;
+
+            // Drain previous child in background (don't wait)
+            if (
+              previousChild?.process &&
+              previousChild.process !== childProcess
+            ) {
+              drainAndStopChild(previousChild.process).catch((err) =>
+                console.error("[drain]", err),
+              );
+            }
+
+            if (emitter) {
+              emitter.emit("ready", { origin: publicOrigin });
+            }
+            resolve();
+          } else {
+            // This child was superseded by a newer one, kill it
+            // console.log("Child process superseded by newer one, killing it...");
+            childProcess.kill("SIGTERM");
+          }
+        } else if (message.type === "EVALUATED") {
+          // Let caller know child has reevaluated the expression (after a file change)
+          if (emitter) {
+            emitter.emit("evaluated");
+          }
+        } else if (message.type === "FATAL") {
+          // Child couldn't start (import error, etc.)
+          // Keep previous active child if any; otherwise we'll serve 500/503.
+          console.error("[child fatal]", message.error ?? message);
+          if (pendingChild?.process === childProcess) {
+            pendingChild = null;
+          }
+          reject(new Error(message.error ?? "Child server failed to start"));
+        }
+      });
+
+      childProcess.on("exit", (code, signal) => {
+        if (activeChild?.process === childProcess) {
+          // Active child died unexpectedly.
+          activeChild = null;
+        }
+        if (pendingChild?.process === childProcess) {
+          pendingChild = null;
+          // Child died before it was ready. If child was ready and resolve()
+          // was called, when the child exits, then reject() is a no-op.
+          reject(
+            new Error(
+              `Child exited before ready (code=${code}, signal=${signal})`,
+            ),
+          );
+        }
+      });
+    })
+  );
 }
