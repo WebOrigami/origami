@@ -23,16 +23,35 @@ import debugCommands from "./debugCommands.js";
  *
  * Also transform a simple object result to YAML for viewing.
  *
- * @param {import("@weborigami/async-tree").Maplike} maplike
+ * @typedef {import("@weborigami/async-tree").Maplike} Maplike
+ * @typedef {import("@weborigami/async-tree").Packed} Packed
+ *
+ * @param {Maplike|Packed} input
  * @param {string} debugFilesPath
  * @param {boolean} enableUnsafeEval
  */
 export default function debugTransform(
-  maplike,
+  input,
   debugFilesPath = "",
   enableUnsafeEval = false,
 ) {
-  const source = Tree.from(maplike, { deep: true });
+  if (isUnpackable(input)) {
+    // If the value isn't a tree, but has a tree attached via an `unpack`
+    // method, destructively wrap the unpack method to add this transform.
+    const original = input.unpack.bind(input);
+    input.unpack = async () => {
+      const content = await original();
+      if (!Tree.isTraversable(content) || typeof content === "function") {
+        return content;
+      }
+      /** @type {any} */
+      let tree = Tree.from(content);
+      return debugTransform(tree);
+    };
+    return input;
+  }
+
+  const source = Tree.from(input, { deep: true });
   const commands = debugCommands(enableUnsafeEval);
 
   const debugFiles = debugFilesPath ? new OrigamiFileMap(debugFilesPath) : null;
@@ -81,24 +100,13 @@ export default function debugTransform(
         value = Tree.from(value);
       }
 
-      if (Tree.isMap(value)) {
-        // Ensure this transform is applied to any map result.
+      // Ensure this transform is applied to any map result, or any object with
+      // an unpack method that returns a map.
+      if (Tree.isMap(value) || value?.unpack) {
         // Note: debugFilesPath only needed at top level.
         value = debugTransform(value, "", enableUnsafeEval);
-      } else if (value?.unpack) {
-        // If the value isn't a tree, but has a tree attached via an `unpack`
-        // method, wrap the unpack method to add this transform.
-        const original = value.unpack.bind(value);
-        value.unpack = async () => {
-          const content = await original();
-          if (!Tree.isTraversable(content) || typeof content === "function") {
-            return content;
-          }
-          /** @type {any} */
-          let tree = Tree.from(content);
-          return debugTransform(tree);
-        };
       }
+
       return value;
     },
 

@@ -88,7 +88,14 @@ export async function handleRequest(request, response, map) {
 
 export function keysFromUrl(url) {
   const encodedKeys = keysFromPath(url.pathname);
-  const keys = encodedKeys.map((key) => decodeURIComponent(key));
+  // Decode the keys, but stop decoding if we encounter an Origami debugger command
+  let foundCommand = false;
+  const keys = encodedKeys.map((key) => {
+    if (key.startsWith("!")) {
+      foundCommand = true;
+    }
+    return foundCommand ? key : decodeURIComponent(key);
+  });
 
   // If the keys array is empty (the path was just a trailing slash) or if the
   // path ended with a slash, add "index.html" to the end of the keys.
