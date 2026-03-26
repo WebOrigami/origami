@@ -1,4 +1,5 @@
-import { execute } from "@weborigami/language";
+import { execute, OrigamiFileMap } from "@weborigami/language";
+import path from "node:path";
 import debugParent from "./debugParent.js";
 
 /**
@@ -58,12 +59,49 @@ export default async function debug2(code, options, state) {
   const enableUnsafeEval = options.enableUnsafeEval ?? false;
   const debugFilesPath = options.debugFilesPath ?? "";
 
-  await debugParent({
+  // Start the debug server
+  const server = await debugParent({
     debugFilesPath,
     enableUnsafeEval,
     expression,
     parentPath,
   });
+
+  // Watch the parent files for changes
+  const tree = new OrigamiFileMap(parentPath);
+  tree.watch();
+  tree.addEventListener?.("change", async (event) => {
+    // @ts-ignore
+    const { filePath } = event.options;
+    if (isJavaScriptFile(filePath)) {
+      // Need to restart the child process
+      console.log("JavaScript file changed, restarting server…");
+      await server.restart();
+    } else if (isPackageJsonFile(filePath)) {
+      // Need to restart the child process
+      console.log("package.json changed, restarting server…");
+      await server.restart();
+    } else {
+      // Just have the child reevaluate the expression
+      console.log("File changed, reloading site…");
+      await server.reevaluate();
+    }
+  });
+
+  // When server closes, stop watching for file changes
+  server.on("close", () => {
+    tree.unwatch();
+  });
 }
 debug2.needsState = true;
 debug2.unevaluatedArgs = true;
+
+function isJavaScriptFile(filePath) {
+  const extname = path.extname(filePath).toLowerCase();
+  const jsExtensions = [".cjs", ".js", ".mjs", ".ts"];
+  return jsExtensions.includes(extname);
+}
+
+function isPackageJsonFile(filePath) {
+  return path.basename(filePath).toLowerCase() === "package.json";
+}

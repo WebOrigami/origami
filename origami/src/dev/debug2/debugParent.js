@@ -1,8 +1,6 @@
-import { OrigamiFileMap } from "@weborigami/language";
 import { fork } from "node:child_process";
 import { EventEmitter } from "node:events";
 import http from "node:http";
-import path from "node:path";
 import { findOpenPort } from "../../common/findOpenPort.js";
 
 const PUBLIC_HOST = "127.0.0.1";
@@ -13,9 +11,6 @@ const childModuleUrl = new URL("./debugChild.js", import.meta.url);
 // The public-facing server that proxies to the child process
 let publicServer;
 let publicOrigin;
-
-// The tree of files in the parent path, which we watch for changes
-let tree;
 
 // The active child process and port
 /** @typedef {import("node:child_process").ChildProcess} ChildProcess */
@@ -66,26 +61,6 @@ export default async function debugParent(options) {
     throw new Error("Debugger couldn't work out the parent path.");
   }
 
-  tree = new OrigamiFileMap(parentPath);
-  tree.watch();
-  tree.addEventListener?.("change", (event) => {
-    // @ts-ignore
-    const { filePath } = event.options;
-    if (isJavaScriptFile(filePath)) {
-      // Need to restart the child process
-      console.log("JavaScript file changed, restarting server…");
-      startChild(options).catch((err) => console.error("[restart]", err));
-    } else if (isPackageJsonFile(filePath)) {
-      // Need to restart the child process
-      console.log("package.json changed, restarting server…");
-      startChild(options).catch((err) => console.error("[restart]", err));
-    } else {
-      // Just have the child reevaluate the expression
-      console.log("File changed, reloading site…");
-      reevaluate();
-    }
-  });
-
   const port = options.port ?? (await findOpenPort());
   publicOrigin = `http://${PUBLIC_HOST}:${port}`;
 
@@ -116,7 +91,6 @@ async function close() {
   publicServer.closeAllConnections();
   await closed;
   publicServer = null;
-  emitter = null;
 
   // Drain and stop any children concurrently
   const children = [pendingChild?.process, activeChild?.process].filter(
@@ -127,9 +101,9 @@ async function close() {
   activeChild = null;
   await Promise.all(children.map(drainAndStopChild));
 
-  // Stop watching for file changes
-  tree.unwatch();
-  tree = null;
+  emitter.emit("close");
+  emitter.removeAllListeners();
+  emitter = null;
 }
 
 /**
@@ -186,16 +160,6 @@ async function drainAndStopChild(childProcess) {
       childProcess.kill("SIGKILL");
     }
   }, GRACE_MS).unref();
-}
-
-function isJavaScriptFile(filePath) {
-  const extname = path.extname(filePath).toLowerCase();
-  const jsExtensions = [".cjs", ".js", ".mjs", ".ts"];
-  return jsExtensions.includes(extname);
-}
-
-function isPackageJsonFile(filePath) {
-  return path.basename(filePath).toLowerCase() === "package.json";
 }
 
 /**
