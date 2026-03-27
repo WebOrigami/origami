@@ -1,5 +1,5 @@
 import { trailingSlash, Tree } from "@weborigami/async-tree";
-import { evaluate } from "@weborigami/language";
+import { evaluate, projectGlobals } from "@weborigami/language";
 import debugTransform from "./debugTransform.js";
 
 const mapParentToResult = new WeakMap();
@@ -16,6 +16,7 @@ const mapParentToResult = new WeakMap();
  * counter to force reevaluation of the same expression.
  */
 export default async function oriEval(parent) {
+  const globals = await projectGlobals(parent);
   return async (key) => {
     const normalizedKey = trailingSlash.remove(key);
     let result = mapParentToResult.get(parent);
@@ -28,7 +29,11 @@ export default async function oriEval(parent) {
     let value;
     if (match) {
       const expression = decodeURIComponent(match.groups.expression);
-      value = await evaluate(expression, { parent });
+      value = await evaluate(expression, {
+        globals,
+        mode: "shell",
+        parent,
+      });
       if (
         (Tree.isMaplike(value) && typeof value !== "function") ||
         value?.unpack
