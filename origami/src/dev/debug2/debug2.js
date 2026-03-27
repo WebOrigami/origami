@@ -1,4 +1,4 @@
-import { execute, OrigamiFileMap } from "@weborigami/language";
+import { OrigamiFileMap } from "@weborigami/language";
 import path from "node:path";
 import debugParent from "./debugParent.js";
 
@@ -10,24 +10,13 @@ import debugParent from "./debugParent.js";
  * extract the source code of the expression to be debugged. (If it were
  * evaluated, the function will be called with the result of the expression.)
  *
- * The `options` argument can include:
- * - `enableUnsafeEval`: if true, enables the `!eval` debug command in the child
- *   process; default is false
- *
  * @typedef {import("@weborigami/language").RuntimeState} RuntimeState
  * @typedef {import("@weborigami/language").AnnotatedCode} AnnotatedCode
  *
  * @param {AnnotatedCode} code
- * @param {any | RuntimeState} options
  * @param {RuntimeState} state
  */
-export default async function debug2(code, options, state) {
-  if (state === undefined) {
-    // Options were omitted; shift arguments
-    state = options;
-    options = [];
-  }
-
+export default async function debug2(code, state) {
   if (
     !(code instanceof Array) ||
     code.source === undefined ||
@@ -47,19 +36,8 @@ export default async function debug2(code, options, state) {
     throw new Error("Dev.debug2 couldn't work out the parent path.");
   }
 
-  // Need to evaluate options object
-  if (options.length > 0) {
-    options = await execute(options, state);
-  } else {
-    options = {};
-  }
-
-  // @ts-ignore
-  const enableUnsafeEval = options.enableUnsafeEval ?? false;
-
   // Start the debug server
   const server = await debugParent({
-    enableUnsafeEval,
     expression,
     parentPath,
   });

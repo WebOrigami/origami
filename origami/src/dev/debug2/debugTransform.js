@@ -11,7 +11,7 @@ import {
 } from "@weborigami/async-tree";
 import indexPage from "../../origami/indexPage.js";
 import yaml from "../../origami/yaml.js";
-import debugCommands from "./debugCommands.js";
+import * as debugCommands from "./debugCommands.js";
 
 /**
  * Transform the given map-based tree to add debugging resources:
@@ -26,9 +26,8 @@ import debugCommands from "./debugCommands.js";
  * @typedef {import("@weborigami/async-tree").Packed} Packed
  *
  * @param {Maplike|Packed} input
- * @param {boolean} enableUnsafeEval
  */
-export default function debugTransform(input, enableUnsafeEval = false) {
+export default function debugTransform(input) {
   if (isUnpackable(input)) {
     // If the value isn't a tree, but has a tree attached via an `unpack`
     // method, destructively wrap the unpack method to add this transform.
@@ -46,7 +45,6 @@ export default function debugTransform(input, enableUnsafeEval = false) {
   }
 
   const source = Tree.from(input, { deep: true });
-  const commands = debugCommands(enableUnsafeEval);
 
   return Object.assign(new AsyncMap(), {
     description: "debug resources",
@@ -63,7 +61,7 @@ export default function debugTransform(input, enableUnsafeEval = false) {
         } else if (key === ".keys.json") {
           value = await jsonKeys.stringify(source);
         } else if (typeof key === "string" && key.startsWith("!")) {
-          value = await invokeOrigamiCommand(commands, source, key);
+          value = await invokeOrigamiCommand(source, key);
         }
       }
 
@@ -88,7 +86,7 @@ export default function debugTransform(input, enableUnsafeEval = false) {
       // Ensure this transform is applied to any map result, or any object with
       // an unpack method that returns a map.
       if (Tree.isMap(value) || value?.unpack) {
-        value = debugTransform(value, enableUnsafeEval);
+        value = debugTransform(value);
       }
 
       return value;
@@ -110,15 +108,15 @@ export default function debugTransform(input, enableUnsafeEval = false) {
   });
 }
 
-async function invokeOrigamiCommand(commands, tree, key) {
+async function invokeOrigamiCommand(tree, key) {
   // Key is an Origami command; invoke it.
   const commandName = trailingSlash.remove(key.slice(1).trim());
 
   // Look for the indicated command
-  const command = commands[commandName];
+  const command = debugCommands[commandName];
   let value;
   if (command) {
-    value = await command(tree);
+    value = command instanceof Function ? await command(tree) : command;
   } else {
     // Look for command in scope
     const parentScope = await scope(tree);

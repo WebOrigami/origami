@@ -15,12 +15,11 @@ let version = 0;
  * resource tree, then transform that tree with debug resources and return it.
  *
  * @param {Object} options
- * @param {boolean} options.enableUnsafeEval
  * @param {string} options.expression
  * @param {string} options.parentPath
  */
 export default async function expressionTree(options) {
-  const { expression, parentPath, enableUnsafeEval } = options;
+  const { expression, parentPath } = options;
 
   const parent = new OrigamiFileMap(parentPath);
   const globals = await projectGlobals(parent);
@@ -46,7 +45,7 @@ export default async function expressionTree(options) {
   setParent(maplike, parent);
 
   // Add debugging resources
-  const tree = debugTransform(maplike, enableUnsafeEval);
+  const tree = debugTransform(maplike);
 
   /** @type {any} */ (tree).version = version++;
 
