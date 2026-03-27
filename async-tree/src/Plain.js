@@ -6,7 +6,10 @@ const Plain = {};
 for (const name of Object.keys(Tree)) {
   Object.defineProperty(Plain, name, {
     get() {
-      return async (...args) => Tree.plain(await Tree[name](...args));
+      return async (...args) => {
+        let value = await Tree[name](...args);
+        return Tree.isMap(value) ? Tree.plain(value) : value;
+      };
     },
   });
 }
