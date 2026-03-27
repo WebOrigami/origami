@@ -22,9 +22,6 @@ function fail(message) {
   process.exit(1);
 }
 
-/** @type {string} */
-const debugFilesPath = process.env.ORIGAMI_DEBUG_FILES_PATH ?? "";
-
 /** @type {boolean} */
 // @ts-ignore
 const enableUnsafeEval = process.env.ORIGAMI_ENABLE_UNSAFE_EVAL === "1";
@@ -98,7 +95,6 @@ function beginDrain() {
 
 async function evaluateExpression() {
   const tree = await expressionTree({
-    debugFilesPath,
     expression,
     parentPath,
     enableUnsafeEval,

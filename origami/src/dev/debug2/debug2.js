@@ -13,7 +13,6 @@ import debugParent from "./debugParent.js";
  * The `options` argument can include:
  * - `enableUnsafeEval`: if true, enables the `!eval` debug command in the child
  *   process; default is false
- * - `debugFilesPath`: path to resources that will be added to the served tree
  *
  * @typedef {import("@weborigami/language").RuntimeState} RuntimeState
  * @typedef {import("@weborigami/language").AnnotatedCode} AnnotatedCode
@@ -57,11 +56,9 @@ export default async function debug2(code, options, state) {
 
   // @ts-ignore
   const enableUnsafeEval = options.enableUnsafeEval ?? false;
-  const debugFilesPath = options.debugFilesPath ?? "";
 
   // Start the debug server
   const server = await debugParent({
-    debugFilesPath,
     enableUnsafeEval,
     expression,
     parentPath,
@@ -77,7 +74,7 @@ export default async function debug2(code, options, state) {
       // Need to restart the child process
       console.log("JavaScript file changed, restarting server…");
       await server.restart();
-    } else if (isPackageJsonFile(filePath)) {
+    } else if (path.basename(filePath) === "package.json") {
       // Need to restart the child process
       console.log("package.json changed, restarting server…");
       await server.restart();
@@ -102,8 +99,4 @@ function isJavaScriptFile(filePath) {
   const extname = path.extname(filePath).toLowerCase();
   const jsExtensions = [".cjs", ".js", ".mjs", ".ts"];
   return jsExtensions.includes(extname);
-}
-
-function isPackageJsonFile(filePath) {
-  return path.basename(filePath).toLowerCase() === "package.json";
 }

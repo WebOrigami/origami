@@ -38,7 +38,6 @@ let emitter = null;
  * whenever files in the parent tree change.
  *
  * Supported `options`:
- * - `debugFilesPath`: path to resources that will be added to the served tree
  * - `enableUnsafeEval`: if true, enables the `!eval` debug command in the child
  *   process; default is false
  * - `expression` (required): the Origami expression to evaluate in the child
@@ -49,7 +48,6 @@ let emitter = null;
  * child server encounters an Origami error while handling a request.
  *
  * @param {Object} options
- * @param {string} [options.debugFilesPath]
  * @param {boolean} [options.enableUnsafeEval]
  * @param {string} options.expression
  * @param {string} options.parentPath
@@ -274,7 +272,6 @@ async function reevaluate() {
  */
 function startChild(options) {
   const { expression, parentPath } = options;
-  const debugFilesPath = options.debugFilesPath ?? "";
   const enableUnsafeEval = options.enableUnsafeEval ?? false;
   const quiet = options.quiet ?? false;
 
@@ -286,7 +283,6 @@ function startChild(options) {
       stdio: ["inherit", "inherit", "inherit", "ipc"],
       env: {
         ...process.env,
-        ORIGAMI_DEBUG_FILES_PATH: debugFilesPath,
         ORIGAMI_ENABLE_UNSAFE_EVAL: enableUnsafeEval ? "1" : "0",
         ORIGAMI_EXPRESSION: expression,
         ORIGAMI_PARENT_PATH: parentPath,

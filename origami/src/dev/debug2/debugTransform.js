@@ -9,7 +9,6 @@ import {
   scope,
   trailingSlash,
 } from "@weborigami/async-tree";
-import { OrigamiFileMap } from "@weborigami/language";
 import indexPage from "../../origami/indexPage.js";
 import yaml from "../../origami/yaml.js";
 import debugCommands from "./debugCommands.js";
@@ -27,14 +26,9 @@ import debugCommands from "./debugCommands.js";
  * @typedef {import("@weborigami/async-tree").Packed} Packed
  *
  * @param {Maplike|Packed} input
- * @param {string} debugFilesPath
  * @param {boolean} enableUnsafeEval
  */
-export default function debugTransform(
-  input,
-  debugFilesPath = "",
-  enableUnsafeEval = false,
-) {
+export default function debugTransform(input, enableUnsafeEval = false) {
   if (isUnpackable(input)) {
     // If the value isn't a tree, but has a tree attached via an `unpack`
     // method, destructively wrap the unpack method to add this transform.
@@ -54,8 +48,6 @@ export default function debugTransform(
   const source = Tree.from(input, { deep: true });
   const commands = debugCommands(enableUnsafeEval);
 
-  const debugFiles = debugFilesPath ? new OrigamiFileMap(debugFilesPath) : null;
-
   return Object.assign(new AsyncMap(), {
     description: "debug resources",
 
@@ -63,16 +55,9 @@ export default function debugTransform(
       // Ask the tree if it has the key.
       let value = await source.get(key);
 
-      if (value === undefined && debugFiles) {
-        // Try the debug files
-        value = await debugFiles.get(key);
-      }
-
       if (value === undefined) {
         // Try the defaults and commands
-        if (key === "_debugger/") {
-          return debugFiles;
-        } else if (key === "index.html") {
+        if (key === "index.html") {
           // Generate an index page for this site
           value = await indexPage(source);
         } else if (key === ".keys.json") {
@@ -103,8 +88,7 @@ export default function debugTransform(
       // Ensure this transform is applied to any map result, or any object with
       // an unpack method that returns a map.
       if (Tree.isMap(value) || value?.unpack) {
-        // Note: debugFilesPath only needed at top level.
-        value = debugTransform(value, "", enableUnsafeEval);
+        value = debugTransform(value, enableUnsafeEval);
       }
 
       return value;
