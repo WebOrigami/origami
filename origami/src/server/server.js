@@ -39,6 +39,8 @@ async function copyResponse(constructed, response) {
       console.error(error.message);
       return false;
     }
+  } else {
+    response.end();
   }
 
   return true;

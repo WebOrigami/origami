@@ -1,4 +1,5 @@
 import { extension, isPacked, toString, Tree } from "@weborigami/async-tree";
+import { createHash } from "node:crypto";
 import { computedMIMEType } from "whatwg-mimetype";
 import { mediaTypeForExtension } from "./mediaTypes.js";
 
@@ -91,7 +92,28 @@ export default async function constructResponse(request, resource) {
     );
   }
 
-  const options = mediaType ? { headers: { "Content-Type": mediaType } } : {};
-  const response = new Response(body, options);
+  // Compute ETag from the body content.
+  const hash = createHash("sha1");
+  if (typeof body === "string" || body instanceof String) {
+    hash.update(String(body), "utf8");
+  } else {
+    hash.update(body);
+  }
+  const etag = `"${hash.digest("hex")}"`;
+
+  // If the client already has this version, return 304 Not Modified.
+  const ifNoneMatch = request?.headers?.["if-none-match"];
+  if (ifNoneMatch && ifNoneMatch === etag) {
+    return new Response(null, {
+      status: 304,
+      headers: { "Cache-Control": "no-cache", ETag: etag },
+    });
+  }
+
+  const headers = { "Cache-Control": "no-cache", ETag: etag };
+  if (mediaType) {
+    headers["Content-Type"] = mediaType;
+  }
+  const response = new Response(body, { headers });
   return response;
 }
