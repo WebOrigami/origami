@@ -102,15 +102,21 @@ export default async function constructResponse(request, resource) {
   const etag = `"${hash.digest("hex")}"`;
 
   // If the client already has this version, return 304 Not Modified.
-  const ifNoneMatch = request?.headers?.["if-none-match"];
-  if (ifNoneMatch && ifNoneMatch === etag) {
-    return new Response(null, {
-      status: 304,
-      headers: { "Cache-Control": "no-cache", ETag: etag },
-    });
-  }
+  // const ifNoneMatch = request?.headers?.["if-none-match"];
+  // if (ifNoneMatch && ifNoneMatch === etag) {
+  //   return new Response(null, {
+  //     status: 304,
+  //     headers: { "Cache-Control": "no-cache", ETag: etag },
+  //   });
+  // }
 
-  const headers = { "Cache-Control": "no-cache", ETag: etag };
+  // const headers = {
+  //   "Cache-Control": "no-cache",
+  //   ETag: etag
+  // };
+  const headers = {
+    "Cache-Control": "max-age=3600",
+  };
   if (mediaType) {
     headers["Content-Type"] = mediaType;
   }
