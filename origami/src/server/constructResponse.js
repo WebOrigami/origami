@@ -114,9 +114,10 @@ export default async function constructResponse(request, resource) {
   //   "Cache-Control": "no-cache",
   //   ETag: etag
   // };
-  const headers = {
-    "Cache-Control": "max-age=3600",
-  };
+  const headers = {};
+  if (resource?.cacheControl) {
+    headers["Cache-Control"] = resource.cacheControl;
+  }
   if (mediaType) {
     headers["Content-Type"] = mediaType;
   }

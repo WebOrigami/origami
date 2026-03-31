@@ -5,6 +5,7 @@ import {
   Tree,
 } from "@weborigami/async-tree";
 import { evaluate, OrigamiFileMap, projectGlobals } from "@weborigami/language";
+import ActiveFileMixin from "./ActiveFileMixin.js";
 import debugTransform from "./debugTransform.js";
 
 // So we can distinguish different trees in the debugger
@@ -21,8 +22,11 @@ let version = 0;
 export default async function expressionTree(options) {
   const { expression, parentPath } = options;
 
-  const parent = new OrigamiFileMap(parentPath);
+  const parent = new (ActiveFileMixin(OrigamiFileMap))(parentPath);
   const globals = await projectGlobals(parent);
+
+  // TODO: Remove
+  parent.activeFilePath = "/Users/jan/Source/Origami/origami/sandbox/test.md";
 
   let maplike;
   try {

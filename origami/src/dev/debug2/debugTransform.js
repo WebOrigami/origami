@@ -12,6 +12,7 @@ import {
 import indexPage from "../../origami/indexPage.js";
 import yaml from "../../origami/yaml.js";
 import * as debugCommands from "./debugCommands.js";
+import debugStorage from "./debugStorage.js";
 
 /**
  * Transform the given map-based tree to add debugging resources:
@@ -50,8 +51,15 @@ export default function debugTransform(input) {
     description: "debug resources",
 
     async get(key) {
+      const storage = {};
+
       // Ask the tree if it has the key.
-      let value = await source.get(key);
+      let value = await debugStorage.run(
+        storage,
+        async () => await source.get(key),
+      );
+
+      const activeFileRead = storage.activeFileRead;
 
       if (value === undefined) {
         // Try the defaults and commands
@@ -87,6 +95,11 @@ export default function debugTransform(input) {
       // an unpack method that returns a map.
       if (Tree.isMap(value) || value?.unpack) {
         value = debugTransform(value);
+      }
+
+      if (value !== undefined) {
+        value = box(value);
+        value.cacheControl = activeFileRead ? "no-cache" : "maxage=3600";
       }
 
       return value;
