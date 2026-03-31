@@ -92,7 +92,7 @@ export async function cache(cache, path, code) {
   }
 
   // Don't await: might get another request for this before promise resolves
-  const promise = await execute(code);
+  const promise = execute(code);
 
   // Save promise so another request will get the same promise
   cache[path] = promise;
