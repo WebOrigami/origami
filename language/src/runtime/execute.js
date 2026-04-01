@@ -1,5 +1,5 @@
 import { isUnpackable, Tree } from "@weborigami/async-tree";
-import asyncStorage from "./asyncStorage.js";
+import executionContext from "./executionContext.js";
 import "./interop.js";
 
 /**
@@ -68,7 +68,7 @@ export default async function execute(code, state = {}) {
   // Execute the function or traverse the map.
   let result;
   try {
-    result = await asyncStorage.run(
+    result = await executionContext.run(
       context,
       async () =>
         fn instanceof Function

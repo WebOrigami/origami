@@ -8,7 +8,6 @@
 
 import { getParent, isUnpackable, Tree } from "@weborigami/async-tree";
 import os from "node:os";
-import * as dependencyGraph from "../runtime/dependencyGraph.js";
 import execute from "./execute.js";
 import expressionObject from "./expressionObject.js";
 import mergeTrees from "./mergeTrees.js";
@@ -92,19 +91,14 @@ export async function cache(cache, path, code) {
     return cache[path];
   }
 
-  // See if we have a source path
-  let sourcePath = code.location?.source?.url?.pathname;
+  // Don't await: might get another request for this before promise resolves
+  const promise = execute(code);
 
-  const value = await dependencyGraph.storage.run({ sourcePath }, async () => {
-    // Don't await: might get another request for this before promise resolves
-    const promise = execute(code);
+  // Save promise so any concurrent requests get the same promise
+  cache[path] = promise;
 
-    // Save promise so a concurrent request will get the same promise
-    cache[path] = promise;
-
-    // Now wait for the value
-    return promise;
-  });
+  // Now wait for the value
+  const value = await promise;
 
   // Update the cache with the actual value
   cache[path] = value;

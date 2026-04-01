@@ -1,11 +1,8 @@
-import { AsyncLocalStorage } from "node:async_hooks";
-
 /**
- * A graph of the dependencies: source path -> [...imported paths]
+ * Graph of files a given Origami source file depends on:
+ *
+ *   source path -> Set(imported paths)
+ *
+ * @type {Map<string, Set<string>>}
  */
-export const graph = new Map();
-
-/**
- * For determining current execution context when reading files
- */
-export const storage = new AsyncLocalStorage();
+export default new Map();
