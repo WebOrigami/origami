@@ -10,6 +10,8 @@ import {
 import getPackedPath from "../handlers/getPackedPath.js";
 import projectGlobals from "../project/projectGlobals.js";
 
+const unpackCache = new Map();
+
 /**
  * If the given value is packed (e.g., buffer) and the key is a string-like path
  * that ends in an extension, search for a handler for that extension and, if
@@ -62,19 +64,27 @@ export default async function handleExtension(value, key, parent = null) {
 }
 
 // Wrap the unpack function so it's only called once per value, and so we can
-// add the file path to any errors it throws.
+// add the file path to any errors the unpack function throws.
 function wrapUnpack(unpack, value, key, parent) {
-  let result;
+  const filePath = getPackedPath(value, { key, parent });
   return async () => {
-    if (!result) {
-      try {
-        result = await unpack(value, { key, parent });
-      } catch (/** @type {any} */ error) {
-        const filePath = getPackedPath(value, { key, parent });
-        const message = `Can't unpack ${filePath}\n${error.message}`;
-        throw new error.constructor(message, { cause: error });
-      }
+    if (unpackCache.has(filePath)) {
+      // Cache hit
+      return unpackCache.get(filePath);
     }
+
+    let result;
+    try {
+      // Save promise in cache so concurrent requests get the same promise
+      const promise = unpack(value, { key, parent });
+      unpackCache.set(filePath, promise);
+      result = await promise;
+    } catch (/** @type {any} */ error) {
+      const message = `Can't unpack ${filePath}\n${error.message}`;
+      throw new error.constructor(message, { cause: error });
+    }
+
+    unpackCache.set(filePath, result);
     return result;
   };
 }
