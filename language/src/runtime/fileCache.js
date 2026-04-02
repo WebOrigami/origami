@@ -1,8 +1,6 @@
 import {
   AsyncMap,
   isUnpackable,
-  keysFromPath,
-  SyncMap,
   trailingSlash,
   Tree,
 } from "@weborigami/async-tree";
@@ -24,21 +22,13 @@ import path from "path";
 export default function fileCache(sourceMaplike, fileRoot, basePath) {
   const source = Tree.from(sourceMaplike, { deep: true });
 
-  const cache = new SyncMap();
-
   if (basePath === undefined) {
     // Top of cache
     basePath = "";
-
-    // Initialize watching for changes
-    fileRoot.watch();
-    fileRoot.addEventListener("change", async (event) => {
-      const { filePath } = event.options;
-      const relativePath = path.relative(fileRoot.path, filePath);
-      const dependencies = fileRoot.dependencies;
-      await invalidateDependentResources(cache, relativePath, dependencies);
-    });
   }
+
+  const cache = new Map();
+  cache.description = `resources for ${basePath === "" ? "/" : basePath}`;
 
   return Object.assign(new AsyncMap(), {
     cache,
@@ -56,7 +46,7 @@ export default function fileCache(sourceMaplike, fileRoot, basePath) {
       // Cache miss, get the value from the source map while having
       // TrackDependencyMixin record which files this value depends on.
       const resourcePath = path.join(basePath, key);
-      const context = { resourcePath };
+      const context = { cache };
       let value = await fileRoot.asyncStorage.run(context, async () => {
         let value = await source.get(key);
         if (isUnpackable(value)) {
@@ -88,28 +78,4 @@ export default function fileCache(sourceMaplike, fileRoot, basePath) {
 
     trailingSlashKeys: /** @type {any} */ (source).trailingSlashKeys,
   });
-}
-
-async function invalidateDependentResource(cache, resourcePath) {
-  const keys = keysFromPath(resourcePath);
-  const lastKey = keys.pop();
-  let node = cache;
-  for (const key of keys) {
-    node = await node.get(key);
-    if (node === undefined) {
-      return;
-    }
-  }
-  if (node !== undefined) {
-    node.cache?.delete(lastKey);
-  }
-}
-
-async function invalidateDependentResources(cache, relativePath, dependencies) {
-  const dependentResources = dependencies.get(relativePath);
-  if (dependentResources) {
-    for (const resourcePath of dependentResources) {
-      await invalidateDependentResource(cache, resourcePath);
-    }
-  }
 }

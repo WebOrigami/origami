@@ -6,11 +6,14 @@ import {
   isUnpackable,
   setParent,
   trailingSlash,
+  Tree,
 } from "@weborigami/async-tree";
 import getPackedPath from "../handlers/getPackedPath.js";
 import projectGlobals from "../project/projectGlobals.js";
+import * as dependencies from "./dependencies.js";
 
 const unpackCache = new Map();
+unpackCache.description = "unpack cache";
 
 /**
  * If the given value is packed (e.g., buffer) and the key is a string-like path
@@ -73,18 +76,24 @@ function wrapUnpack(unpack, value, key, parent) {
       return unpackCache.get(filePath);
     }
 
+    const root = await Tree.root(parent);
+
     let result;
     try {
-      // Save promise in cache so concurrent requests get the same promise
-      const promise = unpack(value, { key, parent });
-      unpackCache.set(filePath, promise);
-      result = await promise;
+      // TODO: Let this work without a context
+      const context = { cache: unpackCache };
+      result = await root.asyncStorage.run(context, async () => {
+        // Save promise in cache so concurrent requests get the same promise
+        const promise = unpack(value, { key, parent });
+        unpackCache.set(filePath, promise);
+        return promise;
+      });
     } catch (/** @type {any} */ error) {
       const message = `Can't unpack ${filePath}\n${error.message}`;
       throw new error.constructor(message, { cause: error });
     }
 
-    unpackCache.set(filePath, result);
+    dependencies.add(filePath, unpackCache, filePath, result);
     return result;
   };
 }
