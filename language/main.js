@@ -18,6 +18,7 @@ export { default as EventTargetMixin } from "./src/runtime/EventTargetMixin.js";
 export { default as execute } from "./src/runtime/execute.js";
 export * as expressionFunction from "./src/runtime/expressionFunction.js";
 export { default as expressionObject } from "./src/runtime/expressionObject.js";
+export { default as fileCache } from "./src/runtime/fileCache.js";
 export * from "./src/runtime/handleExtension.js";
 export { default as handleExtension } from "./src/runtime/handleExtension.js";
 export { default as HandleExtensionsTransform } from "./src/runtime/HandleExtensionsTransform.js";

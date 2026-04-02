@@ -1,7 +1,6 @@
-import { trailingSlash } from "@weborigami/async-tree";
+import { trailingSlash, Tree } from "@weborigami/async-tree";
+import { AsyncLocalStorage } from "node:async_hooks";
 import path from "node:path";
-import dependencyGraph from "./dependencyGraph.js";
-import executionContext from "./executionContext.js";
 
 /**
  * When an Origami source file reads a file, record that dependency in the
@@ -9,22 +8,46 @@ import executionContext from "./executionContext.js";
  */
 export default function TrackDependencyMixin(Base) {
   return class TrackDependency extends Base {
+    constructor(...args) {
+      super(...args);
+      this._dependencies = null;
+      this._asyncStorage = null;
+    }
+
+    get asyncStorage() {
+      this._asyncStorage ??= new AsyncLocalStorage();
+      return this._asyncStorage;
+    }
+
+    get dependencies() {
+      this._dependencies ??= new Map();
+      return this._dependencies;
+    }
+
     async get(key) {
       const value = await super.get(key);
 
       // Only interested in files
       if (value instanceof Uint8Array) {
-        const normalizedKey = trailingSlash.remove(key);
-        const filePath = path.join(this.path, normalizedKey);
+        // To record the dependency, get the current async context
+        // and dependencies from the root
+        const root = await Tree.root(this);
+        const asyncStorage = root?.asyncStorage;
+        const dependencies = root?.dependencies;
 
         // See if we have a source path
-        const context = executionContext.getStore();
-        const sourcePath = context?.code?.location?.source?.url?.pathname;
-        if (sourcePath) {
-          // Record the dependency
-          const dependencies = dependencyGraph.get(sourcePath) ?? new Set();
-          dependencies.add(filePath);
-          dependencyGraph.set(sourcePath, dependencies);
+        const context = asyncStorage?.getStore();
+        const resourcePath = context?.resourcePath;
+        if (resourcePath) {
+          const normalizedKey = trailingSlash.remove(key);
+          const filePath = path.join(this.path, normalizedKey);
+          const relativePath = path.relative(root.path, filePath);
+
+          // Record fact that the given resource depends on this file
+          const dependentResources =
+            dependencies.get(relativePath) ?? new Set();
+          dependentResources.add(resourcePath);
+          dependencies.set(relativePath, dependentResources);
         }
       }
 

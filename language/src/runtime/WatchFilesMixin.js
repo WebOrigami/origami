@@ -3,9 +3,6 @@ import path from "node:path";
 import Watcher from "watcher";
 import TreeEvent from "./TreeEvent.js";
 
-// Map of paths to trees used by watcher
-const pathTreeMap = new Map();
-
 export default function WatchFilesMixin(Base) {
   return class WatchFiles extends Base {
     addEventListener(type, listener) {
@@ -16,9 +13,6 @@ export default function WatchFilesMixin(Base) {
     }
 
     onChange(filePath) {
-      // Reset cached values.
-      this.subfoldersMap = new Map();
-
       // Special case: ignore events in .git folder
       if (filePath.includes(`${path.sep}.git${path.sep}`)) {
         return;
@@ -54,11 +48,6 @@ export default function WatchFilesMixin(Base) {
       this.watcher.on("all", (event, filePath) => {
         this.onChange(filePath);
       });
-
-      // Add to the list of FileTree instances watching this directory.
-      const treeRefs = pathTreeMap.get(this.dirname) ?? [];
-      treeRefs.push(new WeakRef(this));
-      pathTreeMap.set(this.dirname, treeRefs);
     }
   };
 }
