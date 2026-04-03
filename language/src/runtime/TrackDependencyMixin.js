@@ -1,7 +1,7 @@
 import { trailingSlash, Tree } from "@weborigami/async-tree";
 import { AsyncLocalStorage } from "node:async_hooks";
 import path from "node:path";
-import * as dependencies from "./dependencies.js";
+import * as dependencies from "./pathCache.js";
 
 /**
  * When an Origami source file reads a file, record that dependency in the

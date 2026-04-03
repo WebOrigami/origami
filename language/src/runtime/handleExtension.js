@@ -10,7 +10,7 @@ import {
 } from "@weborigami/async-tree";
 import getPackedPath from "../handlers/getPackedPath.js";
 import projectGlobals from "../project/projectGlobals.js";
-import * as dependencies from "./dependencies.js";
+import * as dependencies from "./pathCache.js";
 
 const unpackCache = new Map();
 unpackCache.description = "unpack cache";
