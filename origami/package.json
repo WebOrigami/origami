@@ -29,6 +29,7 @@
     "marked-highlight": "2.2.3",
     "marked-smartypants": "1.1.11",
     "sharp": "0.34.5",
+    "whatwg-mimetype": "5.0.0",
     "yaml": "2.8.2"
   },
   "scripts": {
