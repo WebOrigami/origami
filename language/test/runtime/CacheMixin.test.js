@@ -1,26 +1,7 @@
-import { SyncMap, Tree } from "@weborigami/async-tree";
+import { Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import CacheMixin from "../../src/runtime/CacheMixin.js";
-
-// Makes it easier to define a map whose values invoke async functions
-class InvokeFunctionsMap extends SyncMap {
-  constructor(object) {
-    const entries = Object.entries(object);
-    super(entries);
-    this.log = [];
-  }
-
-  async get(key) {
-    let value = await super.get(key);
-    if (typeof value === "function") {
-      value = await value();
-    }
-    this.log.push(key);
-    return value;
-  }
-}
-class CalcMap extends CacheMixin(InvokeFunctionsMap) {}
+import CalcMap from "../../src/runtime/CalcMap.js";
 
 describe("CacheMixin", () => {
   test("caches values and records dependencies", async () => {
@@ -100,6 +81,28 @@ describe("CacheMixin", () => {
     const a4 = await fixture.get("a");
     assert.strictEqual(a4, 330);
     assert.deepEqual(fixture.log, ["c", "b", "a"]); // recalc c, b, a
+  });
+
+  test("tracks dependencies across different maps", async () => {
+    const map1 = new CalcMap({
+      async a() {
+        const b = await map2.get("b");
+        return b + 1;
+      },
+    });
+
+    const map2 = new CalcMap({
+      async b() {
+        return 2;
+      },
+    });
+
+    const result = await map1.get("a");
+    assert.strictEqual(result, 3);
+    assert.deepEqual(cacheEntries(map1), [["a", { value: 3 }]]);
+    assert.deepEqual(cacheEntries(map2), [
+      ["b", { value: 2, downstreams: [[map1, ["a"]]] }],
+    ]);
   });
 
   // test("records dependencies for async calls", async () => {

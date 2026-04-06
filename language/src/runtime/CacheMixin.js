@@ -90,6 +90,10 @@ export default function CacheMixin(Base) {
       return super.keys();
     }
 
+    onValueChange(key) {
+      this.cache.delete(key);
+    }
+
     set(key, value) {
       if (!this._self) {
         // Initializing in constructor

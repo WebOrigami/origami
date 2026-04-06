@@ -5,14 +5,15 @@ import {
   isStringlike,
   isUnpackable,
   setParent,
+  SyncMap,
   trailingSlash,
-  Tree,
 } from "@weborigami/async-tree";
 import getPackedPath from "../handlers/getPackedPath.js";
 import projectGlobals from "../project/projectGlobals.js";
-import * as dependencies from "./pathCache.js";
+import CacheMixin from "./CacheMixin.js";
+import InvokeFunctionsMixin from "./InvokeFunctionsMixin.js";
 
-const unpackCache = new Map();
+const unpackCache = new (CacheMixin(InvokeFunctionsMixin(SyncMap)))();
 unpackCache.description = "unpack cache";
 
 /**
@@ -57,43 +58,19 @@ export default async function handleExtension(value, key, parent = null) {
         }
 
         if (handler.unpack) {
-          value.unpack = wrapUnpack(handler.unpack, value, key, parent);
+          // Wrap the unpack function so it's only called once per value, and so we can
+          // add the file path to any errors the unpack function throws.
+          const filePath = getPackedPath(value, { key, parent });
+          unpackCache.set(filePath, async () => {
+            const data = await parent?.get(key);
+            const unpacked = await handler.unpack(data, { key, parent });
+            return unpacked;
+          });
+          value.unpack = async () => unpackCache.get(filePath);
         }
       }
     }
   }
 
   return value;
-}
-
-// Wrap the unpack function so it's only called once per value, and so we can
-// add the file path to any errors the unpack function throws.
-function wrapUnpack(unpack, value, key, parent) {
-  const filePath = getPackedPath(value, { key, parent });
-  return async () => {
-    if (unpackCache.has(filePath)) {
-      // Cache hit
-      return unpackCache.get(filePath);
-    }
-
-    const root = await Tree.root(parent);
-
-    let result;
-    try {
-      // TODO: Let this work without a context
-      const context = { cache: unpackCache };
-      result = await root.asyncStorage.run(context, async () => {
-        // Save promise in cache so concurrent requests get the same promise
-        const promise = unpack(value, { key, parent });
-        unpackCache.set(filePath, promise);
-        return promise;
-      });
-    } catch (/** @type {any} */ error) {
-      const message = `Can't unpack ${filePath}\n${error.message}`;
-      throw new error.constructor(message, { cause: error });
-    }
-
-    dependencies.add(filePath, unpackCache, filePath, result);
-    return result;
-  };
 }
