@@ -4,6 +4,27 @@ import { AsyncLocalStorage } from "node:async_hooks";
 // Async storage for tracking dependencies encountered during function evaluation
 const storage = new AsyncLocalStorage();
 
+class CacheMap extends SyncMap {
+  delete(key) {
+    const entry = this.get(key);
+    if (entry) {
+      // Invalidate downstream cached values
+      if (entry.downstreams) {
+        for (const downstreamPath of entry.downstreams) {
+          cache.delete(downstreamPath);
+        }
+      }
+    }
+    return super.delete(key);
+  }
+}
+
+// System-wide cache
+export const cache = new CacheMap(); // Export for debugging
+
+// For choosing a quasi-unique path for maps without a `path` property
+let nextPathId = 0;
+
 /**
  * General-purpose mixin for Origami maps with dependency tracking, used for:
  * files, site resources, and scope references in Origami files
@@ -16,8 +37,7 @@ const storage = new AsyncLocalStorage();
  * Cache entries look like:
  *
  *      key -> {
- *        downstreams: Set({ map, key }),
- *        upstreams: Set({ map, key }),
+ *        downstreams: Set(path),
  *        value
  *      }
  *
@@ -42,22 +62,30 @@ export default function CacheMixin(Base) {
   return class extends Base {
     constructor(...args) {
       super(...args);
-      this.cache = new CacheMap();
-      /** @type {any}>} */ (this.cache).source = this; // For debugging
+
+      // Need to assign a unique path to any map without a `path` property
+      if (!this.path) {
+        this.path = `_map${nextPathId}`;
+        nextPathId++;
+      }
+
+      // Expose cache for debugging
+      this.cache = cache;
     }
 
     delete(key) {
       super.delete(key);
-      this.cache.delete(key);
+      cache.delete(this.pathForKey(key));
     }
 
     get(key) {
-      let entry = this.cache.get(key);
+      const path = this.pathForKey(key);
+      let entry = cache.get(path);
       if (!entry) {
         // Cache miss
 
         // Create new async context to track entries downstream of this value
-        const context = { map: this, key };
+        const context = { downstream: path };
 
         // Get value in async context, don't await the result yet
         const value = storage.run(context, async () => {
@@ -69,18 +97,15 @@ export default function CacheMixin(Base) {
 
         // Add promise to cache so concurrent requests get the same promise
         entry = { value };
-        this.cache.set(key, entry);
+        cache.set(path, entry);
       }
 
       // Is this call happening downstream of another cached value?
-      const downstream = storage.getStore();
+      const { downstream } = storage.getStore() ?? {};
       if (downstream) {
         // Record that the downstream value depends on this cached value
-        entry.downstreams ??= new Map();
-        const downstreamsForMap =
-          entry.downstreams.get(downstream.map) ?? new Set();
-        downstreamsForMap.add(downstream.key);
-        entry.downstreams.set(downstream.map, downstreamsForMap);
+        entry.downstreams ??= new Set();
+        entry.downstreams.add(downstream);
       }
 
       return entry.value;
@@ -90,8 +115,17 @@ export default function CacheMixin(Base) {
       return super.keys();
     }
 
+    pathForKey(key) {
+      let path = this.path;
+      if (!(path.endsWith("/") || path.endsWith(":"))) {
+        path += "/";
+      }
+      path += key;
+      return path;
+    }
+
     onValueChange(key) {
-      this.cache.delete(key);
+      cache.delete(this.pathForKey(key));
     }
 
     set(key, value) {
@@ -104,21 +138,4 @@ export default function CacheMixin(Base) {
       super.set(key, value);
     }
   };
-}
-
-class CacheMap extends SyncMap {
-  delete(key) {
-    const entry = this.get(key);
-    if (entry) {
-      // Invalidate downstream cached values
-      if (entry.downstreams) {
-        for (const [downstreamMap, keySet] of entry.downstreams.entries()) {
-          for (const downstreamKey of keySet) {
-            downstreamMap.cache.delete(downstreamKey);
-          }
-        }
-      }
-    }
-    return super.delete(key);
-  }
 }

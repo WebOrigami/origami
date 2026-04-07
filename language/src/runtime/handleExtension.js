@@ -14,7 +14,7 @@ import CacheMixin from "./CacheMixin.js";
 import InvokeFunctionsMixin from "./InvokeFunctionsMixin.js";
 
 const unpackCache = new (CacheMixin(InvokeFunctionsMixin(SyncMap)))();
-unpackCache.description = "unpack cache";
+unpackCache.path = "unpack:";
 
 /**
  * If the given value is packed (e.g., buffer) and the key is a string-like path
@@ -58,10 +58,14 @@ export default async function handleExtension(value, key, parent = null) {
         }
 
         if (handler.unpack) {
-          // Wrap the unpack function so it's only called once per value, and so we can
-          // add the file path to any errors the unpack function throws.
+          // Wrap the unpack function so it caches the unpacked value, and so we
+          // can add the file path to any errors the unpack function throws.
           const filePath = getPackedPath(value, { key, parent });
           unpackCache.set(filePath, async () => {
+            // We get the data from the parent map again, which is inefficient
+            // but: a) this reads the loaded data from the file cache so it's
+            // not that slow and b) this ensures the file data is tracked as an
+            // upstream dependency of the unpacked value.
             const data = await parent?.get(key);
             const unpacked = await handler.unpack(data, { key, parent });
             return unpacked;

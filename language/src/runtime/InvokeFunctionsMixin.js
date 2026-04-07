@@ -1,10 +1,13 @@
+import { isPlainObject } from "@weborigami/async-tree";
+
 // Makes it easier to define a map whose values invoke async functions
 export default function InvokeFunctionsMixin(Base) {
   return class extends Base {
-    constructor(object = {}) {
-      const entries = Object.entries(object);
-      super(entries);
-      this.log = [];
+    constructor(iterable) {
+      if (isPlainObject(iterable)) {
+        iterable = Object.entries(iterable);
+      }
+      super(iterable);
     }
 
     async get(key) {
@@ -12,7 +15,6 @@ export default function InvokeFunctionsMixin(Base) {
       if (typeof value === "function") {
         value = await value();
       }
-      this.log.push(key);
       return value;
     }
   };
