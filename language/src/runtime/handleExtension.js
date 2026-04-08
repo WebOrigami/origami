@@ -5,16 +5,13 @@ import {
   isStringlike,
   isUnpackable,
   setParent,
-  SyncMap,
   trailingSlash,
+  Tree,
 } from "@weborigami/async-tree";
+import path from "node:path";
 import getPackedPath from "../handlers/getPackedPath.js";
 import projectGlobals from "../project/projectGlobals.js";
-import CacheMixin from "./CacheMixin.js";
-import InvokeFunctionsMixin from "./InvokeFunctionsMixin.js";
-
-const unpackCache = new (CacheMixin(InvokeFunctionsMixin(SyncMap)))();
-unpackCache.path = "unpack:";
+import systemCache from "./systemCache.js";
 
 /**
  * If the given value is packed (e.g., buffer) and the key is a string-like path
@@ -61,16 +58,23 @@ export default async function handleExtension(value, key, parent = null) {
           // Wrap the unpack function so it caches the unpacked value, and so we
           // can add the file path to any errors the unpack function throws.
           const filePath = getPackedPath(value, { key, parent });
-          unpackCache.set(filePath, async () => {
-            // We get the data from the parent map again, which is inefficient
-            // but: a) this reads the loaded data from the file cache so it's
-            // not that slow and b) this ensures the file data is tracked as an
-            // upstream dependency of the unpacked value.
-            const data = await parent?.get(key);
-            const unpacked = await handler.unpack(data, { key, parent });
-            return unpacked;
-          });
-          value.unpack = async () => unpackCache.get(filePath);
+          const projectRoot = parent ? await Tree.root(parent) : null;
+          const projectRootPath = projectRoot?.path;
+          const relativePath = path.relative(projectRootPath, filePath);
+          let isPathWithinProjectRoot = !relativePath.startsWith("..");
+          const cachePath = isPathWithinProjectRoot
+            ? `_unpack/${relativePath}`
+            : `_unpack${filePath}`;
+          value.unpack = async () =>
+            systemCache.getAndTrackDependencies(cachePath, async () => {
+              // We get the data from the parent map again, which is inefficient
+              // but: a) this reads the loaded data from the file cache so it's
+              // not that slow and b) this ensures the file data is tracked as
+              // an upstream dependency of the unpacked value.
+              const data = await parent?.get(key);
+              const unpacked = await handler.unpack(data, { key, parent });
+              return unpacked;
+            });
         }
       }
     }

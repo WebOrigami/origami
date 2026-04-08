@@ -1,26 +1,6 @@
-import { SyncMap } from "@weborigami/async-tree";
-import { AsyncLocalStorage } from "node:async_hooks";
-
-// Async storage for tracking dependencies encountered during function evaluation
-const storage = new AsyncLocalStorage();
-
-class CacheMap extends SyncMap {
-  delete(key) {
-    const entry = this.get(key);
-    if (entry) {
-      // Invalidate downstream cached values
-      if (entry.downstreams) {
-        for (const downstreamPath of entry.downstreams) {
-          cache.delete(downstreamPath);
-        }
-      }
-    }
-    return super.delete(key);
-  }
-}
-
-// System-wide cache
-export const cache = new CacheMap(); // Export for debugging
+import { symbols, Tree } from "@weborigami/async-tree";
+import path from "node:path";
+import systemCache from "./systemCache.js";
 
 // For choosing a quasi-unique path for maps without a `path` property
 let nextPathId = 0;
@@ -63,61 +43,61 @@ export default function CacheMixin(Base) {
     constructor(...args) {
       super(...args);
 
-      // Need to assign a unique path to any map without a `path` property
-      if (!this.path) {
-        this.path = `_map${nextPathId}`;
-        nextPathId++;
-      }
-
       // Expose cache for debugging
-      this.cache = cache;
+      this.cache = systemCache;
     }
 
     delete(key) {
       super.delete(key);
-      cache.delete(this.pathForKey(key));
+      systemCache.delete(this.cachePathForKey(key));
     }
 
-    get(key) {
-      const path = this.pathForKey(key);
-      let entry = cache.get(path);
-      if (!entry) {
-        // Cache miss
-
-        // Create new async context to track entries downstream of this value
-        const context = { downstream: path };
-
-        // Get value in async context, don't await the result yet
-        const value = storage.run(context, async () => {
-          const value = await super.get(key);
-          // Add resolved value to cache
-          entry.value = value;
-          return value;
+    async get(key) {
+      const path = this.cachePathForKey(key);
+      const value = await systemCache.getAndTrackDependencies(path, () =>
+        super.get(key),
+      );
+      if (Tree.isMap(value)) {
+        Object.defineProperty(value, "cachePath", {
+          value: path,
+          writable: false,
+          enumerable: true,
+          configurable: true,
         });
-
-        // Add promise to cache so concurrent requests get the same promise
-        entry = { value };
-        cache.set(path, entry);
       }
-
-      // Is this call happening downstream of another cached value?
-      const { downstream } = storage.getStore() ?? {};
-      if (downstream) {
-        // Record that the downstream value depends on this cached value
-        entry.downstreams ??= new Set();
-        entry.downstreams.add(downstream);
-      }
-
-      return entry.value;
+      return value;
     }
 
     keys() {
       return super.keys();
     }
 
-    pathForKey(key) {
-      let path = this.path;
-      if (!(path.endsWith("/") || path.endsWith(":"))) {
+    // Default cache path for a map without a `cachePath` property
+    get cachePath() {
+      let result;
+      if (this.path) {
+        // Use file path as cache path
+        let root = this;
+        while (root.parent || root[symbols.parent]) {
+          root = root.parent || root[symbols.parent];
+        }
+        const projectRootPath = root.path;
+        const relativePath = path.relative(projectRootPath, this.path);
+        let isPathWithinProjectRoot = !relativePath.startsWith("..");
+        result = isPathWithinProjectRoot
+          ? `_project/${relativePath}`
+          : this.path;
+      } else {
+        result = `_map${nextPathId}`;
+        nextPathId++;
+      }
+      this.cachePath = result; // memoize
+      return result;
+    }
+
+    cachePathForKey(key) {
+      let path = this.cachePath;
+      if (!path.endsWith("/")) {
         path += "/";
       }
       path += key;
@@ -125,7 +105,7 @@ export default function CacheMixin(Base) {
     }
 
     onValueChange(key) {
-      cache.delete(this.pathForKey(key));
+      systemCache.delete(this.cachePathForKey(key));
     }
 
     set(key, value) {

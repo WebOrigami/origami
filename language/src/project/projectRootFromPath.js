@@ -55,5 +55,12 @@ export default async function projectRootFromPath(dirname) {
     root = new OrigamiFileMap(dirname);
   }
 
+  Object.defineProperty(root, "cachePath", {
+    value: "_project",
+    writable: false,
+    enumerable: true,
+    configurable: true,
+  });
+
   return root;
 }
