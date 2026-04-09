@@ -21,6 +21,8 @@ export default function WatchFilesMixin(Base) {
       this.dispatchEvent(new TreeEvent("change", { filePath }));
     }
 
+    onKeysChange(key) {}
+
     onValueChange(key) {}
 
     unwatch() {
@@ -51,7 +53,12 @@ export default function WatchFilesMixin(Base) {
         this.onChange(filePath);
 
         const relativePath = path.relative(this.dirname, filePath);
-        this.onValueChange(relativePath);
+        const keyEvents = ["add", "addDir", "unlink", "unlinkDir"];
+        if (keyEvents.includes(event)) {
+          this.onKeysChange(relativePath);
+        } else if (event === "change") {
+          this.onValueChange(relativePath);
+        }
       });
     }
   };

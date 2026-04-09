@@ -47,31 +47,6 @@ export default function CacheMixin(Base) {
       this.cache = systemCache;
     }
 
-    delete(key) {
-      super.delete(key);
-      systemCache.delete(this.cachePathForKey(key));
-    }
-
-    async get(key) {
-      const path = this.cachePathForKey(key);
-      const value = await systemCache.getAndTrackDependencies(path, () =>
-        super.get(key),
-      );
-      if (Tree.isMap(value)) {
-        Object.defineProperty(value, "cachePath", {
-          value: path,
-          writable: false,
-          enumerable: true,
-          configurable: true,
-        });
-      }
-      return value;
-    }
-
-    keys() {
-      return super.keys();
-    }
-
     // Default cache path for a map without a `cachePath` property
     get cachePath() {
       let result;
@@ -104,8 +79,48 @@ export default function CacheMixin(Base) {
       return path;
     }
 
-    onValueChange(key) {
+    delete(key) {
+      super.delete(key);
       systemCache.delete(this.cachePathForKey(key));
+    }
+
+    async get(key) {
+      const path = this.cachePathForKey(key);
+      const value = await systemCache.getAndTrackDependencies(path, () =>
+        super.get(key),
+      );
+      if (Tree.isMap(value)) {
+        Object.defineProperty(value, "cachePath", {
+          value: path,
+          writable: false,
+          enumerable: true,
+          configurable: true,
+        });
+      }
+      return value;
+    }
+
+    *keys() {
+      const keysPath = this.cachePathForKey("_keys");
+      if (systemCache.has(keysPath)) {
+        yield* systemCache.get(keysPath);
+        return;
+      }
+      // const keys = await systemCache.getAndTrackDependencies(keysPath, () =>
+      //   super.keys(),
+      // );
+      // yield* keys;
+      const keys = Array.from(super.keys());
+      systemCache.set(keysPath, keys);
+      yield* keys;
+    }
+
+    onKeysChange(path) {
+      systemCache.delete(this.cachePathForKey("_keys"));
+    }
+
+    onValueChange(path) {
+      systemCache.delete(this.cachePathForKey(path));
     }
 
     set(key, value) {
