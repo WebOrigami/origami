@@ -1,7 +1,7 @@
 import { SyncMap } from "@weborigami/async-tree";
-import CacheMixin from "./CacheMixin.js";
-import InvokeFunctionsMixin from "./InvokeFunctionsMixin.js";
+import CacheTransform from "./CacheTransform.js";
+import InvokeFunctionsTransform from "./InvokeFunctionsTransform.js";
 
-export default class CalcMap extends CacheMixin(
-  InvokeFunctionsMixin(SyncMap),
+export default class CalcMap extends CacheTransform(
+  InvokeFunctionsTransform(SyncMap),
 ) {}

@@ -1,10 +1,10 @@
 import { Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { beforeEach, describe, test } from "node:test";
-import { cache } from "../../src/runtime/CacheMixin.js";
+import { cache } from "../../src/runtime/CacheTransform.js";
 import CalcMap from "../../src/runtime/CalcMap.js";
 
-describe("CacheMixin", () => {
+describe("CacheTransform", () => {
   beforeEach(() => {
     cache.clear();
   });
@@ -123,49 +123,6 @@ describe("CacheMixin", () => {
     assert.strictEqual(a4, 330);
     assert.deepEqual(log, ["a", "b", "c"]); // recalc all
   });
-
-  // test("records dependencies for async calls", async () => {
-  //   const c = (input) => input.toUpperCase();
-
-  //   const fixture = new CalcMap({
-  //     async site() {
-  //       const a = await fixture.get("a");
-  //       const b = await fixture.get("b");
-  //       return {
-  //         a,
-  //         b,
-  //       };
-  //     },
-
-  //     async a() {
-  //       const c = await fixture.get("c");
-  //       return c("a");
-  //     },
-
-  //     async b() {
-  //       const c = await fixture.get("c");
-  //       return c("b");
-  //     },
-
-  //     async c() {
-  //       return c;
-  //     },
-  //   });
-
-  //   const site = await fixture.get("site");
-  //   const result = await Tree.plain(site);
-  //   assert.deepEqual(result, {
-  //     a: "A",
-  //     b: "B",
-  //   });
-  //   const entries = cacheEntries(/** @type {any} */ (fixture).cache);
-  //   assert.deepStrictEqual(entries, [
-  //     ["site", { value: { a: "A", b: "B" } }],
-  //     ["a", { downstreams: [[fixture, ["site"]]], value: "A" }],
-  //     ["c", { downstreams: [[fixture, ["a", "b"]]], value: c }],
-  //     ["b", { downstreams: [[fixture, ["site"]]], value: "B" }],
-  //   ]);
-  // });
 });
 
 export function cacheEntries() {

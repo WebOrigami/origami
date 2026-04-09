@@ -35,7 +35,7 @@ export default async function projectGlobals(parent) {
       assignPropertyDescriptors(globals, config);
     }
 
-    // Cache globals on project root
+    // Store globals on project root
     projectRoot.globals = globals;
   }
 

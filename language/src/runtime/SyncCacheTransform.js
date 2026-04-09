@@ -2,9 +2,6 @@ import { symbols, Tree } from "@weborigami/async-tree";
 import path from "node:path";
 import systemCache from "./systemCache.js";
 
-// For choosing a quasi-unique path for maps without a `path` property
-let nextPathId = 0;
-
 /**
  * General-purpose mixin for Origami maps with dependency tracking, used for:
  * files, site resources, and scope references in Origami files
@@ -63,8 +60,7 @@ export default function SyncCacheTransform(Base) {
           ? `_project/${relativePath}`
           : this.path;
       } else {
-        result = `_map${nextPathId}`;
-        nextPathId++;
+        result = systemCache.nextDefaultCachePath();
       }
       this.cachePath = result; // memoize
       return result;
@@ -86,7 +82,7 @@ export default function SyncCacheTransform(Base) {
 
     async get(key) {
       const path = this.cachePathForKey(key);
-      const value = await systemCache.getOrInsertComputedAsync(path, () =>
+      const value = await systemCache.getOrInsertComputed(path, () =>
         super.get(key),
       );
       if (Tree.isMap(value)) {
@@ -102,16 +98,10 @@ export default function SyncCacheTransform(Base) {
 
     *keys() {
       const keysPath = this.cachePathForKey("_keys");
-      if (systemCache.has(keysPath)) {
-        yield* systemCache.get(keysPath);
-        return;
-      }
-      // const keys = await systemCache.getAndTrackDependencies(keysPath, () =>
-      //   super.keys(),
-      // );
-      // yield* keys;
-      const keys = Array.from(super.keys());
-      systemCache.set(keysPath, keys);
+      const keys = systemCache.getOrInsertComputed(keysPath, () =>
+        // We can't cache an iterator; convert to array
+        Array.from(super.keys()),
+      );
       yield* keys;
     }
 

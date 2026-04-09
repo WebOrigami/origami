@@ -12,7 +12,7 @@ export { default as projectGlobals } from "./src/project/projectGlobals.js";
 export { default as projectRoot } from "./src/project/projectRoot.js";
 export { default as projectRootFromPath } from "./src/project/projectRootFromPath.js";
 export * as Protocols from "./src/protocols/protocols.js";
-export { default as CacheMixin } from "./src/runtime/CacheMixin.js";
+export { default as CacheTransform } from "./src/runtime/CacheTransform.js";
 export { default as CalcMap } from "./src/runtime/CalcMap.js";
 export { default as calcs } from "./src/runtime/calcs.js";
 export { formatError, highlightError, lineInfo } from "./src/runtime/errors.js";
