@@ -39,10 +39,10 @@ let nextPathId = 0;
  *      c.ori -> { downstreams: Set(a.ori, b.ori), value: ... }
  */
 export default function cacheWithTracking(maplike) {
-  const source = Tree.from(maplike);
+  const source = Tree.from(maplike, { deep: true });
   let cachePath;
 
-  return Object.assign(new AsyncMap(), {
+  const result = Object.assign(new AsyncMap(), {
     cache: systemCache,
 
     // Default cache path for a map without a `cachePath` property
@@ -87,35 +87,38 @@ export default function cacheWithTracking(maplike) {
 
     async get(key) {
       const path = this.cachePathForKey(key);
-      const value = await systemCache.getAndTrackDependencies(path, () =>
+      let value = await systemCache.getAndTrackDependencies(path, () =>
         source.get(key),
       );
       if (Tree.isMap(value)) {
-        Object.defineProperty(value, "cachePath", {
+        const cached = await cacheWithTracking(value);
+        Object.defineProperty(cached, "cachePath", {
           value: path,
           writable: false,
           enumerable: true,
           configurable: true,
         });
-        setParent(value, this);
+        setParent(cached, this);
+        Object.defineProperty(value, "result", {
+          value: cached,
+          writable: false,
+          enumerable: true,
+          configurable: true,
+        });
+        value = cached;
       }
       return value;
     },
 
     async *keys() {
       const keysPath = this.cachePathForKey("_keys");
-      const keys = await systemCache.getAndTrackDependencies(keysPath, () =>
-        source.keys(),
+      const keys = await systemCache.getAndTrackDependencies(
+        keysPath,
+        async () => {
+          return Tree.keys(source);
+        },
       );
       yield* keys;
-    },
-
-    onKeysChange(path) {
-      systemCache.delete(this.cachePathForKey("_keys"));
-    },
-
-    onValueChange(path) {
-      systemCache.delete(this.cachePathForKey(path));
     },
 
     set(key, value) {
@@ -124,5 +127,33 @@ export default function cacheWithTracking(maplike) {
     },
 
     source,
+
+    watch() {
+      /** @type {any} */
+      let watchTarget = source;
+      while (watchTarget.source && !watchTarget.watch) {
+        watchTarget = watchTarget.source;
+      }
+
+      watchTarget.watch();
+      watchTarget.addEventListener("keyschange", () =>
+        systemCache.delete(this.cachePathForKey("_keys")),
+      );
+      watchTarget.addEventListener("valuechange", (event) =>
+        systemCache.delete(this.cachePathForKey(event.options.relativePath)),
+      );
+      watchTarget.addEventListener("valuedelete", (event) =>
+        systemCache.delete(this.cachePathForKey(event.options.relativePath)),
+      );
+    },
   });
+
+  Object.defineProperty(source, "result", {
+    value: result,
+    writable: false,
+    enumerable: true,
+    configurable: true,
+  });
+
+  return result;
 }

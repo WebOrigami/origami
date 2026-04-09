@@ -21,9 +21,21 @@ export default function WatchFilesMixin(Base) {
       this.dispatchEvent(new TreeEvent("change", { filePath }));
     }
 
-    onKeysChange(key) {}
+    onKeysChange(relativePath) {
+      this.dispatchEvent(new TreeEvent("keyschange", { relativePath }));
+    }
 
-    onValueChange(key) {}
+    onValueAdd(relativePath) {
+      this.dispatchEvent(new TreeEvent("valueadd", { relativePath }));
+    }
+
+    onValueChange(relativePath) {
+      this.dispatchEvent(new TreeEvent("valuechange", { relativePath }));
+    }
+
+    onValueDelete(relativePath) {
+      this.dispatchEvent(new TreeEvent("valuedelete", { relativePath }));
+    }
 
     unwatch() {
       if (!this.watching) {
@@ -53,11 +65,22 @@ export default function WatchFilesMixin(Base) {
         this.onChange(filePath);
 
         const relativePath = path.relative(this.dirname, filePath);
-        const keyEvents = ["add", "addDir", "unlink", "unlinkDir"];
-        if (keyEvents.includes(event)) {
-          this.onKeysChange(relativePath);
-        } else if (event === "change") {
-          this.onValueChange(relativePath);
+        switch (event) {
+          case "add":
+          case "addDir":
+            this.onValueAdd(relativePath);
+            this.onKeysChange(relativePath);
+            break;
+
+          case "change":
+            this.onValueChange(relativePath);
+            break;
+
+          case "unlink":
+          case "unlinkDir":
+            this.onValueDelete(relativePath);
+            this.onKeysChange(relativePath);
+            break;
         }
       });
     }

@@ -71,8 +71,17 @@ export default async function handleExtension(value, key, parent = null) {
               // but: a) this reads the loaded data from the file cache so it's
               // not that slow and b) this ensures the file data is tracked as
               // an upstream dependency of the unpacked value.
-              const data = await parent?.get(key);
-              const unpacked = await handler.unpack(data, { key, parent });
+
+              /** @type {any} */
+              let getTarget = parent;
+              while (getTarget.result) {
+                getTarget = getTarget.result;
+              }
+              const data = await getTarget.get(key);
+              const unpacked = await handler.unpack(data, {
+                key,
+                parent: getTarget,
+              });
               return unpacked;
             });
         }

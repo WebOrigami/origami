@@ -10,23 +10,32 @@ export default {
   /** @type {import("@weborigami/async-tree").UnpackFunction} */
   async unpack(packed, options = {}) {
     const { key, parent } = options;
-    if (!(parent && "import" in parent)) {
+    let importTarget = parent;
+    while (importTarget.source && !importTarget.import) {
+      importTarget = importTarget.source;
+    }
+
+    if (!importTarget) {
       throw new TypeError(
         "The parent tree must support importing modules to unpack JavaScript files.",
       );
     }
 
-    const object = await /** @type {any} */ (parent).import?.(key);
+    const object = await importTarget.import?.(key);
 
     let bound;
+    let bindTarget = parent;
+    while (bindTarget.result) {
+      bindTarget = bindTarget.result;
+    }
     if ("default" in object) {
       // Module with a default export; return that.
-      bound = bindToParent(object.default, parent);
+      bound = bindToParent(object.default, bindTarget);
     } else {
       // Module with multiple named exports.
       bound = {};
       for (const [name, value] of Object.entries(object)) {
-        bound[name] = bindToParent(value, parent);
+        bound[name] = bindToParent(value, bindTarget);
       }
     }
 
