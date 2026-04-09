@@ -13,18 +13,18 @@ describe("systemCache", () => {
     // Create cache entries for
     // { a = 2 * b, b = c + 1, c = 3 }
     let getC = async () =>
-      await systemCache.getAndTrackDependencies("c", async () => {
+      await systemCache.getOrInsertComputedAsync("c", async () => {
         log.push("c");
         return 3;
       });
     let getB = async () =>
-      await systemCache.getAndTrackDependencies("b", async () => {
+      await systemCache.getOrInsertComputedAsync("b", async () => {
         log.push("b");
         const c = await getC();
         return c + 1;
       });
     let getA = async () =>
-      await systemCache.getAndTrackDependencies("a", async () => {
+      await systemCache.getOrInsertComputedAsync("a", async () => {
         log.push("a");
         const b = await getB();
         return 2 * b;
@@ -57,7 +57,7 @@ describe("systemCache", () => {
     // Replace formula for a
     // { a = 3 * b, b = c + 1, c = 3 }
     getA = async () =>
-      await systemCache.getAndTrackDependencies("a", async () => {
+      await systemCache.getOrInsertComputedAsync("a", async () => {
         log.push("a");
         const b = await getB();
         return 3 * b;
@@ -74,7 +74,7 @@ describe("systemCache", () => {
     // Replace formula for b
     // { a = 3 * b, b = c + 10, c = 3 }
     getB = async () =>
-      await systemCache.getAndTrackDependencies("b", async () => {
+      await systemCache.getOrInsertComputedAsync("b", async () => {
         log.push("b");
         const c = await getC();
         return c + 10;
@@ -87,7 +87,7 @@ describe("systemCache", () => {
     // Replace formula for c
     // { a = 3 * b, b = c + 10, c = 100 }
     getC = async () =>
-      await systemCache.getAndTrackDependencies("c", async () => {
+      await systemCache.getOrInsertComputedAsync("c", async () => {
         log.push("c");
         return 100;
       });

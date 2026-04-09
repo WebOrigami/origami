@@ -86,7 +86,7 @@ export default function CacheMixin(Base) {
 
     async get(key) {
       const path = this.cachePathForKey(key);
-      const value = await systemCache.getAndTrackDependencies(path, () =>
+      const value = await systemCache.getOrInsertComputedAsync(path, () =>
         super.get(key),
       );
       if (Tree.isMap(value)) {

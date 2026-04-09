@@ -66,7 +66,7 @@ export default async function handleExtension(value, key, parent = null) {
             ? `_unpack/${relativePath}`
             : `_unpack${filePath}`;
           value.unpack = async () =>
-            systemCache.getAndTrackDependencies(cachePath, async () => {
+            systemCache.getOrInsertComputedAsync(cachePath, async () => {
               // We get the data from the parent map again, which is inefficient
               // but: a) this reads the loaded data from the file cache so it's
               // not that slow and b) this ensures the file data is tracked as

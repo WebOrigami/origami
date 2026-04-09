@@ -1,4 +1,4 @@
-import { AsyncMap, setParent, symbols, Tree } from "@weborigami/async-tree";
+import { symbols, Tree } from "@weborigami/async-tree";
 import path from "node:path";
 import systemCache from "./systemCache.js";
 
@@ -38,38 +38,37 @@ let nextPathId = 0;
  *      b.ori -> { downstreams: Set(site.ori), value: ... }
  *      c.ori -> { downstreams: Set(a.ori, b.ori), value: ... }
  */
-export default function cacheWithTracking(maplike) {
-  const source = Tree.from(maplike, { deep: true });
-  let cachePath;
+export default function SyncCacheTransform(Base) {
+  return class SyncCache extends Base {
+    constructor(...args) {
+      super(...args);
 
-  const result = Object.assign(new AsyncMap(), {
-    cache: systemCache,
+      // Expose cache for debugging
+      this.cache = systemCache;
+    }
 
     // Default cache path for a map without a `cachePath` property
     get cachePath() {
-      if (cachePath) {
-        return cachePath;
-      }
-
-      if (source.path) {
+      let result;
+      if (this.path) {
         // Use file path as cache path
-        let root = source;
+        let root = this;
         while (root.parent || root[symbols.parent]) {
           root = root.parent || root[symbols.parent];
         }
         const projectRootPath = root.path;
-        const relativePath = path.relative(projectRootPath, source.path);
+        const relativePath = path.relative(projectRootPath, this.path);
         let isPathWithinProjectRoot = !relativePath.startsWith("..");
-        cachePath = isPathWithinProjectRoot
+        result = isPathWithinProjectRoot
           ? `_project/${relativePath}`
-          : source.path;
+          : this.path;
       } else {
-        cachePath = `_map${nextPathId}`;
+        result = `_map${nextPathId}`;
         nextPathId++;
       }
-
-      return cachePath;
-    },
+      this.cachePath = result; // memoize
+      return result;
+    }
 
     cachePathForKey(key) {
       let path = this.cachePath;
@@ -78,82 +77,60 @@ export default function cacheWithTracking(maplike) {
       }
       path += key;
       return path;
-    },
+    }
 
     delete(key) {
-      source.delete(key);
+      super.delete(key);
       systemCache.delete(this.cachePathForKey(key));
-    },
+    }
 
     async get(key) {
       const path = this.cachePathForKey(key);
-      let value = await systemCache.getOrInsertComputedAsync(path, () =>
-        source.get(key),
+      const value = await systemCache.getOrInsertComputedAsync(path, () =>
+        super.get(key),
       );
       if (Tree.isMap(value)) {
-        const cached = await cacheWithTracking(value);
-        Object.defineProperty(cached, "cachePath", {
+        Object.defineProperty(value, "cachePath", {
           value: path,
           writable: false,
           enumerable: true,
           configurable: true,
         });
-        setParent(cached, this);
-        Object.defineProperty(value, "result", {
-          value: cached,
-          writable: false,
-          enumerable: true,
-          configurable: true,
-        });
-        value = cached;
       }
       return value;
-    },
+    }
 
-    async *keys() {
+    *keys() {
       const keysPath = this.cachePathForKey("_keys");
-      const keys = await systemCache.getOrInsertComputedAsync(
-        keysPath,
-        async () => {
-          return Tree.keys(source);
-        },
-      );
+      if (systemCache.has(keysPath)) {
+        yield* systemCache.get(keysPath);
+        return;
+      }
+      // const keys = await systemCache.getAndTrackDependencies(keysPath, () =>
+      //   super.keys(),
+      // );
+      // yield* keys;
+      const keys = Array.from(super.keys());
+      systemCache.set(keysPath, keys);
       yield* keys;
-    },
+    }
+
+    onKeysChange(path) {
+      systemCache.delete(this.cachePathForKey("_keys"));
+    }
+
+    onValueChange(path) {
+      systemCache.delete(this.cachePathForKey(path));
+    }
 
     set(key, value) {
-      this.delete(key);
-      source.set(key, value);
-    },
-
-    source,
-
-    watch() {
-      /** @type {any} */
-      let watchTarget = source;
-      while (watchTarget.source && !watchTarget.watch) {
-        watchTarget = watchTarget.source;
+      if (!this._self) {
+        // Initializing in constructor
+        super.set(key, value);
+        return;
       }
-
-      watchTarget.watch();
-      watchTarget.addEventListener("keyschange", () =>
-        systemCache.delete(this.cachePathForKey("_keys")),
-      );
-      watchTarget.addEventListener("valuechange", (event) =>
-        systemCache.delete(this.cachePathForKey(event.options.relativePath)),
-      );
-      watchTarget.addEventListener("valuedelete", (event) =>
-        systemCache.delete(this.cachePathForKey(event.options.relativePath)),
-      );
-    },
-  });
-
-  Object.defineProperty(source, "result", {
-    value: result,
-    writable: false,
-    enumerable: true,
-    configurable: true,
-  });
-
-  return result;
+      this.delete(key);
+      super.set(key, value);
+    }
+  };
 }

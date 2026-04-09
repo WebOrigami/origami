@@ -2,7 +2,24 @@ import { SyncMap } from "@weborigami/async-tree";
 import { AsyncLocalStorage } from "node:async_hooks";
 
 // Async storage for tracking dependencies encountered during function evaluation
-const storage = new AsyncLocalStorage();
+const asyncStorage = new AsyncLocalStorage();
+
+// Sync analogue to AsyncLocalStorage for tracking dependencies in sync functions
+const syncStorage = {
+  getStore() {
+    return this.stack.at(-1);
+  },
+
+  run(context, fn) {
+    this.stack.push(context);
+    const value = fn();
+    this.stack.pop();
+    return value;
+  },
+
+  /** @type {any[]} */
+  stack: [],
+};
 
 export class SystemCacheMap extends SyncMap {
   delete(path) {
@@ -26,10 +43,36 @@ export class SystemCacheMap extends SyncMap {
     return super.delete(path);
   }
 
-  async getAndTrackDependencies(path, computeFn) {
+  getOrInsertComputed(path, computeFn) {
     let entry = systemCache.get(path);
     if (!entry) {
       // Cache miss
+
+      // Create empty entry for this path
+      entry = {};
+      systemCache.set(path, entry);
+
+      // Create new sync context to track entries downstream of this value
+      const context = { downstream: path };
+
+      // Get value in sync context
+      entry.value = syncStorage.run(context, computeFn);
+    }
+
+    this.trackDependency(path, entry);
+
+    return entry.value;
+  }
+
+  async getOrInsertComputedAsync(path, computeFn) {
+    let entry = systemCache.get(path);
+    if (!entry) {
+      // Cache miss
+
+      if (syncStorage.getStore()) {
+        // A function that was supposed to be sync called an async function
+        throw new Error("Cannot track async dependencies in a sync context");
+      }
 
       // Create empty entry for this path
       entry = {};
@@ -40,7 +83,7 @@ export class SystemCacheMap extends SyncMap {
 
       // Get value in async context, don't await the result yet. Add promise to
       // cache so concurrent requests get the same promise.
-      entry.value = storage.run(context, async () => {
+      entry.value = asyncStorage.run(context, async () => {
         const value = await computeFn();
         // Add resolved value to cache
         entry.value = value;
@@ -48,8 +91,15 @@ export class SystemCacheMap extends SyncMap {
       });
     }
 
+    this.trackDependency(path, entry);
+
+    return entry.value;
+  }
+
+  trackDependency(path, entry) {
     // Is this call happening downstream of another cached value?
-    const { downstream } = storage.getStore() ?? {};
+    const { downstream } =
+      syncStorage.getStore() ?? asyncStorage.getStore() ?? {};
     if (downstream) {
       // Record that the downstream value depends on this cached value
       entry.downstreams ??= new Set();
@@ -60,8 +110,6 @@ export class SystemCacheMap extends SyncMap {
       downstreamEntry.upstreams ??= new Set();
       downstreamEntry.upstreams.add(path);
     }
-
-    return entry.value;
   }
 }
 
