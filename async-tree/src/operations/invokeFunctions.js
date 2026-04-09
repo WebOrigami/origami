@@ -7,7 +7,7 @@ export default async function invokeFunctions(maplike) {
     deep: true,
   });
 
-  return Object.assign(new AsyncMap(), {
+  const result = Object.assign(new AsyncMap(), {
     description: "invokeFunctions",
 
     async get(key) {
@@ -30,4 +30,18 @@ export default async function invokeFunctions(maplike) {
 
     trailingSlashKeys: /** @type {any} */ (source).trailingSlashKeys,
   });
+
+  if (!source.readOnly) {
+    Object.assign(result, {
+      delete(key) {
+        return source.delete(key);
+      },
+
+      set(key, value) {
+        return source.set(key, value);
+      },
+    });
+  }
+
+  return result;
 }

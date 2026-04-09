@@ -14,6 +14,7 @@ export { default as projectRootFromPath } from "./src/project/projectRootFromPat
 export * as Protocols from "./src/protocols/protocols.js";
 export { default as CacheMixin } from "./src/runtime/CacheMixin.js";
 export { default as CalcMap } from "./src/runtime/CalcMap.js";
+export { default as calcs } from "./src/runtime/calcs.js";
 export { formatError, highlightError, lineInfo } from "./src/runtime/errors.js";
 export { default as evaluate } from "./src/runtime/evaluate.js";
 export { default as EventTargetMixin } from "./src/runtime/EventTargetMixin.js";
