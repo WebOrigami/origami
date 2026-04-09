@@ -11,7 +11,7 @@ import coreGlobals from "./coreGlobals.js";
  * @param {SyncOrAsyncMap} parent
  */
 export default async function config(parent) {
-  const projectRoot = await Tree.root(parent);
+  const projectRoot = Tree.root(parent);
 
   let configObject = {};
   const configBuffer = await projectRoot.get("config.ori");

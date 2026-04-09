@@ -26,7 +26,7 @@ export default function TrackDependencyMixin(Base) {
       if (value instanceof Uint8Array) {
         // To record the dependency, get the current async context
         // and dependencies from the root
-        const root = await Tree.root(this);
+        const root = Tree.root(this);
 
         // See if we have an async context
         const context = root?.asyncStorage?.getStore();

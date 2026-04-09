@@ -19,7 +19,7 @@ export default async function projectGlobals(parent) {
     return coreGlobals();
   }
 
-  const projectRoot = await Tree.root(parent);
+  const projectRoot = Tree.root(parent);
   if (!projectRoot.globals) {
     // Start with core globals
     const globals = await coreGlobals();

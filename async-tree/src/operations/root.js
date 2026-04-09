@@ -1,5 +1,5 @@
 import * as symbols from "../symbols.js";
-import * as args from "../utilities/args.js";
+import from from "./from.js";
 
 /**
  * Walk up the `parent` chain to find the root of the tree.
@@ -8,9 +8,9 @@ import * as args from "../utilities/args.js";
  *
  * @param {Maplike} maplike
  */
-export default async function root(maplike) {
+export default function root(maplike) {
   /** @type {any} */
-  let current = await args.map(maplike, "Tree.root");
+  let current = from(maplike);
   while (current.parent || current[symbols.parent]) {
     current = current.parent || current[symbols.parent];
   }

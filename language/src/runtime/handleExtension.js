@@ -58,7 +58,7 @@ export default async function handleExtension(value, key, parent = null) {
           // Wrap the unpack function so it caches the unpacked value, and so we
           // can add the file path to any errors the unpack function throws.
           const filePath = getPackedPath(value, { key, parent });
-          const projectRoot = parent ? await Tree.root(parent) : null;
+          const projectRoot = parent ? Tree.root(parent) : null;
           const projectRootPath = projectRoot?.path;
           const relativePath = path.relative(projectRootPath, filePath);
           let isPathWithinProjectRoot = !relativePath.startsWith("..");
