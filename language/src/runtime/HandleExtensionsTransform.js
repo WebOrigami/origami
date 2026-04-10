@@ -1,3 +1,4 @@
+import { Tree } from "@weborigami/async-tree";
 import handleExtension from "./handleExtension.js";
 
 /**
@@ -15,9 +16,9 @@ export default function HandleExtensionsTransform(Base) {
 
     get(key) {
       const value = super.get(key);
-      return value instanceof Promise
-        ? value.then((resolved) => handleExtension(resolved, key, this))
-        : handleExtension(value, key, this);
+      const root = Tree.root(this);
+      const globals = root.globals;
+      return handleExtension(value, key, globals, this);
     }
 
     // See delete()

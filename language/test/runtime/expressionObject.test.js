@@ -75,10 +75,16 @@ describe("expressionObject", () => {
     });
   });
 
-  test.only("returned object values can be unpacked", async () => {
+  test("returned object values can be unpacked", async () => {
     const entries = [["data.json", `{ "a": 1 }`]];
     const context = new SyncMap();
-    const result = await expressionObject(entries, { object: context });
+    const globals = {
+      json_handler: { unpack: (data) => JSON.parse(data) },
+    };
+    const result = await expressionObject(entries, {
+      object: context,
+      globals,
+    });
     const dataJson = await result["data.json"];
     const json = await dataJson.unpack();
     assert.deepEqual(json, { a: 1 });

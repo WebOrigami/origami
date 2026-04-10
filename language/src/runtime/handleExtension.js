@@ -10,7 +10,6 @@ import {
 } from "@weborigami/async-tree";
 import path from "node:path";
 import getPackedPath from "../handlers/getPackedPath.js";
-import projectGlobals from "../project/projectGlobals.js";
 import systemCache from "./systemCache.js";
 
 /**
@@ -20,10 +19,21 @@ import systemCache from "./systemCache.js";
  *
  * @param {any} value
  * @param {any} key
+ * @param {any} handlers
  * @param {import("@weborigami/async-tree").SyncOrAsyncMap|null} [parent]
  */
-export default async function handleExtension(value, key, parent = null) {
-  if (isPacked(value) && isStringlike(key) && value.unpack === undefined) {
+export default async function handleExtension(
+  value,
+  key,
+  handlers,
+  parent = null,
+) {
+  if (
+    isPacked(value) &&
+    isStringlike(key) &&
+    value.unpack === undefined &&
+    handlers
+  ) {
     const hasSlash = trailingSlash.has(key);
     if (hasSlash) {
       key = trailingSlash.remove(key);
@@ -35,8 +45,7 @@ export default async function handleExtension(value, key, parent = null) {
       : extension.extname(key);
     if (extname) {
       const handlerName = `${extname.slice(1)}_handler`;
-      const handlers = await projectGlobals(parent);
-      let handler = await handlers[handlerName];
+      let handler = handlers[handlerName];
       if (handler) {
         if (isUnpackable(handler)) {
           // The extension handler itself needs to be unpacked
@@ -60,11 +69,16 @@ export default async function handleExtension(value, key, parent = null) {
           const filePath = getPackedPath(value, { key, parent });
           const projectRoot = parent ? Tree.root(parent) : null;
           const projectRootPath = projectRoot?.path;
-          const relativePath = path.relative(projectRootPath, filePath);
-          let isPathWithinProjectRoot = !relativePath.startsWith("..");
-          const cachePath = isPathWithinProjectRoot
-            ? `_unpack/${relativePath}`
-            : `_unpack${filePath}`;
+          const relativePath = projectRootPath
+            ? path.relative(projectRootPath, filePath)
+            : null;
+          let isPathWithinProjectRoot = relativePath
+            ? !relativePath.startsWith("..")
+            : false;
+          const cachePath = path.join(
+            "_unpack",
+            isPathWithinProjectRoot ? relativePath : filePath,
+          );
           value.unpack = async () =>
             systemCache.getOrInsertComputedAsync(cachePath, async () => {
               // We get the data from the parent map again, which is inefficient

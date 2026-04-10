@@ -10,7 +10,15 @@ describe("handleExtension", () => {
     assert(typeof numberValue === "number");
     assert.equal(numberValue, 1);
     const jsonFile = await fixture.get("bar.json");
-    const withHandler = await handleExtension(jsonFile, "bar.json", fixture);
+    const globals = {
+      json_handler: { unpack: async (data) => JSON.parse(data) },
+    };
+    const withHandler = await handleExtension(
+      jsonFile,
+      "bar.json",
+      globals,
+      fixture,
+    );
     assert.equal(String(withHandler), `{ "bar": 2 }`);
     const data = await withHandler.unpack();
     assert.deepEqual(data, { bar: 2 });

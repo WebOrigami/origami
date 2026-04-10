@@ -1,3 +1,4 @@
+import { Tree } from "@weborigami/async-tree";
 import handleExtension from "../runtime/handleExtension.js";
 
 /**
@@ -24,7 +25,9 @@ export default async function fetchAndHandleExtension(href, parent) {
   const url = new URL(href);
   const filename = url.pathname.split("/").pop();
   if (filename) {
-    buffer = await handleExtension(buffer, filename, parent);
+    const root = Tree.root(parent);
+    const globals = root.globals;
+    buffer = await handleExtension(buffer, filename, globals, parent);
   }
 
   return buffer;

@@ -112,6 +112,7 @@ export default async function expressionObject(entries, state = {}) {
  * Define a single property on the object
  */
 function defineProperty(object, propertyInfo, state, map) {
+  const { globals } = state;
   let { enumerable, hasExtension, key, value, valueType } = propertyInfo;
   if (valueType == VALUE_TYPE.PRIMITIVE) {
     // Define simple property
@@ -129,7 +130,9 @@ function defineProperty(object, propertyInfo, state, map) {
       get: async () => {
         const newState = Object.assign({}, state, { object: map });
         const result = await execute(value, newState);
-        return hasExtension ? handleExtension(result, key, map) : result;
+        return hasExtension
+          ? handleExtension(result, key, globals, map)
+          : result;
       },
     });
   }

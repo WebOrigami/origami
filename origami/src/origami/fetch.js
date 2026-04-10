@@ -17,6 +17,6 @@ export default async function fetchBuiltin(resource, options, state) {
   const url = new URL(resource);
   const key = url.pathname;
 
-  return handleExtension(value, key, state?.parent);
+  return handleExtension(value, key, state?.globals, state?.parent);
 }
 fetchBuiltin.needsState = true;
