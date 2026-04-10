@@ -17,7 +17,7 @@ export default async function packageProtocol(...args) {
   if (name.startsWith("@")) {
     // First key is an npm organization, add next key as name
     const nameArg = args.shift();
-    name += nameArg;
+    name += "/" + nameArg;
     packageRootKeys.push(nameArg);
   }
   const packageRootPath = pathFromKeys(packageRootKeys);
