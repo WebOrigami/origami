@@ -13,12 +13,7 @@ describe("handleExtension", () => {
     const globals = {
       json_handler: { unpack: async (data) => JSON.parse(data) },
     };
-    const withHandler = await handleExtension(
-      jsonFile,
-      "bar.json",
-      globals,
-      fixture,
-    );
+    const withHandler = handleExtension(jsonFile, "bar.json", globals, fixture);
     assert.equal(String(withHandler), `{ "bar": 2 }`);
     const data = await withHandler.unpack();
     assert.deepEqual(data, { bar: 2 });

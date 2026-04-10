@@ -22,12 +22,7 @@ import systemCache from "./systemCache.js";
  * @param {any} handlers
  * @param {import("@weborigami/async-tree").SyncOrAsyncMap|null} [parent]
  */
-export default async function handleExtension(
-  value,
-  key,
-  handlers,
-  parent = null,
-) {
+export default function handleExtension(value, key, handlers, parent = null) {
   if (
     isPacked(value) &&
     isStringlike(key) &&
@@ -47,11 +42,6 @@ export default async function handleExtension(
       const handlerName = `${extname.slice(1)}_handler`;
       let handler = handlers[handlerName];
       if (handler) {
-        if (isUnpackable(handler)) {
-          // The extension handler itself needs to be unpacked
-          handler = await handler.unpack();
-        }
-
         // If the value is a primitive, box it so we can attach data to it.
         value = box(value);
 
@@ -81,20 +71,20 @@ export default async function handleExtension(
           );
           value.unpack = async () =>
             systemCache.getOrInsertComputedAsync(cachePath, async () => {
-              // We get the data from the parent map again, which is inefficient
-              // but: a) this reads the loaded data from the file cache so it's
-              // not that slow and b) this ensures the file data is tracked as
-              // an upstream dependency of the unpacked value.
-
-              /** @type {any} */
-              let getTarget = parent;
-              while (getTarget.result) {
-                getTarget = getTarget.result;
+              if (isUnpackable(handler)) {
+                // The extension handler itself needs to be unpacked
+                handler = await handler.unpack();
               }
-              const data = await getTarget.get(key);
+
+              // If we have a parent, we get the data from the parent map again.
+              // This is inefficient but: a) this reads the loaded data from the
+              // file cache so it's not that slow and b) this ensures the file
+              // data is tracked as an upstream dependency of the unpacked
+              // value.
+              const data = parent ? await parent.get(key) : value;
               const unpacked = await handler.unpack(data, {
                 key,
-                parent: getTarget,
+                parent,
               });
               return unpacked;
             });
