@@ -31,7 +31,7 @@ export default async function invokeFunctions(maplike) {
     trailingSlashKeys: /** @type {any} */ (source).trailingSlashKeys,
   });
 
-  if (!source.readOnly) {
+  if (!(/** @type {any} */ (source).readOnly)) {
     Object.assign(result, {
       delete(key) {
         return source.delete(key);

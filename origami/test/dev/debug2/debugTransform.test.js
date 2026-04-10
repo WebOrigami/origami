@@ -26,19 +26,22 @@ describe("debugTransform", () => {
     assert.equal(await Tree.traverse(fixture, "more", "!keys"), "- b\n");
   });
 
-  test("given a packed tree, adds debug resources when the tree is unpacked", async () => {
+  test("given a packed value, adds debug resources when the tree is unpacked", async () => {
     /** @type {any} */
     const packed = new String("packed");
     packed.unpack = () => ({
       a: 1,
     });
-    const fixture = debugTransform(packed);
+    const fixture = debugTransform({
+      packed,
+    });
 
     // Packed value is the same
-    assert.equal(String(fixture), "packed");
+    const result = await fixture.get("packed");
+    assert.equal(String(result), "packed");
 
     // Can unpack to get the tree with debug resources
-    const unpacked = await fixture.unpack();
+    const unpacked = await result.unpack();
     assert.equal(await unpacked.get("a"), 1);
     assert.equal(await unpacked.get("!keys"), "- a\n");
   });
