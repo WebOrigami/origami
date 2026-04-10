@@ -38,7 +38,7 @@ let nextPathId = 0;
  *      b.ori -> { downstreams: Set(site.ori), value: ... }
  *      c.ori -> { downstreams: Set(a.ori, b.ori), value: ... }
  */
-export default function CacheMixin(Base) {
+export default function CacheTransform(Base) {
   return class extends Base {
     constructor(...args) {
       super(...args);

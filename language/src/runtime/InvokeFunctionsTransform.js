@@ -10,10 +10,10 @@ export default function InvokeFunctionsTransform(Base) {
       super(iterable);
     }
 
-    async get(key) {
-      let value = await super.get(key);
+    get(key) {
+      let value = super.get(key);
       if (typeof value === "function") {
-        value = await value();
+        value = value();
       }
       return value;
     }

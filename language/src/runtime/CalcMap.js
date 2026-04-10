@@ -1,7 +1,7 @@
 import { SyncMap } from "@weborigami/async-tree";
-import CacheTransform from "./CacheTransform.js";
 import InvokeFunctionsTransform from "./InvokeFunctionsTransform.js";
+import SyncCacheTransform from "./SyncCacheTransform.js";
 
-export default class CalcMap extends CacheTransform(
+export default class CalcMap extends SyncCacheTransform(
   InvokeFunctionsTransform(SyncMap),
 ) {}

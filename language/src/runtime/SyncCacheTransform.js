@@ -1,4 +1,4 @@
-import { symbols, Tree } from "@weborigami/async-tree";
+import { Tree } from "@weborigami/async-tree";
 import path from "node:path";
 import systemCache from "./systemCache.js";
 
@@ -42,28 +42,20 @@ export default function SyncCacheTransform(Base) {
 
       // Expose cache for debugging
       this.cache = systemCache;
-    }
 
-    // Default cache path for a map without a `cachePath` property
-    get cachePath() {
-      let result;
+      // Pick a default `cachePath` property
       if (this.path) {
         // Use file path as cache path
-        let root = this;
-        while (root.parent || root[symbols.parent]) {
-          root = root.parent || root[symbols.parent];
-        }
+        const root = Tree.root(this);
         const projectRootPath = root.path;
         const relativePath = path.relative(projectRootPath, this.path);
         let isPathWithinProjectRoot = !relativePath.startsWith("..");
-        result = isPathWithinProjectRoot
+        this.cachePath = isPathWithinProjectRoot
           ? `_project/${relativePath}`
           : this.path;
       } else {
-        result = systemCache.nextDefaultCachePath();
+        this.cachePath = systemCache.nextDefaultCachePath();
       }
-      this.cachePath = result; // memoize
-      return result;
     }
 
     cachePathForKey(key) {
@@ -80,11 +72,9 @@ export default function SyncCacheTransform(Base) {
       systemCache.delete(this.cachePathForKey(key));
     }
 
-    async get(key) {
+    get(key) {
       const path = this.cachePathForKey(key);
-      const value = await systemCache.getOrInsertComputed(path, () =>
-        super.get(key),
-      );
+      const value = systemCache.getOrInsertComputed(path, () => super.get(key));
       if (Tree.isMap(value)) {
         Object.defineProperty(value, "cachePath", {
           value: path,

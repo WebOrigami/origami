@@ -1,7 +1,6 @@
 import { FileMap } from "@weborigami/async-tree";
 import path from "node:path";
 import OrigamiFileMap from "../runtime/OrigamiFileMap.js";
-import cacheWithTracking from "../runtime/cacheWithTracking.js";
 
 const configFileName = "config.ori";
 const packageFileName = "package.json";
@@ -56,16 +55,7 @@ export default async function projectRootFromPath(dirname) {
     root = new OrigamiFileMap(dirname);
   }
 
-  // Add caching
-  const cached = await cacheWithTracking(root);
-  cached.path = root.path;
+  root.cachePath = "_project";
 
-  Object.defineProperty(cached, "cachePath", {
-    value: "_project",
-    writable: false,
-    enumerable: true,
-    configurable: true,
-  });
-
-  return cached;
+  return root;
 }
