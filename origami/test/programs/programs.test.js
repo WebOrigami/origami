@@ -12,6 +12,7 @@ import { describe, test } from "node:test";
 describe("programs", async () => {
   const dir = new URL("fixtures", import.meta.url);
   const fixtures = new OrigamiFileMap(dir);
+  await fixtures.initializeGlobals();
 
   for (const key of await fixtures.keys()) {
     const file = await fixtures.get(key);

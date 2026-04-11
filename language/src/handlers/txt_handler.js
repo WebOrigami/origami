@@ -6,7 +6,8 @@ import {
 } from "@weborigami/async-tree";
 import * as YAMLModule from "yaml";
 import * as compile from "../compiler/compile.js";
-import projectGlobals from "../project/projectGlobals.js";
+import coreGlobals from "../project/coreGlobals.js";
+import getGlobalsForTree from "../project/getGlobalsForTree.js";
 import parseFrontMatter from "./parseFrontMatter.js";
 
 // The "yaml" package doesn't seem to provide a default export that the browser can
@@ -80,7 +81,8 @@ export default {
       const { body, frontText, isOrigami } = parsed;
       let frontData;
       if (isOrigami) {
-        const globals = await projectGlobals(parent);
+        const globals =
+          options.globals ?? getGlobalsForTree(parent) ?? (await coreGlobals());
         const compiled = compile.expression(frontText.trim(), {
           globals,
           parent,

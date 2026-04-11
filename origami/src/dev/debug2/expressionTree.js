@@ -4,7 +4,11 @@ import {
   setParent,
   Tree,
 } from "@weborigami/async-tree";
-import { evaluate, OrigamiFileMap, projectGlobals } from "@weborigami/language";
+import {
+  evaluate,
+  getGlobalsForTree,
+  OrigamiFileMap,
+} from "@weborigami/language";
 import debugTransform from "./debugTransform.js";
 
 // So we can distinguish different trees in the debugger
@@ -22,7 +26,8 @@ export default async function expressionTree(options) {
   const { expression, parentPath } = options;
 
   const parent = new OrigamiFileMap(parentPath);
-  const globals = await projectGlobals(parent);
+  await parent.initializeGlobals();
+  const globals = getGlobalsForTree(parent);
 
   let maplike;
   try {

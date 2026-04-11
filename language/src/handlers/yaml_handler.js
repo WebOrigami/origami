@@ -8,7 +8,8 @@ import {
 } from "@weborigami/async-tree";
 import * as YAMLModule from "yaml";
 import * as compile from "../compiler/compile.js";
-import projectGlobals from "../project/projectGlobals.js";
+import coreGlobals from "../project/coreGlobals.js";
+import getGlobalsForTree from "../project/getGlobalsForTree.js";
 import getSource from "./getSource.js";
 
 // The "yaml" package doesn't seem to provide a default export that the browser can
@@ -104,7 +105,8 @@ export default {
 };
 
 async function oriCallTagForParent(parent, options, yaml) {
-  const globals = await projectGlobals(parent);
+  const globals =
+    options.globals ?? getGlobalsForTree(parent) ?? (await coreGlobals());
   return {
     collection: "seq",
 
@@ -168,7 +170,8 @@ async function oriCallTagForParent(parent, options, yaml) {
 // Define the !ori tag for YAML parsing. This will run in the context of the
 // supplied parent.
 async function oriTagForParent(parent, options, yaml) {
-  const globals = await projectGlobals(parent);
+  const globals =
+    options.globals ?? getGlobalsForTree(parent) ?? (await coreGlobals());
   return {
     resolve(text) {
       hasOriTags = true;

@@ -44,6 +44,7 @@ export default async function debug2(code, state) {
 
   // Watch the parent files for changes
   const tree = new OrigamiFileMap(parentPath);
+  await tree.initializeGlobals();
   tree.watch();
   tree.addEventListener?.("change", async (event) => {
     // @ts-ignore

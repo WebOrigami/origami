@@ -1,6 +1,7 @@
 import { extension, getParent, trailingSlash } from "@weborigami/async-tree";
 import * as compile from "../compiler/compile.js";
-import projectGlobals from "../project/projectGlobals.js";
+import coreGlobals from "../project/coreGlobals.js";
+import getGlobalsForTree from "../project/getGlobalsForTree.js";
 import getSource from "./getSource.js";
 
 /**
@@ -16,7 +17,8 @@ export default {
     const source = getSource(packed, options);
 
     // Compile the source code as an Origami template document
-    const globals = options.globals ?? (await projectGlobals(parent));
+    const globals =
+      options.globals ?? getGlobalsForTree(parent) ?? (await coreGlobals());
     const defineFn = compile.templateDocument(source, {
       front: options.front,
       globals,

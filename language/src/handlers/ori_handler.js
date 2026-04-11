@@ -1,6 +1,7 @@
 import { getParent, setParent } from "@weborigami/async-tree";
 import * as compile from "../compiler/compile.js";
-import projectGlobals from "../project/projectGlobals.js";
+import coreGlobals from "../project/coreGlobals.js";
+import getGlobalsForTree from "../project/getGlobalsForTree.js";
 import getSource from "./getSource.js";
 
 /**
@@ -18,7 +19,8 @@ export default {
 
     // Compile the source code as an Origami program
     const compiler = options.compiler ?? compile.program;
-    const globals = options.globals ?? (await projectGlobals(parent));
+    const globals =
+      options.globals ?? getGlobalsForTree(parent) ?? (await coreGlobals());
     const fn = compiler(source, {
       globals,
       mode: "program",

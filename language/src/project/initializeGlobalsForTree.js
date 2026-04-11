@@ -4,7 +4,7 @@ import coreGlobals from "./coreGlobals.js";
 import projectConfig from "./projectConfig.js";
 
 /**
- * Return the complete set of globals available to code running in the given
+ * Make the complete set of globals available to code running in the given
  * container. This will be the core globals plus any configuration specified in
  * the project's config.ori file.
  *
@@ -12,13 +12,9 @@ import projectConfig from "./projectConfig.js";
  * container.
  *
  * @typedef {import("@weborigami/async-tree").SyncOrAsyncMap} SyncOrAsyncMap
- * @param {SyncOrAsyncMap|null} parent
+ * @param {SyncOrAsyncMap} parent
  */
 export default async function projectGlobals(parent) {
-  if (!parent) {
-    return coreGlobals();
-  }
-
   const projectRoot = Tree.root(parent);
   if (!projectRoot.globals) {
     // Start with core globals

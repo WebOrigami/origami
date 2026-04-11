@@ -1,5 +1,5 @@
 import { Tree, args, getRealmObjectPrototype } from "@weborigami/async-tree";
-import { compile, projectGlobals } from "@weborigami/language";
+import { compile, getGlobalsForTree } from "@weborigami/language";
 import { toYaml } from "../common/serialize.js";
 import * as dev from "../dev/dev.js";
 
@@ -19,7 +19,7 @@ export default async function ori(expression, options = {}) {
 
   // Add Dev builtins as top-level globals
   const globals = {
-    ...(await projectGlobals(parent)),
+    ...getGlobalsForTree(parent),
     ...dev,
   };
 

@@ -206,6 +206,7 @@ addOpLabel(greaterThanOrEqual, "«ops.greaterThanOrEqual»");
  */
 export async function homeDirectory(...keys) {
   const tree = new OrigamiFileMap(os.homedir());
+  await tree.initializeGlobals();
   return keys.length > 0 ? Tree.traverse(tree, ...keys) : tree;
 }
 addOpLabel(homeDirectory, "«ops.homeDirectory»");

@@ -6,6 +6,7 @@ import OrigamiFileMap from "../../src/runtime/OrigamiFileMap.js";
 
 const fixturesUrl = new URL("fixtures", import.meta.url);
 const fixtures = new OrigamiFileMap(fixturesUrl);
+await fixtures.initializeGlobals();
 
 describe(".ori handler", async () => {
   test("loads a string expression", async () => {
@@ -38,7 +39,7 @@ describe(".ori handler", async () => {
     const tree = await ori_handler.unpack(source);
     assert.deepEqual(
       await Tree.traverse(tree, "public", "message"),
-      "Hello, world!"
+      "Hello, world!",
     );
   });
 

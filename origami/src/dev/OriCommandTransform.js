@@ -1,5 +1,5 @@
 import { isUnpackable, scope, trailingSlash } from "@weborigami/async-tree";
-import { projectGlobals } from "@weborigami/language";
+import { getGlobalsForTree } from "@weborigami/language";
 
 /**
  * Add support for commands prefixed with `!`.
@@ -28,11 +28,11 @@ export default function OriCommandTransform(Base) {
         }
 
         // Key is an Origami command; invoke it.
-        const globals = await projectGlobals(/** @type {any} */ (this));
+        const globals = getGlobalsForTree(this);
         const commandName = trailingSlash.remove(key.slice(1).trim());
 
         // Look for command as a global or Dev command
-        const command = globals[commandName] ?? globals.Dev?.[commandName];
+        const command = globals?.[commandName] ?? globals?.Dev?.[commandName];
         if (command) {
           value = await command(this);
         } else {

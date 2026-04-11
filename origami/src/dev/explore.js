@@ -44,6 +44,7 @@ async function getScopeData(scope) {
 async function loadTemplate() {
   const folderPath = path.resolve(fileURLToPath(import.meta.url), "..");
   const folder = new OrigamiFileMap(folderPath);
+  await folder.initializeGlobals();
   const templateFile = await folder.get("explore.ori");
   const template = await Handlers.ori_handler.unpack(templateFile, {
     parent: folder,

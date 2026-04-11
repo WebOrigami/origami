@@ -22,6 +22,7 @@ export default async function files(...args) {
   const resolved = path.resolve(basePath, relativePath);
 
   const result = new OrigamiFileMap(resolved);
+  await result.initializeGlobals();
   return result;
 }
 files.needsState = true;

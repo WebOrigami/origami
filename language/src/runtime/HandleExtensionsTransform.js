@@ -1,4 +1,5 @@
 import { Tree } from "@weborigami/async-tree";
+import initializeGlobalsForTree from "../project/initializeGlobalsForTree.js";
 import handleExtension from "./handleExtension.js";
 
 /**
@@ -12,6 +13,17 @@ export default function HandleExtensionsTransform(Base) {
     // Implement delete (and set) to keep the Map read-write
     delete(key) {
       return super.delete(key);
+    }
+
+    /**
+     * Initialize the globals on the project root. This makes the file handlers
+     * available for use from any folder inside the tree.
+     *
+     * This is an async operation because it can load JavaScript files, so it
+     * can't be done in the constructor.
+     */
+    async initializeGlobals() {
+      await initializeGlobalsForTree(this);
     }
 
     get(key) {
