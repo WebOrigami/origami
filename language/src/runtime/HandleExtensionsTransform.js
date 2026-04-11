@@ -1,4 +1,4 @@
-import { Tree } from "@weborigami/async-tree";
+import getGlobalsForTree from "../project/getGlobalsForTree.js";
 import initializeGlobalsForTree from "../project/initializeGlobalsForTree.js";
 import handleExtension from "./handleExtension.js";
 
@@ -28,8 +28,7 @@ export default function HandleExtensionsTransform(Base) {
 
     get(key) {
       const value = super.get(key);
-      const root = Tree.root(this);
-      const globals = root.globals;
+      const globals = getGlobalsForTree(this);
       return handleExtension(value, key, globals, this);
     }
 

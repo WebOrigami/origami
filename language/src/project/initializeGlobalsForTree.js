@@ -17,8 +17,8 @@ import projectConfig from "./projectConfig.js";
 export default async function projectGlobals(parent) {
   const projectRoot = Tree.root(parent);
   if (!projectRoot.globals) {
-    // Start with core globals
-    const globals = await coreGlobals();
+    // Start with a copy of the core globals
+    const globals = { ...(await coreGlobals()) };
 
     if (parent) {
       // Get config for the given container and add it to the globals. During

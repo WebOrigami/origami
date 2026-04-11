@@ -53,42 +53,41 @@ export default function handleExtension(value, key, handlers, parent = null) {
           setParent(value, parent);
         }
 
-        if (handler.unpack) {
-          // Wrap the unpack function so it caches the unpacked value, and so we
-          // can add the file path to any errors the unpack function throws.
-          const filePath = getPackedPath(value, { key, parent });
-          const projectRoot = parent ? Tree.root(parent) : null;
-          const projectRootPath = projectRoot?.path;
-          const relativePath = projectRootPath
-            ? path.relative(projectRootPath, filePath)
-            : null;
-          let isPathWithinProjectRoot = relativePath
-            ? !relativePath.startsWith("..")
-            : false;
-          const cachePath = path.join(
-            "_unpack",
-            isPathWithinProjectRoot ? relativePath : filePath,
-          );
-          value.unpack = async () =>
-            systemCache.getOrInsertComputedAsync(cachePath, async () => {
-              if (isUnpackable(handler)) {
-                // The extension handler itself needs to be unpacked
-                handler = await handler.unpack();
-              }
+        // Wrap the unpack function so it caches the unpacked value, and so we
+        // can add the file path to any errors the unpack function throws.
+        const filePath = getPackedPath(value, { key, parent });
+        const projectRoot = parent ? Tree.root(parent) : null;
+        const projectRootPath = projectRoot?.path;
+        const relativePath = projectRootPath
+          ? path.relative(projectRootPath, filePath)
+          : null;
+        let isPathWithinProjectRoot = relativePath
+          ? !relativePath.startsWith("..")
+          : false;
+        const cachePath = path.join(
+          "_unpack",
+          isPathWithinProjectRoot ? relativePath : filePath,
+        );
+        value.unpack = async () =>
+          systemCache.getOrInsertComputedAsync(cachePath, async () => {
+            handler = await handler;
+            if (isUnpackable(handler)) {
+              // The extension handler itself needs to be unpacked
+              handler = await handler.unpack();
+            }
 
-              // If we have a parent, we get the data from the parent map again.
-              // This is inefficient but: a) this reads the loaded data from the
-              // file cache so it's not that slow and b) this ensures the file
-              // data is tracked as an upstream dependency of the unpacked
-              // value.
-              const data = parent ? await parent.get(key) : value;
-              const unpacked = await handler.unpack(data, {
-                key,
-                parent,
-              });
-              return unpacked;
+            // If we have a parent, we get the data from the parent map again.
+            // This is inefficient but: a) this reads the loaded data from the
+            // file cache so it's not that slow and b) this ensures the file
+            // data is tracked as an upstream dependency of the unpacked
+            // value.
+            const data = parent ? await parent.get(key) : value;
+            const unpacked = await handler.unpack(data, {
+              key,
+              parent,
             });
-        }
+            return unpacked;
+          });
       }
     }
   }
