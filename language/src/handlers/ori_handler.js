@@ -1,7 +1,9 @@
-import { getParent, setParent } from "@weborigami/async-tree";
+import { getParent, isPlainObject, setParent } from "@weborigami/async-tree";
+import path from "node:path";
 import * as compile from "../compiler/compile.js";
 import coreGlobals from "../project/coreGlobals.js";
 import getGlobalsForTree from "../project/getGlobalsForTree.js";
+import { cachePathSymbol } from "../runtime/symbols.js";
 import getSource from "./getSource.js";
 
 /**
@@ -32,6 +34,14 @@ export default {
 
     if (parent) {
       setParent(result, parent);
+      const parentCachePath = /** @type {any} */ (parent).cachePath;
+      if (isPlainObject(result) && parentCachePath && options.key) {
+        Object.defineProperty(result, cachePathSymbol, {
+          value: path.join(parentCachePath, options.key),
+          enumerable: false,
+          configurable: true,
+        });
+      }
     }
 
     return result;

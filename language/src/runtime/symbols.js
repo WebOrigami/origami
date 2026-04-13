@@ -1,3 +1,4 @@
+export const cachePathSymbol = Symbol("cachePath");
 export const codeSymbol = Symbol("code");
 export const configSymbol = Symbol("config");
 export const scopeSymbol = Symbol("scope");

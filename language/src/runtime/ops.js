@@ -488,7 +488,8 @@ export async function property(object, key) {
 
   if (isUnpackable(object)) {
     object = await object.unpack();
-  } else if (typeof object === "string") {
+  }
+  if (typeof object === "string") {
     object = new String(object);
   } else if (typeof object === "number") {
     object = new Number(object);

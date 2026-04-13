@@ -6,9 +6,12 @@ import {
   trailingSlash,
   Tree,
 } from "@weborigami/async-tree";
+import path from "node:path";
 import execute from "./execute.js";
 import handleExtension from "./handleExtension.js";
 import { ops } from "./internal.js";
+import { cachePathSymbol } from "./symbols.js";
+import systemCache from "./systemCache.js";
 
 export const KEY_TYPE = {
   STRING: 0, // Simple string key: `a: 1`
@@ -95,16 +98,6 @@ export default async function expressionObject(entries, state = {}) {
     writable: true,
   });
 
-  // TODO: If there are any getters, mark the object as async. Note: this code
-  // was added so that Tree.from() could know whether to return an ObjectMap or
-  // a hypothetical AsyncObjectMap, which in turn would let a map operation know
-  // whether to expect async property values. const hasGetters =
-  // infos.some((info) => info.valueType === VALUE_TYPE.GETTER); if (hasGetters)
-  // { Object.defineProperty(object, symbols.async, { configurable: true,
-  // enumerable: false, value: true, writable: true,
-  //   });
-  // }
-
   return object;
 }
 
@@ -129,7 +122,15 @@ function defineProperty(object, propertyInfo, state, map) {
       enumerable,
       get: async () => {
         const newState = Object.assign({}, state, { object: map });
-        const result = await execute(value, newState);
+        const objectCachePath = object[cachePathSymbol];
+        const propertyCachePath = objectCachePath
+          ? path.join(objectCachePath, key)
+          : undefined;
+        const result = propertyCachePath
+          ? await systemCache.getOrInsertComputedAsync(propertyCachePath, () =>
+              execute(value, newState),
+            )
+          : await execute(value, newState);
         return hasExtension
           ? handleExtension(result, key, globals, map)
           : result;
