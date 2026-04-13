@@ -31,7 +31,6 @@ export const REFERENCE_EXTERNAL = 4;
  */
 export default function optimize(code, options = {}) {
   const globals = options.globals ?? jsGlobals;
-  const cache = options.cache === undefined ? {} : options.cache;
   const parent = options.parent ?? null;
 
   // The locals is an array, one item for each function or object context that
@@ -48,7 +47,7 @@ export default function optimize(code, options = {}) {
       return globals[args[0]];
 
     case markers.traverse:
-      return resolvePath(code, globals, parent, locals, cache);
+      return resolvePath(code, globals, parent, locals);
 
     case ops.lambda:
       const parameters = args[1];
@@ -103,7 +102,7 @@ export default function optimize(code, options = {}) {
         return child;
       }
     }),
-    code.location
+    code.location,
   );
 
   return annotate(optimized, code.location);
@@ -129,7 +128,7 @@ function avoidLocalRecursion(locals, key) {
   const matchingKeyIndex = locals[currentFrameIndex].names.findIndex(
     (name) =>
       // Ignore trailing slashes when comparing keys
-      trailingSlash.remove(name) === trailingSlash.remove(key)
+      trailingSlash.remove(name) === trailingSlash.remove(key),
   );
 
   if (matchingKeyIndex >= 0) {
@@ -147,10 +146,10 @@ function avoidLocalRecursion(locals, key) {
   }
 }
 
-function cachePath(code, cache) {
+function cachePath(code) {
   const keys = code.map(keyFromCode).filter((key) => key !== null);
   const path = pathFromKeys(keys);
-  return annotate([ops.cache, cache, path, code], code.location);
+  return annotate([ops.cache, path, code], code.location);
 }
 
 // A reference with periods like x.y.z
@@ -193,7 +192,7 @@ function findLocalDetails(key, locals) {
   for (let i = locals.length - 1; i >= 0; i--) {
     const { type, names } = locals[i];
     const local = names.find(
-      (name) => trailingSlash.remove(name) === normalized
+      (name) => trailingSlash.remove(name) === normalized,
     );
     if (local) {
       const depth = type === REFERENCE_PARAM ? paramDepth : inheritedDepth;
@@ -329,7 +328,7 @@ function reference(code, globals, parent, locals) {
   };
 }
 
-function resolvePath(code, globals, parent, locals, cache) {
+function resolvePath(code, globals, parent, locals) {
   const args = code.slice(1);
   const [head, ...tail] = args;
 
@@ -352,9 +351,9 @@ function resolvePath(code, globals, parent, locals, cache) {
     }
   }
 
-  if (type === REFERENCE_EXTERNAL && cache !== null) {
+  if (type === REFERENCE_EXTERNAL) {
     // Cache external path
-    return cachePath(result, cache);
+    return cachePath(result);
   }
 
   return result;

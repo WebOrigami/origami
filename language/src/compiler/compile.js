@@ -28,9 +28,7 @@ function compile(source, options) {
   });
 
   // Optimize the code
-  const cache = mode === "program" ? {} : null;
   const optimized = optimize(code, {
-    cache,
     globals,
     parent,
   });

@@ -93,9 +93,16 @@ export default function AsyncCacheTransform(Base) {
 
     async *keys() {
       const keysPath = this.cachePathForKey("_keys");
-      const keys = await systemCache.getOrInsertComputedAsync(keysPath, () =>
-        // We can't cache an iterator; convert to array
-        Array.from(super.keys()),
+      const keys = await systemCache.getOrInsertComputedAsync(
+        keysPath,
+        async () => {
+          // We can't cache an iterator; convert to array
+          const result = [];
+          for await (const key of super.keys()) {
+            result.push(key);
+          }
+          return result;
+        },
       );
       yield* keys;
     }

@@ -1,4 +1,5 @@
-import { getParent, toString } from "@weborigami/async-tree";
+import { getParent, toString, Tree } from "@weborigami/async-tree";
+import path from "node:path";
 
 /**
  * Given packed source text and a handler's options, return a source
@@ -9,6 +10,7 @@ export default function getSource(packed, options = {}) {
 
   // Try to determine a URL for error messages
   const sourceName = options.key;
+  let relativePath;
   let url;
   if (sourceName) {
     if (/** @type {any} */ (parent)?.url) {
@@ -24,6 +26,13 @@ export default function getSource(packed, options = {}) {
         parentHref += "/";
       }
       url = new URL(sourceName, parentHref);
+
+      // TODO: clean up
+      const root = Tree.root(parent);
+      relativePath = path.join(
+        path.relative(root.path, parent.path),
+        sourceName,
+      );
     }
   }
 
@@ -32,5 +41,9 @@ export default function getSource(packed, options = {}) {
     name: options.key,
     url,
   };
+  if (relativePath) {
+    source.relativePath = relativePath;
+  }
+
   return source;
 }

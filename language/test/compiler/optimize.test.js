@@ -113,7 +113,6 @@ describe("optimize", () => {
       const parent = {};
       const expected = [
         ops.cache,
-        {},
         "folder",
         [
           [ops.scope, parent],
@@ -133,7 +132,6 @@ describe("optimize", () => {
       const parent = {};
       const expected = [
         ops.cache,
-        {},
         "index.html",
         [
           [ops.scope, parent],
@@ -162,7 +160,6 @@ describe("optimize", () => {
             ops.getter,
             [
               ops.cache,
-              {},
               "posts.txt",
               [
                 [ops.scope, parent],
@@ -235,14 +232,14 @@ describe("optimize", () => {
     test("root directory", () => {
       // Compilation of `</>`
       const code = createCode([markers.traverse, [markers.external, "/"]]);
-      const expected = [ops.cache, {}, "/", [ops.rootDirectory]];
+      const expected = [ops.cache, "/", [ops.rootDirectory]];
       assertCodeEqual(optimize(code), expected);
     });
 
     test("home directory", () => {
       // Compilation of `<~>`
       const code = createCode([markers.traverse, [ops.homeDirectory]]);
-      const expected = [ops.cache, {}, "~", [ops.homeDirectory]];
+      const expected = [ops.cache, "~", [ops.homeDirectory]];
       assertCodeEqual(optimize(code), expected);
     });
   });
@@ -259,7 +256,6 @@ describe("optimize", () => {
       const parent = {};
       const expected = [
         ops.cache,
-        {},
         "path/to/file",
         [
           [ops.scope, parent],
@@ -282,7 +278,6 @@ describe("optimize", () => {
       const parent = {};
       const expected = [
         ops.cache,
-        {},
         "package.json/name",
         [
           [ops.scope, parent],

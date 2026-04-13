@@ -23,12 +23,9 @@ export default async function ori(expression, options = {}) {
     ...dev,
   };
 
-  // Compile the expression. Avoid caching scope references so that, e.g.,
-  // passing a function to the `watch` builtin will always look the current
-  // value of things in scope.
+  // Compile the expression
   const fn = compile.expression(expression, {
     globals,
-    enableCaching: false,
     mode: "shell",
     parent,
   });

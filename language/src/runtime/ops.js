@@ -8,11 +8,13 @@
 
 import { getParent, isUnpackable, Tree } from "@weborigami/async-tree";
 import os from "node:os";
+import path from "node:path";
 import execute from "./execute.js";
 import expressionObject from "./expressionObject.js";
 import mergeTrees from "./mergeTrees.js";
 import OrigamiFileMap from "./OrigamiFileMap.js";
 import { codeSymbol } from "./symbols.js";
+import systemCache from "./systemCache.js";
 
 function addOpLabel(op, label) {
   Object.defineProperty(op, "toString", {
@@ -81,29 +83,19 @@ addOpLabel(bitwiseXor, "«ops.bitwiseXor»");
 /**
  * Cache the value of the code for an external reference
  *
- * @param {any} cache
- * @param {string} path
+ * @param {string} refPath
  * @param {AnnotatedCode} code
  */
-export async function cache(cache, path, code) {
-  if (path in cache) {
-    // Cache hit
-    return cache[path];
+export async function cache(refPath, code) {
+  const sourcePath = code.location?.source?.relativePath;
+  if (!sourcePath) {
+    console.warn("Tried to cache a value for code with no source path");
+    return execute(code);
   }
-
-  // Don't await: might get another request for this before promise resolves
-  const promise = execute(code);
-
-  // Save promise so any concurrent requests get the same promise
-  cache[path] = promise;
-
-  // Now wait for the value
-  const value = await promise;
-
-  // Update the cache with the actual value
-  cache[path] = value;
-
-  return value;
+  const cachePath = path.join("_refs", sourcePath, refPath);
+  return systemCache.getOrInsertComputedAsync(cachePath, async () =>
+    execute(code),
+  );
 }
 addOpLabel(cache, "«ops.cache»");
 cache.unevaluatedArgs = true;
