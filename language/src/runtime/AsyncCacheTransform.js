@@ -35,8 +35,8 @@ import systemCache from "./systemCache.js";
  *      b.ori -> { downstreams: Set(site.ori), value: ... }
  *      c.ori -> { downstreams: Set(a.ori, b.ori), value: ... }
  */
-export default function SyncCacheTransform(Base) {
-  return class SyncCache extends Base {
+export default function AsyncCacheTransform(Base) {
+  return class AsyncCache extends Base {
     constructor(...args) {
       super(...args);
 
@@ -69,14 +69,15 @@ export default function SyncCacheTransform(Base) {
       return cachePath;
     }
 
-    delete(key) {
-      super.delete(key);
+    async delete(key) {
+      const deleted = await super.delete(key);
       systemCache.delete(this.cachePathForKey(key));
+      return deleted;
     }
 
-    get(key) {
+    async get(key) {
       const cachePath = this.cachePathForKey(key);
-      const value = systemCache.getOrInsertComputed(cachePath, () =>
+      const value = await systemCache.getOrInsertComputedAsync(cachePath, () =>
         super.get(key),
       );
       if (Tree.isMap(value)) {
@@ -90,9 +91,9 @@ export default function SyncCacheTransform(Base) {
       return value;
     }
 
-    *keys() {
+    async *keys() {
       const keysPath = this.cachePathForKey("_keys");
-      const keys = systemCache.getOrInsertComputed(keysPath, () =>
+      const keys = await systemCache.getOrInsertComputedAsync(keysPath, () =>
         // We can't cache an iterator; convert to array
         Array.from(super.keys()),
       );
@@ -107,14 +108,9 @@ export default function SyncCacheTransform(Base) {
       systemCache.delete(this.cachePathForKey(path));
     }
 
-    set(key, value) {
-      if (!this._self) {
-        // Initializing in constructor
-        super.set(key, value);
-        return;
-      }
-      this.delete(key);
-      super.set(key, value);
+    async set(key, value) {
+      await this.delete(key);
+      await super.set(key, value);
     }
   };
 }

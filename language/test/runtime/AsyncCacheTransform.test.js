@@ -2,114 +2,109 @@ import assert from "node:assert";
 import { beforeEach, describe, test } from "node:test";
 import systemCache from "../../src/runtime/systemCache.js";
 
-// We test SyncCacheTransform via SyncCalcMap since it's about the smallest
+// We test AsyncCacheTransform via CalcMap since it's about the smallest
 // functional application of the transform.
-import SyncCalcMap from "../../src/runtime/SyncCalcMap.js";
+import CalcMap from "../../src/runtime/SyncCalcMap.js";
 
-describe("SyncCacheTransform", () => {
+describe("AsyncCacheTransform", () => {
   beforeEach(() => {
     systemCache.clear();
   });
 
-  test("tracks dependencies across different maps", () => {
+  test("tracks dependencies across different maps", async () => {
     let log = [];
 
     // Don't assign `path`, let maps get auto-assigned unique paths
-    const map1 = new SyncCalcMap({
-      a() {
+    const map1 = new CalcMap({
+      async a() {
         log.push("a");
-        const b = map2.get("b");
+        const b = await map2.get("b");
         return b + 1;
       },
     });
 
-    const map2 = new SyncCalcMap({
-      b() {
+    const map2 = new CalcMap({
+      async b() {
         log.push("b");
         return 2;
       },
     });
 
-    const a1 = map1.get("a");
+    const a1 = await map1.get("a");
     assert.strictEqual(a1, 3);
     assert.deepEqual(log, ["a", "b"]);
 
     log = [];
-    const a2 = map1.get("a");
+    const a2 = await map1.get("a");
     assert.strictEqual(a2, 3);
     assert.deepEqual(log, []); // a is cached, no new calcs
   });
 
-  test("caches values and records dependencies", () => {
+  test("caches values and records dependencies", async () => {
     // { a = 2 * b, b = c + 1, c = 3 }
     let log = [];
-    const fixture = new SyncCalcMap({
-      a() {
+    const fixture = new CalcMap({
+      async a() {
         log.push("a");
-        const b = fixture.get("b");
+        const b = await fixture.get("b");
         return 2 * b;
       },
 
-      b() {
+      async b() {
         log.push("b");
-        const c = fixture.get("c");
+        const c = await fixture.get("c");
         return c + 1;
       },
 
-      c() {
+      async c() {
         log.push("c");
         return 3;
       },
     });
     fixture.path = "fixture";
 
-    assert.deepEqual(
-      [...fixture.entries()],
-      [
-        ["a", 8],
-        ["b", 4],
-        ["c", 3],
-      ],
-    );
+    assert.equal(await fixture.get("a"), 8);
+    assert.equal(await fixture.get("b"), 4);
+    assert.equal(await fixture.get("c"), 3);
     assert.deepEqual(log, ["a", "b", "c"]);
 
     log = [];
-    const a1 = fixture.get("a");
+    const a1 = await fixture.get("a");
     assert.strictEqual(a1, 8);
     assert.deepEqual(log, []); // a is cached, no new calcs
 
     // Replace formula for a
     // { a = 3 * b, b = c + 1, c = 3 }
-    fixture.set("a", () => {
+    fixture.set("a", async () => {
       log.push("a");
-      const b = fixture.get("b");
+      const b = await fixture.get("b");
       return 3 * b;
     });
     log = [];
-    const a2 = fixture.get("a");
+    const a2 = await fixture.get("a");
     assert.strictEqual(a2, 12);
     assert.deepEqual(log, ["a"]); // recalc only a
 
     // Replace formula for b
     // { a = 3 * b, b = c + 10, c = 3 }
-    fixture.set("b", () => {
+    fixture.set("b", async () => {
       log.push("b");
-      const c = fixture.get("c");
+      const c = await fixture.get("c");
       return c + 10;
     });
     log = [];
-    const a3 = fixture.get("a");
+    const a3 = await fixture.get("a");
     assert.strictEqual(a3, 39);
     assert.deepEqual(log, ["a", "b"]); // recalc a and b
 
     // Replace value of c with 100
     // { a = 3 * b, b = c + 10, c = 100 }
-    fixture.set("c", () => {
+    fixture.set("c", async () => {
       log.push("c");
       return 100;
     });
     log = [];
-    const a4 = fixture.get("a");
+    const a4 = await fixture.get("a");
     assert.strictEqual(a4, 330);
     assert.deepEqual(log, ["a", "b", "c"]); // recalc all
   });

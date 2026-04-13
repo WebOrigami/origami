@@ -65,6 +65,10 @@ export default function WatchFilesMixin(Base) {
         this.onChange(filePath);
 
         const relativePath = path.relative(this.dirname, filePath);
+        if (relativePath.startsWith(".git")) {
+          return; // Ignore noisy events in .git folder
+        }
+
         switch (event) {
           case "add":
           case "addDir":
