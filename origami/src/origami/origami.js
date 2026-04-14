@@ -34,5 +34,6 @@ export { default as static } from "./static.js";
 export { default as string } from "./string.js";
 export { default as tsv } from "./tsv.js";
 export { default as unpack } from "./unpack.js";
+export { default as xmlDom } from "./xmlDom.js";
 export { default as yaml } from "./yaml.js";
 export { default as yamlParse } from "./yamlParse.js";
