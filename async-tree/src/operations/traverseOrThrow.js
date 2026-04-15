@@ -86,7 +86,9 @@ export default async function traverseOrThrow(maplike, ...keys) {
       const message =
         value === undefined
           ? "A path tried to unpack a value that doesn't exist."
-          : "A path tried to unpack data that's already unpacked.";
+          : isPacked(value)
+            ? "A path tried to unpack data but there's no unpack function."
+            : "A path tried to unpack data that's already unpacked.";
       throw new TraverseError(message, {
         head: maplike,
         lastValue,

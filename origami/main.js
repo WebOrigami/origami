@@ -3,6 +3,7 @@ export * from "./src/common/serialize.js";
 export { default as debugParent } from "./src/dev/debug2/debugParent.js";
 export { default as debugTransform } from "./src/dev/debug2/debugTransform.js";
 export * as Dev from "./src/dev/dev.js";
+export * from "./src/handlers/origamiHandlers.js";
 export * as Origami from "./src/origami/origami.js";
 export { default as origamiHighlightDefinition } from "./src/origami/origamiHighlightDefinition.js";
 export { default as constructResponse } from "./src/server/constructResponse.js";
