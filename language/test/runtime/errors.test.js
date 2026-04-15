@@ -249,19 +249,19 @@ evaluating: \x1B[31mfile.foo/\x1B[0m`,
       );
     });
 
-    test("identifies when a value didn't need to be unpacked", async () => {
+    test("identifies when data was already unpacked", async () => {
       const parent = {
         a: {
-          b: 1,
+          "b.json": 1,
         },
       };
       await assertError(
-        `a/b/`,
+        `a/b.json/`,
         `TraverseError: A path tried to unpack data that's already unpacked.
-Tried to traverse path:  a/b/
-Stopped unexpectedly at: b/
-You can drop the trailing slash and just use: b
-evaluating: \x1B[31mb/\x1B[0m`,
+Tried to traverse path:  a/b.json/
+Stopped unexpectedly at: b.json/
+You can drop the trailing slash and just use: b.json
+evaluating: \x1B[31mb.json/\x1B[0m`,
         { parent },
       );
     });
