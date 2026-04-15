@@ -5,12 +5,12 @@ import domNodeToObject from "./domNodeToObject.js";
 let parser;
 
 /**
- * Return the DOM for the given XML string.
+ * Return the DOM for the given XML as a plain object.
  *
  * @param {import("@weborigami/async-tree").Stringlike} xml
  */
-export default async function xmlDom(xml) {
-  xml = args.stringlike(xml, "Origami.xmlDom");
+export default async function xmlParse(xml) {
+  xml = args.stringlike(xml, "Origami.xmlParse");
   const parser = await getParser();
   const dom = parser.parseFromString(xml, "application/xml");
   let object = domNodeToObject(dom);

@@ -1,5 +1,5 @@
 import { symbols, toString } from "@weborigami/async-tree";
-import xmlDom from "../origami/xmlDom.js";
+import xmlParse from "../origami/xmlParse.js";
 
 export default {
   mediaType: "application/xml",
@@ -10,7 +10,7 @@ export default {
     if (text === null) {
       throw new TypeError("XML handler can only unpack text.");
     }
-    const data = await xmlDom(text);
+    const data = await xmlParse(text);
     // Define `parent` as non-enumerable property
     Object.defineProperty(data, symbols.parent, {
       configurable: true,
