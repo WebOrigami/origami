@@ -65,8 +65,8 @@ export default function handleExtension(value, key, handlers, parent = null) {
           ? !relativePath.startsWith("..")
           : false;
         const cachePath = path.join(
-          "_unpack",
           isPathWithinProjectRoot ? relativePath : filePath,
+          "_unpack",
         );
         value.unpack = async () =>
           systemCache.getOrInsertComputedAsync(cachePath, async () => {
