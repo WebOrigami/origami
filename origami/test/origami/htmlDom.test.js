@@ -12,28 +12,23 @@ describe("htmlDom", () => {
       </div>
     `);
     assert.deepEqual(dom, {
-      name: "#document-fragment",
+      name: "div",
+      attributes: { class: "container" },
       children: [
         {
-          name: "div",
-          attributes: { class: "container" },
+          name: "p",
           children: [
             {
-              name: "p",
-              children: [
-                {
-                  name: "#text",
-                  text: "\n          Hello ",
-                },
-                {
-                  name: "b",
-                  text: "world",
-                },
-                {
-                  name: "#text",
-                  text: ".\n        ",
-                },
-              ],
+              name: "#text",
+              text: "\n          Hello ",
+            },
+            {
+              name: "b",
+              text: "world",
+            },
+            {
+              name: "#text",
+              text: ".\n        ",
             },
           ],
         },

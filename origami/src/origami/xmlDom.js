@@ -13,7 +13,14 @@ export default async function xmlDom(xml) {
   xml = args.stringlike(xml, "Origami.xmlDom");
   const parser = await getParser();
   const dom = parser.parseFromString(xml, "application/xml");
-  return domNodeToObject(dom);
+  let object = domNodeToObject(dom);
+  if (
+    (object.name === "#document" || object.name === "#document-fragment") &&
+    object.children.length === 1
+  ) {
+    object = object.children[0];
+  }
+  return object;
 }
 
 async function getParser() {

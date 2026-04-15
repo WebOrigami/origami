@@ -79,6 +79,9 @@ Origami:
     inline:
       args: (text)
       description: Inline Origami expressions found in the text
+    htmlDom:
+      args: (html)
+      description: Parse HTML into a plain JavaScript object
     json:
       args: (obj)
       description: Render the object in JSON format
@@ -139,6 +142,9 @@ Origami:
     unpack:
       args: (buffer)
       description: Unpack the buffer into a usable form
+    xmlDom:
+      args: (xml)
+      description: Parse XML into a plain JavaScript object
     yaml:
       args: (obj)
       description: Render the object in YAML format

@@ -6,16 +6,11 @@ describe("xmlDom", () => {
   test("parses an XML string into a plain object representing the DOM", async () => {
     const dom = await xmlDom("<root><child>Text</child></root>");
     assert.deepEqual(dom, {
-      name: "#document",
+      name: "root",
       children: [
         {
-          name: "root",
-          children: [
-            {
-              name: "child",
-              text: "Text",
-            },
-          ],
+          name: "child",
+          text: "Text",
         },
       ],
     });
