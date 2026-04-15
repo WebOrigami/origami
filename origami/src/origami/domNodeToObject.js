@@ -48,7 +48,7 @@ export default function domNodeToObject(node) {
       }
       if (onlyText) {
         const text = relevantChildren
-          .map((child) => child.nodeValue)
+          .map((child) => collapseWhitespace(child.nodeValue ?? ""))
           .join("")
           .trim();
         if (text.length > 0) {
@@ -64,13 +64,13 @@ export default function domNodeToObject(node) {
     case TEXT_NODE:
       return {
         name: "#text",
-        text: node.nodeValue ?? "",
+        text: collapseWhitespace(node.nodeValue ?? ""),
       };
 
     case CDATA_SECTION_NODE:
       return {
         name: "#cdata-section",
-        text: node.nodeValue ?? "",
+        text: collapseWhitespace(node.nodeValue ?? ""),
       };
 
     default:
@@ -78,6 +78,11 @@ export default function domNodeToObject(node) {
         name: `#node-${node.nodeType}`,
       };
   }
+}
+
+// Collapse leading or trailing whitespace characters to a single space
+function collapseWhitespace(str) {
+  return str.replace(/^\s+/, " ").replace(/\s+$/, " ");
 }
 
 function isWhitespaceOnly(node) {

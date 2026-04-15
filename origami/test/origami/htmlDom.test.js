@@ -20,7 +20,7 @@ describe("htmlDom", () => {
           children: [
             {
               name: "#text",
-              text: "\n          Hello ",
+              text: " Hello ",
             },
             {
               name: "b",
@@ -28,7 +28,7 @@ describe("htmlDom", () => {
             },
             {
               name: "#text",
-              text: ".\n        ",
+              text: ". ",
             },
           ],
         },
