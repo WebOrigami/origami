@@ -48,12 +48,14 @@ export default class SystemCacheMap extends SyncMap {
 
   getOrInsertComputed(path, computeFn) {
     let entry = this.get(path);
-    if (!entry) {
-      // Cache miss
+    if (!entry || !("value" in entry)) {
+      // Cache miss, or entry has no value yet
 
-      // Create empty entry for this path
-      entry = {};
-      this.set(path, entry);
+      if (!entry) {
+        // Create empty entry for this path
+        entry = {};
+        this.set(path, entry);
+      }
 
       // Create new sync context to track entries downstream of this value
       const context = { downstream: path };
@@ -69,17 +71,19 @@ export default class SystemCacheMap extends SyncMap {
 
   async getOrInsertComputedAsync(path, computeFn) {
     let entry = this.get(path);
-    if (!entry) {
-      // Cache miss
+    if (!entry || !("value" in entry)) {
+      // Cache miss, or entry has no value yet
 
       if (syncStorage.getStore()) {
         // A function that was supposed to be sync called an async function
         throw new Error("Cannot track async dependencies in a sync context");
       }
 
-      // Create empty entry for this path
-      entry = {};
-      this.set(path, entry);
+      if (!entry) {
+        // Create empty entry for this path
+        entry = {};
+        this.set(path, entry);
+      }
 
       // Create new async context to track entries downstream of this value
       const context = { downstream: path };
@@ -100,24 +104,42 @@ export default class SystemCacheMap extends SyncMap {
   }
 
   nextDefaultCachePath() {
-    const cachePath = `_map${nextPathId}`;
+    const cachePath = `_object${nextPathId}`;
     nextPathId++;
     return cachePath;
   }
 
-  trackDependency(path, entry) {
+  /**
+   * Given a path for an upstream dependency, and optionally the entry for that
+   * path if it has already been retrieved, track the dependency between the
+   * upstream entry and the currently running downstream path.
+   *
+   * @param {string} upstreamPath
+   * @param {any} [upstreamEntry]
+   */
+  trackDependency(upstreamPath, upstreamEntry = null) {
+    if (!upstreamEntry) {
+      upstreamEntry = this.get(upstreamPath);
+      if (!upstreamEntry) {
+        // Create empty entry for this path, so that dependencies can be tracked
+        // for values that aren't cached.
+        upstreamEntry = {};
+        this.set(upstreamPath, upstreamEntry);
+      }
+    }
+
     // Is this call happening downstream of another cached value?
     const { downstream } =
       syncStorage.getStore() ?? asyncStorage.getStore() ?? {};
     if (downstream) {
-      // Record that the downstream value depends on this cached value
-      entry.downstreams ??= new Set();
-      entry.downstreams.add(downstream);
+      // Add the downstream entry to the upstream entry's downstreams
+      upstreamEntry.downstreams ??= new Set();
+      upstreamEntry.downstreams.add(downstream);
 
-      // Record that this cached value is upstream of the downstream value
+      // Add the upstream entry to the downstream entry's upstreams
       const downstreamEntry = this.get(downstream);
       downstreamEntry.upstreams ??= new Set();
-      downstreamEntry.upstreams.add(path);
+      downstreamEntry.upstreams.add(upstreamPath);
     }
   }
 }

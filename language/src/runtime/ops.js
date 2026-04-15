@@ -12,6 +12,7 @@ import execute from "./execute.js";
 import expressionObject from "./expressionObject.js";
 import mergeTrees from "./mergeTrees.js";
 import OrigamiFileMap from "./OrigamiFileMap.js";
+import ScopeMap from "./ScopeMap.js";
 import { codeSymbol } from "./symbols.js";
 import systemCache from "./systemCache.js";
 
@@ -85,10 +86,8 @@ addOpLabel(bitwiseXor, "«ops.bitwiseXor»");
  * @param {string} cachePath
  * @param {AnnotatedCode} code
  */
-export async function cache(cachePath, code) {
-  return systemCache.getOrInsertComputedAsync(cachePath, async () =>
-    execute(code),
-  );
+export function cache(cachePath, code) {
+  return systemCache.getOrInsertComputedAsync(cachePath, () => execute(code));
 }
 addOpLabel(cache, "«ops.cache»");
 cache.unevaluatedArgs = true;
@@ -523,7 +522,8 @@ export async function scope(parent) {
       "Tried to find a value in scope, but no container was provided as the parent.",
     );
   }
-  return Tree.scope(parent);
+  const scopeMap = new ScopeMap(parent);
+  return scopeMap;
 }
 addOpLabel(scope, "«ops.scope»");
 

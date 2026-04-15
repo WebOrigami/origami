@@ -70,7 +70,9 @@ export default function handleExtension(value, key, handlers, parent = null) {
         );
         value.unpack = async () =>
           systemCache.getOrInsertComputedAsync(cachePath, async () => {
-            handler = await handler;
+            if (handler instanceof Promise) {
+              handler = await handler;
+            }
             if (isUnpackable(handler)) {
               // The extension handler itself needs to be unpacked
               handler = await handler.unpack();

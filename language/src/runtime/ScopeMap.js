@@ -1,4 +1,6 @@
 import { SyncMap } from "@weborigami/async-tree";
+import path from "node:path";
+import systemCache from "./systemCache.js";
 
 /**
  * Return a sync map of all values in scope for the given sync source map.
@@ -12,17 +14,26 @@ export default class ScopeMap extends SyncMap {
     this.trailingSlashKeys = source.trailingSlashKeys;
   }
 
-  // Starting with this map, search up the parent hierarchy.
   get(key) {
-    let current = this.source;
     let value;
+
+    // Starting with this map, search up its parent hierarchy
+    let current = this.source;
     while (current) {
+      // If the keys of this folder change, the scope request for this key could
+      // return a different value, so a change in keys needs to invalidate the
+      // value. Whether or not the get() request below succeeds, track the keys
+      // of this folder as an upstream dependency of the value being requested.
+      const folderKeysPath = path.join(current.cachePath, "_keys");
+      systemCache.trackDependency(folderKeysPath);
+
       value = current.get(key);
       if (value !== undefined) {
         break;
       }
       current = current.parent;
     }
+
     return value;
   }
 
