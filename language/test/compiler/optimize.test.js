@@ -113,14 +113,17 @@ describe("optimize", () => {
       const parent = {};
       const expected = [
         ops.cache,
-        "folder",
+        "test.ori/_refs/folder",
         [
           [ops.scope, parent],
           [ops.literal, "folder"],
         ],
       ];
       const globals = {};
-      assertCodeEqual(optimize(code, { globals, parent }), expected);
+      assertCodeEqual(
+        optimize(code, { cachePath: "test.ori/_refs", globals, parent }),
+        expected,
+      );
     });
 
     test("external reference", () => {
@@ -132,14 +135,17 @@ describe("optimize", () => {
       const parent = {};
       const expected = [
         ops.cache,
-        "index.html",
+        "test.ori/_refs/index.html",
         [
           [ops.scope, parent],
           [ops.literal, "index.html"],
         ],
       ];
       const globals = {};
-      assertCodeEqual(optimize(code, { globals, parent }), expected);
+      assertCodeEqual(
+        optimize(code, { cachePath: "test.ori/_refs", globals, parent }),
+        expected,
+      );
     });
 
     test("external reference inside object with matching key", () => {
@@ -160,7 +166,7 @@ describe("optimize", () => {
             ops.getter,
             [
               ops.cache,
-              "posts.txt",
+              "test.ori/_refs/posts.txt",
               [
                 [ops.scope, parent],
                 [ops.literal, "posts.txt"],
@@ -170,7 +176,10 @@ describe("optimize", () => {
         ],
       ];
       const globals = {};
-      assertCodeEqual(optimize(code, { globals, parent }), expected);
+      assertCodeEqual(
+        optimize(code, { cachePath: "test.ori/_refs", globals, parent }),
+        expected,
+      );
     });
 
     test("global reference", () => {
@@ -232,15 +241,21 @@ describe("optimize", () => {
     test("root directory", () => {
       // Compilation of `</>`
       const code = createCode([markers.traverse, [markers.external, "/"]]);
-      const expected = [ops.cache, "/", [ops.rootDirectory]];
-      assertCodeEqual(optimize(code), expected);
+      const expected = [ops.cache, "test.ori/_refs/", [ops.rootDirectory]];
+      assertCodeEqual(
+        optimize(code, { cachePath: "test.ori/_refs" }),
+        expected,
+      );
     });
 
     test("home directory", () => {
       // Compilation of `<~>`
       const code = createCode([markers.traverse, [ops.homeDirectory]]);
-      const expected = [ops.cache, "~", [ops.homeDirectory]];
-      assertCodeEqual(optimize(code), expected);
+      const expected = [ops.cache, "test.ori/_refs/~", [ops.homeDirectory]];
+      assertCodeEqual(
+        optimize(code, { cachePath: "test.ori/_refs" }),
+        expected,
+      );
     });
   });
 
@@ -256,7 +271,7 @@ describe("optimize", () => {
       const parent = {};
       const expected = [
         ops.cache,
-        "path/to/file",
+        "test.ori/_refs/path/to/file",
         [
           [ops.scope, parent],
           [ops.literal, "path/"],
@@ -264,7 +279,10 @@ describe("optimize", () => {
           [ops.literal, "file"],
         ],
       ];
-      assertCodeEqual(optimize(code, { parent }), expected);
+      assertCodeEqual(
+        optimize(code, { cachePath: "test.ori/_refs", parent }),
+        expected,
+      );
     });
 
     test("implicit external path", () => {
@@ -278,14 +296,17 @@ describe("optimize", () => {
       const parent = {};
       const expected = [
         ops.cache,
-        "package.json/name",
+        "test.ori/_refs/package.json/name",
         [
           [ops.scope, parent],
           [ops.literal, "package.json/"],
           [ops.literal, "name"],
         ],
       ];
-      assertCodeEqual(optimize(code, { globals, parent }), expected);
+      assertCodeEqual(
+        optimize(code, { cachePath: "test.ori/_refs", globals, parent }),
+        expected,
+      );
     });
 
     test("local path", () => {

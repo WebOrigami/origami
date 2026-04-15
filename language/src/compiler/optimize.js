@@ -1,4 +1,5 @@
 import { pathFromKeys, trailingSlash } from "@weborigami/async-tree";
+import path from "node:path";
 import jsGlobals from "../project/jsGlobals.js";
 import {
   KEY_TYPE,
@@ -32,6 +33,7 @@ export const REFERENCE_EXTERNAL = 4;
 export default function optimize(code, options = {}) {
   const globals = options.globals ?? jsGlobals;
   const parent = options.parent ?? null;
+  const cachePath = options.cachePath ?? null;
 
   // The locals is an array, one item for each function or object context that
   // has been entered. The array grows to the right. Array items are objects
@@ -47,7 +49,7 @@ export default function optimize(code, options = {}) {
       return globals[args[0]];
 
     case markers.traverse:
-      return resolvePath(code, globals, parent, locals);
+      return resolvePath(code, globals, parent, locals, cachePath);
 
     case ops.lambda:
       const parameters = args[1];
@@ -146,10 +148,11 @@ function avoidLocalRecursion(locals, key) {
   }
 }
 
-function cachePath(code) {
+function cacheExternalPath(code, cachePath) {
   const keys = code.map(keyFromCode).filter((key) => key !== null);
-  const path = pathFromKeys(keys);
-  return annotate([ops.cache, path, code], code.location);
+  const keysPath = pathFromKeys(keys);
+  const externalCachePath = path.join(cachePath, keysPath);
+  return annotate([ops.cache, externalCachePath, code], code.location);
 }
 
 // A reference with periods like x.y.z
@@ -328,7 +331,7 @@ function reference(code, globals, parent, locals) {
   };
 }
 
-function resolvePath(code, globals, parent, locals) {
+function resolvePath(code, globals, parent, locals, cachePath) {
   const args = code.slice(1);
   const [head, ...tail] = args;
 
@@ -351,9 +354,9 @@ function resolvePath(code, globals, parent, locals) {
     }
   }
 
-  if (type === REFERENCE_EXTERNAL) {
-    // Cache external path
-    return cachePath(result);
+  if (type === REFERENCE_EXTERNAL && cachePath) {
+    // External references should be cached
+    return cacheExternalPath(result, cachePath);
   }
 
   return result;

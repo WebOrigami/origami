@@ -1,4 +1,6 @@
+import path from "node:path";
 import { createExpressionFunction } from "../runtime/expressionFunction.js";
+import systemCache from "../runtime/systemCache.js";
 import optimize from "./optimize.js";
 import { parse } from "./parse.js";
 
@@ -27,8 +29,13 @@ function compile(source, options) {
     startRule,
   });
 
+  // Select a path the file will use to cache scope references
+  const sourcePath = source.relativePath ?? systemCache.nextDefaultCachePath();
+  const cachePath = path.join(sourcePath, "_refs");
+
   // Optimize the code
   const optimized = optimize(code, {
+    cachePath,
     globals,
     parent,
   });

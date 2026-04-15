@@ -23,11 +23,12 @@ export function assertCodeLocations(code) {
  */
 export function createCode(array) {
   const code = array.map((item) =>
-    item instanceof Array ? createCode(item) : item
+    item instanceof Array ? createCode(item) : item,
   );
   /** @type {any} */ (code).location = {
     end: 0,
     source: {
+      relativePath: "test.ori",
       text: "",
     },
     start: 0,

@@ -8,7 +8,6 @@
 
 import { getParent, isUnpackable, Tree } from "@weborigami/async-tree";
 import os from "node:os";
-import path from "node:path";
 import execute from "./execute.js";
 import expressionObject from "./expressionObject.js";
 import mergeTrees from "./mergeTrees.js";
@@ -83,16 +82,10 @@ addOpLabel(bitwiseXor, "«ops.bitwiseXor»");
 /**
  * Cache the value of the code for an external reference
  *
- * @param {string} refPath
+ * @param {string} cachePath
  * @param {AnnotatedCode} code
  */
-export async function cache(refPath, code) {
-  const sourcePath = code.location?.source?.relativePath;
-  if (!sourcePath) {
-    console.warn("Tried to cache a value for code with no source path");
-    return execute(code);
-  }
-  const cachePath = path.join("_refs", sourcePath, refPath);
+export async function cache(cachePath, code) {
   return systemCache.getOrInsertComputedAsync(cachePath, async () =>
     execute(code),
   );

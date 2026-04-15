@@ -104,7 +104,7 @@ describe("ops", () => {
     assert.strictEqual(ops.exponentiation(2, 0), 1);
   });
 
-  test.only("ops.cache evaluates code and cache its result", async () => {
+  test("ops.cache evaluates code and cache its result", async () => {
     let count = 0;
     const container = {
       group: {
@@ -116,7 +116,7 @@ describe("ops", () => {
     };
     const code = createCode([
       ops.cache,
-      "group/count",
+      "_refs/test.ori/group/count",
       [
         [ops.scope, container],
         [ops.literal, "group"],
