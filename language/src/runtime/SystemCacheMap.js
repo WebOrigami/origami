@@ -46,6 +46,8 @@ export default class SystemCacheMap extends SyncMap {
     return super.delete(path);
   }
 
+  // REVIEW: This doesn't have the correct signature for getOrInsertComputed,
+  // because it returns the entry `value` property, not the actual entry.
   getOrInsertComputed(path, computeFn) {
     let entry = this.get(path);
     if (!entry || !("value" in entry)) {
