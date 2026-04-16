@@ -43,6 +43,17 @@ export default async function expressionObject(entries, state = {}) {
   }
   setParent(object, parent);
 
+  // Prefix used to save cached property values
+  const sourcePath = entries.code?.location?.source?.relativePath;
+  const objectCachePath =
+    parent?.[cachePathSymbol] ??
+    sourcePath ??
+    systemCache.nextDefaultCachePath();
+  Object.defineProperty(object, cachePathSymbol, {
+    value: objectCachePath,
+    enumerable: false,
+  });
+
   // The object in Map form for use on the stack
   const map = new ObjectMap(object);
 
@@ -124,10 +135,7 @@ function defineProperty(object, propertyInfo, state, map) {
       enumerable,
       get: async () => {
         const newState = Object.assign({}, state, { object: map });
-        const objectCachePath = object[cachePathSymbol];
-        const propertyCachePath = objectCachePath
-          ? path.join(objectCachePath, key)
-          : undefined;
+        const propertyCachePath = path.join(object[cachePathSymbol], key);
         let result = propertyCachePath
           ? await systemCache.getOrInsertComputedAsync(propertyCachePath, () =>
               execute(value, newState),

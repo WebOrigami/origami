@@ -4,6 +4,7 @@ import { describe, test } from "node:test";
 
 import expressionObject from "../../src/runtime/expressionObject.js";
 import { ops } from "../../src/runtime/internal.js";
+import systemCache from "../../src/runtime/systemCache.js";
 
 describe("expressionObject", () => {
   test("can instantiate an object", async () => {
@@ -121,11 +122,28 @@ describe("expressionObject", () => {
     ]);
   });
 
-  // test("sets symbols.async on objects with getters", async () => {
-  //   const noGetter = await expressionObject([["eager", 1]]);
-  //   assert.equal(noGetter[symbols.async], undefined);
+  test.only("tracks dependencies on upstream values", async () => {
+    systemCache.clear();
 
-  //   const hasGetter = await expressionObject([["lazy", [ops.getter, [2]]]]);
-  //   assert.equal(hasGetter[symbols.async], true);
-  // });
+    // The `number` property gets a value from the cache
+    const getNumber = () =>
+      systemCache.getOrInsertComputed("dependency", () => 1);
+    const entries = [["number", [getNumber]]];
+    // The code file path will be used as a cache key prefix
+    entries.code = {
+      location: {
+        source: {
+          relativePath: "src/test.ori",
+        },
+      },
+    };
+    const object = await expressionObject(entries);
+    const number = await object.number;
+    assert.equal(number, 1);
+
+    const dependencyEntry = systemCache.get("dependency");
+    const objectEntry = systemCache.get("src/test.ori/number");
+    assert(dependencyEntry.downstreams.has("src/test.ori/number"));
+    assert(objectEntry.upstreams.has("dependency"));
+  });
 });
