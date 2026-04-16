@@ -7,7 +7,7 @@ import OrigamiFileMap from "../../src/runtime/OrigamiFileMap.js";
 import systemCache from "../../src/runtime/systemCache.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
-const tempDirectory = path.join(dirname, "fixtures/temp/OrigamiFileMap");
+const tempDirectory = path.join(dirname, "fixtures/temp");
 
 describe("OrigamiFileMap", () => {
   beforeEach(() => {

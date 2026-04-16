@@ -59,7 +59,7 @@ export default function handleExtension(value, key, handlers, parent = null) {
         const projectRoot = parent ? Tree.root(parent) : null;
         const projectRootPath = projectRoot?.path;
         const relativePath = projectRootPath
-          ? path.relative(projectRootPath, filePath)
+          ? path.join("_project", path.relative(projectRootPath, filePath))
           : null;
         let isPathWithinProjectRoot = relativePath
           ? !relativePath.startsWith("..")

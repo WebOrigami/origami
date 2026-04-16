@@ -1,7 +1,14 @@
 import { ObjectMap } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import * as handlers from "../../src/handlers/handlers.js";
 import handleExtension from "../../src/runtime/handleExtension.js";
+import OrigamiFileMap from "../../src/runtime/OrigamiFileMap.js";
+import systemCache from "../../src/runtime/systemCache.js";
+
+const fixturesUrl = new URL("fixtures/unpack", import.meta.url);
+const fixtureFiles = new OrigamiFileMap(fixturesUrl);
+fixtureFiles.globals = handlers;
 
 describe("handleExtension", () => {
   test("attaches an unpack method to a value with an extension", async () => {
@@ -17,6 +24,17 @@ describe("handleExtension", () => {
     assert.equal(String(withHandler), `{ "bar": 2 }`);
     const data = await withHandler.unpack();
     assert.deepEqual(data, { bar: 2 });
+  });
+
+  test("tracks dependency on underlying file", async () => {
+    systemCache.clear();
+    const file = fixtureFiles.get("hello.json");
+    const data = await file.unpack();
+    assert.equal(data, "Hello");
+    const fileEntry = systemCache.get("_project/hello.json");
+    const unpackEntry = systemCache.get("_project/hello.json/_unpack");
+    assert(fileEntry.downstreams.has("_project/hello.json/_unpack"));
+    assert(unpackEntry.upstreams.has("_project/hello.json"));
   });
 });
 
