@@ -3,6 +3,7 @@ import {
   ObjectMap,
   setParent,
   symbols,
+  SyncMap,
   trailingSlash,
   Tree,
 } from "@weborigami/async-tree";
@@ -134,6 +135,7 @@ function defineProperty(object, propertyInfo, state, map) {
       configurable: true,
       enumerable,
       get: async () => {
+        // Execute the code to get the value of the property
         const newState = Object.assign({}, state, { object: map });
         const propertyCachePath = path.join(object[cachePathSymbol], key);
         let result = propertyCachePath
@@ -141,17 +143,34 @@ function defineProperty(object, propertyInfo, state, map) {
               execute(value, newState),
             )
           : await execute(value, newState);
+
+        // Cache the result
         if (
           propertyCachePath &&
           Tree.isMap(result) &&
+          // @ts-ignore
+          !(result.cachePath && result[cachePathSymbol]) &&
           !(
             isTransformApplied(SyncCacheTransform, result) ||
             isTransformApplied(AsyncCacheTransform, result)
           )
         ) {
-          result = transformObject(AsyncCacheTransform, result);
+          if (result instanceof Map) {
+            if (!(result instanceof SyncMap)) {
+              // Convert regular Map to SyncMap so we can extend it
+              result = new (SyncCacheTransform(SyncMap))(result);
+            } else {
+              // Cache a SyncMap
+              result = transformObject(SyncCacheTransform, result);
+            }
+          } else {
+            // Cache an AsyncMap
+            result = transformObject(AsyncCacheTransform, result);
+          }
           result.cachePath = propertyCachePath;
         }
+
+        // Handle extension
         return hasExtension
           ? handleExtension(result, key, globals, map)
           : result;
