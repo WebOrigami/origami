@@ -70,17 +70,17 @@ describe("ops", () => {
   });
 
   test("ops.deepText concatenates tree value text", async () => {
-    const container = {
+    const parent = new ObjectMap({
       name: "world",
-    };
+    });
     const code = createCode([
       ops.deepText,
       "Hello, ",
-      [[ops.scope, container], "name"],
+      [[ops.scope], "name"],
       ".",
     ]);
 
-    const result = await execute(code);
+    const result = await execute(code, { parent });
     assert.strictEqual(result, "Hello, world.");
   });
 
@@ -106,26 +106,22 @@ describe("ops", () => {
 
   test("ops.cache evaluates code and cache its result", async () => {
     let count = 0;
-    const container = {
+    const parent = new ObjectMap({
       group: {
         get count() {
           // Use promise to test async behavior
           return Promise.resolve(++count);
         },
       },
-    };
+    });
     const code = createCode([
       ops.cache,
       "_refs/test.ori/group/count",
-      [
-        [ops.scope, container],
-        [ops.literal, "group"],
-        [ops.literal, "count"],
-      ],
+      [[ops.scope], [ops.literal, "group"], [ops.literal, "count"]],
     ]);
-    const result = await execute(code);
+    const result = await execute(code, { parent });
     assert.strictEqual(result, 1);
-    const result2 = await execute(code);
+    const result2 = await execute(code, { parent });
     assert.strictEqual(result2, 1);
   });
 
@@ -224,18 +220,18 @@ describe("ops", () => {
   });
 
   test("ops.lambda defines a function with underscore input", async () => {
-    const container = {
+    const parent = new ObjectMap({
       message: "Hello",
-    };
+    });
 
     const code = createCode([
       ops.lambda,
       1,
       [["_", [[ops.params, 0], 0]]],
-      [[ops.scope, container], "message"],
+      [[ops.scope], "message"],
     ]);
 
-    const fn = await execute(code);
+    const fn = await execute(code, { parent });
     assert.equal(fn.length, 1);
     const result = await fn();
     assert.strictEqual(result, "Hello");
@@ -307,9 +303,9 @@ describe("ops", () => {
     //   ...more
     //   c: a
     // }
-    const container = {
+    const parent = new ObjectMap({
       more: { b: 2 },
-    };
+    });
     const code = createCode([
       [
         ops.object,
@@ -320,14 +316,14 @@ describe("ops", () => {
           [
             ops.merge,
             [ops.object, ["a", [ops.getter, [[ops.inherited, 1], "a"]]]],
-            [[ops.scope, container], "more"],
+            [[ops.scope], "more"],
             [ops.object, ["c", [ops.getter, [[ops.inherited, 1], "c"]]]],
           ],
         ],
       ],
       "_result",
     ]);
-    const result = await execute(code);
+    const result = await execute(code, { parent });
     assert.deepEqual(await Tree.plain(result), { a: 1, b: 2, c: 1 });
   });
 
@@ -336,31 +332,6 @@ describe("ops", () => {
     assert.strictEqual(ops.multiplication(-3, 4), -12);
     assert.strictEqual(ops.multiplication("3", 2), 6);
     assert.strictEqual(ops.multiplication("foo", 2), NaN);
-  });
-
-  test("ops.objectRest returns an object without specified keys", async () => {
-    const obj = {
-      a: 1,
-      b: 2,
-      c: 3,
-    };
-    const result = await ops.objectRest(obj, ["a", "b"]);
-    assert.deepEqual(result, { c: 3 });
-  });
-
-  test("ops.optional", async () => {
-    assert.equal(
-      ops.optional(null, (x) => x.a),
-      undefined,
-    );
-    assert.equal(
-      ops.optional(undefined, (x) => x.a),
-      undefined,
-    );
-    assert.equal(
-      ops.optional({ a: 1 }, (x) => x.a),
-      1,
-    );
   });
 
   test("ops.notEqual", () => {
@@ -389,33 +360,58 @@ describe("ops", () => {
   });
 
   test("ops.object instantiates an object", async () => {
-    const container = {
+    const parent = new ObjectMap({
       upper: (s) => s.toUpperCase(),
-    };
+    });
 
     const code = createCode([
       ops.object,
-      ["hello", [[[ops.scope, container], "upper"], "hello"]],
-      ["world", [[[ops.scope, container], "upper"], "world"]],
+      ["hello", [[[ops.scope], "upper"], "hello"]],
+      ["world", [[[ops.scope], "upper"], "world"]],
     ]);
 
-    const result = await execute(code);
+    const result = await execute(code, { parent });
     assert.strictEqual(result.hello, "HELLO");
     assert.strictEqual(result.world, "WORLD");
   });
 
   test("ops.object instantiates an array", async () => {
-    const container = {
+    const parent = new ObjectMap({
       upper: (s) => s.toUpperCase(),
-    };
+    });
     const code = createCode([
       ops.array,
       "Hello",
       1,
-      [[[ops.scope, container], "upper"], "world"],
+      [[[ops.scope], "upper"], "world"],
     ]);
-    const result = await execute(code);
+    const result = await execute(code, { parent });
     assert.deepEqual(result, ["Hello", 1, "WORLD"]);
+  });
+
+  test("ops.objectRest returns an object without specified keys", async () => {
+    const obj = {
+      a: 1,
+      b: 2,
+      c: 3,
+    };
+    const result = await ops.objectRest(obj, ["a", "b"]);
+    assert.deepEqual(result, { c: 3 });
+  });
+
+  test("ops.optional", async () => {
+    assert.equal(
+      ops.optional(null, (x) => x.a),
+      undefined,
+    );
+    assert.equal(
+      ops.optional(undefined, (x) => x.a),
+      undefined,
+    );
+    assert.equal(
+      ops.optional({ a: 1 }, (x) => x.a),
+      1,
+    );
   });
 
   test("ops.params returns a stack frame", async () => {
@@ -454,7 +450,7 @@ describe("ops", () => {
       );
       const a = await tree.get("a");
       const b = await a.get("b");
-      const scope = await ops.scope(b);
+      const scope = await ops.scope(b, { parent: b });
       assert.equal(await scope?.get("c"), 1);
     });
   });

@@ -44,11 +44,13 @@ describe(".ori handler", async () => {
   });
 
   test("loads an object containing an object shorthand", async () => {
-    const assets = new ObjectMap({});
+    const assets = new ObjectMap({ a: 1, b: 2 });
     const parent = new ObjectMap({ assets });
     const source = `{ assets }`;
     const object = await ori_handler.unpack(source, { parent });
-    assert.equal(object.assets, assets);
+    const expectedValues = Array.from(assets.values());
+    const actualValues = Array.from(object.assets.values());
+    assert.deepEqual(actualValues, expectedValues);
   });
 
   test("loads a template literal", async () => {

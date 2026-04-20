@@ -32,7 +32,6 @@ export const REFERENCE_EXTERNAL = 4;
  */
 export default function optimize(code, options = {}) {
   const globals = options.globals ?? jsGlobals;
-  const parent = options.parent ?? null;
   const cachePath = options.cachePath ?? null;
 
   // The locals is an array, one item for each function or object context that
@@ -49,7 +48,7 @@ export default function optimize(code, options = {}) {
       return globals[args[0]];
 
     case markers.traverse:
-      return resolvePath(code, globals, parent, locals, cachePath);
+      return resolvePath(code, globals, locals, cachePath);
 
     case ops.lambda:
       const parameters = args[1];
@@ -182,8 +181,8 @@ function compoundReference(key, globals, locals, location) {
   return { type: headReference.type, result };
 }
 
-function externalReference(key, parent, location) {
-  const scope = annotate([ops.scope, parent], location);
+function externalReference(key, location) {
+  const scope = annotate([ops.scope], location);
   const literal = annotate([ops.literal, key], location);
   return annotate([scope, literal], location);
 }
@@ -285,7 +284,7 @@ function paramReference(key, depth, location) {
   return annotate([params, literal], location);
 }
 
-function reference(code, globals, parent, locals) {
+function reference(code, globals, locals) {
   const key = keyFromCode(code);
   const normalized = trailingSlash.remove(key);
   const location = code.location;
@@ -308,7 +307,7 @@ function reference(code, globals, parent, locals) {
     // Explicit external reference
     return {
       type: REFERENCE_EXTERNAL,
-      result: externalReference(key, parent, location),
+      result: externalReference(key, location),
     };
   }
 
@@ -327,15 +326,15 @@ function reference(code, globals, parent, locals) {
   // Must be external
   return {
     type: REFERENCE_EXTERNAL,
-    result: externalReference(key, parent, location),
+    result: externalReference(key, location),
   };
 }
 
-function resolvePath(code, globals, parent, locals, cachePath) {
+function resolvePath(code, globals, locals, cachePath) {
   const args = code.slice(1);
   const [head, ...tail] = args;
 
-  let { type, result } = reference(head, globals, parent, locals);
+  let { type, result } = reference(head, globals, locals);
 
   if (tail.length > 0) {
     // If the result is a traversal, we can safely extend it

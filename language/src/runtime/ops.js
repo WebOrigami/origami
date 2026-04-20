@@ -6,7 +6,7 @@
  * @typedef {import("@weborigami/async-tree").SyncOrAsyncMap} SyncOrAsyncMap
  */
 
-import { getParent, isUnpackable, Tree } from "@weborigami/async-tree";
+import { getParent, isUnpackable, SyncMap, Tree } from "@weborigami/async-tree";
 import os from "node:os";
 import execute from "./execute.js";
 import expressionObject from "./expressionObject.js";
@@ -85,11 +85,15 @@ addOpLabel(bitwiseXor, "«ops.bitwiseXor»");
  *
  * @param {string} cachePath
  * @param {AnnotatedCode} code
+ * @param {RuntimeState} state
  */
-export function cache(cachePath, code) {
-  return systemCache.getOrInsertComputedAsync(cachePath, () => execute(code));
+export function cache(cachePath, code, state) {
+  return systemCache.getOrInsertComputedAsync(cachePath, () =>
+    execute(code, state),
+  );
 }
 addOpLabel(cache, "«ops.cache»");
+cache.needsState = true;
 cache.unevaluatedArgs = true;
 
 /**
@@ -514,18 +518,18 @@ addOpLabel(rootDirectory, "«ops.rootDirectory»");
 /**
  * Return the scope of the current tree
  *
- * @param {SyncOrAsyncMap} parent
+ * @param {RuntimeState} state
  */
-export async function scope(parent) {
+export async function scope(state = {}) {
+  const { parent } = state;
   if (!parent) {
-    throw new ReferenceError(
-      "Tried to find a value in scope, but no container was provided as the parent.",
-    );
+    return new SyncMap(); // empty scope if there's no parent
   }
   const scopeMap = new ScopeMap(parent);
   return scopeMap;
 }
 addOpLabel(scope, "«ops.scope»");
+scope.needsState = true;
 
 export function shiftLeft(a, b) {
   return a << b;

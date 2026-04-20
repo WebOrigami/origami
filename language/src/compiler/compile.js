@@ -37,7 +37,6 @@ function compile(source, options) {
   const optimized = optimize(code, {
     cachePath,
     globals,
-    parent,
   });
 
   // Create a function that executes the optimized code.

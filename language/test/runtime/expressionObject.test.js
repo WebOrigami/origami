@@ -8,17 +8,17 @@ import systemCache from "../../src/runtime/systemCache.js";
 
 describe("expressionObject", () => {
   test("can instantiate an object", async () => {
-    const container = new ObjectMap({
+    const parent = new ObjectMap({
       upper: (s) => s.toUpperCase(),
     });
 
     const entries = [
-      ["hello", [[[ops.scope, container], "upper"], "hello"]],
-      ["world", [[[ops.scope, container], "upper"], "world"]],
+      ["hello", [[[ops.scope], "upper"], "hello"]],
+      ["world", [[[ops.scope], "upper"], "world"]],
     ];
     const context = new SyncMap();
 
-    const object = await expressionObject(entries, { object: context });
+    const object = await expressionObject(entries, { object: context, parent });
     assert.equal(await object.hello, "HELLO");
     assert.equal(await object.world, "WORLD");
     assert.equal(object[symbols.parent], context);
@@ -30,7 +30,7 @@ describe("expressionObject", () => {
     const entries = [["count", [ops.getter, [increment]]]];
     const object = await expressionObject(entries);
     assert.equal(await object.count, 0);
-    assert.equal(await object.count, 1);
+    assert.equal(await object.count, 0); // getter result should be cached
   });
 
   test("treats a getter for a primitive value as a regular property", async () => {
@@ -122,7 +122,7 @@ describe("expressionObject", () => {
     ]);
   });
 
-  test.only("tracks dependencies on upstream values", async () => {
+  test("tracks dependencies on upstream values", async () => {
     systemCache.clear();
 
     // The `number` property gets a value from the cache

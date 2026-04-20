@@ -1,3 +1,4 @@
+import { ObjectMap } from "@weborigami/async-tree";
 import { execute, ops } from "@weborigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";
@@ -13,17 +14,17 @@ describe("once", () => {
 
   test("evaluates an Origami lambda with given code only once", async () => {
     let counter = 0;
-    const container = {
+    const parent = new ObjectMap({
       increment: () => ++counter,
-    };
+    });
     // Create two lambdas with the same code
-    const code = [ops.lambda, 0, [], [[[ops.scope, container], "increment"]]];
+    const code = [ops.lambda, 0, [], [[[ops.scope], "increment"]]];
     // @ts-ignore
-    const lambda1 = await execute(code);
+    const lambda1 = await execute(code, { parent });
     const result1 = await once(lambda1);
     assert.strictEqual(result1, 1);
     // @ts-ignore
-    const lambda2 = await execute(code);
+    const lambda2 = await execute(code, { parent });
     const result2 = await once(lambda2);
     assert.strictEqual(result2, 1);
   });

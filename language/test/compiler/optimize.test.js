@@ -114,10 +114,7 @@ describe("optimize", () => {
       const expected = [
         ops.cache,
         "test.ori/_refs/folder",
-        [
-          [ops.scope, parent],
-          [ops.literal, "folder"],
-        ],
+        [[ops.scope], [ops.literal, "folder"]],
       ];
       const globals = {};
       assertCodeEqual(
@@ -136,10 +133,7 @@ describe("optimize", () => {
       const expected = [
         ops.cache,
         "test.ori/_refs/index.html",
-        [
-          [ops.scope, parent],
-          [ops.literal, "index.html"],
-        ],
+        [[ops.scope], [ops.literal, "index.html"]],
       ];
       const globals = {};
       assertCodeEqual(
@@ -167,10 +161,7 @@ describe("optimize", () => {
             [
               ops.cache,
               "test.ori/_refs/posts.txt",
-              [
-                [ops.scope, parent],
-                [ops.literal, "posts.txt"],
-              ],
+              [[ops.scope], [ops.literal, "posts.txt"]],
             ],
           ],
         ],
@@ -273,7 +264,7 @@ describe("optimize", () => {
         ops.cache,
         "test.ori/_refs/path/to/file",
         [
-          [ops.scope, parent],
+          [ops.scope],
           [ops.literal, "path/"],
           [ops.literal, "to/"],
           [ops.literal, "file"],
@@ -297,11 +288,7 @@ describe("optimize", () => {
       const expected = [
         ops.cache,
         "test.ori/_refs/package.json/name",
-        [
-          [ops.scope, parent],
-          [ops.literal, "package.json/"],
-          [ops.literal, "name"],
-        ],
+        [[ops.scope], [ops.literal, "package.json/"], [ops.literal, "name"]],
       ];
       assertCodeEqual(
         optimize(code, { cachePath: "test.ori/_refs", globals, parent }),

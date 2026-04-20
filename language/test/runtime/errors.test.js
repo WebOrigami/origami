@@ -1,3 +1,4 @@
+import { ObjectMap } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import coreGlobals from "../../src/project/coreGlobals.js";
@@ -73,9 +74,9 @@ evaluating: \x1B[31mdatu.toString\x1B[0m
     });
 
     test("proposes typos using scope keys", async () => {
-      const parent = {
+      const parent = new ObjectMap({
         "index.ori": "Index page",
-      };
+      });
       await assertError(
         `index.orj(1, 2, 3)`,
         `ReferenceError: Couldn't find the function or map to execute.
@@ -170,11 +171,11 @@ evaluating: \x1B[31mposts.md\x1B[0m
     });
 
     test("handles a traversal failure inside a reference error", async () => {
-      const parent = {
+      const parent = new ObjectMap({
         post1: {
           title: "First post",
         },
-      };
+      });
       await assertError(
         `(post1/totle).toUpperCase()`,
         `ReferenceError: Tried to get a property of something that doesn't exist.
@@ -197,7 +198,7 @@ evaluating: \x1B[31mrepeat\x1B[0m`,
 
   describe("TraverseError", () => {
     test("suggests typos for failed path", async () => {
-      const parent = {
+      const parent = new ObjectMap({
         a: {
           b: {
             sub: {
@@ -206,7 +207,7 @@ evaluating: \x1B[31mrepeat\x1B[0m`,
             },
           },
         },
-      };
+      });
       await assertError(
         `a/b/sup/c`,
         `TraverseError: A path hit a null or undefined value.
@@ -219,9 +220,9 @@ evaluating: \x1B[31msup/\x1B[0m`,
     });
 
     test("identifies when a numeric key failed", async () => {
-      const parent = {
+      const parent = new ObjectMap({
         map: new Map([[1, new Map([["a", true]])]]),
-      };
+      });
       await assertError(
         `map/1/a`,
         `TraverseError: A path hit a null or undefined value.
@@ -235,9 +236,9 @@ evaluating: \x1B[31m1/\x1B[0m`,
     });
 
     test("identifies when a value couldn't be unpacked due to a missing extension handler", async () => {
-      const parent = {
+      const parent = new ObjectMap({
         "file.foo": Uint8Array.from("hello"),
-      };
+      });
       await assertError(
         `file.foo/bar`,
         `TraverseError: A path hit binary file data that can't be unpacked.
@@ -250,11 +251,11 @@ evaluating: \x1B[31mfile.foo/\x1B[0m`,
     });
 
     test("identifies when data was already unpacked", async () => {
-      const parent = {
+      const parent = new ObjectMap({
         a: {
           "b.json": 1,
         },
-      };
+      });
       await assertError(
         `a/b.json/`,
         `TraverseError: A path tried to unpack data that's already unpacked.
@@ -267,9 +268,9 @@ evaluating: \x1B[31mb.json/\x1B[0m`,
     });
 
     test("identifies when a value didn't exist to be unpacked", async () => {
-      const parent = {
+      const parent = new ObjectMap({
         a: {},
-      };
+      });
       await assertError(
         `a/b/`,
         `TraverseError: A path tried to unpack a value that doesn't exist.
@@ -287,7 +288,7 @@ async function assertError(source, expectedMessage, options) {
     await evaluate(source, {
       globals,
       object: null,
-      parent: {},
+      parent: null,
       stack: [],
       ...options,
     });

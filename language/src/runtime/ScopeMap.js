@@ -24,8 +24,10 @@ export default class ScopeMap extends SyncMap {
       // return a different value, so a change in keys needs to invalidate the
       // value. Whether or not the get() request below succeeds, track the keys
       // of this folder as an upstream dependency of the value being requested.
-      const folderKeysPath = path.join(current.cachePath, "_keys");
-      systemCache.trackDependency(folderKeysPath);
+      if (current.cachePath) {
+        const folderKeysPath = path.join(current.cachePath, "_keys");
+        systemCache.trackDependency(folderKeysPath);
+      }
 
       value = current.get(key);
       if (value !== undefined) {
