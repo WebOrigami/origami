@@ -47,7 +47,13 @@ export default {
     } else if (parent) {
       setParent(result, parent);
       const parentCachePath = /** @type {any} */ (parent).cachePath;
-      if (isPlainObject(result) && parentCachePath && options.key) {
+      if (
+        isPlainObject(result) &&
+        // @ts-ignore
+        !result[cachePathSymbol] &&
+        parentCachePath &&
+        options.key
+      ) {
         Object.defineProperty(result, cachePathSymbol, {
           value: path.join(parentCachePath, options.key),
           enumerable: false,
