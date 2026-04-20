@@ -28,6 +28,7 @@ export default async function expressionTree(options) {
   const parent = new OrigamiFileMap(parentPath);
   await parent.initializeGlobals();
   const globals = getGlobalsForTree(parent);
+  parent.watch();
 
   let maplike;
   try {

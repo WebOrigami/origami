@@ -1,4 +1,7 @@
+import { getParent, Tree } from "@weborigami/async-tree";
+import { systemCache } from "@weborigami/language";
 import http from "node:http";
+import path from "node:path";
 import { requestListener } from "../../server/server.js";
 import expressionTree from "./expressionTree.js";
 
@@ -39,13 +42,13 @@ if (parentPath === undefined) {
 const quiet = process.env.ORIGAMI_QUIET === "1";
 
 // An indirect pointer to the tree of resources;
-let treeHandle = {};
+// let treeHandle = {};
 
 // Initial evaluation of the expression
-await evaluateExpression();
+const tree = await evaluateExpression();
 
 // Serve the tree of resources
-const listener = requestListener(treeHandle, { quiet });
+const listener = requestListener(tree, { quiet });
 const server = http.createServer(listener);
 
 // Track live connections so we can drain/close cleanly.
@@ -94,25 +97,40 @@ async function evaluateExpression() {
     expression,
     parentPath,
   });
-  if (!tree) {
+  if (!Tree.isMaplike(tree)) {
     fail("Dev.debug2: expression did not evaluate to a maplike resource tree");
   }
-  Object.setPrototypeOf(treeHandle, tree);
+  // Object.setPrototypeOf(treeHandle, tree);
 
-  // Clean the handle of any named properties or symbols that have been set
-  // directly on it.
-  try {
-    for (const key of Object.getOwnPropertyNames(treeHandle)) {
-      delete treeHandle[key];
-    }
-    for (const key of Object.getOwnPropertySymbols(treeHandle)) {
-      delete treeHandle[key];
-    }
-  } catch {
-    // Ignore errors.
-  }
+  // // Clean the handle of any named properties or symbols that have been set
+  // // directly on it.
+  // try {
+  //   for (const key of Object.getOwnPropertyNames(treeHandle)) {
+  //     delete treeHandle[key];
+  //   }
+  //   for (const key of Object.getOwnPropertySymbols(treeHandle)) {
+  //     delete treeHandle[key];
+  //   }
+  // } catch {
+  //   // Ignore errors.
+  // }
 
-  process.send?.({ type: "EVALUATED" });
+  // process.send?.({ type: "EVALUATED" });
+
+  return tree;
+}
+
+function invalidate(filePath) {
+  const parent = getParent(tree);
+  const root = Tree.root(parent);
+  const rootPath = root.path;
+  const relativePath = path.relative(rootPath, filePath);
+  let isPathWithinProjectRoot = !relativePath.startsWith("..");
+  const cachePath = isPathWithinProjectRoot
+    ? `_project/${relativePath}`
+    : filePath;
+  systemCache.delete(cachePath);
+  process.send?.({ type: "INVALIDATED", filePath });
 }
 
 function maybeFinishDrain() {
@@ -127,8 +145,12 @@ function maybeFinishDrain() {
 process.on("message", async (/** @type {any} */ message) => {
   if (message?.type === "DRAIN") {
     beginDrain();
-  } else if (message?.type === "REEVALUATE") {
-    await evaluateExpression();
+  } else if (
+    message?.type === "INVALIDATE" &&
+    typeof message.filePath === "string"
+  ) {
+    // await evaluateExpression();
+    await invalidate(message.filePath);
   }
 });
 process.on("SIGTERM", beginDrain);

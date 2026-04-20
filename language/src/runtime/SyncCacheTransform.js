@@ -99,12 +99,15 @@ export default function SyncCacheTransform(Base) {
       yield* keys;
     }
 
-    onKeysChange(path) {
-      systemCache.delete(this.cachePathForKey("_keys"));
+    onKeysChange(relativePath) {
+      super.onKeysChange?.(relativePath);
+      const keysPath = path.dirname(relativePath) + "/_keys";
+      systemCache.delete(this.cachePathForKey(keysPath));
     }
 
-    onValueChange(path) {
-      systemCache.delete(this.cachePathForKey(path));
+    onValueChange(relativePath) {
+      super.onValueChange?.(relativePath);
+      systemCache.delete(this.cachePathForKey(relativePath));
     }
 
     set(key, value) {

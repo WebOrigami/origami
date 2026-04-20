@@ -12,5 +12,9 @@ export default function cache() {
     }
     return [path, result];
   });
+
+  // Sort the entries by key
+  entries.sort(([keyA], [keyB]) => keyA.localeCompare(keyB));
+
   return new Map(entries);
 }

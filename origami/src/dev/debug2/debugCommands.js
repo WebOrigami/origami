@@ -8,4 +8,5 @@ export { default as index } from "../../origami/indexPage.js";
 export { default as yaml } from "../../origami/yaml.js";
 export { default as explore } from "../explore.js";
 export { default as svg } from "../svg.js";
+export { default as syscache } from "../syscache.js";
 export { default as version } from "../version.js";

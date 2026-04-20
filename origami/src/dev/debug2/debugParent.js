@@ -68,8 +68,8 @@ export default async function debugParent(options) {
 
   emitter = Object.assign(new EventEmitter(), {
     close,
+    invalidate,
     origin: publicOrigin,
-    reevaluate,
     restart: () => startChild(options),
   });
   return emitter;
@@ -237,18 +237,23 @@ function proxyRequest(request, response) {
   request.pipe(upstreamRequest);
 }
 
-async function reevaluate() {
+async function invalidate(filePath) {
   if (!activeChild) {
     return;
   }
 
   const child = activeChild;
 
-  // Wait for the next EVALUATED message from the child
+  // Wait for the next INVALIDATED message from the child
   const evaluated = /** @type {Promise<void>} */ (
     new Promise((resolve) => {
       const onMessage = (/** @type {any} */ msg) => {
-        if (msg && typeof msg === "object" && msg.type === "EVALUATED") {
+        if (
+          msg &&
+          typeof msg === "object" &&
+          msg.type === "INVALIDATED" &&
+          msg.filePath === filePath
+        ) {
           child.process.off("message", onMessage);
           resolve();
         }
@@ -257,7 +262,7 @@ async function reevaluate() {
     })
   );
 
-  child.process.send({ type: "REEVALUATE" });
+  child.process.send({ type: "INVALIDATE", filePath });
   await evaluated;
 }
 

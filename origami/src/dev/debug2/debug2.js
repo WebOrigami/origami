@@ -1,4 +1,3 @@
-import { OrigamiFileMap } from "@weborigami/language";
 import path from "node:path";
 import debugParent from "./debugParent.js";
 
@@ -43,31 +42,33 @@ export default async function debug2(code, state) {
   });
 
   // Watch the parent files for changes
-  const tree = new OrigamiFileMap(parentPath);
-  await tree.initializeGlobals();
-  tree.watch();
-  tree.addEventListener?.("change", async (event) => {
-    // @ts-ignore
-    const { filePath } = event.options;
-    if (isJavaScriptFile(filePath)) {
-      // Need to restart the child process
-      console.log("JavaScript file changed, restarting server…");
-      await server.restart();
-    } else if (path.basename(filePath) === "package.json") {
-      // Need to restart the child process
-      console.log("package.json changed, restarting server…");
-      await server.restart();
-    } else {
-      // Just have the child reevaluate the expression
-      console.log("File changed, reloading site…");
-      await server.reevaluate();
-    }
-  });
+  // const tree = new OrigamiFileMap(parentPath);
+  // await tree.initializeGlobals();
+  // tree.watch();
+  // tree.addEventListener?.("valuechange", async (event) => {
+  //   // @ts-ignore
+  //   const { relativePath } = event.options;
+  //   if (isJavaScriptFile(relativePath)) {
+  //     // Need to restart the child process
+  //     console.log("JavaScript file changed, restarting server…");
+  //     await server.restart();
+  //   } else if (relativePath === "package.json") {
+  //     // Need to restart the child process
+  //     console.log("package.json changed, restarting server…");
+  //     await server.restart();
+  //   }
+  // });
+  // tree.addEventListener?.("keyschange", async (event) => {
+  //   // @ts-ignore
+  //   const { relativePath } = event.options;
+  //   console.log("Keys changed…");
+  //   await server.invalidate(`${relativePath}/_keys`);
+  // });
 
   // When server closes, stop watching for file changes
-  server.on("close", () => {
-    tree.unwatch();
-  });
+  // server.on("close", () => {
+  //   tree.unwatch();
+  // });
 
   console.log(`Server running at ${server.origin}. Press Ctrl+C to stop.`);
 }

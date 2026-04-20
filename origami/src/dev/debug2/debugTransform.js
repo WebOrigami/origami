@@ -87,6 +87,8 @@ export default function debugTransform(input) {
       return this.get("index.html");
     },
 
+    parent: source.parent,
+
     source,
 
     trailingSlashKeys: true,
