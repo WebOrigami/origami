@@ -10,21 +10,24 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 const tempDirectory = path.join(dirname, "fixtures/temp");
 
 describe("OrigamiFileMap", () => {
+  let tempFiles;
+
   beforeEach(() => {
     // Remove any existing files or directories inside the temp directory so
     // tests start from a clean slate. Use force so this is safe if the
     // directory doesn't exist.
     fs.rmSync(tempDirectory, { force: true, recursive: true });
     fs.mkdirSync(tempDirectory, { recursive: true });
+    tempFiles = new OrigamiFileMap(tempDirectory);
   });
 
   afterEach(() => {
+    // HACK: should removeEventListener, which should stop watching
+    tempFiles.unwatch();
     fs.rmSync(tempDirectory, { force: true, recursive: true });
   });
 
-  test("can watch its folder for changes", { timeout: 2000 }, async () => {
-    const tempFiles = new OrigamiFileMap(tempDirectory);
-
+  test.only("can watch its folder for changes", { timeout: 2000 }, async () => {
     const changedFilePath = await new Promise(async (resolve) => {
       tempFiles.addEventListener("change", (event) => {
         resolve(/** @type {any} */ (event).options.filePath);
@@ -34,9 +37,6 @@ describe("OrigamiFileMap", () => {
         "This file is left over from testing and can be removed.",
       );
     });
-
-    // HACK: should removeEventListener, which should stop watching
-    tempFiles.unwatch();
 
     assert.equal(path.basename(changedFilePath), "temp.txt");
   });

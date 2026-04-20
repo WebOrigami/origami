@@ -7,9 +7,7 @@ export default function WatchFilesMixin(Base) {
   return class WatchFiles extends Base {
     addEventListener(type, listener) {
       super.addEventListener(type, listener);
-      if (type === "change") {
-        this.watch();
-      }
+      this.watch();
     }
 
     onChange(filePath) {
