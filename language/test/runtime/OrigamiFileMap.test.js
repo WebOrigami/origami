@@ -27,7 +27,7 @@ describe("OrigamiFileMap", () => {
     fs.rmSync(tempDirectory, { force: true, recursive: true });
   });
 
-  test.only("can watch its folder for changes", { timeout: 2000 }, async () => {
+  test("can watch its folder for changes", { timeout: 2000 }, async () => {
     const changedFilePath = await new Promise(async (resolve) => {
       tempFiles.addEventListener("change", (event) => {
         resolve(/** @type {any} */ (event).options.filePath);
