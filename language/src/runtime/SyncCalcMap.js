@@ -1,25 +1,23 @@
-import { isPlainObject, SyncMap } from "@weborigami/async-tree";
+import { SyncMap } from "@weborigami/async-tree";
 import SyncCacheTransform from "./SyncCacheTransform.js";
 
 export default class SyncCalcMap extends SyncCacheTransform(
-  InvokeFunctionsTransform(SyncMap),
-) {}
-
-function InvokeFunctionsTransform(Base) {
-  return class extends Base {
-    constructor(iterable) {
-      if (isPlainObject(iterable)) {
-        iterable = Object.entries(iterable);
-      }
-      super(iterable);
+  class extends SyncMap {
+    constructor(source) {
+      super();
+      this.source = source;
     }
 
     get(key) {
-      let value = super.get(key);
+      let value = this.source.get(key);
       if (typeof value === "function") {
         value = value();
       }
       return value;
     }
-  };
-}
+
+    keys() {
+      return this.source.keys();
+    }
+  },
+) {}

@@ -116,7 +116,7 @@ export default function AsyncCacheTransform(Base) {
     }
 
     async set(key, value) {
-      await this.delete(key);
+      systemCache.updateValue(this.cachePathForKey(key), value);
       await super.set(key, value);
     }
   };
