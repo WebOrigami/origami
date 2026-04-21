@@ -28,20 +28,7 @@ export default class SystemCacheMap extends SyncMap {
   delete(path) {
     const entry = this.get(path);
     if (entry) {
-      // Invalidate downstream cached values
-      if (entry.downstreams) {
-        for (const downstreamPath of entry.downstreams) {
-          this.delete(downstreamPath);
-        }
-      }
-
-      // Remove this entry from upstreams of any entries it depends on
-      if (entry.upstreams) {
-        for (const upstreamPath of entry.upstreams) {
-          const upstreamEntry = this.get(upstreamPath);
-          upstreamEntry?.downstreams.delete(path);
-        }
-      }
+      this.invalidateDependencies(path, entry);
     }
     return super.delete(path);
   }
@@ -105,6 +92,23 @@ export default class SystemCacheMap extends SyncMap {
     return entry.value;
   }
 
+  invalidateDependencies(path, entry) {
+    // Invalidate downstream cached values
+    if (entry.downstreams) {
+      for (const downstreamPath of entry.downstreams) {
+        this.delete(downstreamPath);
+      }
+    }
+
+    // Remove this entry from upstreams of any entries it depends on
+    if (entry.upstreams) {
+      for (const upstreamPath of entry.upstreams) {
+        const upstreamEntry = this.get(upstreamPath);
+        upstreamEntry?.downstreams.delete(path);
+      }
+    }
+  }
+
   nextDefaultCachePath() {
     const cachePath = `_object${nextPathId}`;
     nextPathId++;
@@ -143,5 +147,16 @@ export default class SystemCacheMap extends SyncMap {
       downstreamEntry.upstreams ??= new Set();
       downstreamEntry.upstreams.add(upstreamPath);
     }
+  }
+
+  updateValue(path, value) {
+    let entry = this.get(path);
+    if (entry) {
+      this.invalidateDependencies(path, entry);
+    } else {
+      entry = {};
+      this.set(path, entry);
+    }
+    entry.value = value;
   }
 }

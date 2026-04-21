@@ -116,7 +116,7 @@ export default function SyncCacheTransform(Base) {
         super.set(key, value);
         return;
       }
-      this.delete(key);
+      systemCache.updateValue(this.cachePathForKey(key), value);
       super.set(key, value);
     }
   };

@@ -11,6 +11,22 @@ describe("SyncCacheTransform", () => {
     systemCache.clear();
   });
 
+  test.only("tracks dependencies", () => {
+    // { a = b + 1, b = 1 }
+    const map = new SyncCalcMap([
+      ["a", () => map.get("b") + 1],
+      ["b", 1],
+    ]);
+    const a1 = map.get("a");
+    assert.strictEqual(a1, 2);
+
+    // Replace formula for b
+    // { a = b + 1, b = 10 }
+    map.set("b", 10);
+    const a2 = map.get("a");
+    assert.strictEqual(a2, 11);
+  });
+
   test("tracks dependencies across different maps", () => {
     let log = [];
 
