@@ -83,8 +83,12 @@ export default class SystemCacheMap extends SyncMap {
         const value = await computeFn();
         // Add resolved value to cache
         entry.value = value;
+        const foo = path;
         return value;
       });
+      if (asyncStorage.getStore()) {
+        console.log(path, asyncStorage.getStore());
+      }
     }
 
     this.trackDependency(path, entry);
@@ -138,12 +142,20 @@ export default class SystemCacheMap extends SyncMap {
     const { downstream } =
       syncStorage.getStore() ?? asyncStorage.getStore() ?? {};
     if (downstream) {
+      let downstreamEntry = this.get(downstream);
+      if (!downstreamEntry) {
+        // The downstream entry has been deleted from the cache. It seems that
+        // Node can resurrect an asyncStorage for a run that has already
+        // finished. To cope, we reconstruct an entry.
+        downstreamEntry = {};
+        this.set(downstream, downstreamEntry);
+      }
+
       // Add the downstream entry to the upstream entry's downstreams
       upstreamEntry.downstreams ??= new Set();
       upstreamEntry.downstreams.add(downstream);
 
       // Add the upstream entry to the downstream entry's upstreams
-      const downstreamEntry = this.get(downstream);
       downstreamEntry.upstreams ??= new Set();
       downstreamEntry.upstreams.add(upstreamPath);
     }
