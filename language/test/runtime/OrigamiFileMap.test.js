@@ -44,14 +44,16 @@ describe("OrigamiFileMap", () => {
   test("caches file reads", async () => {
     systemCache.clear();
 
-    const tempFiles = new OrigamiFileMap(tempDirectory);
+    const filePath = path.join(tempDirectory, "temp.txt");
+    fs.writeFileSync(filePath, "Hello");
 
-    const buffer = "Hello";
-    tempFiles.set("temp.txt", buffer);
-    tempFiles.get("temp.txt");
+    const tempFiles = new OrigamiFileMap(tempDirectory);
+    const buffer = tempFiles.get("temp.txt");
+    const text = new TextDecoder().decode(buffer);
+    assert.deepEqual(text, "Hello");
 
     const entry = systemCache.get("_project/temp.txt");
-    const text = new TextDecoder().decode(entry.value);
-    assert.deepEqual(text, "Hello");
+    const cachedText = new TextDecoder().decode(entry.value);
+    assert.deepEqual(cachedText, "Hello");
   });
 });

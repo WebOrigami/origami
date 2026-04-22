@@ -91,6 +91,11 @@ export default function AsyncCacheTransform(Base) {
       return value;
     }
 
+    invalidateKeys() {
+      const keysPath = this.cachePathForKey("_keys");
+      systemCache.delete(keysPath);
+    }
+
     async *keys() {
       const keysPath = this.cachePathForKey("_keys");
       const keys = await systemCache.getOrInsertComputedAsync(
@@ -107,16 +112,22 @@ export default function AsyncCacheTransform(Base) {
       yield* keys;
     }
 
-    onKeysChange(path) {
-      systemCache.delete(this.cachePathForKey("_keys"));
+    onKeysChange(key) {
+      super.onKeysChange?.(key);
+      this.invalidateKeys();
     }
 
-    onValueChange(path) {
-      systemCache.delete(this.cachePathForKey(path));
+    onValueChange(key) {
+      super.onValueChange?.(key);
+      systemCache.delete(this.cachePathForKey(key));
     }
 
     async set(key, value) {
       systemCache.updateValue(this.cachePathForKey(key), value);
+      if (!(await this.has(key))) {
+        // Adding a new key, need to invalidate cached keys
+        this.invalidateKeys();
+      }
       await super.set(key, value);
     }
   };
