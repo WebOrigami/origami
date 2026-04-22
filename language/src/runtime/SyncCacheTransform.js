@@ -42,20 +42,25 @@ export default function SyncCacheTransform(Base) {
 
       // Expose cache for debugging
       this.cache = systemCache;
+    }
 
-      // Pick a default `cachePath` property
-      if (this.path) {
-        // Use file path as cache path
-        const root = Tree.root(this);
-        const projectRootPath = root.path;
-        const relativePath = path.relative(projectRootPath, this.path);
-        let isPathWithinProjectRoot = !relativePath.startsWith("..");
-        this.cachePath = isPathWithinProjectRoot
-          ? `_project/${relativePath}`
-          : this.path;
-      } else {
-        this.cachePath = systemCache.nextDefaultCachePath();
+    get cachePath() {
+      if (!this._cachePath) {
+        if (this.path) {
+          // Use file path as cache path
+          const root = Tree.root(this);
+          const projectRootPath = root.path;
+          const relativePath = path.relative(projectRootPath, this.path);
+          let isPathWithinProjectRoot = !relativePath.startsWith("..");
+          this._cachePath = isPathWithinProjectRoot
+            ? `_project/${relativePath}`
+            : this.path;
+        } else {
+          // Pick a default `cachePath` property
+          this._cachePath = systemCache.nextDefaultCachePath();
+        }
       }
+      return this._cachePath;
     }
 
     cachePathForKey(key) {

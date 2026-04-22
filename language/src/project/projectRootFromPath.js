@@ -57,7 +57,8 @@ export default async function projectRootFromPath(dirname) {
 
   await root.initializeGlobals();
 
-  /** @type {any} */ (root).cachePath = "_project";
+  // Provide a more meaningful cache path
+  /** @type {any} */ (root)._cachePath = "_project";
 
   return root;
 }

@@ -167,7 +167,7 @@ function defineProperty(object, propertyInfo, state, map) {
             // Cache an AsyncMap
             result = transformObject(AsyncCacheTransform, result);
           }
-          result.cachePath = propertyCachePath;
+          result._cachePath = propertyCachePath;
         }
 
         // Handle extension

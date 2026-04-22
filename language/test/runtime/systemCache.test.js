@@ -32,9 +32,9 @@ describe("systemCache", () => {
     // Make src a child of the project root
     src.parent = project;
 
-    // Cache paths are optional but make cache keys more meaningful
-    src.cachePath = "project/src";
-    project.cachePath = "project";
+    // Paths are optional but make cache keys more meaningful
+    src.path = "project/src";
+    project.path = "project";
 
     // Add handlers so we can unpack values
     project.globals = handlers;

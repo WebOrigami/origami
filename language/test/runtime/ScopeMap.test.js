@@ -14,13 +14,13 @@ describe("scope", () => {
       a: 1,
       b: 2,
     });
-    outer.cachePath = "outer";
+    outer.path = "outer";
 
     /** @type {any} */
     const inner = new SyncCacheObjectMap({
       a: 3,
     });
-    inner.cachePath = "outer/inner";
+    inner.path = "outer/inner";
 
     inner.parent = outer;
     const innerScope = new ScopeMap(inner);
