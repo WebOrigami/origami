@@ -8,7 +8,6 @@ export default function WatchFilesMixin(Base) {
   return class WatchFiles extends Base {
     addEventListener(type, listener) {
       super.addEventListener(type, listener);
-      this.watch();
     }
 
     onChange(filePath) {
@@ -36,15 +35,14 @@ export default function WatchFilesMixin(Base) {
       }
 
       this.watcher?.close();
-      this.watching = false;
+      this.watching = null;
     }
 
-    // Turn on watching for the directory.
+    // Turn on watching for the directory; resolves when the watcher is ready.
     watch() {
       if (this.watching) {
-        return;
+        return this.watching;
       }
-      this.watching = true;
 
       // Ensure the directory exists.
       fs.mkdirSync(this.dirname, { recursive: true });
@@ -52,6 +50,9 @@ export default function WatchFilesMixin(Base) {
       this.watcher = new Watcher(this.dirname, {
         ignoreInitial: true,
         recursive: true,
+      });
+      this.watching = new Promise((resolve) => {
+        this.watcher?.on("ready", resolve);
       });
       this.watcher.on("all", async (event, filePath) => {
         this.onChange(filePath);
@@ -84,6 +85,8 @@ export default function WatchFilesMixin(Base) {
           }
         }
       });
+
+      return this.watching;
     }
   };
 }

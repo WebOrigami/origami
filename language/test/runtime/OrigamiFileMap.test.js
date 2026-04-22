@@ -32,6 +32,7 @@ describe("OrigamiFileMap", () => {
       tempFiles.addEventListener("change", (event) => {
         resolve(/** @type {any} */ (event).options.filePath);
       });
+      await tempFiles.watch();
       tempFiles.set(
         "temp.txt",
         "This file is left over from testing and can be removed.",
