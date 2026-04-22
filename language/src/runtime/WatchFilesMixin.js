@@ -1,3 +1,4 @@
+import { keysFromPath, Tree } from "@weborigami/async-tree";
 import * as fs from "node:fs";
 import path from "node:path";
 import Watcher from "watcher";
@@ -19,12 +20,14 @@ export default function WatchFilesMixin(Base) {
       this.dispatchEvent(new TreeEvent("change", { filePath }));
     }
 
-    onKeysChange(relativePath, action) {
-      this.dispatchEvent(new TreeEvent("keyschange", { action, relativePath }));
+    onKeysChange(key) {
+      super.onKeysChange?.(key);
+      // this.dispatchEvent(new TreeEvent("keyschange", { action, key }));
     }
 
-    onValueChange(relativePath) {
-      this.dispatchEvent(new TreeEvent("valuechange", { relativePath }));
+    onValueChange(key) {
+      super.onValueChange?.(key);
+      // this.dispatchEvent(new TreeEvent("valuechange", { key }));
     }
 
     unwatch() {
@@ -50,28 +53,35 @@ export default function WatchFilesMixin(Base) {
         ignoreInitial: true,
         recursive: true,
       });
-      this.watcher.on("all", (event, filePath) => {
+      this.watcher.on("all", async (event, filePath) => {
         this.onChange(filePath);
 
         const relativePath = path.relative(this.dirname, filePath);
         if (relativePath.startsWith(".git")) {
           return; // Ignore noisy events in .git folder
         }
+        if (relativePath.startsWith("..")) {
+          // Event outside the watched directory, shouldn't happen but ignore
+          return;
+        }
 
-        switch (event) {
-          case "add":
-          case "addDir":
-            this.onKeysChange(relativePath, "add");
-            break;
+        const keys = keysFromPath(relativePath);
+        const key = keys.pop();
 
-          case "change":
-            this.onValueChange(relativePath);
-            break;
+        const target = await Tree.traverse(this, ...keys);
+        if (target) {
+          switch (event) {
+            case "add":
+            case "addDir":
+            case "unlink":
+            case "unlinkDir":
+              target.onKeysChange(key);
+              break;
 
-          case "unlink":
-          case "unlinkDir":
-            this.onKeysChange(relativePath, "remove");
-            break;
+            case "change":
+              target.onValueChange(key);
+              break;
+          }
         }
       });
     }

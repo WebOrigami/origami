@@ -70,8 +70,13 @@ export default function SyncCacheTransform(Base) {
     }
 
     delete(key) {
-      super.delete(key);
+      const deleted = super.delete(key);
       systemCache.delete(this.cachePathForKey(key));
+      if (deleted) {
+        // Deleted an existing key, need to invalidate cached keys
+        this.invalidateKeys();
+      }
+      return deleted;
     }
 
     get(key) {
@@ -90,6 +95,11 @@ export default function SyncCacheTransform(Base) {
       return value;
     }
 
+    invalidateKeys() {
+      const keysPath = this.cachePathForKey("_keys");
+      systemCache.delete(keysPath);
+    }
+
     *keys() {
       const keysPath = this.cachePathForKey("_keys");
       const keys = systemCache.getOrInsertComputed(keysPath, () =>
@@ -99,15 +109,14 @@ export default function SyncCacheTransform(Base) {
       yield* keys;
     }
 
-    onKeysChange(relativePath) {
-      super.onKeysChange?.(relativePath);
-      const keysPath = path.dirname(relativePath) + "/_keys";
-      systemCache.delete(this.cachePathForKey(keysPath));
+    onKeysChange(key) {
+      super.onKeysChange?.(key);
+      this.invalidateKeys();
     }
 
-    onValueChange(relativePath) {
-      super.onValueChange?.(relativePath);
-      systemCache.delete(this.cachePathForKey(relativePath));
+    onValueChange(key) {
+      super.onValueChange?.(key);
+      systemCache.delete(this.cachePathForKey(key));
     }
 
     set(key, value) {
@@ -117,6 +126,10 @@ export default function SyncCacheTransform(Base) {
         return;
       }
       systemCache.updateValue(this.cachePathForKey(key), value);
+      if (!this.has(key)) {
+        // Adding a new key, need to invalidate cached keys
+        this.invalidateKeys();
+      }
       super.set(key, value);
     }
   };
