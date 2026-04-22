@@ -1,4 +1,4 @@
-import { getParent, Tree } from "@weborigami/async-tree";
+import { AsyncMap, getParent, Tree } from "@weborigami/async-tree";
 import { systemCache } from "@weborigami/language";
 import http from "node:http";
 import path from "node:path";
@@ -44,11 +44,11 @@ const quiet = process.env.ORIGAMI_QUIET === "1";
 // An indirect pointer to the tree of resources;
 // let treeHandle = {};
 
-// Initial evaluation of the expression
-const tree = await evaluateExpression();
+// Get a handle to the tree produced by evaluating the expression
+const treeHandle = await handleToEvaluatedExpression(expression, parentPath);
 
 // Serve the tree of resources
-const listener = requestListener(tree, { quiet });
+const listener = requestListener(treeHandle, { quiet });
 const server = http.createServer(listener);
 
 // Track live connections so we can drain/close cleanly.
@@ -92,36 +92,43 @@ function beginDrain() {
   setTimeout(() => process.exit(0), HARD_MS).unref();
 }
 
-async function evaluateExpression() {
-  const tree = await expressionTree({
-    expression,
-    parentPath,
+async function handleToEvaluatedExpression(expression, parentPath) {
+  const handle = Object.assign(new AsyncMap(), {
+    async get(key) {
+      const tree = await this.getTree();
+      return tree.get(key);
+    },
+
+    async getTree() {
+      const cachePath = "_expression";
+      const tree = await systemCache.getOrInsertComputedAsync(
+        cachePath,
+        async () =>
+          expressionTree({
+            expression,
+            parentPath,
+          }),
+      );
+      Object.defineProperty(tree, "cachePath", {
+        value: cachePath,
+        writable: false,
+        enumerable: true,
+        configurable: true,
+      });
+      return tree;
+    },
+
+    async keys() {
+      const tree = await this.getTree();
+      return tree.keys();
+    },
   });
-  if (!Tree.isMaplike(tree)) {
-    fail("Dev.debug2: expression did not evaluate to a maplike resource tree");
-  }
-  // Object.setPrototypeOf(treeHandle, tree);
 
-  // // Clean the handle of any named properties or symbols that have been set
-  // // directly on it.
-  // try {
-  //   for (const key of Object.getOwnPropertyNames(treeHandle)) {
-  //     delete treeHandle[key];
-  //   }
-  //   for (const key of Object.getOwnPropertySymbols(treeHandle)) {
-  //     delete treeHandle[key];
-  //   }
-  // } catch {
-  //   // Ignore errors.
-  // }
-
-  // process.send?.({ type: "EVALUATED" });
-
-  return tree;
+  return handle;
 }
 
 function invalidate(filePath) {
-  const parent = getParent(tree);
+  const parent = getParent(treeHandle);
   const root = Tree.root(parent);
   const rootPath = root.path;
   const relativePath = path.relative(rootPath, filePath);
