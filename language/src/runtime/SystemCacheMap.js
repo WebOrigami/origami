@@ -83,12 +83,8 @@ export default class SystemCacheMap extends SyncMap {
         const value = await computeFn();
         // Add resolved value to cache
         entry.value = value;
-        const foo = path;
         return value;
       });
-      if (asyncStorage.getStore()) {
-        console.log(path, asyncStorage.getStore());
-      }
     }
 
     this.trackDependency(path, entry);

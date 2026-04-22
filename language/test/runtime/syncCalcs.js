@@ -1,5 +1,5 @@
 import { SyncMap } from "@weborigami/async-tree";
-import SyncCacheTransform from "./SyncCacheTransform.js";
+import SyncCacheTransform from "../../src/runtime/SyncCacheTransform.js";
 
 export default function syncCalcs(iterable) {
   const data = new (SyncCacheTransform(SyncMap))(iterable);

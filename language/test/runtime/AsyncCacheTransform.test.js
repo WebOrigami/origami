@@ -5,7 +5,7 @@ import systemCache from "../../src/runtime/systemCache.js";
 // We test AsyncCacheTransform via asyncCalcs since it's a fairly small
 // application of the transform.
 import { Tree } from "@weborigami/async-tree";
-import asyncCalcs from "../../src/runtime/asyncCalcs.js";
+import asyncCalcs from "./asyncCalcs.js";
 
 describe("AsyncCacheTransform", () => {
   beforeEach(() => {

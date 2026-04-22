@@ -13,7 +13,6 @@ export { default as projectConfig } from "./src/project/projectConfig.js";
 export { default as projectRoot } from "./src/project/projectRoot.js";
 export { default as projectRootFromPath } from "./src/project/projectRootFromPath.js";
 export * as Protocols from "./src/protocols/protocols.js";
-export { default as AsyncCalcMap } from "./src/runtime/AsyncCalcMap.js";
 export { formatError, highlightError, lineInfo } from "./src/runtime/errors.js";
 export { default as evaluate } from "./src/runtime/evaluate.js";
 export { default as EventTargetMixin } from "./src/runtime/EventTargetMixin.js";
@@ -27,7 +26,6 @@ export { default as ImportModulesMixin } from "./src/runtime/ImportModulesMixin.
 export * as moduleCache from "./src/runtime/moduleCache.js";
 export { default as OrigamiFileMap } from "./src/runtime/OrigamiFileMap.js";
 export * as symbols from "./src/runtime/symbols.js";
-export { default as SyncCalcMap } from "./src/runtime/SyncCalcMap.js";
 export { default as systemCache } from "./src/runtime/systemCache.js";
 export { default as TreeEvent } from "./src/runtime/TreeEvent.js";
 export { default as WatchFilesMixin } from "./src/runtime/WatchFilesMixin.js";

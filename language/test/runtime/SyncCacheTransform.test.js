@@ -4,7 +4,7 @@ import systemCache from "../../src/runtime/systemCache.js";
 
 // We test SyncCacheTransform via syncCalcs since it's a fairly small
 // application of the transform.
-import syncCalcs from "../../src/runtime/syncCalcs.js";
+import syncCalcs from "./syncCalcs.js";
 
 describe("SyncCacheTransform", () => {
   beforeEach(() => {
