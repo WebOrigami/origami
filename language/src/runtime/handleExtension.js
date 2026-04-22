@@ -56,18 +56,21 @@ export default function handleExtension(value, key, handlers, parent = null) {
         // Wrap the unpack function so it caches the unpacked value, and so we
         // can add the file path to any errors the unpack function throws.
         const filePath = getPackedPath(value, { key, parent });
-        const projectRoot = parent ? Tree.root(parent) : null;
-        const projectRootPath = projectRoot?.path;
-        const relativePath = projectRootPath
-          ? path.join("_project", path.relative(projectRootPath, filePath))
-          : null;
-        let isPathWithinProjectRoot = relativePath
-          ? !relativePath.startsWith("..")
-          : false;
-        const cachePath = path.join(
-          isPathWithinProjectRoot ? relativePath : filePath,
-          "_unpack",
-        );
+        let fileCachePath;
+        if (parent.cachePath) {
+          fileCachePath = path.join(parent.cachePath, key);
+        } else {
+          const projectRoot = parent ? Tree.root(parent) : null;
+          const projectRootPath = projectRoot?.path;
+          const relativePath = projectRootPath
+            ? path.join("_project", path.relative(projectRootPath, filePath))
+            : null;
+          let isPathWithinProjectRoot = relativePath
+            ? !relativePath.startsWith("..")
+            : false;
+          fileCachePath = isPathWithinProjectRoot ? relativePath : filePath;
+        }
+        const cachePath = path.join(fileCachePath, "_unpack");
         value.unpack = async () =>
           systemCache.getOrInsertComputedAsync(cachePath, async () => {
             if (handler instanceof Promise) {

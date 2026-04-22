@@ -125,7 +125,7 @@ export default function SyncCacheTransform(Base) {
         super.set(key, value);
         return;
       }
-      systemCache.updateValue(this.cachePathForKey(key), value);
+      systemCache.delete(this.cachePathForKey(key));
       if (!this.has(key)) {
         // Adding a new key, need to invalidate cached keys
         this.invalidateKeys();
