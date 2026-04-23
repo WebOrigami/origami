@@ -74,13 +74,18 @@ export default function WatchFilesMixin(Base) {
           switch (event) {
             case "add":
             case "addDir":
-            case "unlink":
-            case "unlinkDir":
               target.onKeysChange(key);
               break;
 
             case "change":
               target.onValueChange(key);
+              break;
+
+            case "unlink":
+            case "unlinkDir":
+              // Removing file/folder invalidates both its value and the keys
+              target.onValueChange(key);
+              target.onKeysChange(key);
               break;
           }
         }
