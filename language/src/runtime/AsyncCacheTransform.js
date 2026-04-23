@@ -53,7 +53,7 @@ export default function AsyncCacheTransform(Base) {
           const relativePath = path.relative(projectRootPath, this.path);
           let isPathWithinProjectRoot = !relativePath.startsWith("..");
           this._cachePath = isPathWithinProjectRoot
-            ? `_project/${relativePath}`
+            ? `_root/${relativePath}`
             : this.path;
         } else {
           // Pick a default `cachePath` property

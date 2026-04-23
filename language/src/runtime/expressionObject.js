@@ -45,7 +45,8 @@ export default async function expressionObject(entries, state = {}) {
   setParent(object, parent);
 
   // Prefix used to save cached property values
-  const sourcePath = entries.code?.location?.source?.relativePath;
+  const location = entries.code?.location ?? entries[0].location;
+  const sourcePath = location?.source?.relativePath;
   const objectCachePath =
     parent?.[cachePathSymbol] ??
     sourcePath ??

@@ -30,10 +30,15 @@ export default async function expressionTree(options) {
   const globals = getGlobalsForTree(parent);
   await parent.watch();
 
+  const source = {
+    text: expression,
+    relativePath: "_expression", // so cache path will be meaningful and consistent
+  };
+
   let maplike;
   try {
     // Evaluate the expression
-    maplike = await evaluate(expression, { globals, mode: "shell", parent });
+    maplike = await evaluate(source, { globals, mode: "shell", parent });
     if (isUnpackable(maplike)) {
       maplike = await maplike.unpack();
     }

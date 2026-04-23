@@ -1,6 +1,6 @@
 import { systemCache } from "@weborigami/language";
 
-export default function cache() {
+export default function syscache() {
   /** @type {any} */
   const entries = [...systemCache.entries()].map(([path, entry]) => {
     const result = {};

@@ -31,10 +31,10 @@ describe("handleExtension", () => {
     const file = fixtureFiles.get("hello.json");
     const data = await file.unpack();
     assert.equal(data, "Hello");
-    const fileEntry = systemCache.get("_project/hello.json");
-    const unpackEntry = systemCache.get("_project/hello.json/_unpack");
-    assert(fileEntry.downstreams.has("_project/hello.json/_unpack"));
-    assert(unpackEntry.upstreams.has("_project/hello.json"));
+    const fileEntry = systemCache.get("_root/hello.json");
+    const unpackEntry = systemCache.get("_root/hello.json/_unpack");
+    assert(fileEntry.downstreams.has("_root/hello.json/_unpack"));
+    assert(unpackEntry.upstreams.has("_root/hello.json"));
   });
 });
 

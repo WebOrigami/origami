@@ -53,7 +53,7 @@ describe("OrigamiFileMap", () => {
     const text = new TextDecoder().decode(buffer);
     assert.deepEqual(text, "Hello");
 
-    const entry = systemCache.get("_project/temp.txt");
+    const entry = systemCache.get("_root/temp.txt");
     const cachedText = new TextDecoder().decode(entry.value);
     assert.deepEqual(cachedText, "Hello");
   });

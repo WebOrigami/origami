@@ -100,21 +100,14 @@ async function handleToEvaluatedExpression(expression, parentPath) {
     },
 
     async getTree() {
-      const cachePath = "_expression";
       const tree = await systemCache.getOrInsertComputedAsync(
-        cachePath,
+        "_expression",
         async () =>
           expressionTree({
             expression,
             parentPath,
           }),
       );
-      Object.defineProperty(tree, "cachePath", {
-        value: cachePath,
-        writable: false,
-        enumerable: true,
-        configurable: true,
-      });
       return tree;
     },
 
@@ -134,7 +127,7 @@ function invalidate(filePath) {
   const relativePath = path.relative(rootPath, filePath);
   let isPathWithinProjectRoot = !relativePath.startsWith("..");
   const cachePath = isPathWithinProjectRoot
-    ? `_project/${relativePath}`
+    ? `_root/${relativePath}`
     : filePath;
   systemCache.delete(cachePath);
   process.send?.({ type: "INVALIDATED", filePath });
