@@ -39,24 +39,22 @@ describe("systemCache", () => {
     // Add handlers so we can unpack values
     project.globals = handlers;
 
-    const value1 = await Tree.traverseOrThrow(
-      project,
-      "src",
-      "site.ori",
-      "value",
-    );
+    const site = await Tree.traverseOrThrow(project, "src/", "site.ori/");
+
+    const value1 = await site.value;
     assert.equal(value1, 1);
 
     // Add new data.json to src folder, overriding the one in project root
     src.set("data.json", "2");
 
-    const value2 = await Tree.traverseOrThrow(
-      project,
-      "src",
-      "site.ori",
-      "value",
-    );
+    const value2 = await site.value;
     assert.equal(value2, 2);
+
+    // Delete data.json from src folder, reverting to the one in project root
+    src.delete("data.json");
+
+    const value3 = await site.value;
+    assert.equal(value3, 1);
   });
 });
 
