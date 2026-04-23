@@ -261,7 +261,8 @@ export function lambda(length, parameters, code, state = {}) {
       // interim stack frame.
       const interimStack = stack.slice();
       interimStack.push(args);
-      const frame = await expressionObject(parameters, { stack: interimStack });
+      const paramState = { ...state, stack: interimStack };
+      const frame = await expressionObject(parameters, paramState);
       // Record which code this stack frame is associated with
       Object.defineProperty(frame, codeSymbol, {
         value: code,
