@@ -171,11 +171,14 @@ evaluating: \x1B[31mposts.md\x1B[0m
     });
 
     test("handles a traversal failure inside a reference error", async () => {
-      const parent = new ObjectMap({
-        post1: {
-          title: "First post",
+      const parent = new ObjectMap(
+        {
+          post1: {
+            title: "First post",
+          },
         },
-      });
+        { deep: true },
+      );
       await assertError(
         `(post1/totle).toUpperCase()`,
         `ReferenceError: Tried to get a property of something that doesn't exist.
@@ -198,16 +201,19 @@ evaluating: \x1B[31mrepeat\x1B[0m`,
 
   describe("TraverseError", () => {
     test("suggests typos for failed path", async () => {
-      const parent = new ObjectMap({
-        a: {
-          b: {
-            sub: {
-              // need 2+ characters for typos
-              c: 1,
+      const parent = new ObjectMap(
+        {
+          a: {
+            b: {
+              sub: {
+                // need 2+ characters for typos
+                c: 1,
+              },
             },
           },
         },
-      });
+        { deep: true },
+      );
       await assertError(
         `a/b/sup/c`,
         `TraverseError: A path hit a null or undefined value.
@@ -220,9 +226,7 @@ evaluating: \x1B[31msup/\x1B[0m`,
     });
 
     test("identifies when a numeric key failed", async () => {
-      const parent = new ObjectMap({
-        map: new Map([[1, new Map([["a", true]])]]),
-      });
+      const parent = new Map([["map", new Map([[1, new Map([["a", true]])]])]]);
       await assertError(
         `map/1/a`,
         `TraverseError: A path hit a null or undefined value.
@@ -251,11 +255,14 @@ evaluating: \x1B[31mfile.foo/\x1B[0m`,
     });
 
     test("identifies when data was already unpacked", async () => {
-      const parent = new ObjectMap({
-        a: {
-          "b.json": 1,
+      const parent = new ObjectMap(
+        {
+          a: {
+            "b.json": 1,
+          },
         },
-      });
+        { deep: true },
+      );
       await assertError(
         `a/b.json/`,
         `TraverseError: A path tried to unpack data that's already unpacked.
@@ -268,9 +275,12 @@ evaluating: \x1B[31mb.json/\x1B[0m`,
     });
 
     test("identifies when a value didn't exist to be unpacked", async () => {
-      const parent = new ObjectMap({
-        a: {},
-      });
+      const parent = new ObjectMap(
+        {
+          a: {},
+        },
+        { deep: true },
+      );
       await assertError(
         `a/b/`,
         `TraverseError: A path tried to unpack a value that doesn't exist.
@@ -283,8 +293,15 @@ evaluating: \x1B[31mb/\x1B[0m`,
   });
 });
 
-async function assertError(source, expectedMessage, options) {
+async function assertError(expression, expectedMessage, options) {
   try {
+    const source =
+      typeof expression !== "string"
+        ? expression
+        : {
+            text: expression,
+            relativePath: "test.ori",
+          };
     await evaluate(source, {
       globals,
       object: null,
