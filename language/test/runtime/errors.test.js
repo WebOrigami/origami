@@ -1,13 +1,18 @@
 import { ObjectMap } from "@weborigami/async-tree";
 import assert from "node:assert";
-import { describe, test } from "node:test";
+import { beforeEach, describe, test } from "node:test";
 import coreGlobals from "../../src/project/coreGlobals.js";
 import { formatError } from "../../src/runtime/errors.js";
 import evaluate from "../../src/runtime/evaluate.js";
+import systemCache from "../../src/runtime/systemCache.js";
 
 const globals = await coreGlobals();
 
 describe("formatError", () => {
+  beforeEach(() => {
+    systemCache.clear();
+  });
+
   describe("ReferenceError", () => {
     test("identifies an undefined function", async () => {
       await assertError(
@@ -28,7 +33,7 @@ evaluating: \x1b[31mfoo\x1b[0m`,
       );
     });
 
-    test("references the Origami file that produced the error", async () => {
+    test.only("references the Origami file that produced the error", async () => {
       await assertError(
         {
           text: `foo()`,

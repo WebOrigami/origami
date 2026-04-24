@@ -47,25 +47,16 @@ describe("optimize", () => {
   });
 
   test("resolve deeper context references", () => {
-    // Compilation of `{ a: 1, more: { a } }`
-    const code = createCode([
-      ops.object,
-      null,
-      ["a", [ops.literal, 1]],
-      [
-        "more",
-        [ops.object, null, ["a", [markers.traverse, [markers.reference, "a"]]]],
-      ],
-    ]);
+    const expression = `{ a: 1, more: { a } }`;
     const expected = [
       ops.object,
-      null,
+      "test.ori/",
       ["a", 1],
       [
         "more",
         [
           ops.object,
-          null,
+          "test.ori/more",
           [
             "a",
             [
@@ -76,7 +67,7 @@ describe("optimize", () => {
         ],
       ],
     ];
-    assertCodeEqual(optimize(code), expected);
+    assertCompile(expression, expected);
   });
 
   test("when defining a property, avoid recursive references", () => {
@@ -88,13 +79,13 @@ describe("optimize", () => {
     }`;
     const expected = [
       ops.object,
-      null,
+      "test.ori/",
       ["name", "Alice"],
       [
         "user",
         [
           ops.object,
-          null,
+          "test.ori/user",
           [
             "name",
             [
@@ -319,9 +310,16 @@ describe("optimize", () => {
 });
 
 function assertCompile(expression, expected, mode = "shell") {
+  const source =
+    typeof expression !== "string"
+      ? expression
+      : {
+          text: expression,
+          relativePath: "test.ori",
+        };
   const parent = new SyncMap();
   const globals = {};
-  const fn = compile.expression(expression, { globals, mode, parent });
+  const fn = compile.expression(source, { globals, mode, parent });
   const actual = fn.code;
   assertCodeLocations(actual);
   assertCodeEqual(actual, expected);

@@ -31,10 +31,11 @@ export const REFERENCE_EXTERNAL = 4;
  * @returns {AnnotatedCode}
  */
 export default function optimize(code, options = {}) {
-  // "attached" = a top-level object or its direct descendants
-  const attached = options.attached ?? false;
+  // Cache path for this source file
   const cachePath = options.cachePath ?? null;
   const globals = options.globals ?? jsGlobals;
+  // Cache path for top-level object (and its direct descendants) in this file
+  const objectCachePath = options.objectCachePath ?? null;
 
   // The locals is an array, one item for each function or object context that
   // has been entered. The array grows to the right. Array items are objects
@@ -79,28 +80,42 @@ export default function optimize(code, options = {}) {
   // Optimize children
   const optimized = annotate(
     code.map((child, index) => {
-      if (op === ops.object && index > 1) {
-        const [key, value] = child;
-        const adjustedLocals = avoidLocalRecursion(locals, key);
-        const optimizedKey =
-          typeof key === "string"
+      if (op === ops.object) {
+        if (index === 0) {
+          return child; // return op as is
+        } else if (index === 1) {
+          // Cache path
+          return objectCachePath ?? child;
+        } else {
+          // Object entry
+          const [key, value] = child;
+          const adjustedLocals = avoidLocalRecursion(locals, key);
+          const isStringKey = typeof key === "string";
+          const childCachePath =
+            objectCachePath && isStringKey
+              ? path.join(objectCachePath, key)
+              : null;
+          const childOptions = {
+            ...options,
+            locals: adjustedLocals,
+            objectCachePath: childCachePath,
+          };
+          const optimizedKey = isStringKey
             ? key
-            : optimize(/** @type {AnnotatedCode} */ (key), {
-                ...options,
-                locals: adjustedLocals,
-              });
-        const optimizedValue = optimize(/** @type {AnnotatedCode} */ (value), {
-          ...options,
-          locals: adjustedLocals,
-        });
-        return annotate([optimizedKey, optimizedValue], child.location);
+            : optimize(/** @type {AnnotatedCode} */ (key), childOptions);
+          const optimizedValue = optimize(
+            /** @type {AnnotatedCode} */ (value),
+            childOptions,
+          );
+          return annotate([optimizedKey, optimizedValue], child.location);
+        }
       } else if (Array.isArray(child) && "location" in child) {
         // Review: Aside from ops.object (above), what non-instruction arrays
         // does this descend into?
-        return optimize(/** @type {AnnotatedCode} */ (child), {
-          ...options,
-          locals,
-        });
+        const childOptions = { ...options, locals };
+        // Objects below here are detached from top-level object; not cached
+        delete childOptions.objectCachePath;
+        return optimize(/** @type {AnnotatedCode} */ (child), childOptions);
       } else {
         return child;
       }

@@ -1,7 +1,8 @@
 import { ObjectMap, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
-import { describe, test } from "node:test";
+import { beforeEach, describe, test } from "node:test";
 import evaluate from "../../src/runtime/evaluate.js";
+import systemCache from "../../src/runtime/systemCache.js";
 
 const globals = {
   concat: (...args) => args.join(""),
@@ -10,6 +11,10 @@ const globals = {
 };
 
 describe("evaluate", () => {
+  beforeEach(() => {
+    systemCache.clear();
+  });
+
   test("array", async () => {
     await assertEvaluation("[]", []);
     await assertEvaluation("[ 1, 2, 3, ]", [1, 2, 3]);

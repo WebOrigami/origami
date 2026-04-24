@@ -1,10 +1,14 @@
 import { ObjectMap } from "@weborigami/async-tree";
-import { execute, ops } from "@weborigami/language";
+import { execute, ops, systemCache } from "@weborigami/language";
 import assert from "node:assert";
-import { describe, test } from "node:test";
+import { beforeEach, describe, test } from "node:test";
 import once from "../../src/origami/once.js";
 
 describe("once", () => {
+  beforeEach(() => {
+    systemCache.clear();
+  });
+
   test("evaluates a generic function only once", async () => {
     let counter = 0;
     const promise = once(() => ++counter);

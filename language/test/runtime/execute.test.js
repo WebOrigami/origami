@@ -1,11 +1,16 @@
 import assert from "node:assert";
-import { describe, test } from "node:test";
+import { beforeEach, describe, test } from "node:test";
 
 import { SyncMap } from "@weborigami/async-tree";
 import execute from "../../src/runtime/execute.js";
+import systemCache from "../../src/runtime/systemCache.js";
 import { createCode } from "../compiler/codeHelpers.js";
 
 describe("execute", () => {
+  beforeEach(() => {
+    systemCache.clear();
+  });
+
   test("if object in function position isn't a function, can unpack it", async () => {
     const fn = (...args) => args.join(",");
     const packed = new String();

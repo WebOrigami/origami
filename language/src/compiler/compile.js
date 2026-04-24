@@ -1,3 +1,4 @@
+import { trailingSlash } from "@weborigami/async-tree";
 import { createExpressionFunction } from "../runtime/expressionFunction.js";
 import optimize from "./optimize.js";
 import { parse } from "./parse.js";
@@ -29,12 +30,13 @@ function compile(source, options) {
 
   // Select a path the code will use for caching
   const cachePath = source.relativePath;
+  const objectCachePath = cachePath ? trailingSlash.add(cachePath) : null;
 
   // Optimize the code
   const optimized = optimize(code, {
-    attached: true,
     cachePath,
     globals,
+    objectCachePath,
   });
 
   // Create a function that executes the optimized code.

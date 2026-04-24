@@ -1,12 +1,17 @@
 import { ObjectMap, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
-import { describe, test } from "node:test";
+import { beforeEach, describe, test } from "node:test";
 
 import execute from "../../src/runtime/execute.js";
 import { ops } from "../../src/runtime/internal.js";
+import systemCache from "../../src/runtime/systemCache.js";
 import { createCode } from "../compiler/codeHelpers.js";
 
 describe("ops", () => {
+  beforeEach(() => {
+    systemCache.clear();
+  });
+
   test("ops.addition adds two numbers", async () => {
     assert.strictEqual(ops.addition(2, 2), 4);
     assert.strictEqual(ops.addition(2, true), 3);
