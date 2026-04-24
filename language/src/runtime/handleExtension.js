@@ -61,14 +61,18 @@ export default function handleExtension(value, key, handlers, parent = null) {
           fileCachePath = path.join(parent.cachePath, key);
         } else {
           const projectRoot = parent ? Tree.root(parent) : null;
-          const projectRootPath = projectRoot?.path;
-          const relativePath = projectRootPath
-            ? path.relative(projectRootPath, filePath)
-            : null;
-          let isPathWithinProjectRoot = relativePath
-            ? !relativePath.startsWith("..")
-            : false;
-          fileCachePath = isPathWithinProjectRoot ? relativePath : filePath;
+          if (projectRoot) {
+            const projectRootPath = projectRoot?.path;
+            const relativePath = projectRootPath
+              ? path.relative(projectRootPath, filePath)
+              : null;
+            let isPathWithinProjectRoot = relativePath
+              ? !relativePath.startsWith("..")
+              : false;
+            fileCachePath = isPathWithinProjectRoot ? relativePath : filePath;
+          } else {
+            fileCachePath = systemCache.nextDefaultCachePath();
+          }
         }
         const unpackCachePath = trailingSlash.add(fileCachePath);
         value.unpack = async () =>
