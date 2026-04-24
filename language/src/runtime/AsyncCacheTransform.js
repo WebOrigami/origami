@@ -1,4 +1,4 @@
-import { Tree } from "@weborigami/async-tree";
+import { trailingSlash, Tree } from "@weborigami/async-tree";
 import path from "node:path";
 import systemCache from "./systemCache.js";
 
@@ -79,7 +79,8 @@ export default function AsyncCacheTransform(Base) {
     }
 
     async get(key) {
-      const cachePath = this.cachePathForKey(key);
+      const normalized = trailingSlash.remove(key);
+      const cachePath = this.cachePathForKey(normalized);
       const value = await systemCache.getOrInsertComputedAsync(cachePath, () =>
         super.get(key),
       );

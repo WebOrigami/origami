@@ -1,4 +1,4 @@
-import { Tree } from "@weborigami/async-tree";
+import { trailingSlash, Tree } from "@weborigami/async-tree";
 import path from "node:path";
 import systemCache from "./systemCache.js";
 
@@ -76,7 +76,8 @@ export default function SyncCacheTransform(Base) {
     }
 
     get(key) {
-      const cachePath = this.cachePathForKey(key);
+      const normalized = trailingSlash.remove(key);
+      const cachePath = this.cachePathForKey(normalized);
       const value = systemCache.getOrInsertComputed(cachePath, () =>
         super.get(key),
       );
