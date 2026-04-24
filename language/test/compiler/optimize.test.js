@@ -26,6 +26,7 @@ describe("optimize", () => {
       [["name", [[ops.params, 0], 0]]],
       [
         ops.object,
+        null,
         [
           "a",
           [
@@ -49,19 +50,22 @@ describe("optimize", () => {
     // Compilation of `{ a: 1, more: { a } }`
     const code = createCode([
       ops.object,
+      null,
       ["a", [ops.literal, 1]],
       [
         "more",
-        [ops.object, ["a", [markers.traverse, [markers.reference, "a"]]]],
+        [ops.object, null, ["a", [markers.traverse, [markers.reference, "a"]]]],
       ],
     ]);
     const expected = [
       ops.object,
+      null,
       ["a", 1],
       [
         "more",
         [
           ops.object,
+          null,
           [
             "a",
             [
@@ -84,11 +88,13 @@ describe("optimize", () => {
     }`;
     const expected = [
       ops.object,
+      null,
       ["name", "Alice"],
       [
         "user",
         [
           ops.object,
+          null,
           [
             "name",
             [
@@ -118,7 +124,7 @@ describe("optimize", () => {
       ];
       const globals = {};
       assertCodeEqual(
-        optimize(code, { cachePath: "test.ori/_refs", globals, parent }),
+        optimize(code, { cachePath: "test.ori", globals, parent }),
         expected,
       );
     });
@@ -137,7 +143,7 @@ describe("optimize", () => {
       ];
       const globals = {};
       assertCodeEqual(
-        optimize(code, { cachePath: "test.ori/_refs", globals, parent }),
+        optimize(code, { cachePath: "test.ori", globals, parent }),
         expected,
       );
     });
@@ -146,6 +152,7 @@ describe("optimize", () => {
       // Compilation of `{ (posts) = posts.txt }`
       const code = createCode([
         ops.object,
+        null,
         [
           "(posts)",
           [ops.getter, [markers.traverse, [markers.reference, "posts.txt"]]],
@@ -154,6 +161,7 @@ describe("optimize", () => {
       const parent = {};
       const expected = [
         ops.object,
+        null,
         [
           "(posts)",
           [
@@ -168,7 +176,7 @@ describe("optimize", () => {
       ];
       const globals = {};
       assertCodeEqual(
-        optimize(code, { cachePath: "test.ori/_refs", globals, parent }),
+        optimize(code, { cachePath: "test.ori", globals, parent }),
         expected,
       );
     });
@@ -233,20 +241,14 @@ describe("optimize", () => {
       // Compilation of `</>`
       const code = createCode([markers.traverse, [markers.external, "/"]]);
       const expected = [ops.cache, "test.ori/_refs/", [ops.rootDirectory]];
-      assertCodeEqual(
-        optimize(code, { cachePath: "test.ori/_refs" }),
-        expected,
-      );
+      assertCodeEqual(optimize(code, { cachePath: "test.ori" }), expected);
     });
 
     test("home directory", () => {
       // Compilation of `<~>`
       const code = createCode([markers.traverse, [ops.homeDirectory]]);
       const expected = [ops.cache, "test.ori/_refs/~", [ops.homeDirectory]];
-      assertCodeEqual(
-        optimize(code, { cachePath: "test.ori/_refs" }),
-        expected,
-      );
+      assertCodeEqual(optimize(code, { cachePath: "test.ori" }), expected);
     });
   });
 
@@ -271,7 +273,7 @@ describe("optimize", () => {
         ],
       ];
       assertCodeEqual(
-        optimize(code, { cachePath: "test.ori/_refs", parent }),
+        optimize(code, { cachePath: "test.ori", parent }),
         expected,
       );
     });
@@ -291,7 +293,7 @@ describe("optimize", () => {
         [[ops.scope], [ops.literal, "package.json/"], [ops.literal, "name"]],
       ];
       assertCodeEqual(
-        optimize(code, { cachePath: "test.ori/_refs", globals, parent }),
+        optimize(code, { cachePath: "test.ori", globals, parent }),
         expected,
       );
     });

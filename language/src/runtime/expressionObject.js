@@ -35,7 +35,7 @@ const VALUE_TYPE = {
  * @param {*} entries
  * @param {import("../../index.ts").RuntimeState} [state]
  */
-export default async function expressionObject(entries, state = {}) {
+export default async function expressionObject(cachePath, entries, state = {}) {
   // Create the object and set its parent
   const object = {};
   const parent = state?.object ?? null;
@@ -44,20 +44,9 @@ export default async function expressionObject(entries, state = {}) {
   }
   setParent(object, parent);
 
-  // Prefix used to save cached property values
-  const location = entries.code?.location ?? entries[0].location;
-  const sourcePath = location?.source?.relativePath;
-  const objectCachePath =
-    parent?.[cachePathSymbol] ??
-    sourcePath ??
-    systemCache.nextDefaultCachePath();
-  Object.defineProperty(object, cachePathSymbol, {
-    value: objectCachePath,
-    enumerable: false,
-  });
-
   // The object in Map form for use on the stack
   const map = new ObjectMap(object);
+  map.cachePath = cachePath;
 
   // Preparation: gather information about all properties
   const infos = entries.map(([key, value]) => propertyInfo(key, value));
@@ -138,7 +127,9 @@ function defineProperty(object, propertyInfo, state, map) {
       get: async () => {
         // Execute the code to get the value of the property
         const newState = Object.assign({}, state, { object: map });
-        const propertyCachePath = path.join(object[cachePathSymbol], key);
+        const propertyCachePath = map.cachePath
+          ? path.join(map.cachePath, key)
+          : null;
         let result = propertyCachePath
           ? await systemCache.getOrInsertComputedAsync(propertyCachePath, () =>
               execute(value, newState),
@@ -178,6 +169,24 @@ function defineProperty(object, propertyInfo, state, map) {
       },
     });
   }
+}
+
+export function isTransformApplied(Transform, obj) {
+  let transformName = Transform.name;
+  if (!transformName) {
+    throw `isTransformApplied was called on an unnamed transform function, but a name is required.`;
+  }
+  if (transformName.endsWith("Transform")) {
+    transformName = transformName.slice(0, -9);
+  }
+  // Walk up prototype chain looking for a constructor with the same name as the
+  // transform. This is not a great test.
+  for (let proto = obj; proto; proto = Object.getPrototypeOf(proto)) {
+    if (proto.constructor.name === transformName) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -285,24 +294,6 @@ async function redefineProperty(object, info) {
     value,
     writable: true,
   });
-}
-
-export function isTransformApplied(Transform, obj) {
-  let transformName = Transform.name;
-  if (!transformName) {
-    throw `isTransformApplied was called on an unnamed transform function, but a name is required.`;
-  }
-  if (transformName.endsWith("Transform")) {
-    transformName = transformName.slice(0, -9);
-  }
-  // Walk up prototype chain looking for a constructor with the same name as the
-  // transform. This is not a great test.
-  for (let proto = obj; proto; proto = Object.getPrototypeOf(proto)) {
-    if (proto.constructor.name === transformName) {
-      return true;
-    }
-  }
-  return false;
 }
 
 /**

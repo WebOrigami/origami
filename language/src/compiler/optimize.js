@@ -31,8 +31,10 @@ export const REFERENCE_EXTERNAL = 4;
  * @returns {AnnotatedCode}
  */
 export default function optimize(code, options = {}) {
-  const globals = options.globals ?? jsGlobals;
+  // "attached" = a top-level object or its direct descendants
+  const attached = options.attached ?? false;
   const cachePath = options.cachePath ?? null;
+  const globals = options.globals ?? jsGlobals;
 
   // The locals is an array, one item for each function or object context that
   // has been entered. The array grows to the right. Array items are objects
@@ -65,7 +67,7 @@ export default function optimize(code, options = {}) {
       return inlineLiteral(code);
 
     case ops.object:
-      const entries = args;
+      const entries = args.slice(1);
       const propertyNames = getPropertyNames(entries);
       locals.push({
         type: REFERENCE_INHERITED,
@@ -77,7 +79,7 @@ export default function optimize(code, options = {}) {
   // Optimize children
   const optimized = annotate(
     code.map((child, index) => {
-      if (op === ops.object && index > 0) {
+      if (op === ops.object && index > 1) {
         const [key, value] = child;
         const adjustedLocals = avoidLocalRecursion(locals, key);
         const optimizedKey =
@@ -150,8 +152,8 @@ function avoidLocalRecursion(locals, key) {
 function cacheExternalPath(code, cachePath) {
   const keys = code.map(keyFromCode).filter((key) => key !== null);
   const keysPath = pathFromKeys(keys);
-  const externalCachePath = path.join(cachePath, keysPath);
-  return annotate([ops.cache, externalCachePath, code], code.location);
+  const refCachePath = path.join(cachePath, "_refs", keysPath);
+  return annotate([ops.cache, refCachePath, code], code.location);
 }
 
 // A reference with periods like x.y.z

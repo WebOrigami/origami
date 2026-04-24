@@ -309,15 +309,16 @@ describe("ops", () => {
     const code = createCode([
       [
         ops.object,
+        null,
         ["a", [ops.literal, 1]],
         ["c", [[ops.inherited, 0], "a"]],
         [
           "_result",
           [
             ops.merge,
-            [ops.object, ["a", [ops.getter, [[ops.inherited, 1], "a"]]]],
+            [ops.object, null, ["a", [ops.getter, [[ops.inherited, 1], "a"]]]],
             [[ops.scope], "more"],
-            [ops.object, ["c", [ops.getter, [[ops.inherited, 1], "c"]]]],
+            [ops.object, null, ["c", [ops.getter, [[ops.inherited, 1], "c"]]]],
           ],
         ],
       ],
@@ -366,6 +367,7 @@ describe("ops", () => {
 
     const code = createCode([
       ops.object,
+      null,
       ["hello", [[[ops.scope], "upper"], "hello"]],
       ["world", [[[ops.scope], "upper"], "world"]],
     ]);
@@ -373,20 +375,6 @@ describe("ops", () => {
     const result = await execute(code, { parent });
     assert.strictEqual(result.hello, "HELLO");
     assert.strictEqual(result.world, "WORLD");
-  });
-
-  test("ops.object instantiates an array", async () => {
-    const parent = new ObjectMap({
-      upper: (s) => s.toUpperCase(),
-    });
-    const code = createCode([
-      ops.array,
-      "Hello",
-      1,
-      [[[ops.scope], "upper"], "world"],
-    ]);
-    const result = await execute(code, { parent });
-    assert.deepEqual(result, ["Hello", 1, "WORLD"]);
   });
 
   test("ops.objectRest returns an object without specified keys", async () => {

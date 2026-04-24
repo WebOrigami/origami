@@ -272,7 +272,7 @@ export function makeDocument(front, body, location) {
   entries.push(annotate(["_body", body], location));
 
   // Return the code for the document object
-  return annotate([ops.object, ...entries], location);
+  return annotate([ops.object, null, ...entries], location);
 }
 
 /**
@@ -341,9 +341,10 @@ function makeMerge(spreads, location) {
 
   for (const spread of spreads) {
     if (spread[0] === ops.object) {
-      topEntries.push(...spread.slice(1));
+      const spreadEntries = spread.slice(2);
+      topEntries.push(...spreadEntries);
       // Also add an object to the result with indirect references
-      const indirectEntries = spread.slice(1).map((entry) => {
+      const indirectEntries = spreadEntries.map((entry) => {
         const [key] = entry;
         const parent = annotate([ops.inherited, 1], entry.location);
         const reference = annotate([parent, key], entry.location);
@@ -351,7 +352,7 @@ function makeMerge(spreads, location) {
         return annotate([key, getter], entry.location);
       });
       const indirectObject = annotate(
-        [ops.object, ...indirectEntries],
+        [ops.object, null, ...indirectEntries],
         location,
       );
       resultEntries.push(indirectObject);
@@ -367,7 +368,7 @@ function makeMerge(spreads, location) {
   topEntries.push(annotate(["_result", result], location));
 
   // Construct the top-level object
-  const topObject = annotate([ops.object, ...topEntries], location);
+  const topObject = annotate([ops.object, null, ...topEntries], location);
 
   // Get the _result property
   const code = annotate([topObject, "_result"], location);
@@ -389,13 +390,17 @@ export function makeObject(entries, location) {
     if (key === markers.spread) {
       if (value[0] === ops.object) {
         // Spread of an object; fold into current object
-        currentEntries.push(...value.slice(1));
+        const spreadEntries = value.slice(2);
+        currentEntries.push(...spreadEntries);
       } else {
         // Spread of a tree; accumulate
         if (currentEntries.length > 0) {
           const location = { ...currentEntries[0].location };
           location.end = currentEntries[currentEntries.length - 1].location.end;
-          const spread = annotate([ops.object, ...currentEntries], location);
+          const spread = annotate(
+            [ops.object, null, ...currentEntries],
+            location,
+          );
           spreads.push(spread);
           currentEntries = [];
         }
@@ -422,7 +427,7 @@ export function makeObject(entries, location) {
   if (currentEntries.length > 0) {
     const location = { ...currentEntries[0].location };
     location.end = currentEntries[currentEntries.length - 1].location.end;
-    const spread = annotate([ops.object, ...currentEntries], location);
+    const spread = annotate([ops.object, null, ...currentEntries], location);
     spreads.push(spread);
     currentEntries = [];
   }
@@ -440,7 +445,7 @@ export function makeObject(entries, location) {
     }
   } else {
     // Empty object
-    code = [ops.object];
+    code = [ops.object, null];
   }
 
   return annotate(code, location);
