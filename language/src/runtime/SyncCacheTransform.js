@@ -52,9 +52,7 @@ export default function SyncCacheTransform(Base) {
           const projectRootPath = root.path;
           const relativePath = path.relative(projectRootPath, this.path);
           let isPathWithinProjectRoot = !relativePath.startsWith("..");
-          this._cachePath = isPathWithinProjectRoot
-            ? `_root/${relativePath}`
-            : this.path;
+          this._cachePath = isPathWithinProjectRoot ? relativePath : this.path;
         } else {
           // Pick a default `cachePath` property
           this._cachePath = systemCache.nextDefaultCachePath();
@@ -64,14 +62,7 @@ export default function SyncCacheTransform(Base) {
     }
 
     cachePathForKey(key) {
-      let cachePath = this.cachePath;
-      if (!cachePath.endsWith("/")) {
-        cachePath += "/";
-      }
-      if (key !== ".") {
-        cachePath += key;
-      }
-      return cachePath;
+      return key === "." ? this.cachePath : path.join(this.cachePath, key);
     }
 
     delete(key) {

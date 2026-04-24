@@ -30,7 +30,6 @@ export default function getSource(packed, options = {}) {
       // TODO: clean up
       const root = Tree.root(parent);
       relativePath = path.join(
-        "_root",
         path.relative(root.path, parent.path),
         sourceName,
       );

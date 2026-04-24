@@ -126,9 +126,7 @@ function invalidate(filePath) {
   const rootPath = root.path;
   const relativePath = path.relative(rootPath, filePath);
   let isPathWithinProjectRoot = !relativePath.startsWith("..");
-  const cachePath = isPathWithinProjectRoot
-    ? `_root/${relativePath}`
-    : filePath;
+  const cachePath = isPathWithinProjectRoot ? relativePath : filePath;
   systemCache.delete(cachePath);
   process.send?.({ type: "INVALIDATED", filePath });
 }
