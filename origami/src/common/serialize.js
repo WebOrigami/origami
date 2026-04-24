@@ -43,6 +43,9 @@ export async function toJson(object) {
  * @returns {Promise<string>}
  */
 export async function toYaml(object) {
+  // TODO: The toPlainValue will remove trailing slashes from keys, which should
+  // only happen for maps that support trailing slash keys. For maps that don't,
+  // we should preserve trailing slashes.
   const serializable = await toPlainValue(object, reduceToMap);
   return YAML.stringify(serializable);
 }
