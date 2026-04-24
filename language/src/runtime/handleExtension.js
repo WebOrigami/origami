@@ -70,9 +70,9 @@ export default function handleExtension(value, key, handlers, parent = null) {
             : false;
           fileCachePath = isPathWithinProjectRoot ? relativePath : filePath;
         }
-        const cachePath = path.join(fileCachePath, "_unpack");
+        const unpackCachePath = trailingSlash.add(fileCachePath);
         value.unpack = async () =>
-          systemCache.getOrInsertComputedAsync(cachePath, async () => {
+          systemCache.getOrInsertComputedAsync(unpackCachePath, async () => {
             if (handler instanceof Promise) {
               handler = await handler;
             }

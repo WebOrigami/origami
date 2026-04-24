@@ -128,7 +128,7 @@ export default class SyncMap extends Map {
    */
   get(key) {
     let value = super.get.call(this._self, key);
-    if (value === undefined) {
+    if (value === undefined && this.trailingSlashKeys) {
       // Try alternate key with trailing slash added or removed
       value = super.get.call(this._self, trailingSlash.toggle(key));
     }

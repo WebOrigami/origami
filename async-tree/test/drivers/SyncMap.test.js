@@ -121,6 +121,7 @@ describe("SyncMap", () => {
       ["a", 1],
       ["b/", subMap],
     ]);
+    map.trailingSlashKeys = true;
     assert.strictEqual(map.get("a"), 1);
 
     const b = map.get("b/");

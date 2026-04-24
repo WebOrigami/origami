@@ -20,7 +20,7 @@ export default class ObjectMap extends SyncMap {
     // objects such as Node's `Module` class for representing an ES module.
     if (typeof object !== "object" || object === null) {
       throw new TypeError(
-        `${this.constructor.name}: Expected an object or array.`
+        `${this.constructor.name}: Expected an object or array.`,
       );
     }
     this.object = object;
@@ -38,6 +38,13 @@ export default class ObjectMap extends SyncMap {
   }
 
   get(key) {
+    if (key == null) {
+      // Reject nullish key
+      throw new ReferenceError(
+        `${this.constructor.name}: Cannot get a null or undefined key.`,
+      );
+    }
+
     // Does the object have the key with or without a trailing slash?
     const existingKey = findExistingKey(this.object, key);
     if (existingKey === null) {
@@ -111,7 +118,8 @@ export default class ObjectMap extends SyncMap {
           ? name
           : trailingSlash.toggle(
               name,
-              descriptor.value !== undefined && this.isSubtree(descriptor.value)
+              descriptor.value !== undefined &&
+                this.isSubtree(descriptor.value),
             );
         result.add(key);
       }

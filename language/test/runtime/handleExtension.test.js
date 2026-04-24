@@ -32,8 +32,8 @@ describe("handleExtension", () => {
     const data = await file.unpack();
     assert.equal(data, "Hello");
     const fileEntry = systemCache.get("hello.json");
-    const unpackEntry = systemCache.get("hello.json/_unpack");
-    assert(fileEntry.downstreams.has("hello.json/_unpack"));
+    const unpackEntry = systemCache.get("hello.json/");
+    assert(fileEntry.downstreams.has("hello.json/"));
     assert(unpackEntry.upstreams.has("hello.json"));
   });
 });
