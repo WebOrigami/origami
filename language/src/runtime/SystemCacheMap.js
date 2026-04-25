@@ -1,4 +1,4 @@
-import { SyncMap } from "@weborigami/async-tree";
+import { SyncMap, trailingSlash } from "@weborigami/async-tree";
 import { AsyncLocalStorage } from "node:async_hooks";
 
 // Async storage for tracking dependencies encountered during function evaluation
@@ -27,10 +27,11 @@ let nextPathId = 0;
 export default class SystemCacheMap extends SyncMap {
   delete(path) {
     const entry = this.get(path);
+    const deleted = super.delete(path);
     if (entry) {
       this.invalidateDependencies(path, entry);
     }
-    return super.delete(path);
+    return deleted;
   }
 
   // REVIEW: This doesn't have the correct signature for getOrInsertComputed,
@@ -107,6 +108,20 @@ export default class SystemCacheMap extends SyncMap {
         upstreamEntry?.downstreams.delete(path);
       }
     }
+
+    // Remove all child entries that implicitly depend on this entry
+    for (const [otherPath] of this.entries()) {
+      if (this.isChildPath(path, otherPath)) {
+        this.delete(otherPath);
+      }
+    }
+  }
+
+  // A path is considered a child path if the parent path (including a trailing
+  // slash) is a prefix of the child path.
+  isChildPath(parentPath, childPath) {
+    const normalized = trailingSlash.add(parentPath);
+    return childPath.startsWith(normalized);
   }
 
   nextDefaultCachePath() {
@@ -138,6 +153,12 @@ export default class SystemCacheMap extends SyncMap {
     const { downstream } =
       syncStorage.getStore() ?? asyncStorage.getStore() ?? {};
     if (downstream) {
+      if (this.isChildPath(upstreamPath, downstream)) {
+        // Downstream path is a child of the upstream path, no need to record
+        // explicit dependency
+        return;
+      }
+
       let downstreamEntry = this.get(downstream);
       if (!downstreamEntry) {
         // The downstream entry has been deleted from the cache. It seems that

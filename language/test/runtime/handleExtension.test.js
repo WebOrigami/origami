@@ -33,8 +33,10 @@ describe("handleExtension", () => {
     assert.equal(data, "Hello");
     const fileEntry = systemCache.get("hello.json");
     const unpackEntry = systemCache.get("hello.json/");
-    assert(fileEntry.downstreams.has("hello.json/"));
-    assert(unpackEntry.upstreams.has("hello.json"));
+
+    // Dependency of unpack entry to file entry is implicit, not explicit
+    assert(!fileEntry.downstreams?.has("hello.json/"));
+    assert(!unpackEntry.upstreams?.has("hello.json"));
   });
 });
 

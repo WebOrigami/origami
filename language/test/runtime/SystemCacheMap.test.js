@@ -165,6 +165,30 @@ describe("SystemCacheMap", () => {
     // a is sync but b is async
     await assert.rejects(getA);
   });
+
+  test("implicit dependency of child path on parent path", async () => {
+    const cache = new SystemCacheMap();
+
+    // Create cache entries
+    // parent = 1, parent/child = 2, other = 3
+    const getParent = () => cache.getOrInsertComputed("parent", () => 1);
+    cache.getOrInsertComputed("parent/child", () => {
+      // Force access of parent, no explicit dependency should be recorded
+      getParent();
+      return 2;
+    });
+    cache.getOrInsertComputed("other", () => 3);
+
+    assert.deepEqual(cacheEntries(cache), [
+      ["parent/child", { value: 2 }],
+      ["parent", { value: 1 }],
+      ["other", { value: 3 }],
+    ]);
+
+    // Deleting parent implicitly deletes all children
+    cache.delete("parent");
+    assert.deepEqual(cacheEntries(cache), [["other", { value: 3 }]]);
+  });
 });
 
 export function cacheEntries(cache) {
