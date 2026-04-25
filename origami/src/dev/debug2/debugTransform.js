@@ -84,7 +84,7 @@ export default function debugTransform(input) {
     // If this value is given to the server, the server will call this pack()
     // method. We respond with the index page.
     async pack() {
-      return this.get("index.html");
+      return source.pack?.() ?? this.get("index.html");
     },
 
     parent: source.parent,

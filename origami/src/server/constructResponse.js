@@ -19,6 +19,16 @@ export default async function constructResponse(request, resource) {
   // Determine media type, what data we'll send, and encoding.
   const url = new URL(request?.url ?? "", `https://${request?.headers.host}`);
 
+  if (!isPacked(resource) && typeof resource.pack === "function") {
+    resource = await resource.pack();
+    if (typeof resource === "function") {
+      resource = await resource();
+    }
+    if (resource instanceof Response) {
+      return resource;
+    }
+  }
+
   if (!url.pathname.endsWith("/") && Tree.isMaplike(resource)) {
     // Maplike resource: redirect to its index page.
     const Location = `${url.pathname}/`;
@@ -28,16 +38,6 @@ export default async function constructResponse(request, resource) {
       },
       status: 307,
     });
-  }
-
-  if (!isPacked(resource) && typeof resource.pack === "function") {
-    resource = await resource.pack();
-    if (typeof resource === "function") {
-      resource = await resource();
-    }
-    if (resource instanceof Response) {
-      return resource;
-    }
   }
 
   let body = resource;
