@@ -27,11 +27,65 @@ let nextPathId = 0;
 export default class SystemCacheMap extends SyncMap {
   delete(path) {
     const entry = this.get(path);
-    const deleted = super.delete(path);
-    if (entry) {
-      this.invalidateDependencies(path, entry);
+    if (!entry) {
+      return false; // Path not in cache
     }
-    return deleted;
+
+    const pathsToDelete = new Set([path]);
+    const entriesToDetach = new Set([entry]);
+
+    // Start with the given entry, then add all entries with child paths that
+    // implicitly depend on this entry. These child entries won't need to be
+    // detached from upstream entries -- they all ultimately depend on this
+    // entry which we're about to delete.
+    const entryQueue = [entry];
+    for (const [otherPath, otherEntry] of this.entries()) {
+      if (this.isChildPath(path, otherPath)) {
+        pathsToDelete.add(otherPath);
+        entryQueue.push(otherEntry);
+      }
+    }
+
+    // For each entry, add all downstream entries that explicitly depend on it.
+    // Enqueue those so that their downstreams can be processed too.
+    while (entryQueue.length > 0) {
+      const current = entryQueue.shift();
+      if (current.downstreams) {
+        for (const downstreamPath of current.downstreams) {
+          if (!pathsToDelete.has(downstreamPath)) {
+            pathsToDelete.add(downstreamPath);
+            const downstreamEntry = this.get(downstreamPath);
+            if (downstreamEntry) {
+              entryQueue.push(downstreamEntry);
+              entriesToDetach.add(downstreamEntry);
+            }
+          }
+        }
+      }
+    }
+
+    // Delete everything
+    for (const deletePath of pathsToDelete) {
+      super.delete(deletePath);
+    }
+
+    // Remove deleted entries as being downstream from still-existing entries
+    for (const detachEntry of entriesToDetach) {
+      if (detachEntry.upstreams) {
+        for (const upstreamPath of detachEntry.upstreams) {
+          const upstreamEntry = this.get(upstreamPath);
+          if (upstreamEntry?.downstreams) {
+            upstreamEntry.downstreams.delete(detachEntry.path);
+            if (upstreamEntry.downstreams.size === 0) {
+              // No more downstream dependencies, clean up entry
+              delete upstreamEntry.downstreams;
+            }
+          }
+        }
+      }
+    }
+
+    return true;
   }
 
   // REVIEW: This doesn't have the correct signature for getOrInsertComputed,
@@ -93,30 +147,6 @@ export default class SystemCacheMap extends SyncMap {
     return entry.value;
   }
 
-  invalidateDependencies(path, entry) {
-    // Invalidate downstream cached values
-    if (entry.downstreams) {
-      for (const downstreamPath of entry.downstreams) {
-        this.delete(downstreamPath);
-      }
-    }
-
-    // Remove this entry from upstreams of any entries it depends on
-    if (entry.upstreams) {
-      for (const upstreamPath of entry.upstreams) {
-        const upstreamEntry = this.get(upstreamPath);
-        upstreamEntry?.downstreams.delete(path);
-      }
-    }
-
-    // Remove all child entries that implicitly depend on this entry
-    for (const [otherPath] of this.entries()) {
-      if (this.isChildPath(path, otherPath)) {
-        this.delete(otherPath);
-      }
-    }
-  }
-
   // A path is considered a child path if the parent path (including a trailing
   // slash) is a prefix of the child path.
   isChildPath(parentPath, childPath) {
@@ -176,16 +206,5 @@ export default class SystemCacheMap extends SyncMap {
       downstreamEntry.upstreams ??= new Set();
       downstreamEntry.upstreams.add(upstreamPath);
     }
-  }
-
-  updateValue(path, value) {
-    let entry = this.get(path);
-    if (entry) {
-      this.invalidateDependencies(path, entry);
-    } else {
-      entry = {};
-      this.set(path, entry);
-    }
-    entry.value = value;
   }
 }

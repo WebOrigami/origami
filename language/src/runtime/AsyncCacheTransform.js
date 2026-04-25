@@ -127,12 +127,12 @@ export default function AsyncCacheTransform(Base) {
     }
 
     async set(key, value) {
-      systemCache.updateValue(this.cachePathForKey(key), value);
-      if (!(await this.has(key))) {
+      systemCache.delete(this.cachePathForKey(key));
+      if (!this.has(key)) {
         // Adding a new key, need to invalidate cached keys
         this.invalidateKeys();
       }
-      await super.set(key, value);
+      super.set(key, value);
     }
   };
 }
