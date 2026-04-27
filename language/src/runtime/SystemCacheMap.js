@@ -31,8 +31,8 @@ export default class SystemCacheMap extends SyncMap {
       return false; // Path not in cache
     }
 
-    const pathsToDelete = new Set([path]);
-    const entriesToDetach = new Set([entry]);
+    // Construct a Map of all (path, entry) tuples to delete
+    const tuplesToDelete = new Map([[path, entry]]);
 
     // Start with the given entry, then add all entries with child paths that
     // implicitly depend on this entry. These child entries won't need to be
@@ -41,7 +41,7 @@ export default class SystemCacheMap extends SyncMap {
     const entryQueue = [entry];
     for (const [otherPath, otherEntry] of this.entries()) {
       if (this.isChildPath(path, otherPath)) {
-        pathsToDelete.add(otherPath);
+        tuplesToDelete.set(otherPath, otherEntry);
         entryQueue.push(otherEntry);
       }
     }
@@ -49,15 +49,14 @@ export default class SystemCacheMap extends SyncMap {
     // For each entry, add all downstream entries that explicitly depend on it.
     // Enqueue those so that their downstreams can be processed too.
     while (entryQueue.length > 0) {
-      const current = entryQueue.shift();
-      if (current.downstreams) {
-        for (const downstreamPath of current.downstreams) {
-          if (!pathsToDelete.has(downstreamPath)) {
-            pathsToDelete.add(downstreamPath);
+      const currentEntry = entryQueue.shift();
+      if (currentEntry.downstreams) {
+        for (const downstreamPath of currentEntry.downstreams) {
+          if (!tuplesToDelete.has(downstreamPath)) {
             const downstreamEntry = this.get(downstreamPath);
             if (downstreamEntry) {
               entryQueue.push(downstreamEntry);
-              entriesToDetach.add(downstreamEntry);
+              tuplesToDelete.set(downstreamPath, downstreamEntry);
             }
           }
         }
@@ -65,17 +64,17 @@ export default class SystemCacheMap extends SyncMap {
     }
 
     // Delete everything
-    for (const deletePath of pathsToDelete) {
+    for (const deletePath of tuplesToDelete.keys()) {
       super.delete(deletePath);
     }
 
     // Remove deleted entries as being downstream from still-existing entries
-    for (const detachEntry of entriesToDetach) {
-      if (detachEntry.upstreams) {
-        for (const upstreamPath of detachEntry.upstreams) {
+    for (const [deletePath, deleteEntry] of tuplesToDelete.entries()) {
+      if (deleteEntry.upstreams) {
+        for (const upstreamPath of deleteEntry.upstreams) {
           const upstreamEntry = this.get(upstreamPath);
           if (upstreamEntry?.downstreams) {
-            upstreamEntry.downstreams.delete(detachEntry.path);
+            upstreamEntry.downstreams.delete(deletePath);
             if (upstreamEntry.downstreams.size === 0) {
               // No more downstream dependencies, clean up entry
               delete upstreamEntry.downstreams;
