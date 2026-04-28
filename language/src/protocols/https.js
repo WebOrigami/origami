@@ -1,3 +1,4 @@
+import systemCache from "../runtime/systemCache.js";
 import constructHref from "./constructHref.js";
 import fetchAndHandleExtension from "./fetchAndHandleExtension.js";
 
@@ -11,6 +12,8 @@ import fetchAndHandleExtension from "./fetchAndHandleExtension.js";
 export default async function https(host, ...keys) {
   const state = keys.pop();
   const href = constructHref("https:", host, ...keys);
-  return fetchAndHandleExtension(href, state.parent);
+  return systemCache.getOrInsertComputedAsync(href, () =>
+    fetchAndHandleExtension(href, state.parent),
+  );
 }
 https.needsState = true;

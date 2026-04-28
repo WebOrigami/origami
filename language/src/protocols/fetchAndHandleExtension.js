@@ -24,7 +24,7 @@ export default async function fetchAndHandleExtension(href, parent) {
   // Attach any loader defined for the file type.
   const url = new URL(href);
   const filename = url.pathname.split("/").pop();
-  if (filename) {
+  if (filename && parent) {
     const root = Tree.root(parent);
     const globals = root.globals;
     buffer = await handleExtension(buffer, filename, globals, parent);
