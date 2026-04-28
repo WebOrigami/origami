@@ -14,7 +14,7 @@ import projectConfig from "./projectConfig.js";
  * @typedef {import("@weborigami/async-tree").SyncOrAsyncMap} SyncOrAsyncMap
  * @param {SyncOrAsyncMap} parent
  */
-export default async function projectGlobals(parent) {
+export default async function initializeGlobalsForTree(parent) {
   const projectRoot = Tree.root(parent);
   if (!projectRoot.globals) {
     // Start with a copy of the core globals

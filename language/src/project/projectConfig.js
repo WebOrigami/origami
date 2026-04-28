@@ -10,7 +10,7 @@ import coreGlobals from "./coreGlobals.js";
  * @typedef {import("@weborigami/async-tree").SyncOrAsyncMap} SyncOrAsyncMap
  * @param {SyncOrAsyncMap} parent
  */
-export default async function config(parent) {
+export default async function projectConfig(parent) {
   const projectRoot = Tree.root(parent);
 
   let configObject = {};
