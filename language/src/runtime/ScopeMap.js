@@ -26,7 +26,7 @@ export default class ScopeMap extends SyncMap {
       // of this folder as an upstream dependency of the value being requested.
       if (current.cachePath) {
         const folderKeysPath = path.join(current.cachePath, "_keys");
-        systemCache.trackDependency(folderKeysPath);
+        systemCache.trackCurrentDependency(folderKeysPath);
       }
 
       value = current.get(key);

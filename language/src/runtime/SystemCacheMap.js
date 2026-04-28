@@ -26,22 +26,26 @@ let nextPathId = 0;
 
 export default class SystemCacheMap extends SyncMap {
   delete(path) {
+    // Construct a Map of all (path, entry) tuples to delete
+    const toDelete = new Map();
+
+    // Also construct a queue of entries to process for downstream dependencies
+    const entryQueue = [];
+
     const entry = this.get(path);
-    if (!entry) {
-      return false; // Path not in cache
+    if (entry) {
+      // We'll need to delete the existing entry for this path
+      toDelete.set(path, entry);
+      // Seed the queue with the existing entry
+      entryQueue.push(entry);
     }
 
-    // Construct a Map of all (path, entry) tuples to delete
-    const tuplesToDelete = new Map([[path, entry]]);
-
-    // Start with the given entry, then add all entries with child paths that
-    // implicitly depend on this entry. These child entries won't need to be
-    // detached from upstream entries -- they all ultimately depend on this
-    // entry which we're about to delete.
-    const entryQueue = [entry];
+    // Add all entries with child paths that implicitly depend on this entry.
+    // These child entries won't need to be detached from upstream entries --
+    // they all ultimately depend on this entry which we're about to delete.
     for (const [otherPath, otherEntry] of this.entries()) {
       if (this.isChildPath(path, otherPath)) {
-        tuplesToDelete.set(otherPath, otherEntry);
+        toDelete.set(otherPath, otherEntry);
         entryQueue.push(otherEntry);
       }
     }
@@ -52,11 +56,11 @@ export default class SystemCacheMap extends SyncMap {
       const currentEntry = entryQueue.shift();
       if (currentEntry.downstreams) {
         for (const downstreamPath of currentEntry.downstreams) {
-          if (!tuplesToDelete.has(downstreamPath)) {
+          if (!toDelete.has(downstreamPath)) {
             const downstreamEntry = this.get(downstreamPath);
             if (downstreamEntry) {
               entryQueue.push(downstreamEntry);
-              tuplesToDelete.set(downstreamPath, downstreamEntry);
+              toDelete.set(downstreamPath, downstreamEntry);
             }
           }
         }
@@ -64,12 +68,12 @@ export default class SystemCacheMap extends SyncMap {
     }
 
     // Delete everything
-    for (const deletePath of tuplesToDelete.keys()) {
+    for (const deletePath of toDelete.keys()) {
       super.delete(deletePath);
     }
 
     // Remove deleted entries as being downstream from still-existing entries
-    for (const [deletePath, deleteEntry] of tuplesToDelete.entries()) {
+    for (const [deletePath, deleteEntry] of toDelete.entries()) {
       if (deleteEntry.upstreams) {
         for (const upstreamPath of deleteEntry.upstreams) {
           const upstreamEntry = this.get(upstreamPath);
@@ -107,7 +111,7 @@ export default class SystemCacheMap extends SyncMap {
       entry.value = syncStorage.run(context, computeFn);
     }
 
-    this.trackDependency(path, entry);
+    this.trackCurrentDependency(path, entry);
 
     return entry.value;
   }
@@ -141,7 +145,7 @@ export default class SystemCacheMap extends SyncMap {
       });
     }
 
-    this.trackDependency(path, entry);
+    this.trackCurrentDependency(path, entry);
 
     return entry.value;
   }
@@ -167,7 +171,7 @@ export default class SystemCacheMap extends SyncMap {
    * @param {string} upstreamPath
    * @param {any} [upstreamEntry]
    */
-  trackDependency(upstreamPath, upstreamEntry = null) {
+  trackCurrentDependency(upstreamPath, upstreamEntry = null) {
     if (!upstreamEntry) {
       upstreamEntry = this.get(upstreamPath);
       if (!upstreamEntry) {

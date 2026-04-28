@@ -85,16 +85,11 @@ export default function handleExtension(value, key, handlers, parent = null) {
               handler = await handler.unpack();
             }
 
-            // If we have a parent, we get the data from the parent map again.
-            // This is inefficient but: a) this reads the loaded data from the
-            // file cache so it's not that slow and b) this ensures the file
-            // data is tracked as an upstream dependency of the unpacked
-            // value.
-            const data = parent ? await parent.get(key) : value;
-            const unpacked = await handler.unpack(data, {
+            const unpacked = await handler.unpack(value, {
               key,
               parent,
             });
+
             return unpacked;
           });
       }

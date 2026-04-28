@@ -27,9 +27,13 @@ export default function HandleExtensionsTransform(Base) {
     }
 
     get(key) {
-      const value = super.get(key);
       const globals = getGlobalsForTree(this);
-      return handleExtension(value, key, globals, this);
+      const value = super.get(key);
+      return value instanceof Promise
+        ? value.then((resolved) =>
+            handleExtension(resolved, key, globals, this),
+          )
+        : handleExtension(value, key, globals, this);
     }
 
     // See delete()
