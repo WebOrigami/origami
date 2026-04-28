@@ -8,6 +8,6 @@ import constructSiteTree from "./constructSiteTree.js";
  * @param {string} host
  * @param  {...string} keys
  */
-export default function explorehttp(host, ...keys) {
+export default async function explorehttp(host, ...keys) {
   return constructSiteTree("http:", ExplorableSiteMap, host, ...keys);
 }

@@ -1,5 +1,6 @@
 import { trailingSlash } from "@weborigami/async-tree";
 import HandleExtensionsTransform from "../runtime/HandleExtensionsTransform.js";
+import systemCache from "../runtime/systemCache.js";
 import constructHref from "./constructHref.js";
 
 /**
@@ -12,7 +13,12 @@ import constructHref from "./constructHref.js";
  * @param {string} host
  * @param  {string[]} keys
  */
-export default function constructSiteTree(protocol, mapClass, host, ...keys) {
+export default async function constructSiteTree(
+  protocol,
+  mapClass,
+  host,
+  ...keys
+) {
   // If the last key doesn't end in a slash, remove it for now.
   let lastKey;
   if (keys.length > 0 && keys.at(-1) && !trailingSlash.has(keys.at(-1))) {
@@ -20,7 +26,10 @@ export default function constructSiteTree(protocol, mapClass, host, ...keys) {
   }
 
   const href = constructHref(protocol, host, ...keys);
-  let result = new (HandleExtensionsTransform(mapClass))(href);
+  const result = await systemCache.getOrInsertComputedAsync(
+    href,
+    () => new (HandleExtensionsTransform(mapClass))(href),
+  );
 
   return lastKey ? result.get(lastKey) : result;
 }
