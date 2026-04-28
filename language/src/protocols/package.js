@@ -1,5 +1,6 @@
 import { Tree, keysFromPath, pathFromKeys } from "@weborigami/async-tree";
 import projectRoot from "../project/projectRoot.js";
+import systemCache from "../runtime/systemCache.js";
 
 /**
  * The package: protocol handler
@@ -9,15 +10,27 @@ import projectRoot from "../project/projectRoot.js";
 export default async function packageProtocol(...args) {
   const state = args.pop(); // Remaining args are the path
   const root = await projectRoot(state);
+  const path = pathFromKeys(args);
+  if (!path) {
+    throw new Error("package: protocol requires a package name");
+  }
+  const href = `package:${path}`;
+  const result = await systemCache.getOrInsertComputedAsync(href, () =>
+    loadPackage(root, args),
+  );
+  return result;
+}
+packageProtocol.needsState = true;
 
+async function loadPackage(root, args) {
   // Identify the path to the package root
-  const packageRootKeys = ["node_modules"];
+  const packageRootKeys = ["node_modules/"];
   let name = args.shift();
   packageRootKeys.push(name);
   if (name.startsWith("@")) {
     // First key is an npm organization, add next key as name
     const nameArg = args.shift();
-    name += "/" + nameArg;
+    name = pathFromKeys([name, nameArg]);
     packageRootKeys.push(nameArg);
   }
   const packageRootPath = pathFromKeys(packageRootKeys);
@@ -60,4 +73,3 @@ export default async function packageProtocol(...args) {
 
   return result;
 }
-packageProtocol.needsState = true;

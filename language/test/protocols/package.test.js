@@ -14,6 +14,8 @@ describe("package: protocol", () => {
     const state = { globals, parent };
 
     const result = await packageProtocol("@weborigami", "async-tree", state);
+
+    // Try a method from the package
     const { toString } = result;
     assert.equal(toString(123), "123");
   });
