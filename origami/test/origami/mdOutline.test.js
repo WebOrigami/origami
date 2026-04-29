@@ -55,4 +55,27 @@ Text of section 2.1.1.
       _text: "This is a document with no headings.",
     });
   });
+
+  test("document with missing headings", async () => {
+    const markdown = `
+## Section 1.1
+
+Text of section 1.1.
+
+#### Section 1.1.1.1
+
+Text of section 1.1.1.1.
+`;
+    const outline = await mdOutline(markdown);
+    assert.deepStrictEqual(outline, {
+      _skip1: {
+        "Section 1.1": {
+          _text: "Text of section 1.1.",
+          _skip3: {
+            "Section 1.1.1.1": "Text of section 1.1.1.1.",
+          },
+        },
+      },
+    });
+  });
 });
