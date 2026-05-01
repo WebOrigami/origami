@@ -22,18 +22,29 @@ export default async function mdOutline(input) {
   const outline = {};
   const stack = [];
   let sectionText = "";
+  let sectionTextTrimmed = null;
   /** @type {any} */
   let current = outline;
   for (const token of tokens) {
     if (token.type === "heading") {
       // Current section text gets added as content for the current node.
-      if (sectionText) {
-        current._text = sectionText.trim();
+      sectionTextTrimmed = sectionText.trim();
+      if (sectionTextTrimmed) {
+        current._text = sectionTextTrimmed;
         sectionText = "";
       }
 
-      // Pop the stack to find the right level for this heading
       const { depth, text: headingText } = token;
+
+      // Did we skip a heading level? If so, create `_skip<n>` nodes
+      while (stack.length < depth - 1) {
+        const skipNode = {};
+        current[`_skip${stack.length + 1}`] = skipNode;
+        stack.push(current);
+        current = skipNode;
+      }
+
+      // Pop the stack to find the right level for this heading
       while (stack.length >= depth) {
         current = stack.pop();
         consolidateText(current);
@@ -51,8 +62,9 @@ export default async function mdOutline(input) {
   }
 
   // Any remaining section text gets added as content for the current node.
-  if (sectionText) {
-    current._text = sectionText.trim();
+  sectionTextTrimmed = sectionText.trim();
+  if (sectionTextTrimmed) {
+    current._text = sectionTextTrimmed;
     current = stack.pop();
     if (current) {
       consolidateText(current);
