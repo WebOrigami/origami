@@ -41,9 +41,6 @@ if (parentPath === undefined) {
 
 const quiet = process.env.ORIGAMI_QUIET === "1";
 
-// An indirect pointer to the tree of resources;
-// let treeHandle = {};
-
 // Get a handle to the tree produced by evaluating the expression
 const treeHandle = await handleToEvaluatedExpression(expression, parentPath);
 
