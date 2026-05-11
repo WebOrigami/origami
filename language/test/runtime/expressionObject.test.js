@@ -27,21 +27,34 @@ describe("expressionObject", () => {
     assert.equal(object[symbols.parent], context);
   });
 
-  test("can define a property getter", async () => {
+  test.only("with caching off, property getter upgrades to a static property", async () => {
     let count = 0;
     const increment = () => count++;
     const entries = [["count", [ops.getter, [increment]]]];
     const object = await expressionObject(null, entries);
+    const propertyDescriptor1 = Object.getOwnPropertyDescriptor(
+      object,
+      "count",
+    );
+    assert(propertyDescriptor1?.get); // should be a getter at this point
     assert.equal(await object.count, 0);
-    assert.equal(await object.count, 1); // getter result not cached
+    assert.equal(count, 1); // getter should have been called
+    const propertyDescriptor2 = Object.getOwnPropertyDescriptor(
+      object,
+      "count",
+    );
+    assert.equal(propertyDescriptor2?.value, 0); // should be a static property now
   });
 
-  test("can define a cached property getter", async () => {
+  test.only("with caching on, property getter uses system cache", async () => {
     let count = 0;
     const increment = () => count++;
     const entries = [["count", [ops.getter, [increment]]]];
     const object = await expressionObject("foo.ori/", entries);
     assert.equal(await object.count, 0);
+    const propertyDescriptor = Object.getOwnPropertyDescriptor(object, "count");
+    assert(propertyDescriptor?.get); // should still be a getter
+    assert.equal(count, 1); // getter should have been called
     assert.equal(await object.count, 0); // getter result should be cached
   });
 

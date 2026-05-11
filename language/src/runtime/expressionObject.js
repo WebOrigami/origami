@@ -136,36 +136,47 @@ function defineProperty(object, propertyInfo, state, map) {
             )
           : await execute(value, newState);
 
-        // Cache the result
-        if (
-          propertyCachePath &&
-          Tree.isMap(result) &&
-          // @ts-ignore
-          !(result.cachePath && result[cachePathSymbol]) &&
-          !(
-            isTransformApplied(SyncCacheTransform, result) ||
-            isTransformApplied(AsyncCacheTransform, result)
-          )
-        ) {
-          if (result instanceof Map) {
-            if (!(result instanceof SyncMap)) {
-              // Convert regular Map to SyncMap so we can extend it
-              result = new (SyncCacheTransform(SyncMap))(result);
-            } else {
-              // Cache a SyncMap
-              result = transformObject(SyncCacheTransform, result);
-            }
-          } else {
-            // Cache an AsyncMap
-            result = transformObject(AsyncCacheTransform, result);
-          }
-          result._cachePath = propertyCachePath;
+        if (hasExtension) {
+          // Handle extension
+          result = handleExtension(result, key, globals, map);
         }
 
-        // Handle extension
-        return hasExtension
-          ? handleExtension(result, key, globals, map)
-          : result;
+        // Cache the result
+        if (propertyCachePath) {
+          if (
+            Tree.isMap(result) &&
+            // @ts-ignore
+            !(result.cachePath && result[cachePathSymbol]) &&
+            !(
+              isTransformApplied(SyncCacheTransform, result) ||
+              isTransformApplied(AsyncCacheTransform, result)
+            )
+          ) {
+            if (result instanceof Map) {
+              if (!(result instanceof SyncMap)) {
+                // Convert regular Map to SyncMap so we can extend it
+                result = new (SyncCacheTransform(SyncMap))(result);
+              } else {
+                // Cache a SyncMap
+                result = transformObject(SyncCacheTransform, result);
+              }
+            } else {
+              // Cache an AsyncMap
+              result = transformObject(AsyncCacheTransform, result);
+            }
+            result._cachePath = propertyCachePath;
+          }
+        } else {
+          // Memoize result on the object itself
+          Object.defineProperty(object, key, {
+            configurable: true,
+            enumerable,
+            value: result,
+            writable: true,
+          });
+        }
+
+        return result;
       },
     });
   }
