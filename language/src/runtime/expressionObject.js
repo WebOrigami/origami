@@ -12,7 +12,7 @@ import AsyncCacheTransform from "./AsyncCacheTransform.js";
 import execute from "./execute.js";
 import handleExtension from "./handleExtension.js";
 import { ops } from "./internal.js";
-import { cachePathSymbol } from "./symbols.js";
+import { cachePathSymbol, cachingSymbol } from "./symbols.js";
 import SyncCacheTransform from "./SyncCacheTransform.js";
 import systemCache from "./systemCache.js";
 
@@ -44,9 +44,16 @@ export default async function expressionObject(cachePath, entries, state = {}) {
   }
   setParent(object, parent);
 
+  Object.defineProperty(object, cachePathSymbol, {
+    configurable: true,
+    enumerable: false,
+    value: cachePath,
+    writable: true,
+  });
+
   // The object in Map form for use on the stack
   const map = new ObjectMap(object);
-  map.cachePath = cachePath;
+  // map.cachePath = cachePath;
 
   // Preparation: gather information about all properties
   const infos = entries.map(([key, value]) => propertyInfo(key, value));
@@ -126,10 +133,9 @@ function defineProperty(object, propertyInfo, state, map) {
       enumerable,
       get: async () => {
         // Execute the code to get the value of the property
+        const propertyCachePath = getPropertyCachePath(object, key);
+
         const newState = Object.assign({}, state, { object: map });
-        const propertyCachePath = map.cachePath
-          ? path.join(map.cachePath, key)
-          : null;
         let result = propertyCachePath
           ? await systemCache.getOrInsertComputedAsync(propertyCachePath, () =>
               execute(value, newState),
@@ -166,7 +172,7 @@ function defineProperty(object, propertyInfo, state, map) {
             }
             result._cachePath = propertyCachePath;
           }
-        } else {
+        } else if (valueType === VALUE_TYPE.EAGER) {
           // Memoize result on the object itself
           Object.defineProperty(object, key, {
             configurable: true,
@@ -180,6 +186,22 @@ function defineProperty(object, propertyInfo, state, map) {
       },
     });
   }
+}
+
+function getPropertyCachePath(object, key) {
+  // Find root of parent chain
+  let root = object;
+  while (root[symbols.parent]) {
+    root = root[symbols.parent];
+  }
+
+  if (!root[cachingSymbol]) {
+    // Caching isn't enabled on this object tree
+    return null;
+  }
+
+  const cachePath = path.join(object[cachePathSymbol], key);
+  return cachePath;
 }
 
 export function isTransformApplied(Transform, obj) {

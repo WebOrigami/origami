@@ -4,6 +4,7 @@ import { describe, test } from "node:test";
 
 import expressionObject from "../../src/runtime/expressionObject.js";
 import { ops } from "../../src/runtime/internal.js";
+import { cachingSymbol } from "../../src/runtime/symbols.js";
 import systemCache from "../../src/runtime/systemCache.js";
 
 describe("expressionObject", () => {
@@ -27,30 +28,23 @@ describe("expressionObject", () => {
     assert.equal(object[symbols.parent], context);
   });
 
-  test.only("with caching off, property getter upgrades to a static property", async () => {
+  test("static property", async () => {
     let count = 0;
     const increment = () => count++;
-    const entries = [["count", [ops.getter, [increment]]]];
-    const object = await expressionObject(null, entries);
-    const propertyDescriptor1 = Object.getOwnPropertyDescriptor(
-      object,
-      "count",
-    );
-    assert(propertyDescriptor1?.get); // should be a getter at this point
-    assert.equal(await object.count, 0);
+    const entries = [["count", [increment]]];
+    const object = await expressionObject("foo.ori/", entries);
+    const propertyDescriptor = Object.getOwnPropertyDescriptor(object, "count");
+    assert.equal(propertyDescriptor?.value, 0);
+    assert.equal(object.count, 0);
     assert.equal(count, 1); // getter should have been called
-    const propertyDescriptor2 = Object.getOwnPropertyDescriptor(
-      object,
-      "count",
-    );
-    assert.equal(propertyDescriptor2?.value, 0); // should be a static property now
   });
 
-  test.only("with caching on, property getter uses system cache", async () => {
+  test("with caching on, property getter uses system cache", async () => {
     let count = 0;
     const increment = () => count++;
     const entries = [["count", [ops.getter, [increment]]]];
     const object = await expressionObject("foo.ori/", entries);
+    object[cachingSymbol] = true; // enable caching on this object tree
     assert.equal(await object.count, 0);
     const propertyDescriptor = Object.getOwnPropertyDescriptor(object, "count");
     assert(propertyDescriptor?.get); // should still be a getter
@@ -153,8 +147,9 @@ describe("expressionObject", () => {
     // The `number` property gets a value from the cache
     const getNumber = () =>
       systemCache.getOrInsertComputed("dependency", () => 1);
-    const entries = [["number", [getNumber]]];
+    const entries = [["number", [ops.getter, [getNumber]]]];
     const object = await expressionObject("src/test.ori/", entries);
+    object[cachingSymbol] = true; // enable caching on this object tree
     const number = await object.number;
     assert.equal(number, 1);
 

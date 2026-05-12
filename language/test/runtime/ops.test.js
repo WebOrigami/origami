@@ -54,6 +54,15 @@ describe("ops", () => {
     assert.strictEqual(ops.bitwiseXor(5, 3), 6);
   });
 
+  test("ops.cache", async () => {
+    const fn = () => 1;
+    const code = createCode([ops.object, "b.ori/", ["a", [ops.getter, [fn]]]]);
+    const result = await ops.cache("a.ori/_refs/b.ori/", code, {});
+    assert.deepEqual(await Tree.plain(result), { a: 1 });
+    const cachedResult = await systemCache.get("a.ori/_refs/b.ori/");
+    assert.strictEqual(await cachedResult.value.a, 1);
+  });
+
   test("ops.comma returns the last value", async () => {
     const code = createCode([ops.comma, 1, 2, 3]);
     const result = await execute(code);

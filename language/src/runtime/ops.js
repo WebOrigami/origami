@@ -88,9 +88,10 @@ addOpLabel(bitwiseXor, "«ops.bitwiseXor»");
  * @param {RuntimeState} state
  */
 export function cache(cachePath, code, state) {
-  return systemCache.getOrInsertComputedAsync(cachePath, () =>
+  const result = systemCache.getOrInsertComputedAsync(cachePath, () =>
     execute(code, state),
   );
+  return result;
 }
 addOpLabel(cache, "«ops.cache»");
 cache.needsState = true;
@@ -131,7 +132,7 @@ export async function construct(constructor, ...args) {
 export async function deepText(...args) {
   return Tree.deepText(args);
 }
-addOpLabel(deepText, "«ops.deepText");
+addOpLabel(deepText, "«ops.deepText»");
 
 /**
  * Default value for a parameter: if the value is defined, return that;
