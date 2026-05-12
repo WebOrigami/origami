@@ -1,8 +1,9 @@
-import { getParent, setParent } from "@weborigami/async-tree";
+import { getParent } from "@weborigami/async-tree";
 import * as compile from "../compiler/compile.js";
 import coreGlobals from "../project/coreGlobals.js";
 import getGlobalsForTree from "../project/getGlobalsForTree.js";
 import getSource from "./getSource.js";
+import processOriExport from "./processOriExport.js";
 
 /**
  * An Origami expression file
@@ -30,9 +31,7 @@ export default {
     // Evaluate the program
     const result = await fn();
 
-    if (parent) {
-      setParent(result, parent);
-    }
+    processOriExport(result, parent);
 
     return result;
   },

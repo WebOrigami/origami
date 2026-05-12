@@ -3,6 +3,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import ori_handler from "../../src/handlers/ori_handler.js";
 import OrigamiFileMap from "../../src/runtime/OrigamiFileMap.js";
+import { cachePathSymbol, cachingSymbol } from "../../src/runtime/symbols.js";
 
 const fixturesUrl = new URL("fixtures", import.meta.url);
 const fixtures = new OrigamiFileMap(fixturesUrl);
@@ -86,5 +87,21 @@ describe(".ori handler", async () => {
     const tree = await ori_handler.unpack(source);
     const indexHtml = await tree["index.html"];
     assert.equal(indexHtml, "Hello, world!");
+  });
+
+  test("enables caching for top-level object", async () => {
+    const parent = new ObjectMap({});
+    const source = `{
+      message = "Hello"
+    }`;
+    const object = await ori_handler.unpack(source, {
+      key: "test.ori",
+      parent,
+    });
+    assert.equal(object[cachePathSymbol], "test.ori/");
+    assert.equal(object[cachingSymbol], true);
+    assert.deepEqual(await Tree.plain(object), {
+      message: "Hello",
+    });
   });
 });

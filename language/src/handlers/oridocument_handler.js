@@ -1,16 +1,9 @@
-import {
-  extension,
-  getParent,
-  isPlainObject,
-  setParent,
-  trailingSlash,
-} from "@weborigami/async-tree";
-import path from "node:path";
+import { extension, getParent, trailingSlash } from "@weborigami/async-tree";
 import * as compile from "../compiler/compile.js";
 import coreGlobals from "../project/coreGlobals.js";
 import getGlobalsForTree from "../project/getGlobalsForTree.js";
-import { cachePathSymbol } from "../runtime/symbols.js";
 import getSource from "./getSource.js";
+import processOriExport from "./processOriExport.js";
 
 /**
  * An Origami template document: a plain text file that contains Origami
@@ -27,7 +20,7 @@ export default {
     // Compile the source code as an Origami template document
     const globals =
       options.globals ?? getGlobalsForTree(parent) ?? (await coreGlobals());
-    const defineFn = compile.templateDocument(source, {
+    const fn = compile.templateDocument(source, {
       front: options.front,
       globals,
       mode: "program",
@@ -35,7 +28,9 @@ export default {
     });
 
     // Invoke the definition to get back the template function or object
-    const result = await defineFn();
+    const result = await fn();
+
+    processOriExport(result, parent);
 
     if (result instanceof Function) {
       const key = options.key;
@@ -43,22 +38,6 @@ export default {
       if (resultExtension && Object.isExtensible(result)) {
         // Add sidecar function so this template can be used in a map.
         result.key = addExtension(resultExtension);
-      }
-    } else if (parent) {
-      setParent(result, parent);
-      const parentCachePath = /** @type {any} */ (parent).cachePath;
-      if (
-        isPlainObject(result) &&
-        // @ts-ignore
-        !result[cachePathSymbol] &&
-        parentCachePath &&
-        options.key
-      ) {
-        Object.defineProperty(result, cachePathSymbol, {
-          value: path.join(parentCachePath, options.key),
-          enumerable: false,
-          configurable: true,
-        });
       }
     }
 

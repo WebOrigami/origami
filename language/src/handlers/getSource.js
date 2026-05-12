@@ -33,6 +33,8 @@ export default function getSource(packed, options = {}) {
         path.relative(root.path, parent.path),
         sourceName,
       );
+    } else {
+      relativePath = sourceName;
     }
   }
 
