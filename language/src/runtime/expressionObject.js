@@ -3,17 +3,15 @@ import {
   ObjectMap,
   setParent,
   symbols,
-  SyncMap,
   trailingSlash,
   Tree,
 } from "@weborigami/async-tree";
 import path from "node:path";
-import AsyncCacheTransform from "./AsyncCacheTransform.js";
+import enableValueCaching from "./enableValueCaching.js";
 import execute from "./execute.js";
 import handleExtension from "./handleExtension.js";
 import { ops } from "./internal.js";
 import { cachePathSymbol, cachingSymbol } from "./symbols.js";
-import SyncCacheTransform from "./SyncCacheTransform.js";
 import systemCache from "./systemCache.js";
 
 export const KEY_TYPE = {
@@ -53,7 +51,6 @@ export default async function expressionObject(cachePath, entries, state = {}) {
 
   // The object in Map form for use on the stack
   const map = new ObjectMap(object);
-  // map.cachePath = cachePath;
 
   // Preparation: gather information about all properties
   const infos = entries.map(([key, value]) => propertyInfo(key, value));
@@ -65,17 +62,7 @@ export default async function expressionObject(cachePath, entries, state = {}) {
     }
   }
 
-  // Second pass: redefine eager string-keyed properties with actual values.
-  for (const info of infos) {
-    if (
-      info.keyType === KEY_TYPE.STRING &&
-      info.valueType === VALUE_TYPE.EAGER
-    ) {
-      await redefineProperty(object, info);
-    }
-  }
-
-  // Third pass: define all computed properties. These may refer to the
+  // Second pass: define all computed properties. These may refer to the
   // properties we just defined.
   for (const info of infos) {
     if (info.keyType === KEY_TYPE.COMPUTED) {
@@ -87,15 +74,11 @@ export default async function expressionObject(cachePath, entries, state = {}) {
     }
   }
 
-  // Fourth pass: redefine eager computed-keyed properties with actual values.
-  for (const info of infos) {
-    if (
-      info.keyType === KEY_TYPE.COMPUTED &&
-      info.valueType === VALUE_TYPE.EAGER
-    ) {
-      await redefineProperty(object, info);
-    }
-  }
+  // Third pass: retrieve eager properties, memoizing them on the object
+  const eagerKeys = infos
+    .filter((info) => info.valueType === VALUE_TYPE.EAGER)
+    .map((info) => info.key);
+  await Promise.all(eagerKeys.map((key) => object[key]));
 
   // Attach a keys method, where keys for primitive/eager properties with
   // maplike values get a trailing slash.
@@ -147,32 +130,7 @@ function defineProperty(object, propertyInfo, state, map) {
           result = handleExtension(result, key, globals, map);
         }
 
-        // Cache the result
-        if (propertyCachePath) {
-          if (
-            Tree.isMap(result) &&
-            // @ts-ignore
-            !(result.cachePath && result[cachePathSymbol]) &&
-            !(
-              isTransformApplied(SyncCacheTransform, result) ||
-              isTransformApplied(AsyncCacheTransform, result)
-            )
-          ) {
-            if (result instanceof Map) {
-              if (!(result instanceof SyncMap)) {
-                // Convert regular Map to SyncMap so we can extend it
-                result = new (SyncCacheTransform(SyncMap))(result);
-              } else {
-                // Cache a SyncMap
-                result = transformObject(SyncCacheTransform, result);
-              }
-            } else {
-              // Cache an AsyncMap
-              result = transformObject(AsyncCacheTransform, result);
-            }
-            result._cachePath = propertyCachePath;
-          }
-        } else if (valueType === VALUE_TYPE.EAGER) {
+        if (valueType === VALUE_TYPE.EAGER) {
           // Memoize result on the object itself
           Object.defineProperty(object, key, {
             configurable: true,
@@ -180,6 +138,8 @@ function defineProperty(object, propertyInfo, state, map) {
             value: result,
             writable: true,
           });
+        } else if (propertyCachePath) {
+          result = enableValueCaching(result, propertyCachePath);
         }
 
         return result;
@@ -206,24 +166,6 @@ function getPropertyCachePath(object, key) {
 
   const cachePath = path.join(object[cachePathSymbol], key);
   return cachePath;
-}
-
-export function isTransformApplied(Transform, obj) {
-  let transformName = Transform.name;
-  if (!transformName) {
-    throw `isTransformApplied was called on an unnamed transform function, but a name is required.`;
-  }
-  if (transformName.endsWith("Transform")) {
-    transformName = transformName.slice(0, -9);
-  }
-  // Walk up prototype chain looking for a constructor with the same name as the
-  // transform. This is not a great test.
-  for (let proto = obj; proto; proto = Object.getPrototypeOf(proto)) {
-    if (proto.constructor.name === transformName) {
-      return true;
-    }
-  }
-  return false;
 }
 
 /**
@@ -317,61 +259,4 @@ export function propertyInfo(key, value) {
   }
 
   return { enumerable, hasExtension, key, keyType, value, valueType };
-}
-
-/**
- * Get the value of the indicated eager property and overwrite the property
- * definition with the actual value.
- */
-async function redefineProperty(object, info) {
-  const value = await object[info.key];
-  Object.defineProperty(object, info.key, {
-    configurable: true,
-    enumerable: info.enumerable,
-    value,
-    writable: true,
-  });
-}
-
-/**
- * Apply a functional class mixin to an individual object instance.
- *
- * This works by create an intermediate class, creating an instance of that, and
- * then setting the intermediate class's prototype to the given individual
- * object. The resulting, extended object is then returned.
- *
- * This manipulation of the prototype chain is generally sound in JavaScript,
- * with some caveats. In particular, the original object class cannot make
- * direct use of private members; JavaScript will complain if the extended
- * object does anything that requires access to those private members.
- *
- * @param {Function} Transform
- * @param {any} obj
- */
-export function transformObject(Transform, obj) {
-  // Apply the mixin to Object and instantiate that. The Object base class here
-  // is going to be cut out of the prototype chain in a moment; we just use
-  // Object as a convenience because its constructor takes no arguments.
-  const mixed = new (Transform(Object))();
-
-  // Find the highest prototype in the chain that was added by the class mixin.
-  // The mixin may have added multiple prototypes to the chain. Walk up the
-  // prototype chain until we hit Object.
-  let mixinProto = Object.getPrototypeOf(mixed);
-  while (Object.getPrototypeOf(mixinProto) !== Object.prototype) {
-    mixinProto = Object.getPrototypeOf(mixinProto);
-  }
-
-  // Redirect the prototype chain above the mixin to point to the original
-  // object. The mixed object now extends the original object with the mixin.
-  Object.setPrototypeOf(mixinProto, obj);
-
-  // Create a new constructor for this mixed object that reflects its prototype
-  // chain. Because we've already got the instance we want, we won't use this
-  // constructor now, but this can be used later to instantiate other objects
-  // that look like the mixed one.
-  mixed.constructor = Transform(obj.constructor);
-
-  // Return the mixed object.
-  return mixed;
 }

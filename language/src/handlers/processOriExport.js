@@ -1,18 +1,17 @@
-import { setParent } from "@weborigami/async-tree";
-import { cachePathSymbol, cachingSymbol } from "../runtime/symbols.js";
+import { setParent, trailingSlash } from "@weborigami/async-tree";
+import enableValueCaching from "../runtime/enableValueCaching.js";
 
 /**
  * Given an object that's the top-level result of an Origami file, perform any
  * necessary processing.
  */
-export default function processOriExport(object, parent) {
-  setParent(object, parent);
+export default function processOriExport(value, source, parent) {
+  setParent(value, parent);
 
-  if (object[cachePathSymbol]) {
-    Object.defineProperty(object, cachingSymbol, {
-      value: true,
-      enumerable: false,
-      configurable: true,
-    });
+  if (source.relativePath) {
+    const cachePath = trailingSlash.add(source.relativePath);
+    value = enableValueCaching(value, cachePath);
   }
+
+  return value;
 }

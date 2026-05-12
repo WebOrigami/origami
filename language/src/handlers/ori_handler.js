@@ -29,9 +29,9 @@ export default {
     });
 
     // Evaluate the program
-    const result = await fn();
+    let result = await fn();
 
-    processOriExport(result, parent);
+    result = processOriExport(result, source, parent);
 
     return result;
   },

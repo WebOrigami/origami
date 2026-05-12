@@ -28,9 +28,9 @@ export default {
     });
 
     // Invoke the definition to get back the template function or object
-    const result = await fn();
+    let result = await fn();
 
-    processOriExport(result, parent);
+    result = processOriExport(result, source, parent);
 
     if (result instanceof Function) {
       const key = options.key;

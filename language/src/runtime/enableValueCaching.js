@@ -1,0 +1,123 @@
+import { AsyncMap, isPlainObject, SyncMap, Tree } from "@weborigami/async-tree";
+import AsyncCacheTransform from "./AsyncCacheTransform.js";
+import SyncCacheTransform from "./SyncCacheTransform.js";
+import { cachePathSymbol } from "./symbols.js";
+
+/**
+ * Given a maplike object whose values can be cached, enable caching. This may
+ * apply a caching transform, and sets a cache path on the object so that it can
+ * use as the prefix for cache paths.
+ *
+ * Note: this typically destructively modifies the given value.
+ *
+ * @param {any} value
+ * @param {string} cachePath
+ */
+export default function enableValueCaching(value, cachePath) {
+  if (typeof value !== "object") {
+    // Don't need to apply caching to primitive value
+    return value;
+  }
+
+  const cacheable =
+    typeof value === "object" &&
+    value[cachePathSymbol] === undefined &&
+    Tree.isMaplike(value) &&
+    !(
+      isTransformApplied(SyncCacheTransform, value) ||
+      isTransformApplied(AsyncCacheTransform, value)
+    );
+
+  if (cacheable) {
+    if (isPlainObject(value)) {
+      // Skip expression objects, which handle their own caching.
+      // TODO: What if it's some other kind of plain object?
+    } else if (Array.isArray(value)) {
+      // Skip arrays: already addressable by index and don't need caching
+    } else {
+      // Other maplike; convert to a Map/AsyncMap
+      value = Tree.from(value);
+      if (value instanceof Map) {
+        if (!(value instanceof SyncMap)) {
+          // Convert regular Map to SyncMap so we can extend it
+          value = new (SyncCacheTransform(SyncMap))(value);
+        } else {
+          // Cache a SyncMap
+          value = transformObject(SyncCacheTransform, value);
+        }
+      } else if (value instanceof AsyncMap) {
+        // Cache an AsyncMap
+        value = transformObject(AsyncCacheTransform, value);
+      }
+    }
+
+    Object.defineProperty(value, cachePathSymbol, {
+      configurable: true,
+      enumerable: false,
+      value: cachePath,
+    });
+  }
+
+  return value;
+}
+
+export function isTransformApplied(Transform, obj) {
+  let transformName = Transform.name;
+  if (!transformName) {
+    throw `isTransformApplied was called on an unnamed transform function, but a name is required.`;
+  }
+  if (transformName.endsWith("Transform")) {
+    transformName = transformName.slice(0, -9);
+  }
+  // Walk up prototype chain looking for a constructor with the same name as the
+  // transform. This is not a great test.
+  for (let proto = obj; proto; proto = Object.getPrototypeOf(proto)) {
+    if (proto.constructor.name === transformName) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Apply a functional class mixin to an individual object instance.
+ *
+ * This works by create an intermediate class, creating an instance of that, and
+ * then setting the intermediate class's prototype to the given individual
+ * object. The resulting, extended object is then returned.
+ *
+ * This manipulation of the prototype chain is generally sound in JavaScript,
+ * with some caveats. In particular, the original object class cannot make
+ * direct use of private members; JavaScript will complain if the extended
+ * object does anything that requires access to those private members.
+ *
+ * @param {Function} Transform
+ * @param {any} obj
+ */
+export function transformObject(Transform, obj) {
+  // Apply the mixin to Object and instantiate that. The Object base class here
+  // is going to be cut out of the prototype chain in a moment; we just use
+  // Object as a convenience because its constructor takes no arguments.
+  const mixed = new (Transform(Object))();
+
+  // Find the highest prototype in the chain that was added by the class mixin.
+  // The mixin may have added multiple prototypes to the chain. Walk up the
+  // prototype chain until we hit Object.
+  let mixinProto = Object.getPrototypeOf(mixed);
+  while (Object.getPrototypeOf(mixinProto) !== Object.prototype) {
+    mixinProto = Object.getPrototypeOf(mixinProto);
+  }
+
+  // Redirect the prototype chain above the mixin to point to the original
+  // object. The mixed object now extends the original object with the mixin.
+  Object.setPrototypeOf(mixinProto, obj);
+
+  // Create a new constructor for this mixed object that reflects its prototype
+  // chain. Because we've already got the instance we want, we won't use this
+  // constructor now, but this can be used later to instantiate other objects
+  // that look like the mixed one.
+  mixed.constructor = Transform(obj.constructor);
+
+  // Return the mixed object.
+  return mixed;
+}

@@ -1,5 +1,7 @@
 import { trailingSlash, Tree } from "@weborigami/async-tree";
 import path from "node:path";
+import enableValueCaching from "./enableValueCaching.js";
+import { cachePathSymbol } from "./symbols.js";
 import systemCache from "./systemCache.js";
 
 /**
@@ -45,20 +47,22 @@ export default function AsyncCacheTransform(Base) {
     }
 
     get cachePath() {
-      if (!this._cachePath) {
+      if (!this[cachePathSymbol]) {
         if (this.path) {
           // Use file path as cache path
           const root = Tree.root(this);
           const projectRootPath = root.path;
           const relativePath = path.relative(projectRootPath, this.path);
           let isPathWithinProjectRoot = !relativePath.startsWith("..");
-          this._cachePath = isPathWithinProjectRoot ? relativePath : this.path;
+          this[cachePathSymbol] = isPathWithinProjectRoot
+            ? relativePath
+            : this.path;
         } else {
-          // Pick a default `cachePath` property
-          this._cachePath = systemCache.nextDefaultCachePath();
+          // Pick a default cache path
+          this[cachePathSymbol] = systemCache.nextDefaultCachePath();
         }
       }
-      return this._cachePath;
+      return this[cachePathSymbol];
     }
 
     cachePathForKey(key) {
@@ -81,17 +85,14 @@ export default function AsyncCacheTransform(Base) {
     async get(key) {
       const normalized = trailingSlash.remove(key);
       const cachePath = this.cachePathForKey(normalized);
-      const value = await systemCache.getOrInsertComputedAsync(cachePath, () =>
-        super.get(key),
+      const value = await systemCache.getOrInsertComputedAsync(
+        cachePath,
+        async () => {
+          let result = await super.get(key);
+          result = enableValueCaching(result, cachePath);
+          return result;
+        },
       );
-      if (Tree.isMap(value)) {
-        Object.defineProperty(value, "cachePath", {
-          value: cachePath,
-          writable: false,
-          enumerable: true,
-          configurable: true,
-        });
-      }
       return value;
     }
 
