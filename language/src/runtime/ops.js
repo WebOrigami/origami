@@ -103,13 +103,15 @@ cache.unevaluatedArgs = true;
  * @param  {...AnnotatedCode} args
  */
 export async function comma(...args) {
+  const state = args.pop(); // The runtime state is passed as the last argument
   let result;
   for (const arg of args) {
-    result = await execute(arg);
+    result = await execute(arg, state);
   }
   return result;
 }
 addOpLabel(comma, "«ops.comma»");
+comma.needsState = true;
 comma.unevaluatedArgs = true;
 
 export async function conditional(condition, truthy, falsy) {
