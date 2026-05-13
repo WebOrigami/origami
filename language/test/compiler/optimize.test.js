@@ -26,7 +26,6 @@ describe("optimize", () => {
       [["name", [[ops.params, 0], 0]]],
       [
         ops.object,
-        null,
         [
           "a",
           [
@@ -50,13 +49,11 @@ describe("optimize", () => {
     const expression = `{ a: 1, more: { a } }`;
     const expected = [
       ops.object,
-      "test.ori/",
       ["a", 1],
       [
         "more",
         [
           ops.object,
-          "test.ori/more",
           [
             "a",
             [
@@ -79,13 +76,11 @@ describe("optimize", () => {
     }`;
     const expected = [
       ops.object,
-      "test.ori/",
       ["name", "Alice"],
       [
         "user",
         [
           ops.object,
-          "test.ori/user",
           [
             "name",
             [
@@ -143,7 +138,6 @@ describe("optimize", () => {
       // Compilation of `{ (posts) = posts.txt }`
       const code = createCode([
         ops.object,
-        null,
         [
           "(posts)",
           [ops.getter, [markers.traverse, [markers.reference, "posts.txt"]]],
@@ -152,7 +146,6 @@ describe("optimize", () => {
       const parent = {};
       const expected = [
         ops.object,
-        null,
         [
           "(posts)",
           [

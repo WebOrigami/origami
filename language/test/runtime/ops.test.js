@@ -56,7 +56,7 @@ describe("ops", () => {
 
   test("ops.cache", async () => {
     const fn = () => 1;
-    const code = createCode([ops.object, "b.ori/", ["a", [ops.getter, [fn]]]]);
+    const code = createCode([ops.object, ["a", [ops.getter, [fn]]]]);
     const result = await ops.cache("a.ori/_refs/b.ori/", code, {});
     assert.deepEqual(await Tree.plain(result), { a: 1 });
     const cachedResult = await systemCache.get("a.ori/_refs/b.ori/");
@@ -323,16 +323,15 @@ describe("ops", () => {
     const code = createCode([
       [
         ops.object,
-        null,
         ["a", [ops.literal, 1]],
         ["c", [[ops.inherited, 0], "a"]],
         [
           "_result",
           [
             ops.merge,
-            [ops.object, null, ["a", [ops.getter, [[ops.inherited, 1], "a"]]]],
+            [ops.object, ["a", [ops.getter, [[ops.inherited, 1], "a"]]]],
             [[ops.scope], "more"],
-            [ops.object, null, ["c", [ops.getter, [[ops.inherited, 1], "c"]]]],
+            [ops.object, ["c", [ops.getter, [[ops.inherited, 1], "c"]]]],
           ],
         ],
       ],
@@ -381,7 +380,6 @@ describe("ops", () => {
 
     const code = createCode([
       ops.object,
-      null,
       ["hello", [[[ops.scope], "upper"], "hello"]],
       ["world", [[[ops.scope], "upper"], "world"]],
     ]);
@@ -452,7 +450,7 @@ describe("ops", () => {
       );
       const a = await tree.get("a");
       const b = await a.get("b");
-      const scope = await ops.scope(b, { parent: b });
+      const scope = await ops.scope({ parent: b });
       assert.equal(await scope?.get("c"), 1);
     });
   });

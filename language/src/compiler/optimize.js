@@ -34,8 +34,6 @@ export default function optimize(code, options = {}) {
   // Cache path for this source file
   const cachePath = options.cachePath ?? null;
   const globals = options.globals ?? jsGlobals;
-  // Cache path for top-level object (and its direct descendants) in this file
-  const objectCachePath = options.objectCachePath ?? null;
 
   // The locals is an array, one item for each function or object context that
   // has been entered. The array grows to the right. Array items are objects
@@ -68,8 +66,7 @@ export default function optimize(code, options = {}) {
       return inlineLiteral(code);
 
     case ops.object:
-      const entries = args.slice(1);
-      const propertyNames = getPropertyNames(entries);
+      const propertyNames = getPropertyNames(args);
       locals.push({
         type: REFERENCE_INHERITED,
         names: propertyNames,
@@ -83,22 +80,14 @@ export default function optimize(code, options = {}) {
       if (op === ops.object) {
         if (index === 0) {
           return child; // return op as is
-        } else if (index === 1) {
-          // Cache path
-          return objectCachePath ?? child;
         } else {
           // Object entry
           const [key, value] = child;
           const adjustedLocals = avoidLocalRecursion(locals, key);
           const isStringKey = typeof key === "string";
-          const childCachePath =
-            objectCachePath && isStringKey
-              ? path.join(objectCachePath, key)
-              : null;
           const childOptions = {
             ...options,
             locals: adjustedLocals,
-            objectCachePath: childCachePath,
           };
           const optimizedKey = isStringKey
             ? key

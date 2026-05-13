@@ -33,21 +33,15 @@ const VALUE_TYPE = {
  * @param {*} entries
  * @param {import("../../index.ts").RuntimeState} [state]
  */
-export default async function expressionObject(cachePath, entries, state = {}) {
+export default async function expressionObject(entries, state = {}) {
   // Create the object and set its parent
   const object = {};
   const parent = state?.object ?? null;
   if (parent !== null && !Tree.isMap(parent)) {
     throw new TypeError(`Parent must be a map or null`);
   }
-  setParent(object, parent);
 
-  Object.defineProperty(object, cachePathSymbol, {
-    configurable: true,
-    enumerable: false,
-    value: cachePath,
-    writable: true,
-  });
+  setParent(object, parent);
 
   // The object in Map form for use on the stack
   const map = new ObjectMap(object);

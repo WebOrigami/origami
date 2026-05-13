@@ -254,7 +254,7 @@ export function lambda(length, parameters, code, state = {}) {
       const interimStack = stack.slice();
       interimStack.push(args);
       const paramState = { ...state, stack: interimStack };
-      const frame = await expressionObject(null, parameters, paramState);
+      const frame = await expressionObject(parameters, paramState);
       // Record which code this stack frame is associated with
       Object.defineProperty(frame, codeSymbol, {
         value: code,
@@ -413,12 +413,11 @@ addOpLabel(nullishCoalescing, "«ops.nullishCoalescing»");
  * parameter's, and the values will be the results of evaluating the
  * corresponding code values in `obj`.
  *
- * @param {string} cachePath
  * @param {any[]} entries
  */
-export async function object(cachePath, ...entries) {
+export async function object(...entries) {
   const state = entries.pop();
-  return expressionObject(cachePath, entries, state);
+  return expressionObject(entries, state);
 }
 addOpLabel(object, "«ops.object»");
 object.unevaluatedArgs = true;

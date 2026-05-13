@@ -23,7 +23,7 @@ describe("expressionObject", () => {
     ];
     const context = new SyncMap();
 
-    const object = await expressionObject(null, entries, {
+    const object = await expressionObject(entries, {
       object: context,
       parent,
     });
@@ -36,7 +36,7 @@ describe("expressionObject", () => {
     let count = 0;
     const increment = () => count++;
     const entries = [["count", [increment]]];
-    const object = await expressionObject("foo.ori/", entries);
+    const object = await expressionObject(entries);
     const propertyDescriptor = Object.getOwnPropertyDescriptor(object, "count");
     assert.equal(propertyDescriptor?.value, 0);
     assert.equal(object.count, 0);
@@ -47,7 +47,7 @@ describe("expressionObject", () => {
     let count = 0;
     const increment = () => count++;
     const entries = [["count", [ops.getter, [increment]]]];
-    const object = await expressionObject("foo.ori/", entries);
+    const object = await expressionObject(entries);
     object[cachePathSymbol] = "foo.ori/"; // enable caching on this object tree
     assert.equal(await object.count, 0);
     const propertyDescriptor = Object.getOwnPropertyDescriptor(object, "count");
@@ -58,7 +58,7 @@ describe("expressionObject", () => {
 
   test("treats a getter for a primitive value as a regular property", async () => {
     const entries = [["name", [ops.getter, "world"]]];
-    const object = await expressionObject(null, entries);
+    const object = await expressionObject(entries);
     assert.equal(object.name, "world");
   });
 
@@ -68,7 +68,7 @@ describe("expressionObject", () => {
       ["message", [ops.deepText, "Hello, ", [[ops.inherited, 0], "name"], "!"]],
     ];
     const context = new SyncMap();
-    const object = await expressionObject(null, entries, { object: context });
+    const object = await expressionObject(entries, { object: context });
     assert.deepEqual(await Tree.plain(object), {
       name: "world",
       message: "Hello, world!",
@@ -92,7 +92,7 @@ describe("expressionObject", () => {
       ["name", "data"],
     ];
     const context = new SyncMap();
-    const object = await expressionObject(null, entries, { object: context });
+    const object = await expressionObject(entries, { object: context });
     assert.deepEqual(await Tree.plain(object), {
       "data.json": 1,
       name: "data",
@@ -105,7 +105,7 @@ describe("expressionObject", () => {
     const globals = {
       json_handler: { unpack: (data) => JSON.parse(data) },
     };
-    const result = await expressionObject(null, entries, {
+    const result = await expressionObject(entries, {
       object: context,
       globals,
     });
@@ -119,7 +119,7 @@ describe("expressionObject", () => {
       ["(hidden)", "shh"],
       ["visible", "hey"],
     ];
-    const object = await expressionObject(null, entries);
+    const object = await expressionObject(entries);
     assert.deepEqual(Object.keys(object), ["visible"]);
     assert.equal(object["hidden"], "shh");
   });
@@ -135,7 +135,7 @@ describe("expressionObject", () => {
       // Computed key
       [[ops.deepText, [ops.array, "data", ".json"]], 1],
     ];
-    const object = await expressionObject(null, entries);
+    const object = await expressionObject(entries);
     assert.deepEqual(object[symbols.keys](), [
       "getter/",
       "hasSlash/",
@@ -152,7 +152,7 @@ describe("expressionObject", () => {
     const getNumber = () =>
       systemCache.getOrInsertComputed("dependency", () => 1);
     const entries = [["number", [ops.getter, [getNumber]]]];
-    const object = await expressionObject("src/test.ori/", entries);
+    const object = await expressionObject(entries);
     object[cachePathSymbol] = "src/test.ori/"; // enable caching on this object tree
     const number = await object.number;
     assert.equal(number, 1);
