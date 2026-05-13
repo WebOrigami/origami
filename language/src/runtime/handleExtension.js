@@ -30,15 +30,12 @@ export default function handleExtension(value, key, handlers, parent = null) {
     value.unpack === undefined &&
     handlers
   ) {
-    const hasSlash = trailingSlash.has(key);
-    if (hasSlash) {
-      key = trailingSlash.remove(key);
-    }
+    const normalized = trailingSlash.remove(key);
 
     // Special cases: `.ori.<ext>` extensions are Origami documents
-    const extname = key.match(/\.ori\.\S+$/)
+    const extname = normalized.match(/\.ori\.\S+$/)
       ? ".oridocument"
-      : extension.extname(key);
+      : extension.extname(normalized);
     if (extname) {
       const handlerName = `${extname.slice(1)}_handler`;
       let handler = handlers[handlerName];
@@ -56,10 +53,10 @@ export default function handleExtension(value, key, handlers, parent = null) {
 
         // Wrap the unpack function so it caches the unpacked value, and so we
         // can add the file path to any errors the unpack function throws.
-        const filePath = getPackedPath(value, { key, parent });
+        const filePath = getPackedPath(value, { key: normalized, parent });
         let fileCachePath;
         if (parent?.[cachePathSymbol]) {
-          fileCachePath = path.join(parent[cachePathSymbol], key);
+          fileCachePath = path.join(parent[cachePathSymbol], normalized);
         } else {
           const projectRoot = parent ? Tree.root(parent) : null;
           if (projectRoot) {
@@ -87,7 +84,7 @@ export default function handleExtension(value, key, handlers, parent = null) {
             }
 
             const unpacked = await handler.unpack(value, {
-              key,
+              key: normalized,
               parent,
             });
 

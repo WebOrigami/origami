@@ -1,4 +1,4 @@
-import { trailingSlash, Tree } from "@weborigami/async-tree";
+import { Tree } from "@weborigami/async-tree";
 import path from "node:path";
 import enableValueCaching from "./enableValueCaching.js";
 import { cachePathSymbol } from "./symbols.js";
@@ -86,8 +86,7 @@ export default function SyncCacheTransform(Base) {
         // Non-string keys can't be part of a path, so can't be cached
         return super.get(key);
       }
-      const normalized = trailingSlash.remove(key);
-      const cachePath = this.cachePathForKey(normalized);
+      const cachePath = this.cachePathForKey(key);
       const value = systemCache.getOrInsertComputed(cachePath, () => {
         let result = super.get(key);
         result = enableValueCaching(result, cachePath);
