@@ -11,7 +11,7 @@ import enableValueCaching from "./enableValueCaching.js";
 import execute from "./execute.js";
 import handleExtension from "./handleExtension.js";
 import { ops } from "./internal.js";
-import { cachePathSymbol, cachingSymbol } from "./symbols.js";
+import { cachePathSymbol } from "./symbols.js";
 import systemCache from "./systemCache.js";
 
 export const KEY_TYPE = {
@@ -151,15 +151,11 @@ function defineProperty(object, propertyInfo, state, map) {
 function getPropertyCachePath(object, key) {
   // Follow parent chain looking for a parent that has caching enabled
   let current = object;
-  while (
-    current[symbols.parent] &&
-    current[cachePathSymbol] &&
-    !current[cachingSymbol]
-  ) {
+  while (current[symbols.parent] && current[cachePathSymbol]) {
     current = current[symbols.parent];
   }
 
-  if (!current[cachingSymbol]) {
+  if (!current[cachePathSymbol]) {
     // Caching isn't enabled on this object tree
     return null;
   }

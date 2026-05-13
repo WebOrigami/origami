@@ -10,6 +10,7 @@ import {
 } from "@weborigami/async-tree";
 import path from "node:path";
 import getPackedPath from "../handlers/getPackedPath.js";
+import { cachePathSymbol } from "./symbols.js";
 import systemCache from "./systemCache.js";
 
 /**
@@ -57,8 +58,8 @@ export default function handleExtension(value, key, handlers, parent = null) {
         // can add the file path to any errors the unpack function throws.
         const filePath = getPackedPath(value, { key, parent });
         let fileCachePath;
-        if (parent.cachePath) {
-          fileCachePath = path.join(parent.cachePath, key);
+        if (parent?.[cachePathSymbol]) {
+          fileCachePath = path.join(parent[cachePathSymbol], key);
         } else {
           const projectRoot = parent ? Tree.root(parent) : null;
           if (projectRoot) {

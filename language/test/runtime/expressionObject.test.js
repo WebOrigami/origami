@@ -1,13 +1,17 @@
 import { ObjectMap, symbols, SyncMap, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
-import { describe, test } from "node:test";
+import { beforeEach, describe, test } from "node:test";
 
 import expressionObject from "../../src/runtime/expressionObject.js";
 import { ops } from "../../src/runtime/internal.js";
-import { cachingSymbol } from "../../src/runtime/symbols.js";
+import { cachePathSymbol } from "../../src/runtime/symbols.js";
 import systemCache from "../../src/runtime/systemCache.js";
 
 describe("expressionObject", () => {
+  beforeEach(() => {
+    systemCache.clear();
+  });
+
   test("can instantiate an object", async () => {
     const parent = new ObjectMap({
       upper: (s) => s.toUpperCase(),
@@ -44,7 +48,7 @@ describe("expressionObject", () => {
     const increment = () => count++;
     const entries = [["count", [ops.getter, [increment]]]];
     const object = await expressionObject("foo.ori/", entries);
-    object[cachingSymbol] = true; // enable caching on this object tree
+    object[cachePathSymbol] = "foo.ori/"; // enable caching on this object tree
     assert.equal(await object.count, 0);
     const propertyDescriptor = Object.getOwnPropertyDescriptor(object, "count");
     assert(propertyDescriptor?.get); // should still be a getter
@@ -149,7 +153,7 @@ describe("expressionObject", () => {
       systemCache.getOrInsertComputed("dependency", () => 1);
     const entries = [["number", [ops.getter, [getNumber]]]];
     const object = await expressionObject("src/test.ori/", entries);
-    object[cachingSymbol] = true; // enable caching on this object tree
+    object[cachePathSymbol] = "src/test.ori/"; // enable caching on this object tree
     const number = await object.number;
     assert.equal(number, 1);
 
