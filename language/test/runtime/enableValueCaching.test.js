@@ -42,4 +42,14 @@ describe("enableValueCaching", () => {
     assert.equal(value.get("a"), 1);
     assert(systemCache.has("foo.ori/a"));
   });
+
+  test("applies cache to function", () => {
+    function greet(name) {
+      return `Hello, ${name}!`;
+    }
+    const value = enableValueCaching(greet, "foo.ori/");
+    assert(typeof value === "function");
+    assert.equal(value("world"), "Hello, world!");
+    assert.equal(value[cachePathSymbol], "foo.ori/");
+  });
 });

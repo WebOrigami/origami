@@ -22,7 +22,7 @@ describe("Origami document handler", () => {
 
   test("Argument to template document available as underscore", async () => {
     const text = "<h1>${ _ }</h1>";
-    const fn = await oridocument_handler.unpack(text);
+    const fn = await oridocument_handler.unpack(text, { key: "test.ori.html" });
     const result = await fn("Home");
     assert.equal(result, "<h1>Home</h1>");
   });

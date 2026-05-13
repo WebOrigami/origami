@@ -1,7 +1,12 @@
 import { AsyncMap, isPlainObject, SyncMap, Tree } from "@weborigami/async-tree";
+import path from "node:path";
 import AsyncCacheTransform from "./AsyncCacheTransform.js";
 import SyncCacheTransform from "./SyncCacheTransform.js";
 import { cachePathSymbol } from "./symbols.js";
+import systemCache from "./systemCache.js";
+
+// For detecting async functions
+const AsyncFunction = async function () {}.constructor;
 
 /**
  * Given a maplike object whose values can be cached, enable caching. This may
@@ -14,13 +19,12 @@ import { cachePathSymbol } from "./symbols.js";
  * @param {string} cachePath
  */
 export default function enableValueCaching(value, cachePath) {
-  if (typeof value !== "object") {
+  if (!(typeof value === "object" || typeof value === "function")) {
     // Don't need to apply caching to primitive value
     return value;
   }
 
   const cacheable =
-    typeof value === "object" &&
     value[cachePathSymbol] === undefined &&
     Tree.isMaplike(value) &&
     !(
@@ -34,6 +38,9 @@ export default function enableValueCaching(value, cachePath) {
       // TODO: What if it's some other kind of plain object?
     } else if (Array.isArray(value)) {
       // Skip arrays: already addressable by index and don't need caching
+    } else if (value instanceof Function) {
+      // Cache a function
+      value = cacheFunction(value, cachePath);
     } else {
       // Other maplike; convert to a Map/AsyncMap
       value = Tree.from(value);
@@ -59,6 +66,30 @@ export default function enableValueCaching(value, cachePath) {
   }
 
   return value;
+}
+
+// Cache a unary function
+export function cacheFunction(fn, cachePath) {
+  if (fn.length !== 1) {
+    // Return as is
+    return fn;
+  }
+  if (fn instanceof AsyncFunction) {
+    return async (key) =>
+      typeof key === "string"
+        ? systemCache.getOrInsertComputedAsync(
+            path.join(cachePath, key),
+            async () => fn(key),
+          )
+        : fn(key);
+  } else {
+    return (key) =>
+      typeof key === "string"
+        ? systemCache.getOrInsertComputed(path.join(cachePath, key), () =>
+            fn(key),
+          )
+        : fn(key);
+  }
 }
 
 export function isTransformApplied(Transform, obj) {
