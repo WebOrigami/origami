@@ -82,8 +82,8 @@ export default function SyncCacheTransform(Base) {
     }
 
     get(key) {
-      if (typeof key !== "string") {
-        // Non-string keys can't be part of a path, so can't be cached
+      if (typeof key !== "string" || key.length === 0) {
+        // Non-string keys and non-empty strings can't be cached
         return super.get(key);
       }
       const cachePath = this.cachePathForKey(key);

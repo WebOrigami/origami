@@ -75,20 +75,32 @@ export function cacheFunction(fn, cachePath) {
     return fn;
   }
   if (fn instanceof AsyncFunction) {
-    return async (key) =>
-      typeof key === "string"
-        ? systemCache.getOrInsertComputedAsync(
-            path.join(cachePath, key),
-            async () => fn(key),
-          )
-        : fn(key);
+    // Return an async function that caches results for a unary argument
+    return async (key) => {
+      if (typeof key !== "string" || key.length === 0) {
+        // Non-string keys and non-empty strings can't be cached
+        return fn(key);
+      }
+      const keyCachePath = path.join(cachePath, key);
+      let result = systemCache.getOrInsertComputedAsync(
+        keyCachePath,
+        async () => fn(key),
+      );
+      result = enableValueCaching(result, keyCachePath);
+      return result;
+    };
   } else {
-    return (key) =>
-      typeof key === "string"
-        ? systemCache.getOrInsertComputed(path.join(cachePath, key), () =>
-            fn(key),
-          )
-        : fn(key);
+    // Return a sync function that caches results for a unary argument
+    return (key) => {
+      if (typeof key !== "string" || key.length === 0) {
+        // Non-string keys and non-empty strings can't be cached
+        return fn(key);
+      }
+      const keyCachePath = path.join(cachePath, key);
+      let result = systemCache.getOrInsertComputed(keyCachePath, () => fn(key));
+      result = enableValueCaching(result, keyCachePath);
+      return result;
+    };
   }
 }
 
