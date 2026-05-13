@@ -71,15 +71,21 @@ export default function SyncCacheTransform(Base) {
 
     delete(key) {
       const deleted = super.delete(key);
-      systemCache.delete(this.cachePathForKey(key));
-      if (deleted) {
-        // Deleted an existing key, need to invalidate cached keys
-        this.invalidateKeys();
+      if (typeof key === "string") {
+        systemCache.delete(this.cachePathForKey(key));
+        if (deleted) {
+          // Deleted an existing key, need to invalidate cached keys
+          this.invalidateKeys();
+        }
       }
       return deleted;
     }
 
     get(key) {
+      if (typeof key !== "string") {
+        // Non-string keys can't be part of a path, so can't be cached
+        return super.get(key);
+      }
       const normalized = trailingSlash.remove(key);
       const cachePath = this.cachePathForKey(normalized);
       const value = systemCache.getOrInsertComputed(cachePath, () => {
@@ -119,6 +125,9 @@ export default function SyncCacheTransform(Base) {
         // Initializing in constructor
         super.set(key, value);
         return;
+      }
+      if (typeof key !== "string") {
+        return super.set(key, value);
       }
       systemCache.delete(this.cachePathForKey(key));
       if (!this.has(key)) {

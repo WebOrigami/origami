@@ -78,11 +78,17 @@ export default function AsyncCacheTransform(Base) {
 
     async delete(key) {
       const deleted = await super.delete(key);
-      systemCache.delete(this.cachePathForKey(key));
+      if (typeof key === "string") {
+        systemCache.delete(this.cachePathForKey(key));
+      }
       return deleted;
     }
 
     async get(key) {
+      if (typeof key !== "string") {
+        // Non-string keys can't be part of a path, so can't be cached
+        return super.get(key);
+      }
       const normalized = trailingSlash.remove(key);
       const cachePath = this.cachePathForKey(normalized);
       const value = await systemCache.getOrInsertComputedAsync(
@@ -128,6 +134,9 @@ export default function AsyncCacheTransform(Base) {
     }
 
     async set(key, value) {
+      if (typeof key !== "string") {
+        return super.set(key, value);
+      }
       systemCache.delete(this.cachePathForKey(key));
       if (!this.has(key)) {
         // Adding a new key, need to invalidate cached keys
