@@ -222,9 +222,18 @@ describe("optimize", () => {
     });
 
     test("root directory", () => {
-      // Compilation of `</>`
-      const code = createCode([markers.traverse, [markers.external, "/"]]);
-      const expected = [ops.cache, "test.ori/_refs/", [ops.rootDirectory]];
+      // Compilation of `</etc/passwd>`
+      const code = createCode([
+        markers.traverse,
+        [markers.external, "/"],
+        [ops.literal, "etc/"],
+        [ops.literal, "passwd"],
+      ]);
+      const expected = [
+        ops.cache,
+        "test.ori/_refs//etc/passwd",
+        [[ops.rootDirectory], [ops.literal, "etc/"], [ops.literal, "passwd"]],
+      ];
       assertCodeEqual(optimize(code, { cachePath: "test.ori" }), expected);
     });
 

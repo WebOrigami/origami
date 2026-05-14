@@ -4,10 +4,12 @@ import { describe, test } from "node:test";
 import * as handlers from "../../src/handlers/handlers.js";
 import handleExtension from "../../src/runtime/handleExtension.js";
 import OrigamiFileMap from "../../src/runtime/OrigamiFileMap.js";
+import { cachePathSymbol } from "../../src/runtime/symbols.js";
 import systemCache from "../../src/runtime/systemCache.js";
 
 const fixturesUrl = new URL("fixtures/unpack", import.meta.url);
 const fixtureFiles = new OrigamiFileMap(fixturesUrl);
+fixtureFiles[cachePathSymbol] = "fixtures";
 fixtureFiles.globals = handlers;
 
 describe("handleExtension", () => {
@@ -31,12 +33,12 @@ describe("handleExtension", () => {
     const file = fixtureFiles.get("hello.json");
     const data = await file.unpack();
     assert.equal(data, "Hello");
-    const fileEntry = systemCache.get("hello.json");
-    const unpackEntry = systemCache.get("hello.json/");
+    const fileEntry = systemCache.get("fixtures/hello.json");
+    const unpackEntry = systemCache.get("fixtures/hello.json/");
 
     // Dependency of unpack entry to file entry is implicit, not explicit
-    assert(!fileEntry.downstreams?.has("hello.json/"));
-    assert(!unpackEntry.upstreams?.has("hello.json"));
+    assert(!fileEntry.downstreams?.has("fixtures/hello.json/"));
+    assert(!unpackEntry.upstreams?.has("fixtures/hello.json"));
   });
 });
 

@@ -1,8 +1,8 @@
-import { Tree } from "@weborigami/async-tree";
 import path from "node:path";
 import enableValueCaching from "./enableValueCaching.js";
 import { cachePathSymbol } from "./symbols.js";
 import systemCache from "./systemCache.js";
+import SystemCacheMap from "./SystemCacheMap.js";
 
 /**
  * General-purpose mixin for Origami maps with dependency tracking, used for:
@@ -47,21 +47,7 @@ export default function SyncCacheTransform(Base) {
     }
 
     get cachePath() {
-      if (!this[cachePathSymbol]) {
-        if (this.path) {
-          // Use file path as cache path
-          const root = Tree.root(this);
-          const projectRootPath = root.path;
-          const relativePath = path.relative(projectRootPath, this.path);
-          let isPathWithinProjectRoot = !relativePath.startsWith("..");
-          this[cachePathSymbol] = isPathWithinProjectRoot
-            ? relativePath
-            : this.path;
-        } else {
-          // Pick a default cache path
-          this[cachePathSymbol] = systemCache.nextDefaultCachePath();
-        }
-      }
+      this[cachePathSymbol] ??= SystemCacheMap.cachePathForFolder(this);
       return this[cachePathSymbol];
     }
 

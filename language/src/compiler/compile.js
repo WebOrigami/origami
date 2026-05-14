@@ -3,6 +3,9 @@ import { createExpressionFunction } from "../runtime/expressionFunction.js";
 import optimize from "./optimize.js";
 import { parse } from "./parse.js";
 
+// For caching while evaluating expressions with no identified source file
+let count = 0;
+
 /**
  * Compile the given Origami source code into a JavaScript function.
  *
@@ -29,7 +32,7 @@ function compile(source, options) {
   });
 
   // Select a path the code will use for caching
-  const cachePath = source.relativePath;
+  const cachePath = source.relativePath ?? `_expression${count++}`;
   const objectCachePath = cachePath ? trailingSlash.add(cachePath) : null;
 
   // Optimize the code

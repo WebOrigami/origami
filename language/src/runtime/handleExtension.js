@@ -12,6 +12,7 @@ import path from "node:path";
 import getPackedPath from "../handlers/getPackedPath.js";
 import { cachePathSymbol } from "./symbols.js";
 import systemCache from "./systemCache.js";
+import SystemCacheMap from "./SystemCacheMap.js";
 
 /**
  * If the given value is packed (e.g., buffer) and the key is a string-like path
@@ -69,7 +70,7 @@ export default function handleExtension(value, key, handlers, parent = null) {
               : false;
             fileCachePath = isPathWithinProjectRoot ? relativePath : filePath;
           } else {
-            fileCachePath = systemCache.nextDefaultCachePath();
+            fileCachePath = SystemCacheMap.nextDefaultCachePath();
           }
         }
         const unpackCachePath = trailingSlash.add(fileCachePath);

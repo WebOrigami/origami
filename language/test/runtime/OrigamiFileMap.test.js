@@ -4,6 +4,7 @@ import path from "node:path";
 import { afterEach, beforeEach, describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import OrigamiFileMap from "../../src/runtime/OrigamiFileMap.js";
+import { cachePathSymbol } from "../../src/runtime/symbols.js";
 import systemCache from "../../src/runtime/systemCache.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -49,11 +50,12 @@ describe("OrigamiFileMap", () => {
     fs.writeFileSync(filePath, "Hello");
 
     const tempFiles = new OrigamiFileMap(tempDirectory);
+    tempFiles[cachePathSymbol] = "temp";
     const buffer = tempFiles.get("temp.txt");
     const text = new TextDecoder().decode(buffer);
     assert.deepEqual(text, "Hello");
 
-    const entry = systemCache.get("temp.txt");
+    const entry = systemCache.get("temp/temp.txt");
     const cachedText = new TextDecoder().decode(entry.value);
     assert.deepEqual(cachedText, "Hello");
   });

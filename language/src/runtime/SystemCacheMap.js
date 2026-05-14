@@ -25,6 +25,21 @@ const syncStorage = {
 let nextPathId = 0;
 
 export default class SystemCacheMap extends SyncMap {
+  static cachePathForFolder(folder) {
+    if (folder.path) {
+      // If folder is within project, prefer path relative to root
+      // const root = Tree.root(folder);
+      // const projectRootPath = root.path;
+      // const relativePath = path.relative(projectRootPath, folder.path);
+      // let isPathWithinProjectRoot = !relativePath.startsWith("..");
+      // return isPathWithinProjectRoot ? relativePath : folder.path;
+      return folder.path;
+    } else {
+      // Pick a default cache path
+      return this.nextDefaultCachePath();
+    }
+  }
+
   delete(path) {
     // Construct a Map of all (path, entry) tuples to delete
     const toDelete = new Map();
@@ -150,6 +165,23 @@ export default class SystemCacheMap extends SyncMap {
     return entry.value;
   }
 
+  /**
+   * Like standard path.join(), but without special handling for absolute or
+   * relative paths: adding "/", ".", or ".." adds those strings to the path.
+   *
+   * @param {string[]} segments
+   */
+  static joinPath(...segments) {
+    let result = segments.shift() ?? "";
+    while (segments.length > 0) {
+      if (!result.endsWith("/")) {
+        result += "/";
+      }
+      result += segments.shift() ?? "";
+    }
+    return result;
+  }
+
   // A path is considered a child path if the parent path (including a trailing
   // slash) is a prefix of the child path.
   isChildPath(parentPath, childPath) {
@@ -157,7 +189,7 @@ export default class SystemCacheMap extends SyncMap {
     return childPath.startsWith(normalized);
   }
 
-  nextDefaultCachePath() {
+  static nextDefaultCachePath() {
     const cachePath = `_object${nextPathId}`;
     nextPathId++;
     return cachePath;

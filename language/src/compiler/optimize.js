@@ -1,5 +1,4 @@
 import { pathFromKeys, trailingSlash } from "@weborigami/async-tree";
-import path from "node:path";
 import jsGlobals from "../project/jsGlobals.js";
 import {
   KEY_TYPE,
@@ -7,6 +6,7 @@ import {
   propertyInfo,
 } from "../runtime/expressionObject.js";
 import { ops } from "../runtime/internal.js";
+import SystemCacheMap from "../runtime/SystemCacheMap.js";
 import { annotate, markers, spanLocations } from "./parserHelpers.js";
 
 export const REFERENCE_PARAM = 1;
@@ -156,7 +156,7 @@ function avoidLocalRecursion(locals, key) {
 function cacheExternalPath(code, cachePath) {
   const keys = code.map(keyFromCode).filter((key) => key !== null);
   const keysPath = pathFromKeys(keys);
-  const refCachePath = path.join(cachePath, "_refs", keysPath);
+  const refCachePath = SystemCacheMap.joinPath(cachePath, "_refs", keysPath);
   return annotate([ops.cache, refCachePath, code], code.location);
 }
 

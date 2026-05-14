@@ -250,7 +250,7 @@ evaluating: \x1B[31m1/\x1B[0m`,
       });
       await assertError(
         `file.foo/bar`,
-        `TraverseError: A path hit binary file data that can't be unpacked.
+        `TraverseError: A path hit binary data that can't be unpacked.
 Tried to traverse path:  file.foo/bar
 Stopped unexpectedly at: file.foo/
 The value couldn't be unpacked because no file extension handler is registered for ".foo".

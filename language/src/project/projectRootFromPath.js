@@ -1,6 +1,7 @@
 import { FileMap } from "@weborigami/async-tree";
 import path from "node:path";
 import OrigamiFileMap from "../runtime/OrigamiFileMap.js";
+import { cachePathSymbol } from "../runtime/symbols.js";
 
 const configFileName = "config.ori";
 const packageFileName = "package.json";
@@ -58,7 +59,7 @@ export default async function projectRootFromPath(dirname) {
   await root.initializeGlobals();
 
   // Project root cache prefix is empty, files will extend this
-  /** @type {any} */ (root)._cachePath = "";
+  /** @type {any} */ (root)[cachePathSymbol] = "";
 
   return root;
 }
