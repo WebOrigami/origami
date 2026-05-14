@@ -42,8 +42,12 @@ export default async function traverseOrThrow(maplike, ...keys) {
       if (typeof (/** @type {any} */ (value).unpack) === "function") {
         value = await value.unpack();
       } else {
+        const type =
+          typeof value === "string" || value instanceof String
+            ? "string"
+            : "binary";
         throw new TraverseError(
-          "A path hit binary file data that can't be unpacked.",
+          `A path hit ${type} data that can't be unpacked.`,
           {
             head: maplike,
             lastValue,
