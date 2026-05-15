@@ -39,8 +39,11 @@ export default function handleExtension(value, key, handlers, parent = null) {
       : extension.extname(normalized);
     if (extname) {
       const handlerName = `${extname.slice(1)}_handler`;
-      let handler = handlers[handlerName];
-      if (handler) {
+      // Use `in` to look for handle so that, if the handler is a promise, we
+      // can still find it without awaiting it here.
+      if (handlerName in handlers) {
+        let handler = handlers[handlerName];
+
         // If the value is a primitive, box it so we can attach data to it.
         value = box(value);
 
