@@ -114,6 +114,10 @@ async function handleToEvaluatedExpression(expression, parentPath) {
     },
   });
 
+  // Trigger initial expression evaluation but don't wait for it. This lets some
+  // evaluation happen while the user launches/refreshes their browser.
+  handle.getTree();
+
   return handle;
 }
 
