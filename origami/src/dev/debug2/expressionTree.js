@@ -7,8 +7,9 @@ import {
 import {
   evaluate,
   getGlobalsForTree,
-  OrigamiFileMap,
+  projectRootFromPath,
 } from "@weborigami/language";
+import path from "node:path";
 import debugTransform from "./debugTransform.js";
 
 // So we can distinguish different trees in the debugger
@@ -25,10 +26,14 @@ let version = 0;
 export default async function expressionTree(options) {
   const { expression, parentPath } = options;
 
-  const parent = new OrigamiFileMap(parentPath);
-  await parent.initializeGlobals();
+  const projectRoot = await projectRootFromPath(parentPath);
+  await projectRoot.watch();
+
+  // Traverse from the project root to the indicated parent.
+  const relative = path.relative(projectRoot.path, parentPath);
+  const parent = await Tree.traversePath(projectRoot, relative);
+
   const globals = getGlobalsForTree(parent);
-  await parent.watch();
 
   const source = {
     text: expression,

@@ -1,5 +1,6 @@
-import { SyncMap, trailingSlash } from "@weborigami/async-tree";
+import { SyncMap, trailingSlash, Tree } from "@weborigami/async-tree";
 import { AsyncLocalStorage } from "node:async_hooks";
+import path from "node:path";
 
 // Async storage for tracking dependencies encountered during function evaluation
 const asyncStorage = new AsyncLocalStorage();
@@ -28,12 +29,11 @@ export default class SystemCacheMap extends SyncMap {
   static cachePathForFolder(folder) {
     if (folder.path) {
       // If folder is within project, prefer path relative to root
-      // const root = Tree.root(folder);
-      // const projectRootPath = root.path;
-      // const relativePath = path.relative(projectRootPath, folder.path);
-      // let isPathWithinProjectRoot = !relativePath.startsWith("..");
-      // return isPathWithinProjectRoot ? relativePath : folder.path;
-      return folder.path;
+      const root = Tree.root(folder);
+      const projectRootPath = root.path;
+      const relativePath = path.relative(projectRootPath, folder.path);
+      let isPathWithinProjectRoot = !relativePath.startsWith("..");
+      return isPathWithinProjectRoot ? relativePath : folder.path;
     } else {
       // Pick a default cache path
       return this.nextDefaultCachePath();

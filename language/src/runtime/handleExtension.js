@@ -60,7 +60,10 @@ export default function handleExtension(value, key, handlers, parent = null) {
         const filePath = getPackedPath(value, { key: normalized, parent });
         let fileCachePath;
         if (parent?.[cachePathSymbol]) {
-          fileCachePath = path.join(parent[cachePathSymbol], normalized);
+          fileCachePath = SystemCacheMap.joinPath(
+            parent[cachePathSymbol],
+            normalized,
+          );
         } else {
           const projectRoot = parent ? Tree.root(parent) : null;
           if (projectRoot) {
