@@ -27,5 +27,6 @@ export * as moduleCache from "./src/runtime/moduleCache.js";
 export { default as OrigamiFileMap } from "./src/runtime/OrigamiFileMap.js";
 export * as symbols from "./src/runtime/symbols.js";
 export { default as systemCache } from "./src/runtime/systemCache.js";
+export { default as SystemCacheMap } from "./src/runtime/SystemCacheMap.js";
 export { default as TreeEvent } from "./src/runtime/TreeEvent.js";
 export { default as WatchFilesMixin } from "./src/runtime/WatchFilesMixin.js";

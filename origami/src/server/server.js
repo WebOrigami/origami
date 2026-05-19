@@ -1,8 +1,8 @@
 import {
-  TraverseError,
-  Tree,
   keysFromPath,
   trailingSlash,
+  TraverseError,
+  Tree,
 } from "@weborigami/async-tree";
 import { formatError } from "@weborigami/language";
 import { ServerResponse } from "node:http";
@@ -54,8 +54,25 @@ async function copyResponse(constructed, response) {
 export async function handleRequest(request, response, map) {
   // For parsing purposes, we assume HTTPS -- it doesn't affect parsing.
   const url = new URL(request.url ?? "", `https://${request.headers.host}`);
-  const keys = keysFromUrl(url);
 
+  // Do we already have an ETag for this resource?
+  // const etagPath = SystemCacheMap.joinPath(url.pathname, "_etag");
+  // const etag = systemCache.get(etagPath)?.value;
+  // if (etag) {
+  //   // Does the client already have this version?
+  //   const ifNoneMatch = request?.headers?.["if-none-match"];
+  //   if (ifNoneMatch === etag) {
+  //     // Client already has this version
+  //     response.writeHead(304, {
+  //       "Cache-Control": "no-cache",
+  //       ETag: etag,
+  //     });
+  //     response.end();
+  //     return true;
+  //   }
+  // }
+
+  const keys = keysFromUrl(url);
   const data = request.method === "POST" ? await parsePostData(request) : null;
 
   // Ask the tree for the resource with those keys.

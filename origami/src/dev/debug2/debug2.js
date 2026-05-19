@@ -42,9 +42,6 @@ export default async function debug2(code, state) {
   });
 
   // Watch the parent files for changes
-  // const tree = new OrigamiFileMap(parentPath);
-  // await tree.initializeGlobals();
-  // tree.watch();
   // tree.addEventListener?.("valuechange", async (event) => {
   //   // @ts-ignore
   //   const { relativePath } = event.options;
@@ -57,12 +54,6 @@ export default async function debug2(code, state) {
   //     console.log("package.json changed, restarting server…");
   //     await server.restart();
   //   }
-  // });
-  // tree.addEventListener?.("keyschange", async (event) => {
-  //   // @ts-ignore
-  //   const { relativePath } = event.options;
-  //   console.log("Keys changed…");
-  //   await server.invalidate(`${relativePath}/_keys`);
   // });
 
   // When server closes, stop watching for file changes
