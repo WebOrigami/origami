@@ -12,16 +12,16 @@ const TypedArray = Object.getPrototypeOf(Uint8Array);
 async function main(...args) {
   const expression = args.join(" ");
 
-  // Find the project root.
-  const currentDirectory = process.cwd();
-  const projectRoot = await projectRootFromPath(currentDirectory);
-
   // If no arguments were passed, show usage.
   if (!expression) {
     const usage = await help();
     console.log(usage);
     return;
   }
+
+  // Find the project root.
+  const currentDirectory = process.cwd();
+  const projectRoot = await projectRootFromPath(currentDirectory);
 
   // Traverse from the project root to the current directory.
   const relative = path.relative(projectRoot.path, currentDirectory);
