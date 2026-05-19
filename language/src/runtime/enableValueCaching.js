@@ -34,10 +34,12 @@ export default function enableValueCaching(value, cachePath) {
 
   if (cacheable) {
     if (isPlainObject(value)) {
-      // Skip expression objects, which handle their own caching.
+      // Expression objects do their own caching
       // TODO: What if it's some other kind of plain object?
+      markCacheable(value, cachePath);
     } else if (Array.isArray(value)) {
-      // Skip arrays: already addressable by index and don't need caching
+      // Arrays don't require caching
+      markCacheable(value, cachePath);
     } else if (value instanceof Function) {
       // Cache a function
       value = cacheFunction(value, cachePath);
@@ -56,52 +58,62 @@ export default function enableValueCaching(value, cachePath) {
         // Cache an AsyncMap
         value = transformObject(AsyncCacheTransform, value);
       }
+      markCacheable(value, cachePath);
     }
-
-    Object.defineProperty(value, cachePathSymbol, {
-      configurable: true,
-      enumerable: false,
-      value: cachePath,
-    });
   }
 
   return value;
 }
 
-// Cache a unary function
+// Cache a function with arity 1 or greater that takes string arguments
 export function cacheFunction(fn, cachePath) {
-  if (fn.length !== 1) {
+  if (fn.length === 0) {
     // Return as is
     return fn;
   }
+  let result;
   if (fn instanceof AsyncFunction) {
     // Return an async function that caches results for a unary argument
-    return async (key) => {
-      if (typeof key !== "string" || key.length === 0) {
-        // Non-string keys and non-empty strings can't be cached
-        return fn(key);
+    result = async (...args) => {
+      if (!allStringArguments(args)) {
+        return fn(...args);
       }
-      const keyCachePath = path.join(cachePath, key);
+      const keyCachePath = path.join(cachePath, args.join("/"));
       let result = systemCache.getOrInsertComputedAsync(
         keyCachePath,
-        async () => fn(key),
+        async () => fn(...args),
       );
       result = enableValueCaching(result, keyCachePath);
       return result;
     };
   } else {
     // Return a sync function that caches results for a unary argument
-    return (key) => {
-      if (typeof key !== "string" || key.length === 0) {
-        // Non-string keys and non-empty strings can't be cached
-        return fn(key);
+    result = (...args) => {
+      if (!allStringArguments(args)) {
+        return fn(...args);
       }
-      const keyCachePath = path.join(cachePath, key);
-      let result = systemCache.getOrInsertComputed(keyCachePath, () => fn(key));
+      const keyCachePath = path.join(cachePath, args.join("/"));
+      let result = systemCache.getOrInsertComputed(keyCachePath, () =>
+        fn(...args),
+      );
       result = enableValueCaching(result, keyCachePath);
       return result;
     };
   }
+  Object.defineProperty(result, "length", {
+    value: fn.length,
+    configurable: true,
+  });
+  markCacheable(result, cachePath);
+  return result;
+}
+
+// Non-string keys and non-empty strings can't be cached
+function allStringArguments(args) {
+  return (
+    args.length > 0 &&
+    args.every((arg) => typeof arg === "string" && arg.length > 0)
+  );
 }
 
 export function isTransformApplied(Transform, obj) {
@@ -122,6 +134,13 @@ export function isTransformApplied(Transform, obj) {
   return false;
 }
 
+function markCacheable(object, cachePath) {
+  Object.defineProperty(object, cachePathSymbol, {
+    configurable: true,
+    enumerable: false,
+    value: cachePath,
+  });
+}
 /**
  * Apply a functional class mixin to an individual object instance.
  *

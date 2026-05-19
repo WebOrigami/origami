@@ -43,13 +43,13 @@ describe("enableValueCaching", () => {
     assert(systemCache.has("foo.ori/a"));
   });
 
-  test("applies cache to function", () => {
-    function greet(name) {
-      return `Hello, ${name}!`;
+  test("applies cache to function with string arguments", () => {
+    function fn(x, y) {
+      return `${x} ${y}`;
     }
-    const value = enableValueCaching(greet, "foo.ori/");
+    const value = enableValueCaching(fn, "foo.ori/");
     assert(typeof value === "function");
-    assert.equal(value("world"), "Hello, world!");
+    assert.equal(value("Hello", "world"), "Hello world");
     assert.equal(value[cachePathSymbol], "foo.ori/");
   });
 });

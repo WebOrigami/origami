@@ -64,8 +64,9 @@ export default async function traverseOrThrow(maplike, ...keys) {
       // We'll take as many keys as the function's length, but at least one.
       let fnKeyCount = Math.max(fn.length, 1);
       const args = remainingKeys.splice(0, fnKeyCount);
+      const normalized = args.map((key) => trailingSlash.remove(key));
       key = null;
-      value = await fn(...args);
+      value = await fn(...normalized);
     } else {
       // Cast value to a map.
       const map = from(value);
