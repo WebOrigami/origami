@@ -71,6 +71,7 @@ export default async function debugParent(options) {
     origin: publicOrigin,
     restart: () => startChild(options),
   });
+
   return emitter;
 }
 

@@ -1,6 +1,7 @@
-import { AsyncMap } from "@weborigami/async-tree";
-import { systemCache } from "@weborigami/language";
+import { AsyncMap, Tree } from "@weborigami/async-tree";
+import { projectRootFromPath, systemCache } from "@weborigami/language";
 import http from "node:http";
+import path from "node:path";
 import { requestListener } from "../../server/server.js";
 import expressionTree from "./expressionTree.js";
 
@@ -38,10 +39,17 @@ if (parentPath === undefined) {
   fail("Missing Origami parent");
 }
 
+const projectRoot = await projectRootFromPath(parentPath);
+await projectRoot.watch();
+
+// Traverse from the project root to the indicated parent.
+const relative = path.relative(projectRoot.path, parentPath);
+const parent = await Tree.traversePath(projectRoot, relative);
+
 const quiet = process.env.ORIGAMI_QUIET === "1";
 
 // Get a handle to the tree produced by evaluating the expression
-const treeHandle = await handleToEvaluatedExpression(expression, parentPath);
+const treeHandle = await handleToEvaluatedExpression(expression, parent);
 
 // Serve the tree of resources
 const listener = requestListener(treeHandle, { quiet });
@@ -88,7 +96,7 @@ function beginDrain() {
   setTimeout(() => process.exit(0), HARD_MS).unref();
 }
 
-async function handleToEvaluatedExpression(expression, parentPath) {
+async function handleToEvaluatedExpression(expression, parent) {
   const handle = Object.assign(new AsyncMap(), {
     async get(key) {
       const tree = await this.getTree();
@@ -101,7 +109,7 @@ async function handleToEvaluatedExpression(expression, parentPath) {
         async () =>
           expressionTree({
             expression,
-            parentPath,
+            parent,
           }),
       );
       return tree;

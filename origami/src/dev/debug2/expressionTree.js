@@ -4,12 +4,7 @@ import {
   setParent,
   Tree,
 } from "@weborigami/async-tree";
-import {
-  evaluate,
-  getGlobalsForTree,
-  projectRootFromPath,
-} from "@weborigami/language";
-import path from "node:path";
+import { evaluate, getGlobalsForTree } from "@weborigami/language";
 import debugTransform from "./debugTransform.js";
 
 // So we can distinguish different trees in the debugger
@@ -21,17 +16,10 @@ let version = 0;
  *
  * @param {Object} options
  * @param {string} options.expression
- * @param {string} options.parentPath
+ * @param {import("@weborigami/language").OrigamiFileMap} options.parent
  */
 export default async function expressionTree(options) {
-  const { expression, parentPath } = options;
-
-  const projectRoot = await projectRootFromPath(parentPath);
-  await projectRoot.watch();
-
-  // Traverse from the project root to the indicated parent.
-  const relative = path.relative(projectRoot.path, parentPath);
-  const parent = await Tree.traversePath(projectRoot, relative);
+  const { expression, parent } = options;
 
   const globals = getGlobalsForTree(parent);
 
