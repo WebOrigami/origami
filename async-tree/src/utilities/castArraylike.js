@@ -41,7 +41,10 @@ export default function castArraylike(map, createFn = Object.fromEntries) {
     // result. By default this will create a plain object from the entries.
     const normalizedMap = new Map();
     for (const [key, value] of map.entries()) {
-      const normalized = trailingSlash.remove(key);
+      // Normalize the key by stripping trailing slashes, but only if there
+      // aren't multiple keys that only differ by trailing slashes.
+      const normalize = !map.has(trailingSlash.toggle(key));
+      const normalized = normalize ? trailingSlash.remove(key) : key;
       normalizedMap.set(normalized, value);
     }
     return createFn(normalizedMap);

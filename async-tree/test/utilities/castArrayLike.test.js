@@ -50,4 +50,36 @@ describe("castArraylike", () => {
       3: "c",
     });
   });
+
+  test("strips trailing slashes if map only has one form of the key", () => {
+    const map = new /** @type {any} */ (Map)([
+      ["a/", 1],
+      ["b", 2],
+      ["c/", 3],
+    ]);
+    const result = castArraylike(map);
+    assert.deepEqual(result, {
+      a: 1,
+      b: 2,
+      c: 3,
+    });
+  });
+
+  test.only("preserves trailing slashes if map has both forms of the key", () => {
+    const map = new /** @type {any} */ (Map)([
+      ["a/", 1],
+      ["a", 2],
+      ["b", 3],
+      ["c/", 4],
+      ["c", 5],
+    ]);
+    const result = castArraylike(map);
+    assert.deepEqual(result, {
+      "a/": 1,
+      a: 2,
+      b: 3,
+      "c/": 4,
+      c: 5,
+    });
+  });
 });
