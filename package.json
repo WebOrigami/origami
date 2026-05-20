@@ -6,6 +6,7 @@
     "language",
     "origami"
   ],
+  "type": "module",
   "scripts": {
     "build": "cd language; npm run build",
     "publish-all": "cd async-tree; npm publish; cd ../language; npm publish; cd ../origami; npm publish",
