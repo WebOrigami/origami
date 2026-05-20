@@ -8,8 +8,8 @@ import enableValueCaching from "../runtime/enableValueCaching.js";
 export default function processOriExport(value, source, parent) {
   setParent(value, parent);
 
-  if (source.relativePath) {
-    const cachePath = trailingSlash.add(source.relativePath);
+  if (source.cachePath) {
+    const cachePath = trailingSlash.add(source.cachePath);
     value = enableValueCaching(value, cachePath);
   }
 

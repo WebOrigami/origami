@@ -65,7 +65,12 @@ export default function enableValueCaching(value, cachePath) {
   return value;
 }
 
-// Cache a function with arity 1 or greater that takes string arguments
+/**
+ * Cache a function with arity 1 or greater that takes string arguments
+ *
+ * @param {Function} fn
+ * @param {string} cachePath
+ */
 export function cacheFunction(fn, cachePath) {
   if (fn.length === 0) {
     // Return as is

@@ -103,6 +103,8 @@ cache.unevaluatedArgs = true;
  * @param  {...AnnotatedCode} args
  */
 export async function comma(...args) {
+  /** @type {RuntimeState} */
+  // @ts-ignore
   const state = args.pop(); // The runtime state is passed as the last argument
   let result;
   for (const arg of args) {

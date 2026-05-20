@@ -7,4 +7,6 @@ import WatchFilesMixin from "./WatchFilesMixin.js";
 
 export default class OrigamiFileMap extends SyncCacheTransform(HandleExtensionsTransform(
   ImportModulesMixin(WatchFilesMixin(EventTargetMixin(FileMap)))
-)) {}
+)) {
+  globals: any;
+}

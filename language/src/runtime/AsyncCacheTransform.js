@@ -46,7 +46,9 @@ export default function AsyncCacheTransform(Base) {
     }
 
     get cachePath() {
+      // @ts-ignore
       this[cachePathSymbol] ??= SystemCacheMap.cachePathForFolder(this);
+      // @ts-ignore
       return this[cachePathSymbol];
     }
 

@@ -90,6 +90,7 @@ export type RuntimeState = {
  * Source code representation used by the parser.
  */
 export type Source = {
+  cachePath?: string;
   name?: string;
   text: string;
   url?: URL;

@@ -32,7 +32,7 @@ function compile(source, options) {
   });
 
   // Select a path the code will use for caching
-  const cachePath = source.relativePath ?? `_expression${count++}`;
+  const cachePath = source.cachePath ?? `_expression${count++}`;
   const objectCachePath = cachePath ? trailingSlash.add(cachePath) : null;
 
   // Optimize the code

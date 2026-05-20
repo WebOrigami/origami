@@ -18,4 +18,6 @@ export default class OrigamiFileMap extends SyncCacheTransform(
     const normalized = trailingSlash.remove(key);
     return super.cachePathForKey(normalized);
   }
+
+  globals = null;
 }

@@ -10,7 +10,7 @@ export default function getSource(packed, options = {}) {
 
   // Try to determine a URL for error messages
   const sourceName = options.key;
-  let relativePath;
+  let cachePath;
   let url;
   if (sourceName) {
     if (/** @type {any} */ (parent)?.url) {
@@ -27,14 +27,11 @@ export default function getSource(packed, options = {}) {
       }
       url = new URL(sourceName, parentHref);
 
-      // TODO: clean up
       const root = Tree.root(parent);
-      relativePath = path.join(
-        path.relative(root.path, parent.path),
-        sourceName,
-      );
+      const parentPath = /** @type {any} */ (parent).path;
+      cachePath = path.join(path.relative(root.path, parentPath), sourceName);
     } else {
-      relativePath = sourceName;
+      cachePath = sourceName;
     }
   }
 
@@ -43,8 +40,8 @@ export default function getSource(packed, options = {}) {
     name: options.key,
     url,
   };
-  if (relativePath) {
-    source.relativePath = relativePath;
+  if (cachePath) {
+    source.cachePath = cachePath;
   }
 
   return source;

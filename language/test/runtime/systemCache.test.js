@@ -8,6 +8,7 @@ import { describe, test } from "node:test";
 import * as handlers from "../../src/handlers/handlers.js";
 import HandleExtensionsTransform from "../../src/runtime/HandleExtensionsTransform.js";
 import SyncCacheTransform from "../../src/runtime/SyncCacheTransform.js";
+import { cachePathSymbol } from "../../src/runtime/symbols.js";
 
 describe("systemCache", () => {
   test("property based on external scope recalculates when scope changes", async () => {
@@ -33,10 +34,11 @@ describe("systemCache", () => {
     src.parent = project;
 
     // Paths are optional but make cache keys more meaningful
-    src.path = "project/src";
-    project.path = "project";
+    src[cachePathSymbol] = "project/src";
+    project[cachePathSymbol] = "project";
 
     // Add handlers so we can unpack values
+    // @ts-ignore
     project.globals = handlers;
 
     const site = await Tree.traverseOrThrow(project, "src/", "site.ori/");
