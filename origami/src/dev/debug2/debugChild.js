@@ -46,6 +46,14 @@ await projectRoot.watch();
 const relative = path.relative(projectRoot.path, parentPath);
 const parent = await Tree.traversePath(projectRoot, relative);
 
+// Notify parent if a file changes
+projectRoot.addEventListener("change", async (event) => {
+  const { filePath } = event.options;
+  if (filePath) {
+    process.send?.({ type: "VALUE_CHANGE", path: filePath });
+  }
+});
+
 const quiet = process.env.ORIGAMI_QUIET === "1";
 
 // Get a handle to the tree produced by evaluating the expression
