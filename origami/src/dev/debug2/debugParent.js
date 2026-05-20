@@ -68,7 +68,6 @@ export default async function debugParent(options) {
 
   emitter = Object.assign(new EventEmitter(), {
     close,
-    invalidate,
     origin: publicOrigin,
     restart: () => startChild(options),
   });
@@ -237,35 +236,6 @@ function proxyRequest(request, response) {
   request.pipe(upstreamRequest);
 }
 
-async function invalidate(filePath) {
-  if (!activeChild) {
-    return;
-  }
-
-  const child = activeChild;
-
-  // Wait for the next INVALIDATED message from the child
-  const evaluated = /** @type {Promise<void>} */ (
-    new Promise((resolve) => {
-      const onMessage = (/** @type {any} */ msg) => {
-        if (
-          msg &&
-          typeof msg === "object" &&
-          msg.type === "INVALIDATED" &&
-          msg.filePath === filePath
-        ) {
-          child.process.off("message", onMessage);
-          resolve();
-        }
-      };
-      child.process.on("message", onMessage);
-    })
-  );
-
-  child.process.send({ type: "INVALIDATE", filePath });
-  await evaluated;
-}
-
 /**
  * Start a new child process.
  *
@@ -336,11 +306,6 @@ function startChild(options) {
             // This child was superseded by a newer one, kill it
             // console.log("Child process superseded by newer one, killing it...");
             childProcess.kill("SIGTERM");
-          }
-        } else if (message.type === "EVALUATED") {
-          // Let caller know child has reevaluated the expression (after a file change)
-          if (emitter) {
-            emitter.emit("evaluated");
           }
         } else if (message.type === "FATAL") {
           // Child couldn't start (import error, etc.)

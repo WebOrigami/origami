@@ -1,7 +1,6 @@
-import { AsyncMap, getParent, Tree } from "@weborigami/async-tree";
+import { AsyncMap } from "@weborigami/async-tree";
 import { systemCache } from "@weborigami/language";
 import http from "node:http";
-import path from "node:path";
 import { requestListener } from "../../server/server.js";
 import expressionTree from "./expressionTree.js";
 
@@ -121,17 +120,6 @@ async function handleToEvaluatedExpression(expression, parentPath) {
   return handle;
 }
 
-function invalidate(filePath) {
-  const parent = getParent(treeHandle);
-  const root = Tree.root(parent);
-  const rootPath = root.path;
-  const relativePath = path.relative(rootPath, filePath);
-  let isPathWithinProjectRoot = !relativePath.startsWith("..");
-  const cachePath = isPathWithinProjectRoot ? relativePath : filePath;
-  systemCache.delete(cachePath);
-  process.send?.({ type: "INVALIDATED", filePath });
-}
-
 function maybeFinishDrain() {
   if (!draining) return;
   if (serverClosed && sockets.size === 0) {
@@ -144,12 +132,6 @@ function maybeFinishDrain() {
 process.on("message", async (/** @type {any} */ message) => {
   if (message?.type === "DRAIN") {
     beginDrain();
-  } else if (
-    message?.type === "INVALIDATE" &&
-    typeof message.filePath === "string"
-  ) {
-    // await evaluateExpression();
-    await invalidate(message.filePath);
   }
 });
 process.on("SIGTERM", beginDrain);
