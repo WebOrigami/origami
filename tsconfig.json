@@ -10,9 +10,10 @@
     "noUnusedLocals": true,
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
+    "skipLibCheck": true,
     "strict": true,
     "target": "ES2022"
   },
   "include": ["**/*.js"],
-  "exclude": ["origami/exports/exports.js", "origami/src/dev/explore.inline.js"]
+  "exclude": ["origami/src/dev/explore.inline.js"]
 }
