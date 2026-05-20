@@ -177,7 +177,11 @@ export default class SystemCacheMap extends SyncMap {
       if (!result.endsWith("/")) {
         result += "/";
       }
-      result += segments.shift() ?? "";
+      let segment = segments.shift() ?? "";
+      if (segment.startsWith("/")) {
+        segment = segment.slice(1);
+      }
+      result += segment;
     }
     return result;
   }

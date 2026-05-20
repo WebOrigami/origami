@@ -1,6 +1,4 @@
 import { extension, isPacked, toString, Tree } from "@weborigami/async-tree";
-import { systemCache } from "@weborigami/language";
-import SystemCacheMap from "@weborigami/language/src/runtime/SystemCacheMap.js";
 import { createHash } from "node:crypto";
 import { computedMIMEType } from "whatwg-mimetype";
 import { mediaTypeForExtension } from "./mediaTypes.js";
@@ -11,12 +9,12 @@ import { mediaTypeForExtension } from "./mediaTypes.js";
  *
  * @param {import("node:http").IncomingMessage} request
  * @param {any} resource
- * @returns {Promise<Response>}
+ * @returns {Promise<{ response: Response, etag?: string }>}
  */
 export default async function constructResponse(request, resource) {
   if (resource instanceof Response) {
     // Already a Response, return as is.
-    return resource;
+    return { response: resource };
   }
 
   // Determine media type, what data we'll send, and encoding.
@@ -28,19 +26,21 @@ export default async function constructResponse(request, resource) {
       resource = await resource();
     }
     if (resource instanceof Response) {
-      return resource;
+      return { response: resource };
     }
   }
 
   if (!url.pathname.endsWith("/") && Tree.isMaplike(resource)) {
     // Maplike resource: redirect to its index page.
     const Location = `${url.pathname}/`;
-    return new Response("ok", {
-      headers: {
-        Location,
-      },
-      status: 307,
-    });
+    return {
+      response: new Response("ok", {
+        headers: {
+          Location,
+        },
+        status: 307,
+      }),
+    };
   }
 
   let body = resource;
@@ -96,19 +96,15 @@ export default async function constructResponse(request, resource) {
   }
 
   // Compute ETag from the body content.
-  const etagPath = SystemCacheMap.joinPath(url.pathname, "_etag");
-  /** @type {string} */
-  const etag = systemCache.getOrInsertComputed(etagPath, () => {
-    const hash = createHash("sha1");
-    if (typeof body === "string" || body instanceof String) {
-      hash.update(String(body), "utf8");
-    } else {
-      hash.update(body);
-    }
-    const digest = hash.digest("hex");
-    // Store ETag with quotes in cache to match If-None-Match header
-    return `"${digest}"`;
-  });
+  const hash = createHash("sha1");
+  if (typeof body === "string" || body instanceof String) {
+    hash.update(String(body), "utf8");
+  } else {
+    hash.update(body);
+  }
+  const digest = hash.digest("hex");
+  // Store ETag with quotes in cache to match If-None-Match header
+  const etag = `"${digest}"`;
 
   /** @type {Record<string, string>} */
   const headers = {};
@@ -119,6 +115,7 @@ export default async function constructResponse(request, resource) {
     headers["Cache-Control"] = "no-cache";
     headers.ETag = etag;
   }
+
   const response = new Response(body, { headers });
-  return response;
+  return { response, etag };
 }

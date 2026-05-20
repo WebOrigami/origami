@@ -4,7 +4,7 @@ import {
   TraverseError,
   Tree,
 } from "@weborigami/async-tree";
-import { formatError } from "@weborigami/language";
+import { formatError, systemCache, SystemCacheMap } from "@weborigami/language";
 import { ServerResponse } from "node:http";
 import constructResponse from "./constructResponse.js";
 import parsePostData from "./parsePostData.js";
@@ -56,21 +56,21 @@ export async function handleRequest(request, response, map) {
   const url = new URL(request.url ?? "", `https://${request.headers.host}`);
 
   // Do we already have an ETag for this resource?
-  // const etagPath = SystemCacheMap.joinPath(url.pathname, "_etag");
-  // const etag = systemCache.get(etagPath)?.value;
-  // if (etag) {
-  //   // Does the client already have this version?
-  //   const ifNoneMatch = request?.headers?.["if-none-match"];
-  //   if (ifNoneMatch === etag) {
-  //     // Client already has this version
-  //     response.writeHead(304, {
-  //       "Cache-Control": "no-cache",
-  //       ETag: etag,
-  //     });
-  //     response.end();
-  //     return true;
-  //   }
-  // }
+  const etagPath = SystemCacheMap.joinPath("_etag", url.pathname);
+  const etag = systemCache.get(etagPath)?.value;
+  if (etag) {
+    // Does the client already have this version?
+    const ifNoneMatch = request?.headers?.["if-none-match"];
+    if (ifNoneMatch === etag) {
+      // Client already has this version
+      response.writeHead(304, {
+        "Cache-Control": "no-cache",
+        ETag: etag,
+      });
+      response.end();
+      return true;
+    }
+  }
 
   const keys = keysFromUrl(url);
   const data = request.method === "POST" ? await parsePostData(request) : null;
@@ -78,27 +78,45 @@ export async function handleRequest(request, response, map) {
   // Ask the tree for the resource with those keys.
   let resource;
   try {
-    resource = await Tree.traverseOrThrow(map, ...keys);
+    // Track whether or not the resource was successfully found and a response
+    // was sent so that we know whether or not to send a 404.
+    let success;
 
-    // If resource is a function, invoke to get the object we want to return.
-    // For a POST request, pass the data to the function.
-    if (typeof resource === "function") {
-      resource = data ? await resource(data) : await resource();
-    }
+    // We wrap the tree traversal in a call that will both set the etag for this
+    // resource and copy the constructed response to the ServerResponse. The
+    // etag is already included in the response headers so we don't need to
+    // receive it here.
+    await systemCache.getOrInsertComputedAsync(etagPath, async () => {
+      resource = await Tree.traverseOrThrow(map, ...keys);
 
-    if (resource == null) {
-      return false;
-    }
+      // If resource is a function, invoke to get the object we want to return.
+      // For a POST request, pass the data to the function.
+      if (typeof resource === "function") {
+        resource = data ? await resource(data) : await resource();
+      }
 
-    // Construct the response.
-    const constructed = await constructResponse(request, resource);
+      if (resource == null) {
+        return;
+      }
 
-    // Copy the construct response to the ServerResponse and return true if
-    // the response was valid.
-    return copyResponse(constructed, response);
+      // Construct the response
+      const { response: constructed, etag } = await constructResponse(
+        request,
+        resource,
+      );
+
+      // Copy the construct response to the ServerResponse and remember whether
+      // it was successful.
+      success = await copyResponse(constructed, response);
+
+      return etag;
+    });
+
+    // Now return whether or not we successfully found the resource
+    return success;
   } catch (/** @type {any} */ error) {
     // Display an error
-    respondWithError(response, error);
+    await respondWithError(response, error);
     return true;
   }
 }
