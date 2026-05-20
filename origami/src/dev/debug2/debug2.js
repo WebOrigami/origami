@@ -1,4 +1,3 @@
-import path from "node:path";
 import debugParent from "./debugParent.js";
 
 /**
@@ -41,33 +40,7 @@ export default async function debug2(code, state) {
     parentPath,
   });
 
-  // Watch the parent files for changes
-  // tree.addEventListener?.("valuechange", async (event) => {
-  //   // @ts-ignore
-  //   const { relativePath } = event.options;
-  //   if (isJavaScriptFile(relativePath)) {
-  //     // Need to restart the child process
-  //     console.log("JavaScript file changed, restarting server…");
-  //     await server.restart();
-  //   } else if (relativePath === "package.json") {
-  //     // Need to restart the child process
-  //     console.log("package.json changed, restarting server…");
-  //     await server.restart();
-  //   }
-  // });
-
-  // When server closes, stop watching for file changes
-  // server.on("close", () => {
-  //   tree.unwatch();
-  // });
-
   console.log(`Server running at ${server.origin}. Press Ctrl+C to stop.`);
 }
 debug2.needsState = true;
 debug2.unevaluatedArgs = true;
-
-function isJavaScriptFile(filePath) {
-  const extname = path.extname(filePath).toLowerCase();
-  const jsExtensions = [".cjs", ".js", ".mjs", ".ts"];
-  return jsExtensions.includes(extname);
-}

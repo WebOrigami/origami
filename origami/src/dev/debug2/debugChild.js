@@ -40,7 +40,7 @@ if (parentPath === undefined) {
 }
 
 const projectRoot = await projectRootFromPath(parentPath);
-await projectRoot.watch();
+projectRoot.watch();
 
 // Traverse from the project root to the indicated parent.
 const relative = path.relative(projectRoot.path, parentPath);
@@ -74,19 +74,25 @@ server.on("connection", (socket) => {
 server.keepAliveTimeout = 1000;
 server.headersTimeout = 5000;
 
-// Draining state
-let draining = false;
+// Closing state
+let closing = false;
 let serverClosed = false;
 
-function beginDrain() {
-  if (draining) return;
-  draining = true;
+function beginClose() {
+  if (closing) {
+    return;
+  }
+
+  closing = true;
 
   // Stop accepting new connections.
   server.close(() => {
     serverClosed = true;
-    maybeFinishDrain();
+    maybeFinishClose();
   });
+
+  // Stop watching files
+  projectRoot.unwatch();
 
   // Give in-flight requests a moment, then force-close remaining sockets.
   const GRACE_MS = 1200;
@@ -96,7 +102,7 @@ function beginDrain() {
       socket.destroy();
     }
     // socket "close" events will shrink the set; check again soon.
-    setTimeout(maybeFinishDrain, 50).unref();
+    setTimeout(maybeFinishClose, 50).unref();
   }, GRACE_MS).unref();
 
   // Absolute last resort: don’t hang forever.
@@ -136,22 +142,22 @@ async function handleToEvaluatedExpression(expression, parent) {
   return handle;
 }
 
-function maybeFinishDrain() {
-  if (!draining) return;
+function maybeFinishClose() {
+  if (!closing) return;
   if (serverClosed && sockets.size === 0) {
-    process.send?.({ type: "DRAINED" });
+    process.send?.({ type: "CLOSED" });
     process.exit(0);
   }
 }
 
-// Drain when instructed by parent, or if parent dies.
+// Close when instructed by parent, or if parent dies.
 process.on("message", async (/** @type {any} */ message) => {
-  if (message?.type === "DRAIN") {
-    beginDrain();
+  if (message?.type === "CLOSE") {
+    beginClose();
   }
 });
-process.on("SIGTERM", beginDrain);
-process.on("SIGINT", beginDrain);
+process.on("SIGTERM", beginClose);
+process.on("SIGINT", beginClose);
 
 process.on("disconnect", () => {
   // Parent process died, exit immediately

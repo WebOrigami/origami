@@ -1,6 +1,7 @@
 import { fork } from "node:child_process";
 import { EventEmitter } from "node:events";
 import http from "node:http";
+import path from "node:path";
 import { findOpenPort } from "../../common/findOpenPort.js";
 
 const PUBLIC_HOST = "127.0.0.1";
@@ -112,16 +113,16 @@ async function drainAndStopChild(childProcess) {
     return;
   }
 
-  // Ask it to drain first.
+  // Ask it to close first.
   try {
-    childProcess.send({ type: "DRAIN" });
+    childProcess.send({ type: "CLOSE" });
   } catch {
     // ignore
   }
 
-  const drained = new Promise((resolve) => {
+  const closed = new Promise((resolve) => {
     const onMessage = (msg) => {
-      if (msg && typeof msg === "object" && msg.type === "DRAINED") {
+      if (msg && typeof msg === "object" && msg.type === "CLOSED") {
         cleanup(resolve);
       }
     };
@@ -140,7 +141,7 @@ async function drainAndStopChild(childProcess) {
   // Give it a short grace window to finish in-flight work.
   const GRACE_MS = 1500;
   await Promise.race([
-    drained,
+    closed,
     new Promise((r) => setTimeout(r, GRACE_MS).unref()),
   ]);
 
@@ -155,6 +156,20 @@ async function drainAndStopChild(childProcess) {
       childProcess.kill("SIGKILL");
     }
   }, GRACE_MS).unref();
+}
+
+function isJavaScriptFile(filePath) {
+  const extname = path.extname(filePath).toLowerCase();
+  const jsExtensions = [".cjs", ".js", ".mjs", ".ts"];
+  return jsExtensions.includes(extname);
+}
+
+async function onFileChange(filePath) {
+  if (isJavaScriptFile(filePath)) {
+    // Need to restart the child process
+    console.log("JavaScript file changed, restarting server…");
+    await emitter.restart();
+  }
 }
 
 /**
@@ -308,6 +323,12 @@ function startChild(options) {
             // console.log("Child process superseded by newer one, killing it...");
             childProcess.kill("SIGTERM");
           }
+        } else if (
+          message.type === "VALUE_CHANGE" &&
+          typeof message.path === "string"
+        ) {
+          // REVIEW: We don't await this -- is that a problem?
+          onFileChange(message.path);
         } else if (message.type === "FATAL") {
           // Child couldn't start (import error, etc.)
           // Keep previous active child if any; otherwise we'll serve 500/503.
