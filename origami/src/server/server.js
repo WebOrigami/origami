@@ -13,35 +13,30 @@ import parsePostData from "./parsePostData.js";
  * Copy a constructed response to a ServerResponse. Return true if the response
  * was successfully copied, and false if there was a problem.
  *
- * @param {Response} constructed
+ * @param {Response} original
  * @param {ServerResponse} response
  */
-async function copyResponse(constructed, response) {
-  response.statusCode = constructed.status;
-  response.statusMessage = constructed.statusText;
+async function copyResponse(original, response) {
+  const clone = original.clone();
+  response.statusCode = clone.status;
+  response.statusMessage = clone.statusText;
 
   // @ts-ignore Headers has an iterator in ES2022 but tsc doesn't know that.
-  for (const [key, value] of constructed.headers) {
+  for (const [key, value] of clone.headers) {
     response.setHeader(key, value);
   }
 
-  if (constructed.body) {
-    try {
-      // Write the response body to the ServerResponse.
-      const reader = constructed.body.getReader();
-      let { done, value } = await reader.read();
-      while (!done) {
-        response.write(value);
-        ({ done, value } = await reader.read());
-      }
-      response.end();
-    } catch (/** @type {any} */ error) {
-      console.error(error.message);
-      return false;
+  if (clone.body) {
+    // Write the response body
+    const reader = clone.body.getReader();
+    let { done, value } = await reader.read();
+    while (!done) {
+      response.write(value);
+      ({ done, value } = await reader.read());
     }
   }
 
-  return true;
+  response.end();
 }
 
 /**
@@ -56,9 +51,9 @@ export async function handleRequest(request, response, map) {
   const url = new URL(request.url ?? "", `https://${request.headers.host}`);
 
   // Do we already have an ETag for this resource?
-  const pathname = url.pathname.slice(1);
-  const etagPath = SystemCacheMap.joinPath("_etag", pathname);
-  const etag = systemCache.get(etagPath)?.value;
+  const cachePath = SystemCacheMap.joinPath("_site", url.pathname.slice(1));
+  const cacheEntry = systemCache.get(cachePath)?.value;
+  const etag = cacheEntry?.headers?.get("Etag");
   if (etag) {
     // Does the client already have this version?
     const ifNoneMatch = request?.headers?.["if-none-match"];
@@ -77,59 +72,40 @@ export async function handleRequest(request, response, map) {
   const data = request.method === "POST" ? await parsePostData(request) : null;
 
   // Ask the tree for the resource with those keys.
-  let resource;
   try {
-    // Track whether or not the resource was successfully found and a response
-    // was sent so that we know whether or not to send a 404.
-    let success;
-    let undefinedETag = false;
-
     // We wrap the tree traversal in a call that will both set the etag for this
     // resource and copy the constructed response to the ServerResponse. The
     // etag is already included in the response headers so we don't need to
     // receive it here.
-    await systemCache.getOrInsertComputedAsync(etagPath, async () => {
-      resource = await Tree.traverseOrThrow(map, ...keys);
+    const constructed = await systemCache.getOrInsertComputedAsync(
+      cachePath,
+      async () => {
+        let resource = await Tree.traverseOrThrow(map, ...keys);
 
-      // If resource is a function, invoke to get the object we want to return.
-      // For a POST request, pass the data to the function.
-      if (typeof resource === "function") {
-        resource = data ? await resource(data) : await resource();
-      }
+        // If resource is a function, invoke to get the object we want to return.
+        // For a POST request, pass the data to the function.
+        if (typeof resource === "function") {
+          resource = data ? await resource(data) : await resource();
+        }
 
-      if (resource == null) {
-        return;
-      }
+        // Construct the response
+        return resource ? await constructResponse(request, resource) : null;
+      },
+    );
 
-      // Construct the response
-      const { response: constructed, etag } = await constructResponse(
-        request,
-        resource,
-      );
-
-      if (!etag) {
-        undefinedETag = true;
-      }
-
-      // Copy the construct response to the ServerResponse and remember whether
-      // it was successful.
-      success = await copyResponse(constructed, response);
-
-      return etag;
-    });
-
-    // HACK: don't store undefined etag
-    if (undefinedETag) {
-      systemCache.delete(etagPath);
+    // Copy the constructed (and cached) response to the server response
+    if (constructed) {
+      await copyResponse(constructed, response);
+      return true;
     }
-
-    // Now return whether or not we successfully found the resource
-    return success;
   } catch (/** @type {any} */ error) {
     // Display an error
     await respondWithError(response, error);
     return true;
   }
+
+  // No resource found at this path.
+  return false;
 }
 
 export function keysFromUrl(url) {

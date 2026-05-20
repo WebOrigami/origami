@@ -10,12 +10,12 @@ import { mediaTypeForExtension } from "./mediaTypes.js";
  *
  * @param {import("node:http").IncomingMessage} request
  * @param {any} resource
- * @returns {Promise<{ response: Response, etag?: string }>}
+ * @returns {Promise<Response>}
  */
 export default async function constructResponse(request, resource) {
   if (resource instanceof Response) {
     // Already a Response, return as is.
-    return { response: resource };
+    return resource;
   }
 
   // Determine media type, what data we'll send, and encoding.
@@ -27,21 +27,19 @@ export default async function constructResponse(request, resource) {
       resource = await resource();
     }
     if (resource instanceof Response) {
-      return { response: resource };
+      return resource;
     }
   }
 
   if (!url.pathname.endsWith("/") && Tree.isMaplike(resource)) {
     // Maplike resource: redirect to its index page.
     const Location = `${url.pathname}/`;
-    return {
-      response: new Response("ok", {
-        headers: {
-          Location,
-        },
-        status: 307,
-      }),
-    };
+    return new Response("ok", {
+      headers: {
+        Location,
+      },
+      status: 307,
+    });
   }
 
   let body = resource;
@@ -121,5 +119,10 @@ export default async function constructResponse(request, resource) {
   }
 
   const response = new Response(body, { headers });
-  return { response, etag };
+
+  if (resource[symbols.volatileSymbol]) {
+    response[symbols.volatileSymbol] = true;
+  }
+
+  return response;
 }

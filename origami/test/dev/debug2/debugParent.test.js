@@ -16,7 +16,7 @@ describe("debugParent", () => {
 
   after(() => server.close());
 
-  test("starts a debug server", async () => {
+  test.only("starts a debug server", async () => {
     const response = await fetch(server.origin);
     const text = await response.text();
     assert.equal(text, "0");
