@@ -56,7 +56,8 @@ export async function handleRequest(request, response, map) {
   const url = new URL(request.url ?? "", `https://${request.headers.host}`);
 
   // Do we already have an ETag for this resource?
-  const etagPath = SystemCacheMap.joinPath("_etag", url.pathname);
+  const pathname = url.pathname.slice(1);
+  const etagPath = SystemCacheMap.joinPath("_etag", pathname);
   const etag = systemCache.get(etagPath)?.value;
   if (etag) {
     // Does the client already have this version?
