@@ -81,6 +81,7 @@ export async function handleRequest(request, response, map) {
     // Track whether or not the resource was successfully found and a response
     // was sent so that we know whether or not to send a 404.
     let success;
+    let undefinedETag = false;
 
     // We wrap the tree traversal in a call that will both set the etag for this
     // resource and copy the constructed response to the ServerResponse. The
@@ -105,12 +106,21 @@ export async function handleRequest(request, response, map) {
         resource,
       );
 
+      if (!etag) {
+        undefinedETag = true;
+      }
+
       // Copy the construct response to the ServerResponse and remember whether
       // it was successful.
       success = await copyResponse(constructed, response);
 
       return etag;
     });
+
+    // HACK: don't store undefined etag
+    if (undefinedETag) {
+      systemCache.delete(etagPath);
+    }
 
     // Now return whether or not we successfully found the resource
     return success;

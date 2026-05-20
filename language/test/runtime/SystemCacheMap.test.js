@@ -1,6 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import SystemCacheMap from "../../src/runtime/SystemCacheMap.js";
+import volatile from "../../src/runtime/volatile.js";
 
 describe("SystemCacheMap", () => {
   test("getOrInsertComputed tracks sync dependencies", async () => {
@@ -188,6 +189,32 @@ describe("SystemCacheMap", () => {
     // Deleting parent implicitly deletes all children
     cache.delete("parent");
     assert.deepEqual(cacheEntries(cache), [["other", { value: 3 }]]);
+  });
+
+  test("sync volatile values are not cached", async () => {
+    const cache = new SystemCacheMap();
+    let count = 0;
+    const getCount = () =>
+      cache.getOrInsertComputed("count", () => volatile(count++));
+
+    const first = getCount();
+    const second = getCount();
+    assert.strictEqual(Number(first), 0);
+    assert.strictEqual(Number(second), 1);
+    assert.strictEqual(count, 2); // computeFn ran twice, value not cached
+  });
+
+  test("async volatile values are not cached", async () => {
+    const cache = new SystemCacheMap();
+    let count = 0;
+    const getCount = () =>
+      cache.getOrInsertComputedAsync("count", async () => volatile(count++));
+
+    const first = await getCount();
+    const second = await getCount();
+    assert.strictEqual(Number(first), 0);
+    assert.strictEqual(Number(second), 1);
+    assert.strictEqual(count, 2); // computeFn ran twice, value not cached
   });
 });
 

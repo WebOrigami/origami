@@ -1,6 +1,7 @@
 import { SyncMap, trailingSlash, Tree } from "@weborigami/async-tree";
 import { AsyncLocalStorage } from "node:async_hooks";
 import path from "node:path";
+import { volatileSymbol } from "./symbols.js";
 
 // Async storage for tracking dependencies encountered during function evaluation
 const asyncStorage = new AsyncLocalStorage();
@@ -110,55 +111,74 @@ export default class SystemCacheMap extends SyncMap {
   // because it returns the entry `value` property, not the actual entry.
   getOrInsertComputed(path, computeFn) {
     let entry = this.get(path);
-    if (!entry || !("value" in entry)) {
-      // Cache miss, or entry has no value yet
 
-      if (!entry) {
-        // Create empty entry for this path
-        entry = {};
-        this.set(path, entry);
-      }
+    if (entry && "value" in entry) {
+      // Cache hit, value already computed
+      this.trackCurrentDependency(path, entry);
+      return entry.value;
+    }
 
-      // Create new sync context to track entries downstream of this value
-      const context = { downstream: path };
+    // Cache miss, or entry has no value yet
+    let value;
 
-      // Get value in sync context
-      entry.value = syncStorage.run(context, computeFn);
+    if (!entry) {
+      // Create empty entry for this path
+      entry = {};
+      this.set(path, entry);
+    }
+
+    // Create new sync context to track entries downstream of this value
+    const context = { downstream: path };
+
+    // Get value in sync context
+    value = syncStorage.run(context, computeFn);
+    if (!value?.[volatileSymbol]) {
+      // Add resolved value to cache
+      entry.value = value;
     }
 
     this.trackCurrentDependency(path, entry);
 
-    return entry.value;
+    return value;
   }
 
   async getOrInsertComputedAsync(path, computeFn) {
     let entry = this.get(path);
-    if (!entry || !("value" in entry)) {
-      // Cache miss, or entry has no value yet
 
-      if (syncStorage.getStore()) {
-        // A function that was supposed to be sync called an async function
-        throw new Error("Cannot track async dependencies in a sync context");
-      }
+    if (entry && "value" in entry) {
+      // Cache hit, value already computed
+      this.trackCurrentDependency(path, entry);
+      return entry.value;
+    }
 
-      if (!entry) {
-        // Create empty entry for this path
-        entry = {};
-        this.set(path, entry);
-      }
+    // Cache miss, or entry has no value yet
+    if (syncStorage.getStore()) {
+      // A function that was supposed to be sync called an async function
+      throw new Error("Cannot track async dependencies in a sync context");
+    }
 
-      // Create new async context to track entries downstream of this value
-      const context = { downstream: path };
+    if (!entry) {
+      // Create empty entry for this path
+      entry = {};
+      this.set(path, entry);
+    }
 
-      // Get value in async context, don't await the result yet. Add promise to
-      // cache so concurrent requests get the same promise.
-      entry.value = asyncStorage.run(context, async () => {
-        const value = await computeFn();
+    // Create new async context to track entries downstream of this value
+    const context = { downstream: path };
+
+    // Get value in async context, don't await the result yet. Add promise to
+    // cache so concurrent requests get the same promise.
+    entry.value = asyncStorage.run(context, async () => {
+      const value = await computeFn();
+      if (value?.[volatileSymbol]) {
+        // Value is marked as volatile, don't cache it
+        delete entry.value;
+      } else {
         // Add resolved value to cache
         entry.value = value;
-        return value;
-      });
-    }
+      }
+      return value;
+    });
 
     this.trackCurrentDependency(path, entry);
 
