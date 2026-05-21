@@ -51,7 +51,10 @@ export async function handleRequest(request, response, map) {
   const url = new URL(request.url ?? "", `https://${request.headers.host}`);
 
   // Do we already have an ETag for this resource?
-  const cachePath = SystemCacheMap.joinPath("_site", url.pathname.slice(1));
+  let cachePath = SystemCacheMap.joinPath("_site", url.pathname.slice(1));
+  if (url.pathname.endsWith("/")) {
+    cachePath += "index.html";
+  }
   const cacheEntry = systemCache.get(cachePath)?.value;
   const etag = cacheEntry?.headers?.get("Etag");
   if (etag) {
