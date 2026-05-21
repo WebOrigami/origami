@@ -1,4 +1,3 @@
-import path from "node:path";
 import enableValueCaching from "./enableValueCaching.js";
 import { cachePathSymbol } from "./symbols.js";
 import systemCache from "./systemCache.js";
@@ -54,7 +53,9 @@ export default function SyncCacheTransform(Base) {
     }
 
     cachePathForKey(key) {
-      return key === "." ? this.cachePath : path.join(this.cachePath, key);
+      return key === "."
+        ? this.cachePath
+        : SystemCacheMap.joinPath(this.cachePath, key);
     }
 
     delete(key) {

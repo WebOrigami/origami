@@ -6,13 +6,13 @@ import {
   trailingSlash,
   Tree,
 } from "@weborigami/async-tree";
-import path from "node:path";
 import enableValueCaching from "./enableValueCaching.js";
 import execute from "./execute.js";
 import handleExtension from "./handleExtension.js";
 import { ops } from "./internal.js";
 import { cachePathSymbol } from "./symbols.js";
 import systemCache from "./systemCache.js";
+import SystemCacheMap from "./SystemCacheMap.js";
 
 export const KEY_TYPE = {
   STRING: 0, // Simple string key: `a: 1`
@@ -154,7 +154,7 @@ function getPropertyCachePath(object, key) {
     return null;
   }
 
-  const cachePath = path.join(object[cachePathSymbol], key);
+  const cachePath = SystemCacheMap.joinPath(object[cachePathSymbol], key);
   return cachePath;
 }
 

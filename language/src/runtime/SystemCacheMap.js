@@ -188,6 +188,8 @@ export default class SystemCacheMap extends SyncMap {
   /**
    * Like standard path.join(), but without special handling for absolute or
    * relative paths: adding "/", ".", or ".." adds those strings to the path.
+   * This also avoids the behavior in path.join() where consecutive separators
+   * are collapsed. We want the cache path `a//b` to be distinct from `a/b`.
    *
    * @param {string[]} segments
    */

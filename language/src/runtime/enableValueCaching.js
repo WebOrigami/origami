@@ -1,9 +1,9 @@
 import { AsyncMap, isPlainObject, SyncMap, Tree } from "@weborigami/async-tree";
-import path from "node:path";
 import AsyncCacheTransform from "./AsyncCacheTransform.js";
-import SyncCacheTransform from "./SyncCacheTransform.js";
 import { cachePathSymbol } from "./symbols.js";
+import SyncCacheTransform from "./SyncCacheTransform.js";
 import systemCache from "./systemCache.js";
+import SystemCacheMap from "./SystemCacheMap.js";
 
 // For detecting async functions
 const AsyncFunction = async function () {}.constructor;
@@ -83,7 +83,7 @@ export function cacheFunction(fn, cachePath) {
       if (!allStringArguments(args)) {
         return fn(...args);
       }
-      const keyCachePath = path.join(cachePath, args.join("/"));
+      const keyCachePath = SystemCacheMap.joinPath(cachePath, args.join("/"));
       let result = systemCache.getOrInsertComputedAsync(
         keyCachePath,
         async () => fn(...args),
@@ -97,7 +97,7 @@ export function cacheFunction(fn, cachePath) {
       if (!allStringArguments(args)) {
         return fn(...args);
       }
-      const keyCachePath = path.join(cachePath, args.join("/"));
+      const keyCachePath = SystemCacheMap.joinPath(cachePath, args.join("/"));
       let result = systemCache.getOrInsertComputed(keyCachePath, () =>
         fn(...args),
       );
