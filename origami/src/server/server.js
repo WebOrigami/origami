@@ -89,7 +89,7 @@ export async function handleRequest(request, response, map) {
         }
 
         // Construct the response
-        return resource !== null
+        return resource != null
           ? await constructResponse(request, resource)
           : null;
       },
