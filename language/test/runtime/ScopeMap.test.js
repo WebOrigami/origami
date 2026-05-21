@@ -2,6 +2,7 @@ import { ObjectMap } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import ScopeMap from "../../src/runtime/ScopeMap.js";
+import { cachePathSymbol } from "../../src/runtime/symbols.js";
 import SyncCacheTransform from "../../src/runtime/SyncCacheTransform.js";
 import systemCache from "../../src/runtime/systemCache.js";
 
@@ -14,13 +15,13 @@ describe("scope", () => {
       a: 1,
       b: 2,
     });
-    outer.path = "outer";
+    outer[cachePathSymbol] = "outer";
 
     /** @type {any} */
     const inner = new SyncCacheObjectMap({
       a: 3,
     });
-    inner.path = "outer/inner";
+    inner[cachePathSymbol] = "outer/inner";
 
     inner.parent = outer;
     const innerScope = new ScopeMap(inner);

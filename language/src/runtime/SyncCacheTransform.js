@@ -47,8 +47,6 @@ export default function SyncCacheTransform(Base) {
 
     get cachePath() {
       // @ts-ignore
-      this[cachePathSymbol] ??= SystemCacheMap.cachePathForFolder(this);
-      // @ts-ignore
       return this[cachePathSymbol];
     }
 
