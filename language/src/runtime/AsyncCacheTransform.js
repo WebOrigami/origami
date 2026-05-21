@@ -47,20 +47,13 @@ export default function AsyncCacheTransform(Base) {
 
     get cachePath() {
       // @ts-ignore
-      this[cachePathSymbol] ??= SystemCacheMap.cachePathForFolder(this);
-      // @ts-ignore
       return this[cachePathSymbol];
     }
 
     cachePathForKey(key) {
-      let cachePath = this.cachePath;
-      if (!cachePath.endsWith("/")) {
-        cachePath += "/";
-      }
-      if (key !== ".") {
-        cachePath += key;
-      }
-      return cachePath;
+      return key === "."
+        ? this.cachePath
+        : SystemCacheMap.joinPath(this.cachePath, key);
     }
 
     async delete(key) {

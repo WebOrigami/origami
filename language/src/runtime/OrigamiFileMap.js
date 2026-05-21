@@ -1,28 +1,17 @@
-import { FileMap, trailingSlash, Tree } from "@weborigami/async-tree";
-import path from "node:path";
+import { FileMap, trailingSlash } from "@weborigami/async-tree";
 import EventTargetMixin from "./EventTargetMixin.js";
 import HandleExtensionsTransform from "./HandleExtensionsTransform.js";
 import ImportModulesMixin from "./ImportModulesMixin.js";
-import SyncCacheTransform from "./SyncCacheTransform.js";
+import SyncDependenciesTransform from "./SyncDependenciesTransform.js";
 import WatchFilesMixin from "./WatchFilesMixin.js";
 
-export default class OrigamiFileMap extends SyncCacheTransform(
+export default class OrigamiFileMap extends SyncDependenciesTransform(
   HandleExtensionsTransform(
     ImportModulesMixin(WatchFilesMixin(EventTargetMixin(FileMap))),
   ),
 ) {
   get cachePath() {
-    const base = super.cachePath;
-    if (base) {
-      return base;
-    }
-
-    // If folder is within project, prefer path relative to root
-    const root = Tree.root(this);
-    const projectRootPath = root.path;
-    const relativePath = path.relative(projectRootPath, this.path);
-    let isPathWithinProjectRoot = !relativePath.startsWith("..");
-    return isPathWithinProjectRoot ? relativePath : this.path;
+    return super.cachePath ?? this.path;
   }
 
   // Workaround to register file paths in the system cache without trailing

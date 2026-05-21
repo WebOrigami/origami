@@ -1,5 +1,4 @@
-import { getParent, toString, Tree } from "@weborigami/async-tree";
-import path from "node:path";
+import { getParent, toString } from "@weborigami/async-tree";
 import SystemCacheMap from "../runtime/SystemCacheMap.js";
 
 /**
@@ -28,12 +27,8 @@ export default function getSource(packed, options = {}) {
       }
       url = new URL(sourceName, parentHref);
 
-      const root = Tree.root(parent);
       const parentPath = /** @type {any} */ (parent).path;
-      cachePath = SystemCacheMap.joinPath(
-        path.relative(root.path, parentPath),
-        sourceName,
-      );
+      cachePath = SystemCacheMap.joinPath(parentPath, sourceName);
     } else {
       cachePath = sourceName;
     }

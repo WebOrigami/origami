@@ -6,9 +6,7 @@ import {
   isUnpackable,
   setParent,
   trailingSlash,
-  Tree,
 } from "@weborigami/async-tree";
-import path from "node:path";
 import getPackedPath from "../handlers/getPackedPath.js";
 import { cachePathSymbol } from "./symbols.js";
 import systemCache from "./systemCache.js";
@@ -65,19 +63,7 @@ export default function handleExtension(value, key, handlers, parent = null) {
             normalized,
           );
         } else {
-          const projectRoot = parent ? Tree.root(parent) : null;
-          if (projectRoot) {
-            const projectRootPath = projectRoot?.path;
-            const relativePath = projectRootPath
-              ? path.relative(projectRootPath, filePath)
-              : null;
-            let isPathWithinProjectRoot = relativePath
-              ? !relativePath.startsWith("..")
-              : false;
-            fileCachePath = isPathWithinProjectRoot ? relativePath : filePath;
-          } else {
-            fileCachePath = SystemCacheMap.nextDefaultCachePath();
-          }
+          fileCachePath = filePath;
         }
         const unpackCachePath = trailingSlash.add(fileCachePath);
         value.unpack = async () =>
