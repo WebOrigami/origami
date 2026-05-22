@@ -5,6 +5,7 @@ export { default as isOrigamiFrontMatter } from "./src/compiler/isOrigamiFrontMa
 export { parse } from "./src/compiler/parse.js";
 export * from "./src/compiler/parserHelpers.js";
 export * as Handlers from "./src/handlers/handlers.js";
+export * as activeProjectRoot from "./src/project/activeProjectRoot.js";
 export { default as coreGlobals } from "./src/project/coreGlobals.js";
 export { default as getGlobalsForTree } from "./src/project/getGlobalsForTree.js";
 export { default as initializeGlobalsForTree } from "./src/project/initializeGlobalsForTree.js";

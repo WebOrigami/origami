@@ -1,5 +1,9 @@
 import { AsyncMap, Tree } from "@weborigami/async-tree";
-import { projectRootFromPath, systemCache } from "@weborigami/language";
+import {
+  activeProjectRoot,
+  projectRootFromPath,
+  systemCache,
+} from "@weborigami/language";
 import http from "node:http";
 import path from "node:path";
 import { requestListener } from "../../server/server.js";
@@ -40,6 +44,7 @@ if (parentPath === undefined) {
 }
 
 const projectRoot = await projectRootFromPath(parentPath);
+activeProjectRoot.set(projectRoot);
 projectRoot.watch();
 
 // Traverse from the project root to the indicated parent.
