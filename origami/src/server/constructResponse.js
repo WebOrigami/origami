@@ -79,6 +79,10 @@ export default async function constructResponse(request, resource) {
         } else {
           mediaType = sniffedType.toString();
         }
+        if (mediaType === "text/plain") {
+          // Prefer UTF-8 encoding for text/plain
+          mediaType += "; charset=utf-8";
+        }
       }
     }
   }

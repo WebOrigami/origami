@@ -1,4 +1,5 @@
-import { systemCache, volatile } from "@weborigami/language";
+import { activeProjectRoot, systemCache, volatile } from "@weborigami/language";
+import path from "node:path";
 import * as YAMLModule from "yaml";
 
 // The "yaml" package doesn't seem to provide a default export that the browser can
@@ -7,16 +8,18 @@ import * as YAMLModule from "yaml";
 const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
 export default function syscache() {
+  const projectRoot = activeProjectRoot.get();
+
   /** @type {any} */
   const entries = [...systemCache.entries()].map(([path, entry]) => {
     const result = {};
     if (entry.downstreams) {
-      result.downstreams = entry.downstreams;
+      result.downstreams = preferRelativePaths(projectRoot, entry.downstreams);
     }
     if (entry.upstreams) {
-      result.upstreams = entry.upstreams;
+      result.upstreams = preferRelativePaths(projectRoot, entry.upstreams);
     }
-    return [path, result];
+    return [preferRelativePath(projectRoot, path), result];
   });
 
   // Sort the entries by key
@@ -34,4 +37,20 @@ export default function syscache() {
   });
 
   return result;
+}
+
+function preferRelativePath(projectRoot, inputPath) {
+  if (!path.isAbsolute(inputPath)) {
+    return inputPath;
+  }
+  const prefix = `${projectRoot.path}${path.sep}`;
+  if (!inputPath.startsWith(prefix)) {
+    return inputPath;
+  }
+  const relativePath = inputPath.slice(prefix.length);
+  return relativePath;
+}
+
+function preferRelativePaths(projectRoot, paths) {
+  return Array.from(paths).map((path) => preferRelativePath(projectRoot, path));
 }
