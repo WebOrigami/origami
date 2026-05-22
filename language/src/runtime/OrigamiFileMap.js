@@ -4,7 +4,7 @@ import HandleExtensionsTransform from "./HandleExtensionsTransform.js";
 import ImportModulesMixin from "./ImportModulesMixin.js";
 import SyncCacheTransform from "./SyncCacheTransform.js";
 import WatchFilesMixin from "./WatchFilesMixin.js";
-import { volatileSymbol } from "./symbols.js";
+import { noCacheSymbol } from "./symbols.js";
 
 export default class OrigamiFileMap extends SyncCacheTransform(
   HandleExtensionsTransform(
@@ -28,5 +28,5 @@ export default class OrigamiFileMap extends SyncCacheTransform(
 
   // Don't cache files, just record their dependencies. The OS already caches
   // files, so caching them just consumes memory and may slow things down.
-  [volatileSymbol] = true;
+  [noCacheSymbol] = true;
 }

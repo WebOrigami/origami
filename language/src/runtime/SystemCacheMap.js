@@ -1,6 +1,6 @@
 import { SyncMap, trailingSlash } from "@weborigami/async-tree";
 import { AsyncLocalStorage } from "node:async_hooks";
-import { volatileSymbol } from "./symbols.js";
+import { noCacheSymbol, volatileSymbol } from "./symbols.js";
 
 // Async storage for tracking dependencies encountered during function evaluation
 const asyncStorage = new AsyncLocalStorage();
@@ -110,7 +110,10 @@ export default class SystemCacheMap extends SyncMap {
 
     // Get value in sync context
     value = syncStorage.run(context, computeFn);
-    if (!value?.[volatileSymbol]) {
+    if (value?.[noCacheSymbol] || value?.[volatileSymbol]) {
+      // Don't cache value
+      delete entry.value;
+    } else {
       // Add resolved value to cache
       entry.value = value;
     }
@@ -148,8 +151,8 @@ export default class SystemCacheMap extends SyncMap {
     // cache so concurrent requests get the same promise.
     entry.value = asyncStorage.run(context, async () => {
       const value = await computeFn();
-      if (value?.[volatileSymbol]) {
-        // Value is marked as volatile, don't cache it
+      if (value?.[noCacheSymbol] || value?.[volatileSymbol]) {
+        // Don't cache value
         delete entry.value;
       } else {
         // Add resolved value to cache

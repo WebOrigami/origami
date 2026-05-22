@@ -1,6 +1,7 @@
 export const cachePathSymbol = Symbol("cachePath");
 export const codeSymbol = Symbol("code");
 export const configSymbol = Symbol("config");
+export const noCacheSymbol = Symbol("noCache");
 export const scopeSymbol = Symbol("scope");
 export const sourceSymbol = Symbol("source");
 export const volatileSymbol = Symbol("volatile");

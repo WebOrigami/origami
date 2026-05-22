@@ -13,7 +13,7 @@ describe("https", () => {
     assert(systemCache.has("https://example.com"));
     const text = new TextDecoder().decode(result1);
     assert(text.includes("Example Domain"));
-    const result2 = await https("example.com");
+    const result2 = await https("example.com", {});
     assert.strictEqual(result1, result2);
   });
 });
