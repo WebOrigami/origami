@@ -27,69 +27,62 @@ let nextPathId = 0;
 
 export default class SystemCacheMap extends SyncMap {
   delete(path) {
-    // Construct a Map of all (path, entry) tuples to delete
-    const toDelete = new Map();
+    // Find all entries that depend on this path directly or indirectly
+    const toDelete = this.dependentEntries(path);
 
-    // Also construct a queue of entries to process for downstream dependencies
-    const entryQueue = [];
-
-    const entry = this.get(path);
-    if (entry) {
-      // We'll need to delete the existing entry for this path
-      toDelete.set(path, entry);
-      // Seed the queue with the existing entry
-      entryQueue.push(entry);
-    }
-
-    // Add all entries with child paths that implicitly depend on this entry.
-    // These child entries won't need to be detached from upstream entries --
-    // they all ultimately depend on this entry which we're about to delete.
-    for (const [otherPath, otherEntry] of this.entries()) {
-      if (this.isChildPath(path, otherPath)) {
-        toDelete.set(otherPath, otherEntry);
-        entryQueue.push(otherEntry);
-      }
-    }
-
-    // For each entry, add all downstream entries that explicitly depend on it.
-    // Enqueue those so that their downstreams can be processed too.
-    while (entryQueue.length > 0) {
-      const currentEntry = entryQueue.shift();
-      if (currentEntry.downstreams) {
-        for (const downstreamPath of currentEntry.downstreams) {
-          if (!toDelete.has(downstreamPath)) {
-            const downstreamEntry = this.get(downstreamPath);
-            if (downstreamEntry) {
-              entryQueue.push(downstreamEntry);
-              toDelete.set(downstreamPath, downstreamEntry);
-            }
-          }
-        }
-      }
-    }
-
-    // Delete everything
+    // Delete those dependent entries
     for (const deletePath of toDelete.keys()) {
       super.delete(deletePath);
     }
 
     // Remove deleted entries as being downstream from still-existing entries
     for (const [deletePath, deleteEntry] of toDelete.entries()) {
-      if (deleteEntry.upstreams) {
-        for (const upstreamPath of deleteEntry.upstreams) {
-          const upstreamEntry = this.get(upstreamPath);
-          if (upstreamEntry?.downstreams) {
-            upstreamEntry.downstreams.delete(deletePath);
-            if (upstreamEntry.downstreams.size === 0) {
-              // No more downstream dependencies, clean up entry
-              delete upstreamEntry.downstreams;
-            }
+      for (const upstreamPath of deleteEntry.upstreams ?? []) {
+        const upstreamEntry = this.get(upstreamPath);
+        if (upstreamEntry?.downstreams) {
+          upstreamEntry.downstreams.delete(deletePath);
+          if (upstreamEntry.downstreams.size === 0) {
+            // No more downstream dependencies, clean up entry
+            delete upstreamEntry.downstreams;
           }
         }
       }
     }
 
     return true;
+  }
+
+  // Return all entries that directly or indirectly depend on the given path
+  dependentEntries(path) {
+    const result = new Map();
+
+    const entry = this.get(path);
+    if (entry) {
+      // Path itself has an entry
+      result.set(path, entry);
+    }
+
+    // Add all entries with child paths that implicitly depend on this entry
+    for (const [otherPath, otherEntry] of this.entries()) {
+      if (this.isChildPath(path, otherPath)) {
+        result.set(otherPath, otherEntry);
+      }
+    }
+
+    // For each entry, add all entries downstream of it
+    for (const entry of result.values()) {
+      for (const downstreamPath of entry.downstreams ?? []) {
+        if (!result.has(downstreamPath)) {
+          for (const [key, value] of this.dependentEntries(downstreamPath)) {
+            if (!result.has(key)) {
+              result.set(key, value);
+            }
+          }
+        }
+      }
+    }
+
+    return result;
   }
 
   // REVIEW: This doesn't have the correct signature for getOrInsertComputed,
