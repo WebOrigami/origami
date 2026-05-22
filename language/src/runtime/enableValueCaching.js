@@ -88,7 +88,8 @@ export function cacheFunction(fn, cachePath) {
     // Return an async function that caches results for a unary argument
     result = async (...args) => {
       if (!allStringArguments(args)) {
-        return fn(...args);
+        // Run function in context of this cache path, but don't cache result
+        return systemCache.runInContextAsync(cachePath, () => fn(...args));
       }
       const keyCachePath = SystemCacheMap.joinPath(cachePath, args.join("/"));
       let result = systemCache.getOrInsertComputedAsync(
@@ -102,7 +103,8 @@ export function cacheFunction(fn, cachePath) {
     // Return a sync function that caches results for a unary argument
     result = (...args) => {
       if (!allStringArguments(args)) {
-        return fn(...args);
+        // Run function in context of this cache path, but don't cache result
+        return systemCache.runInContext(cachePath, () => fn(...args));
       }
       const keyCachePath = SystemCacheMap.joinPath(cachePath, args.join("/"));
       let result = systemCache.getOrInsertComputed(keyCachePath, () =>

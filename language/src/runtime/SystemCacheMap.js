@@ -203,6 +203,16 @@ export default class SystemCacheMap extends SyncMap {
     return cachePath;
   }
 
+  runInContext(cachePath, fn) {
+    const context = { downstream: cachePath };
+    return syncStorage.run(context, fn);
+  }
+
+  runInContextAsync(cachePath, fn) {
+    const context = { downstream: cachePath };
+    return asyncStorage.run(context, fn);
+  }
+
   /**
    * Given a path for an upstream dependency, and optionally the entry for that
    * path if it has already been retrieved, track the dependency between the
