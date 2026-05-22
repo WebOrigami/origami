@@ -1,5 +1,5 @@
 import enableValueCaching from "./enableValueCaching.js";
-import { cachePathSymbol } from "./symbols.js";
+import { cachePathSymbol, volatileSymbol } from "./symbols.js";
 import systemCache from "./systemCache.js";
 import SystemCacheMap from "./SystemCacheMap.js";
 
@@ -74,7 +74,14 @@ export default function AsyncCacheTransform(Base) {
         cachePath,
         async () => {
           let result = await super.get(key);
-          result = enableValueCaching(result, cachePath);
+          if (result !== undefined) {
+            // @ts-ignore
+            if (this[volatileSymbol]) {
+              result[volatileSymbol] = true;
+            } else {
+              result = enableValueCaching(result, cachePath);
+            }
+          }
           return result;
         },
       );

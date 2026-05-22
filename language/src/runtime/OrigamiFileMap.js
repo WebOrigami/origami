@@ -2,10 +2,11 @@ import { FileMap, trailingSlash } from "@weborigami/async-tree";
 import EventTargetMixin from "./EventTargetMixin.js";
 import HandleExtensionsTransform from "./HandleExtensionsTransform.js";
 import ImportModulesMixin from "./ImportModulesMixin.js";
-import SyncDependenciesTransform from "./SyncDependenciesTransform.js";
+import SyncCacheTransform from "./SyncCacheTransform.js";
 import WatchFilesMixin from "./WatchFilesMixin.js";
+import { volatileSymbol } from "./symbols.js";
 
-export default class OrigamiFileMap extends SyncDependenciesTransform(
+export default class OrigamiFileMap extends SyncCacheTransform(
   HandleExtensionsTransform(
     ImportModulesMixin(WatchFilesMixin(EventTargetMixin(FileMap))),
   ),
@@ -24,4 +25,8 @@ export default class OrigamiFileMap extends SyncDependenciesTransform(
   }
 
   globals = null;
+
+  // Don't cache files, just record their dependencies. The OS already caches
+  // files, so caching them just consumes memory and may slow things down.
+  [volatileSymbol] = true;
 }

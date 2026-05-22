@@ -1,5 +1,4 @@
 import { extension, isPacked, toString, Tree } from "@weborigami/async-tree";
-import { symbols } from "@weborigami/language";
 import { createHash } from "node:crypto";
 import { computedMIMEType } from "whatwg-mimetype";
 import { mediaTypeForExtension } from "./mediaTypes.js";
@@ -95,34 +94,25 @@ export default async function constructResponse(request, resource) {
   }
 
   // Compute ETag from the body content.
-  let etag;
-  if (!resource[symbols.volatileSymbol]) {
-    const hash = createHash("sha1");
-    if (typeof body === "string" || body instanceof String) {
-      hash.update(String(body), "utf8");
-    } else {
-      hash.update(body);
-    }
-    const digest = hash.digest("hex");
-    // Store ETag with quotes in cache to match If-None-Match header
-    etag = `"${digest}"`;
+  const hash = createHash("sha1");
+  if (typeof body === "string" || body instanceof String) {
+    hash.update(String(body), "utf8");
+  } else {
+    hash.update(body);
   }
+  const digest = hash.digest("hex");
+  // Store ETag with quotes in cache to match If-None-Match header
+  const etag = `"${digest}"`;
 
   /** @type {Record<string, string>} */
   const headers = {};
   if (mediaType) {
     headers["Content-Type"] = mediaType;
   }
-  if (etag) {
-    headers["Cache-Control"] = "no-cache";
-    headers.ETag = etag;
-  }
+  headers["Cache-Control"] = "no-cache";
+  headers.ETag = etag;
 
   const response = new Response(body, { headers });
-
-  if (resource[symbols.volatileSymbol]) {
-    response[symbols.volatileSymbol] = true;
-  }
 
   return response;
 }

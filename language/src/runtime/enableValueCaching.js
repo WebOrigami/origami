@@ -1,10 +1,4 @@
-import {
-  AsyncMap,
-  FileMap,
-  isPlainObject,
-  SyncMap,
-  Tree,
-} from "@weborigami/async-tree";
+import { AsyncMap, isPlainObject, SyncMap, Tree } from "@weborigami/async-tree";
 import AsyncCacheTransform from "./AsyncCacheTransform.js";
 import { cachePathSymbol } from "./symbols.js";
 import SyncCacheTransform from "./SyncCacheTransform.js";
@@ -33,7 +27,6 @@ export default function enableValueCaching(value, cachePath) {
   const cacheable =
     value[cachePathSymbol] === undefined &&
     Tree.isMaplike(value) &&
-    !(value instanceof FileMap) && // don't cache files
     !(
       isTransformApplied(SyncCacheTransform, value) ||
       isTransformApplied(AsyncCacheTransform, value)
