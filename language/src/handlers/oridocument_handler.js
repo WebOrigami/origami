@@ -32,6 +32,7 @@ export default {
     if (resultExtension && Object.isExtensible(result)) {
       // Add sidecar function so this template can be used in a map.
       result.key = addExtension(resultExtension);
+      result.keyNeedsSourceValue = false;
     }
 
     return result;

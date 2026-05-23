@@ -226,6 +226,7 @@ function validateOptions(options) {
     // If key or inverseKey weren't specified, look for sidecar functions
     inverseKeyFn ??= valueFn?.inverseKey;
     keyFn ??= valueFn?.key;
+    keyNeedsSourceValue ??= valueFn?.keyNeedsSourceValue;
 
     if (!keyFn && inverseKeyFn) {
       throw new TypeError(
