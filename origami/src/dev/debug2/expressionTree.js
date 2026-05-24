@@ -25,7 +25,7 @@ export default async function expressionTree(options) {
 
   const source = {
     text: expression,
-    relativePath: "_expression", // so cache path will be meaningful and consistent
+    cachePath: "_tree",
   };
 
   let maplike;

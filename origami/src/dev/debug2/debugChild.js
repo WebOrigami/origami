@@ -124,7 +124,7 @@ async function handleToEvaluatedExpression(expression, parent) {
 
     async getTree() {
       const tree = await systemCache.getOrInsertComputedAsync(
-        "_expression",
+        "_debug",
         async () =>
           expressionTree({
             expression,
