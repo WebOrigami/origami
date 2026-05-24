@@ -8,6 +8,9 @@
  */
 export default function assignPropertyDescriptors(target, ...sources) {
   for (const source of sources) {
+    if (!source) {
+      continue;
+    }
     const descriptors = Object.getOwnPropertyDescriptors(source);
     for (const [key, descriptor] of Object.entries(descriptors)) {
       if (descriptor.value !== undefined) {

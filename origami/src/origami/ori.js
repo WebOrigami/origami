@@ -1,5 +1,9 @@
 import { Tree, args, getRealmObjectPrototype } from "@weborigami/async-tree";
-import { compile, getGlobalsForTree } from "@weborigami/language";
+import {
+  assignPropertyDescriptors,
+  compile,
+  getGlobalsForTree,
+} from "@weborigami/language";
 import { toYaml } from "../common/serialize.js";
 import * as dev from "../dev/dev.js";
 
@@ -17,11 +21,8 @@ export default async function ori(expression, options = {}) {
 
   expression = args.stringlike(expression, "Origami.ori");
 
-  // Add Dev builtins as top-level globals
-  const globals = {
-    ...getGlobalsForTree(parent),
-    ...dev,
-  };
+  // Add Dev builtins as top-level globals; avoid invoking getters
+  const globals = assignPropertyDescriptors({}, getGlobalsForTree(parent), dev);
 
   // Compile the expression
   const fn = compile.expression(expression, {
