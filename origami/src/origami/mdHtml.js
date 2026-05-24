@@ -55,5 +55,5 @@ export default async function mdHtml(input) {
 
 mdHtml.key = (sourceValue, sourceKey) =>
   extension.replace(sourceKey, ".md", ".html");
-mdHtml.keyNeedsSourceValue = false;
+mdHtml.key.needsSourceValue = false;
 mdHtml.inverseKey = (resultKey) => extension.replace(resultKey, ".html", ".md");
