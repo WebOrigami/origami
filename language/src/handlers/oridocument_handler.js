@@ -32,7 +32,6 @@ export default {
     if (resultExtension && Object.isExtensible(result)) {
       // Add sidecar function so this template can be used in a map.
       result.key = addExtension(resultExtension);
-      result.keyNeedsSourceValue = false;
     }
 
     return result;
@@ -41,7 +40,7 @@ export default {
 
 // Return a function that adds the given extension
 function addExtension(resultExtension) {
-  return (sourceValue, sourceKey) => {
+  const keyFn = (sourceValue, sourceKey) => {
     if (sourceKey === undefined) {
       return undefined;
     }
@@ -52,4 +51,6 @@ function addExtension(resultExtension) {
       : normalizedKey + resultExtension;
     return resultKey;
   };
+  keyFn.needsSourceValue = false;
+  return keyFn;
 }

@@ -226,7 +226,6 @@ function validateOptions(options) {
     // If key or inverseKey weren't specified, look for sidecar functions
     inverseKeyFn ??= valueFn?.inverseKey;
     keyFn ??= valueFn?.key;
-    keyNeedsSourceValue ??= valueFn?.keyNeedsSourceValue;
 
     if (!keyFn && inverseKeyFn) {
       throw new TypeError(
@@ -251,7 +250,7 @@ function validateOptions(options) {
   // Set defaults for options not specified. We don't set a default value for
   // `deep` because a false value is a stronger signal than undefined.
   description ??= "key/value map";
-  keyNeedsSourceValue ??= true;
+  keyNeedsSourceValue ??= keyFn?.needsSourceValue ?? true;
 
   return {
     deep,
