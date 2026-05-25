@@ -1,26 +1,16 @@
+import hashBytes from "../common/hashBytes.js";
+
 /**
- * Given a block of seed data, return a seeded random number generator function
- * that produces a sequence of pseudo-random 32-bit integers.
+ * Given a block of seed data, return a function that produces a sequence of
+ * pseudo-random 32-bit integers.
  *
  * @typedef {import("@weborigami/async-tree").Stringlike} Stringlike
  *
- * @param {Uint8Array|Stringlike} seedData
+ * @param {Uint8Array|Stringlike} data
  * @return {function(): number}
  */
-export default function randomBasedOn(seedData) {
-  let bytes;
-  if (seedData instanceof Uint8Array) {
-    bytes = seedData;
-  } else {
-    const text = toString(seedData);
-    if (!text) {
-      throw new TypeError("Seed data must be a string or Uint8Array");
-    }
-    bytes = new TextEncoder().encode(text);
-  }
-
-  // Hash the seed data to produce a 256-bit value
-  const hash = createHash("sha256").update(bytes).digest();
+export default function randomsFrom(data) {
+  const hash = hashBytes(data);
 
   // Extract four 32-bit integers from the hash to use as the initial state of
   // the pseudo-random number generator
