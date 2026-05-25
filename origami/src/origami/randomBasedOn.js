@@ -1,6 +1,3 @@
-import { toString } from "@weborigami/async-tree";
-import { createHash } from "node:crypto";
-
 /**
  * Given a block of seed data, return a seeded random number generator function
  * that produces a sequence of pseudo-random 32-bit integers.
@@ -42,10 +39,11 @@ function rotl(x, k) {
 }
 
 /**
- * Pseudo-random number generator based on the xoshiro128** algorithm:
- * See 256-bit variant: https://en.wikipedia.org/wiki/Xorshift#xoshiro256**
+ * Pseudo-random number generator based on the xoshiro128** algorithm. See
+ * the 256-bit variant: https://en.wikipedia.org/wiki/Xorshift#xoshiro256**
  *
- * Unlike the original, this returns a 32-bit integer instead of a float.
+ * Unlike a typical implementation, this directly returns a 32-bit integer
+ * instead of a float.
  *
  * @param {number} a
  * @param {number} b
