@@ -6,6 +6,7 @@ export { default as indexPage } from "../origami/indexPage.js";
 export { default as yaml } from "../origami/yaml.js";
 export { default as breakpoint } from "./breakpoint.js";
 export { default as changes } from "./changes.js";
+export { default as changes2 } from "./changes2.js";
 export { default as code } from "./code.js";
 export { default as copy } from "./copy.js";
 export { default as audit } from "./crawler/audit.js";
