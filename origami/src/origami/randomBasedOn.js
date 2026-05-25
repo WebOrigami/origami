@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 
 /**
  * Given a block of seed data, return a seeded random number generator function
- * that produces a sequence of pseudo-random numbers in the range [0, 1).
+ * that produces a sequence of pseudo-random 32-bit integers.
  *
  * @typedef {import("@weborigami/async-tree").Stringlike} Stringlike
  *
@@ -22,7 +22,7 @@ export default function randomBasedOn(seedData) {
     bytes = new TextEncoder().encode(text);
   }
 
-  // Hash the seed data to produce a 128-bit value
+  // Hash the seed data to produce a 256-bit value
   const hash = createHash("sha256").update(bytes).digest();
 
   // Extract four 32-bit integers from the hash to use as the initial state of
@@ -36,9 +36,16 @@ export default function randomBasedOn(seedData) {
   return prng;
 }
 
+// Rotate left (circular left shift) for 32-bit integers
+function rotl(x, k) {
+  return ((x << k) | (x >>> (32 - k))) >>> 0;
+}
+
 /**
  * Pseudo-random number generator based on the xoshiro128** algorithm:
- * https://en.wikipedia.org/wiki/Xorshift#xoshiro256**
+ * See 256-bit variant: https://en.wikipedia.org/wiki/Xorshift#xoshiro256**
+ *
+ * Unlike the original, this returns a 32-bit integer instead of a float.
  *
  * @param {number} a
  * @param {number} b
@@ -51,10 +58,6 @@ function xoshiro128ss(a, b, c, d) {
   let s1 = b >>> 0;
   let s2 = c >>> 0;
   let s3 = d >>> 0;
-
-  function rotl(x, k) {
-    return ((x << k) | (x >>> (32 - k))) >>> 0;
-  }
 
   return function () {
     const result = (rotl(Math.imul(s1, 5), 7) * 9) >>> 0;
@@ -69,6 +72,6 @@ function xoshiro128ss(a, b, c, d) {
     s2 ^= t;
     s3 = rotl(s3, 11);
 
-    return result / 4294967296;
+    return result;
   };
 }
