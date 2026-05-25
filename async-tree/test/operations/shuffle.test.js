@@ -16,4 +16,29 @@ describe("shuffle", () => {
     const treeKeys = await keys(result);
     assert.deepEqual(treeKeys.sort(), Object.keys(obj).sort());
   });
+
+  test("accepts a randoms function for deterministic shuffling", async () => {
+    const obj = {
+      a: 1,
+      b: 2,
+      c: 3,
+      d: 4,
+      e: 5,
+    };
+
+    function count() {
+      let index = 0;
+      return function () {
+        return index++;
+      };
+    }
+
+    const result1 = await shuffle(obj, { randoms: count() });
+    const keys1 = await keys(result1);
+
+    const result2 = await shuffle(obj, { randoms: count() });
+    const keys2 = await keys(result2);
+
+    assert.deepEqual(keys1, keys2);
+  });
 });
