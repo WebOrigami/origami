@@ -1,9 +1,9 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import compare from "../../src/operations/compare.js";
+import combine from "../../src/operations/combine.js";
 
-describe("compare", () => {
-  test("compares two trees", async () => {
+describe("combine", () => {
+  test("combines two trees", async () => {
     const oldTree = {
       a: {
         b: "old",
@@ -18,8 +18,8 @@ describe("compare", () => {
       },
       e: "new",
     };
-    const comparison = await compare(oldTree, newTree, compareFn);
-    assert.deepEqual(comparison, {
+    const combination = await combine(oldTree, newTree, compareFn);
+    assert.deepEqual(combination, {
       "a/": {
         b: ["old", "new"],
         c: ["old", "old"],

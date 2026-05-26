@@ -19,11 +19,11 @@ export default async function changes(oldMaplike, newMaplike) {
     position: 2,
   });
 
-  const comparison = await Tree.compare(oldTree, newTree, compareFn);
-  return comparison;
+  const combination = await Tree.combine(oldTree, newTree, compare);
+  return combination;
 }
 
-function compareFn(oldValue, newValue) {
+function compare(oldValue, newValue) {
   if (oldValue !== undefined && newValue === undefined) {
     return "deleted";
   } else if (oldValue === undefined && newValue !== undefined) {

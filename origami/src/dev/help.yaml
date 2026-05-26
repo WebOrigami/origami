@@ -202,9 +202,9 @@ Tree:
     clear:
       args: (map)
       description: Remove all values from the map
-    compare:
-      args: (tree1, tree2, compareFn)
-      description: Pairwise application of compareFn to the values in two trees
+    combine:
+      args: (tree1, tree2, combineFn)
+      description: Pairwise application of combineFn to the trees' values
     concat:
       args: (...trees)
       description: Merge trees, renumbering numeric keys
