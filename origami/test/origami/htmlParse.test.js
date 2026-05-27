@@ -1,5 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import domObject from "../../src/origami/domObject.js";
 import htmlParse from "../../src/origami/htmlParse.js";
 
 describe("htmlParse", () => {
@@ -11,7 +12,8 @@ describe("htmlParse", () => {
         </p>
       </div>
     `);
-    assert.deepEqual(dom, {
+    const object = await domObject(dom);
+    assert.deepEqual(object, {
       name: "div",
       attributes: { class: "container" },
       children: [
