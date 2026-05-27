@@ -1,6 +1,6 @@
 import { args } from "@weborigami/async-tree";
 import loadJsDom from "../common/loadJsDom.js";
-import domNodeToObject from "./domNodeToObject.js";
+import domObject from "./domObject.js";
 
 let parser;
 
@@ -13,7 +13,7 @@ export default async function xmlParse(xml) {
   xml = args.stringlike(xml, "Origami.xmlParse");
   const parser = await getParser();
   const dom = parser.parseFromString(xml, "application/xml");
-  let object = domNodeToObject(dom);
+  let object = domObject(dom);
   if (
     (object.name === "#document" || object.name === "#document-fragment") &&
     object.children.length === 1

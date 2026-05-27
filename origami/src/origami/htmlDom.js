@@ -6,8 +6,8 @@ import loadJsDom from "../common/loadJsDom.js";
  *
  * @param {import("@weborigami/async-tree").Stringlike} html
  */
-export default async function htmlParse(html) {
-  html = args.stringlike(html, "Origami.htmlParse");
+export default async function htmlDom(html) {
+  html = args.stringlike(html, "Origami.htmlDom");
   const { JSDOM } = await loadJsDom();
   let dom = JSDOM.fragment(html);
   if (

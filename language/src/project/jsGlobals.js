@@ -92,6 +92,7 @@ const globals = {
   SuppressedError: globalThis.SuppressedError,
   Symbol,
   SyntaxError,
+  Temporal: globalThis.Temporal,
   TextDecoder,
   TextDecoderStream,
   TextEncoder,

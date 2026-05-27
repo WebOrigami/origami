@@ -4,14 +4,17 @@ const CDATA_SECTION_NODE = 4;
 const DOCUMENT_NODE = 9;
 const DOCUMENT_FRAGMENT_NODE = 11;
 
-export default function domNodeToObject(node) {
+/**
+ * Given a DOM node, return a plain object representation of it.
+ */
+export default function domObject(node) {
   switch (node.nodeType) {
     case DOCUMENT_NODE:
       return {
         name: "#document",
         children: [...node.childNodes]
           .filter((child) => !isWhitespaceOnly(child))
-          .map(domNodeToObject),
+          .map(domObject),
       };
 
     case DOCUMENT_FRAGMENT_NODE:
@@ -19,7 +22,7 @@ export default function domNodeToObject(node) {
         name: "#document-fragment",
         children: [...node.childNodes]
           .filter((child) => !isWhitespaceOnly(child))
-          .map(domNodeToObject),
+          .map(domObject),
       };
 
     case ELEMENT_NODE: {
@@ -55,7 +58,7 @@ export default function domNodeToObject(node) {
           result.text = text;
         }
       } else if (relevantChildren.length > 0) {
-        result.children = relevantChildren.map(domNodeToObject);
+        result.children = relevantChildren.map(domObject);
       }
 
       return result;

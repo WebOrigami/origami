@@ -69,7 +69,7 @@ export async function map(arg, operation, options = {}) {
   } catch (/** @type {any} */ error) {
     let message = error.message ?? error;
     message = `${operation}: ${message}`;
-    const newError = new error.constructor(message);
+    const newError = new TypeError(message);
     /** @type {any} */ (newError).position = position;
     throw newError;
   }

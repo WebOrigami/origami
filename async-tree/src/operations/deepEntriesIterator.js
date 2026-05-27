@@ -2,6 +2,7 @@ import * as args from "../utilities/args.js";
 import isUnpackable from "../utilities/isUnpackable.js";
 import isMap from "./isMap.js";
 import isMaplike from "./isMaplike.js";
+
 /**
  * Return an iterator that yields all entries in a tree, including nested trees.
  *
