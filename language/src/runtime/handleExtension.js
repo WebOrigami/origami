@@ -8,6 +8,7 @@ import {
   trailingSlash,
 } from "@weborigami/async-tree";
 import getPackedPath from "../handlers/getPackedPath.js";
+import mediaTypeExtensions from "../handlers/mediaTypeExtensions.json" with { type: "json" };
 import { cachePathSymbol } from "./symbols.js";
 import systemCache from "./systemCache.js";
 import SystemCacheMap from "./SystemCacheMap.js";
@@ -32,9 +33,14 @@ export default function handleExtension(value, key, handlers, parent = null) {
     const normalized = trailingSlash.remove(key);
 
     // Special cases: `.ori.<ext>` extensions are Origami documents
-    const extname = normalized.match(/\.ori\.\S+$/)
+    let extname = normalized.match(/\.ori\.\S+$/)
       ? ".oridocument"
       : extension.extname(normalized);
+
+    if (!extname && value?.mediaType) {
+      extname = extensionFromMediaType(value.mediaType);
+    }
+
     if (extname) {
       const handlerName = `${extname.slice(1)}_handler`;
       // Use `in` to look for handle so that, if the handler is a promise, we
@@ -88,4 +94,9 @@ export default function handleExtension(value, key, handlers, parent = null) {
   }
 
   return value;
+}
+
+function extensionFromMediaType(mediaType) {
+  const essence = mediaType.split(";")[0].trim();
+  return mediaTypeExtensions[essence];
 }

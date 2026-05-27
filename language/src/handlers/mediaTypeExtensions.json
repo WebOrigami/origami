@@ -1,0 +1,15 @@
+{
+  "application/json": ".json",
+  "application/wasm": ".wasm",
+  "application/xhtml+xml": ".xhtml",
+  "application/xml": ".xml",
+  "application/yaml": ".yaml",
+  "image/jpeg": ".jpg",
+  "image/jpg": ".jpg",
+  "text/css": ".css",
+  "text/csv": ".csv",
+  "text/html": ".html",
+  "text/plain": ".txt",
+  "text/tsv": ".tsv",
+  "text/xml": ".xml"
+}

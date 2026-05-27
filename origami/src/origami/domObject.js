@@ -1,3 +1,5 @@
+import { isUnpackable } from "@weborigami/async-tree";
+
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
 const CDATA_SECTION_NODE = 4;
@@ -7,14 +9,21 @@ const DOCUMENT_FRAGMENT_NODE = 11;
 /**
  * Given a DOM node, return a plain object representation of it.
  */
-export default function domObject(node) {
+export default async function domObject(input) {
+  if (isUnpackable(input)) {
+    input = await input.unpack();
+  }
+  return nodeObject(input);
+}
+
+function nodeObject(node) {
   switch (node.nodeType) {
     case DOCUMENT_NODE:
       return {
         name: "#document",
         children: [...node.childNodes]
           .filter((child) => !isWhitespaceOnly(child))
-          .map(domObject),
+          .map(nodeObject),
       };
 
     case DOCUMENT_FRAGMENT_NODE:
@@ -22,7 +31,7 @@ export default function domObject(node) {
         name: "#document-fragment",
         children: [...node.childNodes]
           .filter((child) => !isWhitespaceOnly(child))
-          .map(domObject),
+          .map(nodeObject),
       };
 
     case ELEMENT_NODE: {
@@ -58,7 +67,7 @@ export default function domObject(node) {
           result.text = text;
         }
       } else if (relevantChildren.length > 0) {
-        result.children = relevantChildren.map(domObject);
+        result.children = relevantChildren.map(nodeObject);
       }
 
       return result;

@@ -3,6 +3,7 @@ export { default as help } from "../dev/help.js"; // Alias
 export { default as basename } from "./basename.js";
 export { default as csv } from "./csv.js";
 export { default as document } from "./document.js";
+export { default as domObject } from "./domObject.js";
 export { default as fetch } from "./fetch.js";
 export { default as hash } from "./hash.js";
 export { default as htmlDom } from "./htmlDom.js";

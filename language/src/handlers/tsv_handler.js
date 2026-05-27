@@ -1,7 +1,7 @@
 import { symbols, toString } from "@weborigami/async-tree";
 
 export default {
-  mediaType: "text/csv",
+  mediaType: "text/tsv",
 
   unpack(packed, options = {}) {
     const parent = options.parent ?? null;
