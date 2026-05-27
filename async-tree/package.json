@@ -7,9 +7,9 @@
   "browser": "./browser.js",
   "types": "./index.ts",
   "devDependencies": {
-    "@types/node": "25.3.2",
-    "puppeteer": "24.37.5",
-    "typescript": "5.9.3"
+    "@types/node": "25.9.1",
+    "puppeteer": "25.1.0",
+    "typescript": "6.0.3"
   },
   "scripts": {
     "headlessTest": "node scripts/headlessTest.js",
