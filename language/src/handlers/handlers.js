@@ -20,8 +20,6 @@ export { default as txt_handler } from "./txt_handler.js";
 
 export { default as css_handler } from "./css_handler.js";
 export { default as csv_handler } from "./csv_handler.js";
-export { default as htm_handler } from "./htm_handler.js";
-export { default as html_handler } from "./html_handler.js";
 export { default as jpeg_handler } from "./jpeg_handler.js";
 export { default as jpg_handler } from "./jpg_handler.js";
 export { default as json_handler } from "./json_handler.js";
@@ -30,6 +28,5 @@ export { default as mjs_handler } from "./mjs_handler.js";
 export { default as sh_handler } from "./sh_handler.js";
 export { default as tsv_handler } from "./tsv_handler.js";
 export { default as wasm_handler } from "./wasm_handler.js";
-export { default as xhtml_handler } from "./xhtml_handler.js";
 export { default as yaml_handler } from "./yaml_handler.js";
 export { default as yml_handler } from "./yml_handler.js";
