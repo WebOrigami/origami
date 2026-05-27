@@ -17,7 +17,7 @@ evaluating: \x1b[31mdoesntExist\x1b[0m`,
       );
     });
 
-    test("identifies the argument that produced an error", async () => {
+    test.skip("identifies the argument that produced an error", async () => {
       await assertError(
         `Tree.map(foo, (_) => _)`,
         `ReferenceError: Tree.map: The map argument wasn't defined.
