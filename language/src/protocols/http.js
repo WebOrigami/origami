@@ -13,7 +13,7 @@ export default async function http(host, ...keys) {
   const state = keys.pop();
   const href = constructHref("http:", host, ...keys);
   return systemCache.getOrInsertComputedAsync(href, () =>
-    fetchAndHandleExtension(href, state.parent),
+    fetchAndHandleExtension(href, null, state),
   );
 }
 http.needsState = true;

@@ -13,6 +13,7 @@ export { default as jsGlobals } from "./src/project/jsGlobals.js";
 export { default as projectConfig } from "./src/project/projectConfig.js";
 export { default as projectRoot } from "./src/project/projectRoot.js";
 export { default as projectRootFromPath } from "./src/project/projectRootFromPath.js";
+export { default as fetchAndHandleExtension } from "./src/protocols/fetchAndHandleExtension.js";
 export * as Protocols from "./src/protocols/protocols.js";
 export { default as assignPropertyDescriptors } from "./src/runtime/assignPropertyDescriptors.js";
 export { formatError, highlightError, lineInfo } from "./src/runtime/errors.js";

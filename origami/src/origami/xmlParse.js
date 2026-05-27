@@ -1,26 +1,25 @@
 import { args } from "@weborigami/async-tree";
 import loadJsDom from "../common/loadJsDom.js";
-import domObject from "./domObject.js";
 
 let parser;
 
 /**
- * Return the DOM for the given XML as a plain object.
+ * Return the DOM for the given XML.
  *
  * @param {import("@weborigami/async-tree").Stringlike} xml
  */
 export default async function xmlParse(xml) {
   xml = args.stringlike(xml, "Origami.xmlParse");
   const parser = await getParser();
-  const dom = parser.parseFromString(xml, "application/xml");
-  let object = domObject(dom);
+  let dom = parser.parseFromString(xml, "application/xml");
   if (
-    (object.name === "#document" || object.name === "#document-fragment") &&
-    object.children.length === 1
+    (dom.nodeType === 9 || dom.nodeType === 11) &&
+    dom.children.length === 1
   ) {
-    object = object.children[0];
+    // Document or DocumentFragment with a single child: return the child
+    dom = dom.children[0];
   }
-  return object;
+  return dom;
 }
 
 async function getParser() {
