@@ -13,12 +13,12 @@ Dev:
     clear:
       args: (tree)
       description: Remove all values from the tree (alias of Tree.clear)
-    crawl:
-      args: (tree, base)
-      description: A tree of a site's discoverable resources
     copy:
       args: (source, target)
       description: Copy the source tree to the target
+    crawl:
+      args: (tree, base)
+      description: A tree of a site's discoverable resources
     debug:
       args: (tree)
       description: Add debug features to the tree
@@ -148,6 +148,9 @@ Origami:
     toFunction:
       args: (obj)
       description: Coerce a tree or packed function definition to a function
+    tsv:
+      args: (tree)
+      description: Render the tree as a TSV file
     unpack:
       args: (buffer)
       description: Unpack the buffer into a usable form
