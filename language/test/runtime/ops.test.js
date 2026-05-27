@@ -146,6 +146,7 @@ describe("ops", () => {
   describe("ops.flat", () => {
     test("flattens arrays", async () => {
       assert.deepEqual(await ops.flat(1, 2, [3]), [1, 2, 3]);
+      assert.deepEqual(await ops.flat([1], [2], [[3]]), [1, 2, [3]]);
     });
 
     test("flattens maplike objects", async () => {
@@ -170,6 +171,15 @@ describe("ops", () => {
         2: 7,
         3: 8,
       });
+    });
+
+    test("flattens arrays of objects", async () => {
+      const result = await ops.flat([{ a: 1 }], [{ b: 2 }, { c: 3 }]);
+      assert.deepEqual(await Tree.plain(result), [
+        { a: 1 },
+        { b: 2 },
+        { c: 3 },
+      ]);
     });
   });
 

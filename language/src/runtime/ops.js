@@ -180,8 +180,7 @@ addOpLabel(exponentiation, "«ops.exponentiation»");
 export async function flat(...args) {
   // Unpack packed arguments so they can be flattened
   const unpacked = args.map((arg) => (isUnpackable(arg) ? arg.unpack() : arg));
-  // Flatten to depth 2: 1 for args array, 1 for flattening
-  return Tree.flat(unpacked, 2);
+  return Tree.flat(unpacked);
 }
 addOpLabel(flat, "«ops.flat»");
 

@@ -17,7 +17,7 @@ import deepEntriesIterator from "./deepEntriesIterator.js";
  * @param {number} [depth] The maximum depth to flatten
  */
 export default async function flat(maplike, depth = 1) {
-  const map = await args.map(maplike, "Tree.flat", { deep: true });
+  const map = await args.map(maplike, "Tree.flat");
 
   let index = 0;
   let onlyNumericKeys = true;
