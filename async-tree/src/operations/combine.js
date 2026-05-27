@@ -12,7 +12,7 @@ import keys from "./keys.js";
  * that were not `undefined`. If all results were `undefined`, the overall
  * result is itself `undefined`.
  *
- * @typedef {import("@weborigami/async-tree").Maplike} Maplike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  *
  * @param {Maplike} maplike1
  * @param {Maplike} maplike2
