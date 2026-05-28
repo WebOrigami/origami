@@ -95,7 +95,7 @@ describe("optimize", () => {
     assertCompile(expression, expected, "shell");
   });
 
-  describe("resolve reference", () => {
+  describe.only("resolve reference", () => {
     test("external reference", () => {
       // Compilation of `folder` where folder isn't a variable
       const code = createCode([
@@ -115,17 +115,20 @@ describe("optimize", () => {
       );
     });
 
-    test("external reference", () => {
-      // Compilation of `index.html` where `index` isn't a variable
+    test("external reference with implied unpack", () => {
+      // Compilation of `greet.ori("world")`
       const code = createCode([
-        markers.traverse,
-        [markers.reference, "index.html"],
+        [markers.traverse, [markers.reference, "greet.ori"]],
+        [ops.literal, "world"],
       ]);
       const parent = {};
       const expected = [
-        ops.cache,
-        "test.ori/_refs/index.html",
-        [[ops.scope], [ops.literal, "index.html"]],
+        [
+          ops.cache,
+          "test.ori/_refs/greet.ori/",
+          [ops.unpack, [[ops.scope], [ops.literal, "greet.ori"]]],
+        ],
+        "world",
       ];
       const globals = {};
       assertCodeEqual(

@@ -75,7 +75,7 @@ export default function optimize(code, options = {}) {
   }
 
   // Optimize children
-  const optimized = annotate(
+  let optimized = annotate(
     code.map((child, index) => {
       if (op === ops.object) {
         if (index === 0) {
@@ -111,6 +111,11 @@ export default function optimize(code, options = {}) {
     }),
     code.location,
   );
+
+  if (optimized[0] instanceof Array && optimized[0][0] === ops.cache) {
+    // An external reference in function position: add implied unpack
+    optimized = impliedUnpack(optimized);
+  }
 
   return annotate(optimized, code.location);
 }
@@ -226,6 +231,25 @@ function getPropertyNames(entries) {
 function globalReference(key, globals) {
   const normalized = trailingSlash.remove(key);
   return globals[normalized];
+}
+
+// The code starts with a cached external reference in function position. If the
+// cache path doesn't end in a trailing slash, wrap the external reference in an
+// unpack operation.
+function impliedUnpack(code) {
+  const [opCache, cachePath, refCode] = code[0];
+  if (cachePath.endsWith("/")) {
+    // Will already be unpacked
+    return code;
+  }
+  const modifiedPath = cachePath + "/";
+  const modifiedRefCode = annotate([ops.unpack, refCode], code[0].location);
+  const unpacked = annotate(
+    [opCache, modifiedPath, modifiedRefCode],
+    code[0].location,
+  );
+  const modified = annotate([unpacked, ...code.slice(1)], code.location);
+  return modified;
 }
 
 function inheritedReference(key, depth, location) {
