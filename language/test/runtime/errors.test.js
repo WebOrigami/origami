@@ -33,7 +33,7 @@ evaluating: \x1b[31mfoo\x1b[0m`,
       );
     });
 
-    test.only("references the Origami file that produced the error", async () => {
+    test("references the Origami file that produced the error", async () => {
       await assertError(
         {
           text: `foo()`,

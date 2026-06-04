@@ -39,8 +39,13 @@ export default async function explainReferenceError(code, state) {
   let key;
   if (code[0] === ops.cache) {
     // External scope reference
-    const scopeCall = code[2].slice(1); // get the actual call
-    const keys = scopeCall.map((part) => part[1]);
+    let refCall = code[2];
+    if (refCall[0] === ops.unpack) {
+      // Unwrap implied unpack
+      refCall = refCall[1];
+    }
+    const scopeArgs = refCall.slice(1); // get the scope reference arguments
+    const keys = scopeArgs.map((part) => part[1]);
     const path = pathFromKeys(keys);
 
     if (keys.length > 1) {
