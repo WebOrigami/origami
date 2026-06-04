@@ -87,6 +87,15 @@ export default function handleExtension(value, key, handlers, parent = null) {
               parent,
             });
 
+            // Now that we know the file was unpacked, we cache the file value
+            // itself so that subsequent requests for the file can be fulfilled
+            // from the cache. Doing this sort of manipulation outside of the
+            // cache doesn't feel great, but works.
+            const fileCacheEntry = systemCache.get(fileCachePath);
+            if (fileCacheEntry) {
+              fileCacheEntry.value = value;
+            }
+
             return unpacked;
           });
       }
