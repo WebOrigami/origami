@@ -17,6 +17,7 @@ describe("fetchAndHandleExtension", () => {
         parent,
       },
     );
+    // @ts-ignore
     const data = await buffer.unpack();
     assert.strictEqual(data.name, "Fluffy");
   });

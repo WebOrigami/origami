@@ -37,8 +37,8 @@ export default function handleExtension(value, key, handlers, parent = null) {
       ? ".oridocument"
       : extension.extname(normalized);
 
-    if (!extname && value?.mediaType) {
-      extname = extensionFromMediaType(value.mediaType);
+    if (!extname && /** @type {any} */ (value)?.mediaType) {
+      extname = extensionFromMediaType(/** @type {any} */ (value).mediaType);
     }
 
     if (extname) {
