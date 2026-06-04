@@ -1,11 +1,11 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import domObject from "../../src/origami/domObject.js";
-import htmlParse from "../../src/origami/htmlParse.js";
+import htmlDom from "../../src/origami/htmlDom.js";
 
-describe("htmlParse", () => {
+describe("htmlDom", () => {
   test("parses an HTML string into a plain object representing the DOM", async () => {
-    const dom = await htmlParse(`
+    const dom = await htmlDom(`
       <div class="container">
         <p>
           Hello <b>world</b>.
