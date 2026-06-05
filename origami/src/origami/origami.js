@@ -24,7 +24,6 @@ export { default as once } from "./once.js";
 export { default as ori } from "./ori.js";
 export { default as pack } from "./pack.js";
 export { default as post } from "./post.js";
-export { default as project } from "./project.js";
 export { default as projectRoot } from "./projectRoot.js";
 export { default as randomFrom } from "./randomFrom.js";
 export { default as randomsFrom } from "./randomsFrom.js";
