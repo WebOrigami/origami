@@ -4,8 +4,6 @@ import http from "node:http";
 import path from "node:path";
 import { findOpenPort } from "../../common/findOpenPort.js";
 
-const PUBLIC_HOST = "127.0.0.1";
-
 // Module that loads the server in the child process
 const childModuleUrl = new URL("./debugChild.js", import.meta.url);
 
@@ -59,12 +57,10 @@ export default async function debugParent(options) {
   }
 
   const port = options.port ?? (await findOpenPort());
-  publicOrigin = `http://${PUBLIC_HOST}:${port}`;
+  publicOrigin = `http://localhost:${port}`;
 
   publicServer = http.createServer(proxyRequest);
-  await new Promise((resolve) =>
-    publicServer.listen(port, PUBLIC_HOST, resolve),
-  );
+  await new Promise((resolve) => publicServer.listen(port, undefined, resolve));
   await startChild(options);
 
   emitter = Object.assign(new EventEmitter(), {
@@ -201,7 +197,7 @@ function proxyRequest(request, response) {
 
   const upstreamRequest = http.request(
     {
-      host: PUBLIC_HOST,
+      host: "localhost",
       port,
       method: request.method,
       path: request.url,
