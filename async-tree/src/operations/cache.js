@@ -67,6 +67,11 @@ export default async function treeCache(sourceMaplike, cacheMaplike) {
     },
 
     async *keys() {
+      // REVIEW: Saving our own copy of the source keys can create issues when
+      // this operation is applied in an Origami site. Because this keys() call
+      // happens outside of the language package's system cache, the system
+      // cache may not detect a dependency. If the underlying keys change, the
+      // keys obtained here won't be invalidated.
       sourceKeys ??= await keys(source);
       yield* sourceKeys;
     },

@@ -10,7 +10,7 @@ import keys from "./keys.js";
  */
 export default async function addNextPrevious(maplike) {
   const source = await args.map(maplike, "Tree.addNextPrevious");
-  let sourceKeys;
+  const sourceKeys = await keys(source);
 
   return Object.assign(new AsyncMap(), {
     async get(key) {
@@ -29,7 +29,6 @@ export default async function addNextPrevious(maplike) {
       }
 
       // Find the index of the current key
-      sourceKeys ??= await keys(source);
       const index = sourceKeys.indexOf(key);
       if (index >= 0) {
         // Extend result with nextKey/previousKey properties.
@@ -47,7 +46,6 @@ export default async function addNextPrevious(maplike) {
     },
 
     async *keys() {
-      sourceKeys ??= await keys(source);
       yield* sourceKeys;
     },
 
