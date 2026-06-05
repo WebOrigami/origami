@@ -27,7 +27,6 @@ export type MapExtensionOptions = {
   deep?: boolean;
   description?: string;
   extension?: string;
-  needsSourceValue?: boolean;
   value?: ValueKeyFn;
 };
 
@@ -46,6 +45,7 @@ export type MapOptions = {
   inverseKey?: KeyFn;
   key?: ValueKeyFn;
   keyNeedsSourceValue?: boolean;
+  needsSourceValue?: boolean;
   value?: ValueKeyFn;
 };
 

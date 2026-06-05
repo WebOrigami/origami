@@ -5,10 +5,8 @@ import isPlainObject from "../utilities/isPlainObject.js";
 import isUnpackable from "../utilities/isUnpackable.js";
 import toFunction from "../utilities/toFunction.js";
 import cachedKeyFunctions from "./cachedKeyFunctions.js";
-import extensionKeyFunctions from "./extensionKeyFunctions.js";
 import isMap from "./isMap.js";
 import keys from "./keys.js";
-import parseExtensions from "./parseExtensions.js";
 
 /**
  * Transform the keys and/or values of a tree.
@@ -147,7 +145,6 @@ function validateOption(options, key) {
 function validateOptions(options) {
   let deep;
   let description;
-  let extension;
   let inverseKeyFn;
   let keyFn;
   let keyNeedsSourceValue;
@@ -162,7 +159,6 @@ function validateOptions(options) {
 
     // Validate individual options
     deep = validateOption(options, "deep");
-    extension = validateOption(options, "extension");
     inverseKeyFn = validateOption(options, "inverseKey");
     keyFn = validateOption(options, "key");
     keyNeedsSourceValue = validateOption(options, "keyNeedsSourceValue");
@@ -196,49 +192,21 @@ function validateOptions(options) {
     throw error;
   }
 
-  if (extension && !options._noExtensionWarning) {
-    console.warn(
-      `Tree.map: The 'extension' option for Tree.map() is deprecated and will be removed in a future release. Use Tree.mapExtension() instead.`,
-    );
-  }
-  if (extension && (keyFn || inverseKeyFn)) {
+  // If key or inverseKey weren't specified, look for sidecar functions
+  inverseKeyFn ??= valueFn?.inverseKey;
+  keyFn ??= valueFn?.key;
+
+  if (!keyFn && inverseKeyFn) {
     throw new TypeError(
-      `Tree.map: You can't specify extensions and also a key or inverseKey function`,
-    );
-  }
-  if (extension && keyNeedsSourceValue === true) {
-    throw new TypeError(
-      `Tree.map: using extensions sets keyNeedsSourceValue to be false`,
+      `Tree.map: You can't specify an inverseKey function without a key function`,
     );
   }
 
-  if (extension) {
-    // Use the extension mapping to generate key and inverseKey functions
-    const parsed = parseExtensions(extension);
-    const keyFns = extensionKeyFunctions(
-      parsed.sourceExtension,
-      parsed.resultExtension,
-    );
+  if (keyFn && !inverseKeyFn) {
+    // Only keyFn was provided, so we need to generate the inverseKeyFn
+    const keyFns = cachedKeyFunctions(keyFn, deep);
     keyFn = keyFns.key;
     inverseKeyFn = keyFns.inverseKey;
-    keyNeedsSourceValue = false;
-  } else {
-    // If key or inverseKey weren't specified, look for sidecar functions
-    inverseKeyFn ??= valueFn?.inverseKey;
-    keyFn ??= valueFn?.key;
-
-    if (!keyFn && inverseKeyFn) {
-      throw new TypeError(
-        `Tree.map: You can't specify an inverseKey function without a key function`,
-      );
-    }
-
-    if (keyFn && !inverseKeyFn) {
-      // Only keyFn was provided, so we need to generate the inverseKeyFn
-      const keyFns = cachedKeyFunctions(keyFn, deep);
-      keyFn = keyFns.key;
-      inverseKeyFn = keyFns.inverseKey;
-    }
   }
 
   if (!valueFn && !keyFn) {
