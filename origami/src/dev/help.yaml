@@ -63,6 +63,9 @@ Origami:
     document:
       args: (text, [data])
       description: Create a document object with the text and data
+    domObject:
+      args: (dom)
+      description: Convert a DOM tree to a plain JavaScript object
     extension:
       description: Helpers for working with file extensions
     fetch:
@@ -71,12 +74,12 @@ Origami:
     hash:
       args: (data)
       description: A hex string hash of the data
+    htmlDom:
+      args: (html)
+      description: Parse HTML into a DOM tree
     htmlEscape:
       args: (text)
       description: Escape HTML entities in the text
-    htmlParse:
-      args: (html)
-      description: Parse HTML into a plain JavaScript object
     image:
       description: Collection of functions for working with images
     indexPage:
@@ -154,9 +157,9 @@ Origami:
     unpack:
       args: (buffer)
       description: Unpack the buffer into a usable form
-    xmlParse:
+    xmlDom:
       args: (xml)
-      description: Parse XML into a plain JavaScript object
+      description: Parse XML into a DOM tree
     yaml:
       args: (obj)
       description: Render the object in YAML format

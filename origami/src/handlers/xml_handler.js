@@ -1,5 +1,5 @@
 import { symbols, toString } from "@weborigami/async-tree";
-import xmlParse from "../origami/xmlParse.js";
+import xmlParse from "../origami/xmlDom.js";
 
 export default {
   mediaType: "application/xml",
