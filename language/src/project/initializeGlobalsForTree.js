@@ -1,5 +1,4 @@
-import { Tree } from "@weborigami/async-tree";
-import assignPropertyDescriptors from "../runtime/assignPropertyDescriptors.js";
+import { Tree, assignPropertyDescriptors } from "@weborigami/async-tree";
 import coreGlobals from "./coreGlobals.js";
 import projectConfig from "./projectConfig.js";
 

@@ -20,6 +20,7 @@ export * as trailingSlash from "./src/trailingSlash.js";
 export { default as TraverseError } from "./src/TraverseError.js";
 export * as Tree from "./src/Tree.js";
 export * as args from "./src/utilities/args.js";
+export { default as assignPropertyDescriptors } from "./src/utilities/assignPropertyDescriptors.js";
 export { default as box } from "./src/utilities/box.js";
 export { default as castArraylike } from "./src/utilities/castArraylike.js";
 export { default as getParent } from "./src/utilities/getParent.js";

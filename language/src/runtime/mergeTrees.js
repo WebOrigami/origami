@@ -1,11 +1,11 @@
 import {
+  assignPropertyDescriptors,
   isPlainObject,
   isUnpackable,
   symbols,
   trailingSlash,
   Tree,
 } from "@weborigami/async-tree";
-import assignPropertyDescriptors from "./assignPropertyDescriptors.js";
 
 /**
  * Create a tree that's the result of merging the given trees.

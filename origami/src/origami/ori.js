@@ -1,9 +1,10 @@
-import { Tree, args, getRealmObjectPrototype } from "@weborigami/async-tree";
 import {
+  args,
   assignPropertyDescriptors,
-  compile,
-  getGlobalsForTree,
-} from "@weborigami/language";
+  getRealmObjectPrototype,
+  Tree,
+} from "@weborigami/async-tree";
+import { compile, getGlobalsForTree } from "@weborigami/language";
 import { toYaml } from "../common/serialize.js";
 import * as dev from "../dev/dev.js";
 
