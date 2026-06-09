@@ -25,24 +25,24 @@ export default function enableValueCaching(value, cachePath) {
   }
 
   const cacheable =
-    value[cachePathSymbol] === undefined &&
-    Tree.isMaplike(value) &&
-    !(
-      isTransformApplied(SyncCacheTransform, value) ||
-      isTransformApplied(AsyncCacheTransform, value)
-    );
-
+    value[cachePathSymbol] === undefined && Tree.isMaplike(value);
   if (cacheable) {
     if (isPlainObject(value)) {
       // Expression objects do their own caching
       // TODO: What if it's some other kind of plain object?
       markCacheable(value, cachePath);
     } else if (Array.isArray(value)) {
-      // Arrays don't require caching
+      // Cache arrays
       markCacheable(value, cachePath);
     } else if (value instanceof Function) {
       // Cache a function
       value = cacheFunction(value, cachePath);
+    } else if (
+      isTransformApplied(SyncCacheTransform, value) ||
+      isTransformApplied(AsyncCacheTransform, value)
+    ) {
+      // Already has caching transform applied; just mark cacheable
+      markCacheable(value, cachePath);
     } else {
       // Other maplike; convert to a Map/AsyncMap
       value = Tree.from(value);
