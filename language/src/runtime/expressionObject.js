@@ -145,16 +145,15 @@ function defineProperty(object, propertyInfo, state, map) {
 function getPropertyCachePath(object, key) {
   // Follow parent chain looking for a parent that has caching enabled
   let current = object;
-  while (current[symbols.parent] && current[cachePathSymbol]) {
+  while (current[cachePathSymbol] === undefined) {
     current = current[symbols.parent];
+    if (!current) {
+      // Caching isn't enabled on this object tree
+      return null;
+    }
   }
 
-  if (!current[cachePathSymbol]) {
-    // Caching isn't enabled on this object tree
-    return null;
-  }
-
-  const cachePath = SystemCacheMap.joinPath(object[cachePathSymbol], key);
+  const cachePath = SystemCacheMap.joinPath(current[cachePathSymbol], key);
   return cachePath;
 }
 
