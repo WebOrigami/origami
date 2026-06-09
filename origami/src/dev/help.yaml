@@ -105,9 +105,9 @@ Origami:
       description: The outline structure of the markdown document
     naturalOrder:
       description: A comparison function for natural sort order
-    once:
-      args: (fn)
-      description: Run the function only once, return the same result
+    # once:
+    #   args: (fn)
+    #   description: Run the function only once, return the same result
     ori:
       args: (text)
       description: Evaluate the text as an Origami expression
