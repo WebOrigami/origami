@@ -1,4 +1,4 @@
-import { args } from "@weborigami/async-tree";
+import { args, isUnpackable } from "@weborigami/async-tree";
 import loadJsDom from "../common/loadJsDom.js";
 
 /**
@@ -7,6 +7,9 @@ import loadJsDom from "../common/loadJsDom.js";
  * @param {import("@weborigami/async-tree").Stringlike} html
  */
 export default async function htmlDom(html) {
+  if (isUnpackable(html)) {
+    html = await html.unpack();
+  }
   html = args.stringlike(html, "Origami.htmlDom");
   const { JSDOM } = await loadJsDom();
   let dom = JSDOM.fragment(html);
