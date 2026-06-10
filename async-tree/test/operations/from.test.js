@@ -58,4 +58,21 @@ describe("from", () => {
     const result = await slice(0, 5);
     assert.equal(result, "Hello");
   });
+
+  test("upgrades object with get/keys to a Map", () => {
+    const object = {
+      get(key) {
+        return key.toUpperCase();
+      },
+
+      *keys() {
+        yield "a";
+        yield "b";
+      },
+    };
+    const tree = from(object);
+    assert.deepEqual([...tree.keys()], ["a", "b"]);
+    assert.equal(tree.get("a"), "A");
+    assert.equal(tree.get("b"), "B");
+  });
 });

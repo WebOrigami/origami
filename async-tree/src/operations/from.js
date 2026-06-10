@@ -2,12 +2,15 @@ import AsyncMap from "../drivers/AsyncMap.js";
 import FunctionMap from "../drivers/FunctionMap.js";
 import ObjectMap from "../drivers/ObjectMap.js";
 import SetMap from "../drivers/SetMap.js";
+import SyncMap from "../drivers/SyncMap.js";
 import * as symbols from "../symbols.js";
 import box from "../utilities/box.js";
-import isPlainObject from "../utilities/isPlainObject.js";
 import setParent from "../utilities/setParent.js";
 import TypedArray from "../utilities/TypedArray.js";
 import isMap from "./isMap.js";
+
+// Base class for async functions
+const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
 
 /**
  * Attempts to cast the indicated object to a map.
@@ -42,15 +45,17 @@ export default function from(object, options = {}) {
     map = new SetMap(object);
   } else if (object instanceof ArrayBuffer || object instanceof TypedArray) {
     throw new TypeError("Can't treat binary file data as a map.");
-  } else if (isPlainObject(object) || object instanceof Array) {
-    map = new ObjectMap(object, { deep });
     // @ts-ignore
   } else if (globalThis.Iterator && object instanceof Iterator) {
     const array = Array.from(object);
     map = new ObjectMap(array, { deep });
-  } else if (object && typeof object === "object") {
-    // An instance of some class.
-    map = new ObjectMap(object, { deep });
+  } else if (typeof object === "object") {
+    if (typeof object.get === "function" && typeof object.keys === "function") {
+      map = upgradeToMap(object);
+    } else {
+      // A plain object, array, or instance of some class
+      map = new ObjectMap(object, { deep });
+    }
   } else if (
     typeof object === "string" ||
     typeof object === "number" ||
@@ -68,4 +73,11 @@ export default function from(object, options = {}) {
   }
 
   return map;
+}
+
+function upgradeToMap(object) {
+  const isAsync =
+    object.get instanceof AsyncFunction || object.keys instanceof AsyncFunction;
+  const baseClass = isAsync ? AsyncMap : SyncMap;
+  return Object.assign(new baseClass(), object);
 }
