@@ -25,6 +25,8 @@ export { default as deflatePaths } from "./operations/deflatePaths.js";
 export { default as delete } from "./operations/delete.js";
 export { default as entries } from "./operations/entries.js";
 export { default as filter } from "./operations/filter.js";
+export { default as find } from "./operations/find.js";
+export { default as findKey } from "./operations/findKey.js";
 export { default as first } from "./operations/first.js";
 export { default as flat } from "./operations/flat.js";
 export { default as forEach } from "./operations/forEach.js";
