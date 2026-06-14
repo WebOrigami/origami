@@ -33,3 +33,4 @@ export { default as wasm_handler } from "./wasm_handler.js";
 export { default as xhtml_handler } from "./xhtml_handler.js";
 export { default as yaml_handler } from "./yaml_handler.js";
 export { default as yml_handler } from "./yml_handler.js";
+export { default as zip_handler } from "./zip_handler.js";
