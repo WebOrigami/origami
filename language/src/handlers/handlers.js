@@ -20,6 +20,7 @@ export { default as txt_handler } from "./txt_handler.js";
 
 export { default as css_handler } from "./css_handler.js";
 export { default as csv_handler } from "./csv_handler.js";
+export { default as epub_handler } from "./epub_handler.js";
 export { default as htm_handler } from "./htm_handler.js";
 export { default as html_handler } from "./html_handler.js";
 export { default as jpeg_handler } from "./jpeg_handler.js";

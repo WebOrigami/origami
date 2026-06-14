@@ -1,4 +1,4 @@
-import { SyncMap, Tree } from "@weborigami/async-tree";
+import { isUnpackable, SyncMap, Tree } from "@weborigami/async-tree";
 import {
   getGlobalsForTree,
   HandleExtensionsTransform,
@@ -19,6 +19,9 @@ export default {
   async pack(maplike) {
     // The ZIP file should leave the files in tree order.
     const zip = new Zip({ noSort: true });
+    if (isUnpackable(maplike)) {
+      maplike = await maplike.unpack();
+    }
     const deflated = await Tree.deflatePaths(maplike);
     for (let [path, value] of deflated) {
       if (typeof value === "function") {
