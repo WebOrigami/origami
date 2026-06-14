@@ -19,7 +19,7 @@ export default {
     if (isUnpackable(maplike)) {
       maplike = await maplike.unpack();
     }
-    const tree = Tree.from(maplike);
+    const tree = Tree.from(maplike, { deep: true });
     return zip_handler.pack(mimetypeFirst(tree));
   },
 
