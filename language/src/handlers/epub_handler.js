@@ -23,7 +23,9 @@ export default {
     return zip_handler.pack(mimetypeFirst(tree));
   },
 
-  unpack: zip_handler.unpack,
+  async unpack(buffer, options) {
+    return zip_handler.unpack(buffer, options);
+  },
 };
 
 // A tree with its `mimetype` file first
