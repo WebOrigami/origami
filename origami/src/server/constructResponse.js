@@ -104,6 +104,8 @@ export default async function constructResponse(request, resource) {
     const hash = createHash("sha1");
     if (typeof body === "string" || body instanceof String) {
       hash.update(String(body), "utf8");
+    } else if (body instanceof ArrayBuffer) {
+      hash.update(new Uint8Array(body));
     } else {
       hash.update(body);
     }
