@@ -28,6 +28,7 @@ export default class AsyncMap {
     if (!isMap(result)) {
       // Create new child node using no-arg constructor
       result = new /** @type {any} */ (this.constructor)();
+      result.trailingSlashKeys = this.trailingSlashKeys;
       await this.set(key, result);
     }
 

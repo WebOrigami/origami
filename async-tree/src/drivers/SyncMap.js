@@ -49,6 +49,7 @@ export default class SyncMap extends Map {
     if (!(result instanceof Map)) {
       // Create new child node using no-arg constructor
       result = new /** @type {any} */ (this.constructor)();
+      result.trailingSlashKeys = this.trailingSlashKeys;
       this.set(key, result);
     }
 
