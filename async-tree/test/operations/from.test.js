@@ -71,6 +71,7 @@ describe("from", () => {
       },
     };
     const tree = from(object);
+    // @ts-ignore
     assert.deepEqual([...tree.keys()], ["a", "b"]);
     assert.equal(tree.get("a"), "A");
     assert.equal(tree.get("b"), "B");

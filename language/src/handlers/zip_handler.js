@@ -53,6 +53,7 @@ export default {
     // Origami generally prefers keeping things as an Uint8Array or ArrayBuffer,
     // but adm-zip only accepts a Buffer.
     if (buffer instanceof Uint8Array || buffer instanceof ArrayBuffer) {
+      // @ts-ignore
       buffer = Buffer.from(buffer);
     }
 
