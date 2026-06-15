@@ -1,10 +1,11 @@
 import { AsyncMap, isUnpackable, Tree } from "@weborigami/async-tree";
+import addExtensionKeyFn from "./addExtensionKeyFn.js";
 import zip_handler from "./zip_handler.js";
 
 /**
  * Handler for EPUB files
  */
-export default {
+const epub_handler = {
   mediaType: "application/epub+zip",
 
   /**
@@ -27,6 +28,10 @@ export default {
     return zip_handler.unpack(buffer, options);
   },
 };
+
+/** @type {any} */ (epub_handler.pack).key = addExtensionKeyFn(".epub");
+
+export default epub_handler;
 
 // A tree with its `mimetype` file first
 function mimetypeFirst(tree) {

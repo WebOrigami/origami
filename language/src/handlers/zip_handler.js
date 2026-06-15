@@ -4,11 +4,12 @@ import {
   HandleExtensionsTransform,
 } from "@weborigami/language";
 import Zip from "adm-zip";
+import addExtensionKeyFn from "./addExtensionKeyFn.js";
 
 /**
  * Handler for ZIP files
  */
-export default {
+const zip_handler = {
   mediaType: "application/zip",
 
   /**
@@ -86,6 +87,10 @@ export default {
     return result;
   },
 };
+
+/** @type {any} */ (zip_handler.pack).key = addExtensionKeyFn(".zip");
+
+export default zip_handler;
 
 function InvokeFunctionsTransform(Base) {
   return class InvokeFunctions extends Base {

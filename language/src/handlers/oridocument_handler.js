@@ -1,7 +1,8 @@
-import { extension, getParent, trailingSlash } from "@weborigami/async-tree";
+import { extension, getParent } from "@weborigami/async-tree";
 import * as compile from "../compiler/compile.js";
 import coreGlobals from "../project/coreGlobals.js";
 import getGlobalsForTree from "../project/getGlobalsForTree.js";
+import addExtensionKeyFn from "./addExtensionKeyFn.js";
 import getSource from "./getSource.js";
 import processOriExport from "./processOriExport.js";
 
@@ -37,27 +38,10 @@ export default {
       const resultExtension = key ? extension.extname(key) : null;
       if (resultExtension && Object.isExtensible(result)) {
         // Add sidecar function so this template can be used in a map.
-        result.key = addExtension(resultExtension);
+        result.key = addExtensionKeyFn(resultExtension);
       }
     }
 
     return result;
   },
 };
-
-// Return a function that adds the given extension
-function addExtension(resultExtension) {
-  const keyFn = (sourceValue, sourceKey) => {
-    if (sourceKey === undefined) {
-      return undefined;
-    }
-    const normalizedKey = trailingSlash.remove(sourceKey);
-    const sourceExtension = extension.extname(normalizedKey);
-    const resultKey = sourceExtension
-      ? extension.replace(normalizedKey, sourceExtension, resultExtension)
-      : normalizedKey + resultExtension;
-    return resultKey;
-  };
-  keyFn.needsSourceValue = false;
-  return keyFn;
-}
