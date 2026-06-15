@@ -247,6 +247,12 @@ Tree:
     filter:
       args: (tree, options)
       description: Filter a tree by a condition
+    find:
+      args: (map, test)
+      description: The value of the first entry satisfying the test
+    findKey:
+      args: (map, test)
+      description: The key of the first entry satisfying the test
     first:
       args: (map)
       description: The first value in the map
