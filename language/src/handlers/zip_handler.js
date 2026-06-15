@@ -19,10 +19,12 @@ export default {
   async pack(maplike) {
     // The ZIP file should leave the files in tree order.
     const zip = new Zip({ noSort: true });
+
     if (isUnpackable(maplike)) {
       maplike = await maplike.unpack();
     }
-    const deflated = await Tree.deflatePaths(maplike);
+    const tree = Tree.from(maplike, { deep: true });
+    const deflated = await Tree.deflatePaths(tree);
     for (let [path, value] of deflated) {
       if (typeof value === "function") {
         value = value();
@@ -31,6 +33,12 @@ export default {
         value = await value;
       }
       zip.addFile(path, value);
+
+      // Special case for EPUB files, where `mimetype` must be uncompressed.
+      if (path === "mimetype") {
+        const entry = zip.getEntry(path);
+        // entry.header.method = 0; // STORE (not DEFLATE)
+      }
     }
     const buffer = zip.toBuffer();
     return buffer;
