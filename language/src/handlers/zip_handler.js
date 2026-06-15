@@ -31,14 +31,16 @@ export default {
       }
       if (value instanceof Promise) {
         value = await value;
+      } else if (value instanceof String) {
+        value = value.toString(); // adm-zip wants simple strings
       }
       zip.addFile(path, value);
 
       // Special case for EPUB files, where `mimetype` must be uncompressed.
-      if (path === "mimetype") {
-        const entry = zip.getEntry(path);
-        // entry.header.method = 0; // STORE (not DEFLATE)
-      }
+      // if (path === "mimetype") {
+      //   const entry = zip.getEntry(path);
+      //   entry.header.method = 0; // STORE (not DEFLATE)
+      // }
     }
     const buffer = zip.toBuffer();
     return buffer;
