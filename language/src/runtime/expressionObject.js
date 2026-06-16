@@ -25,23 +25,33 @@ const VALUE_TYPE = {
   GETTER: 2, // Calculated on demand: `a = fn()`
 };
 
+const mapUnattachedObjectToIndex = new Map();
+
 /**
  * Given an array of entries with string keys and Origami code values (arrays of
  * ops and operands), return an object with the same keys defining properties
  * whose getters evaluate the code.
-
+ *
+ * @param {string|null} cachePath
  * @param {*} entries
  * @param {import("../../index.ts").RuntimeState} [state]
  */
-export default async function expressionObject(entries, state = {}) {
+export default async function expressionObject(cachePath, entries, state = {}) {
   // Create the object and set its parent
   const object = {};
   const parent = state?.object ?? null;
   if (parent !== null && !Tree.isMap(parent)) {
     throw new TypeError(`Parent must be a map or null`);
   }
-
   setParent(object, parent);
+
+  if (cachePath?.endsWith("/_objects/")) {
+    // Unattached object, add a unique index to the cache path
+    let index = mapUnattachedObjectToIndex.get(cachePath) ?? 0;
+    mapUnattachedObjectToIndex.set(cachePath, index + 1);
+    cachePath += index + "/";
+  }
+  object[cachePathSymbol] = cachePath;
 
   // The object in Map form for use on the stack
   const map = new ObjectMap(object);
@@ -124,6 +134,11 @@ function defineProperty(object, propertyInfo, state, map) {
           result = handleExtension(result, key, globals, map);
         }
 
+        if (propertyCachePath) {
+          // Enable caching on value
+          result = enableValueCaching(result, propertyCachePath);
+        }
+
         if (valueType === VALUE_TYPE.EAGER) {
           // Memoize result on the object itself
           Object.defineProperty(object, key, {
@@ -132,8 +147,6 @@ function defineProperty(object, propertyInfo, state, map) {
             value: result,
             writable: true,
           });
-        } else if (propertyCachePath) {
-          result = enableValueCaching(result, propertyCachePath);
         }
 
         return result;
@@ -145,7 +158,7 @@ function defineProperty(object, propertyInfo, state, map) {
 function getPropertyCachePath(object, key) {
   // Follow parent chain looking for a parent that has caching enabled
   let current = object;
-  while (current[cachePathSymbol] === undefined) {
+  while (current[cachePathSymbol] == null) {
     current = current[symbols.parent];
     if (!current) {
       // Caching isn't enabled on this object tree

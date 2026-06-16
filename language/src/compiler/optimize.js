@@ -31,9 +31,13 @@ export const REFERENCE_EXTERNAL = 4;
  * @returns {AnnotatedCode}
  */
 export default function optimize(code, options = {}) {
-  // Cache path for this source file
-  const cachePath = options.cachePath ?? null;
   const globals = options.globals ?? jsGlobals;
+  const cachePath = options.cachePath; // top-level cache path for this code
+  // Cache path for attached objects
+  const objectCachePath =
+    options.objectCachePath ??
+    (cachePath ? trailingSlash.add(cachePath) : null);
+  const attached = options.attached ?? true;
 
   // The locals is an array, one item for each function or object context that
   // has been entered. The array grows to the right. Array items are objects
@@ -66,7 +70,8 @@ export default function optimize(code, options = {}) {
       return inlineLiteral(code);
 
     case ops.object:
-      const propertyNames = getPropertyNames(args);
+      const entries = args.slice(1);
+      const propertyNames = getPropertyNames(entries);
       locals.push({
         type: REFERENCE_INHERITED,
         names: propertyNames,
@@ -80,14 +85,24 @@ export default function optimize(code, options = {}) {
       if (op === ops.object) {
         if (index === 0) {
           return child; // return op as is
+        } else if (index === 1) {
+          // Replace null cache path with actual value
+          return objectCachePath;
         } else {
           // Object entry
           const [key, value] = child;
           const adjustedLocals = avoidLocalRecursion(locals, key);
           const isStringKey = typeof key === "string";
+          const cachePathKey = isStringKey
+            ? baseKeyName(key)
+            : `_arg${index - 2}`;
+          const childObjectCachePath = attached
+            ? SystemCacheMap.joinPath(objectCachePath, cachePathKey + "/")
+            : objectCachePath;
           const childOptions = {
             ...options,
             locals: adjustedLocals,
+            objectCachePath: childObjectCachePath,
           };
           const optimizedKey = isStringKey
             ? key
@@ -101,9 +116,20 @@ export default function optimize(code, options = {}) {
       } else if (Array.isArray(child) && "location" in child) {
         // Review: Aside from ops.object (above), what non-instruction arrays
         // does this descend into?
-        const childOptions = { ...options, locals };
-        // Objects below here are detached from top-level object; not cached
-        delete childOptions.objectCachePath;
+        let childObjectCachePath = objectCachePath;
+        if (attached) {
+          // Objects below this point are detached, use `_objects` cache path
+          childObjectCachePath = SystemCacheMap.joinPath(
+            objectCachePath,
+            `_objects/`,
+          );
+        }
+        const childOptions = {
+          ...options,
+          attached: false,
+          locals,
+          objectCachePath: childObjectCachePath,
+        };
         return optimize(/** @type {AnnotatedCode} */ (child), childOptions);
       } else {
         return child;
@@ -124,23 +150,20 @@ export default function optimize(code, options = {}) {
 // remove any local variable with that name from the stack of locals to avoid a
 // recursive reference.
 function avoidLocalRecursion(locals, key) {
-  if (key[0] === "(" && key[key.length - 1] === ")") {
-    // Non-enumerable property, remove parentheses
-    key = key.slice(1, -1);
-  }
-
   const currentFrameIndex = locals.length - 1;
   if (locals[currentFrameIndex]?.type !== REFERENCE_INHERITED) {
     // Not an inherited context, nothing to do
     return locals;
   }
 
+  const baseKey = baseKeyName(key);
+
   // See if the key matches any of the local variable names in the current
   // context (ignoring trailing slashes)
   const matchingKeyIndex = locals[currentFrameIndex].names.findIndex(
     (name) =>
       // Ignore trailing slashes when comparing keys
-      trailingSlash.remove(name) === trailingSlash.remove(key),
+      trailingSlash.remove(name) === trailingSlash.remove(baseKey),
   );
 
   if (matchingKeyIndex >= 0) {
@@ -156,6 +179,14 @@ function avoidLocalRecursion(locals, key) {
   } else {
     return locals;
   }
+}
+
+function baseKeyName(key) {
+  if (key[0] === "(" && key[key.length - 1] === ")") {
+    // Non-enumerable property, remove parentheses
+    key = key.slice(1, -1);
+  }
+  return key;
 }
 
 function cacheExternalPath(code, cachePath) {

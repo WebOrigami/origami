@@ -16,7 +16,6 @@ const globals = {
  * features, which compare the output of evaluate2() against an expected result.
  */
 describe("compile", () => {
-
   test("async object", async () => {
     const fn = compile.expression("{ a: { b = name }}", { globals });
     const object = await fn();

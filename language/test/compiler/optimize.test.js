@@ -15,6 +15,12 @@ import {
 } from "./codeHelpers.js";
 
 describe("optimize", () => {
+  test("define cache path based on source", () => {
+    const expression = "{ a: 1 }";
+    const expected = [ops.object, "/folder/test.ori/", ["a", 1]];
+    assertCompile(expression, expected);
+  });
+
   test("change local references to context references", () => {
     const expression = `(name) => {
       a: name,
@@ -26,6 +32,7 @@ describe("optimize", () => {
       [["name", [[ops.params, 0], 0]]],
       [
         ops.object,
+        "/folder/test.ori/_objects/",
         [
           "a",
           [
@@ -49,11 +56,13 @@ describe("optimize", () => {
     const expression = `{ a: 1, more: { a } }`;
     const expected = [
       ops.object,
+      "/folder/test.ori/",
       ["a", 1],
       [
         "more",
         [
           ops.object,
+          "/folder/test.ori/more/",
           [
             "a",
             [
@@ -76,11 +85,13 @@ describe("optimize", () => {
     }`;
     const expected = [
       ops.object,
+      "/folder/test.ori/",
       ["name", "Alice"],
       [
         "user",
         [
           ops.object,
+          "/folder/test.ori/user/",
           [
             "name",
             [
@@ -95,7 +106,7 @@ describe("optimize", () => {
     assertCompile(expression, expected, "shell");
   });
 
-  describe.only("resolve reference", () => {
+  describe("resolve reference", () => {
     test("external reference", () => {
       // Compilation of `folder` where folder isn't a variable
       const code = createCode([
@@ -141,6 +152,7 @@ describe("optimize", () => {
       // Compilation of `{ (posts) = posts.txt }`
       const code = createCode([
         ops.object,
+        null,
         [
           "(posts)",
           [ops.getter, [markers.traverse, [markers.reference, "posts.txt"]]],
@@ -149,13 +161,14 @@ describe("optimize", () => {
       const parent = {};
       const expected = [
         ops.object,
+        "/folder/test.ori/",
         [
           "(posts)",
           [
             ops.getter,
             [
               ops.cache,
-              "test.ori/_refs/posts.txt",
+              "/folder/test.ori/_refs/posts.txt",
               [[ops.scope], [ops.literal, "posts.txt"]],
             ],
           ],
@@ -163,7 +176,7 @@ describe("optimize", () => {
       ];
       const globals = {};
       assertCodeEqual(
-        optimize(code, { cachePath: "test.ori", globals, parent }),
+        optimize(code, { cachePath: "/folder/test.ori", globals, parent }),
         expected,
       );
     });
@@ -319,6 +332,7 @@ function assertCompile(expression, expected, mode = "shell") {
     typeof expression !== "string"
       ? expression
       : {
+          cachePath: "/folder/test.ori",
           text: expression,
           relativePath: "test.ori",
         };

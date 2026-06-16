@@ -30,6 +30,7 @@ export default function getSource(packed, options = {}) {
       const parentPath = /** @type {any} */ (parent).path;
       cachePath = SystemCacheMap.joinPath(parentPath, sourceName);
     } else {
+      // TODO: Avoid cache path collisions in this case
       cachePath = sourceName;
     }
   }
