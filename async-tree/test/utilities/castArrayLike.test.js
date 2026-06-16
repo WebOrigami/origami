@@ -65,7 +65,7 @@ describe("castArraylike", () => {
     });
   });
 
-  test.only("preserves trailing slashes if map has both forms of the key", () => {
+  test("preserves trailing slashes if map has both forms of the key", () => {
     const map = new /** @type {any} */ (Map)([
       ["a/", 1],
       ["a", 2],
