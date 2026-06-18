@@ -19,17 +19,15 @@ const AsyncFunction = async function () {}.constructor;
  * @param {string} cachePath
  */
 export default function enableValueCaching(value, cachePath) {
-  if (!(typeof value === "object" || typeof value === "function")) {
-    // Don't need to apply caching to primitive value
-    return value;
-  }
+  // Value must be a defined object or function, and not have already have a
+  // cache path, and be maplike.
+  const cachable =
+    value &&
+    (typeof value === "object" || typeof value === "function") &&
+    value[cachePathSymbol] === undefined &&
+    Tree.isMaplike(value);
 
-  if (value[cachePathSymbol] !== undefined) {
-    // Already cacheable
-    return value;
-  }
-
-  if (Tree.isMaplike(value)) {
+  if (cachable) {
     if (isPlainObject(value)) {
       // Expression objects do their own caching
       // TODO: What if it's some other kind of plain object?
