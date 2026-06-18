@@ -19,5 +19,6 @@ export { default as serve } from "./serve.js";
 export { default as stdin } from "./stdin.js";
 export { default as svg } from "./svg.js";
 export { default as syscache } from "./syscache.js";
+export { default as syscount } from "./syscount.js";
 export { default as version } from "./version.js";
 export { default as watch } from "./watch.js";

@@ -1,4 +1,5 @@
 import { isUnpackable, Tree } from "@weborigami/async-tree";
+import { counters } from "@weborigami/language";
 import executionContext from "./executionContext.js";
 import "./interop.js";
 
@@ -14,6 +15,8 @@ import "./interop.js";
  * @param {RuntimeState} [state]
  */
 export default async function execute(code, state = {}) {
+  counters.executions++;
+
   if (!(code instanceof Array)) {
     // Simple scalar; return as is.
     return code;

@@ -15,6 +15,7 @@ export { default as projectRoot } from "./src/project/projectRoot.js";
 export { default as projectRootFromPath } from "./src/project/projectRootFromPath.js";
 export { default as fetchAndHandleExtension } from "./src/protocols/fetchAndHandleExtension.js";
 export * as Protocols from "./src/protocols/protocols.js";
+export { default as counters } from "./src/runtime/counters.js";
 export { formatError, highlightError, lineInfo } from "./src/runtime/errors.js";
 export { default as evaluate } from "./src/runtime/evaluate.js";
 export { default as EventTargetMixin } from "./src/runtime/EventTargetMixin.js";
