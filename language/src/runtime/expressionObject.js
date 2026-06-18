@@ -123,7 +123,9 @@ function defineProperty(object, propertyInfo, state, map) {
         const propertyCachePath = getPropertyCachePath(object, key);
 
         const newState = Object.assign({}, state, { object: map });
-        let result = propertyCachePath
+        const cacheProperty =
+          valueType === VALUE_TYPE.GETTER && propertyCachePath;
+        let result = cacheProperty
           ? await systemCache.getOrInsertComputedAsync(propertyCachePath, () =>
               execute(value, newState),
             )
