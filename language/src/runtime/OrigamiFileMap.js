@@ -4,15 +4,15 @@ import HandleExtensionsTransform from "./HandleExtensionsTransform.js";
 import ImportModulesMixin from "./ImportModulesMixin.js";
 import SyncCacheTransform from "./SyncCacheTransform.js";
 import WatchFilesMixin from "./WatchFilesMixin.js";
-import { noCacheSymbol } from "./symbols.js";
+import { cachePathSymbol, noCacheSymbol } from "./symbols.js";
 
 export default class OrigamiFileMap extends SyncCacheTransform(
   HandleExtensionsTransform(
     ImportModulesMixin(WatchFilesMixin(EventTargetMixin(FileMap))),
   ),
 ) {
-  get cachePath() {
-    return super.cachePath ?? this.path;
+  get [cachePathSymbol]() {
+    return this.path;
   }
 
   // Workaround to register file paths in the system cache without trailing

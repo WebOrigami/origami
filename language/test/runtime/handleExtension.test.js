@@ -4,11 +4,9 @@ import { describe, test } from "node:test";
 import * as handlers from "../../src/handlers/handlers.js";
 import handleExtension from "../../src/runtime/handleExtension.js";
 import OrigamiFileMap from "../../src/runtime/OrigamiFileMap.js";
-import { cachePathSymbol } from "../../src/runtime/symbols.js";
 
 const fixturesUrl = new URL("fixtures/unpack", import.meta.url);
 const fixtureFiles = new OrigamiFileMap(fixturesUrl);
-fixtureFiles[cachePathSymbol] = "fixtures";
 fixtureFiles.globals = handlers;
 
 describe("handleExtension", () => {

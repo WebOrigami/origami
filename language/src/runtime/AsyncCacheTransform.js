@@ -45,15 +45,12 @@ export default function AsyncCacheTransform(Base) {
       this.cache = systemCache;
     }
 
-    get cachePath() {
-      // @ts-ignore
-      return this[cachePathSymbol];
-    }
-
     cachePathForKey(key) {
       return key === "."
-        ? this.cachePath
-        : SystemCacheMap.joinPath(this.cachePath, key);
+        ? // @ts-ignore
+          this[cachePathSymbol]
+        : // @ts-ignore
+          SystemCacheMap.joinPath(this[cachePathSymbol], key);
     }
 
     async delete(key) {
