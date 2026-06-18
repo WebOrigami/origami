@@ -1,5 +1,5 @@
 import { isUnpackable, Tree } from "@weborigami/async-tree";
-import { counters } from "@weborigami/language";
+import counters from "../runtime/counters.js";
 import executionContext from "./executionContext.js";
 import "./interop.js";
 
