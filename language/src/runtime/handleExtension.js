@@ -13,6 +13,9 @@ import { cachePathSymbol } from "./symbols.js";
 import systemCache from "./systemCache.js";
 import SystemCacheMap from "./SystemCacheMap.js";
 
+// Base class for async functions
+const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+
 /**
  * If the given value is packed (e.g., buffer) and the key is a string-like path
  * that ends in an extension, search for a handler for that extension and, if
@@ -46,17 +49,25 @@ export default function handleExtension(value, key, handlers, parent = null) {
       // Use `in` to look for handle so that, if the handler is a promise, we
       // can still find it without awaiting it here.
       if (handlerName in handlers) {
-        let handler = handlers[handlerName];
-
         // If the value is a primitive, box it so we can attach data to it.
         value = box(value);
 
-        if (handler.mediaType) {
-          value.mediaType = handler.mediaType;
-        }
-
         if (parent) {
           setParent(value, parent);
+        }
+
+        // Avoid triggering the loading of the handler if it's async because
+        // we may be doing this work inside a sync function.
+        const descriptor = Object.getOwnPropertyDescriptor(
+          handlers,
+          handlerName,
+        );
+        const lazyHandler = descriptor?.get instanceof AsyncFunction;
+        if (!lazyHandler) {
+          const mediaType = handlers[handlerName]?.mediaType;
+          if (mediaType) {
+            value.mediaType = mediaType;
+          }
         }
 
         // Wrap the unpack function so it caches the unpacked value, and so we
@@ -74,9 +85,7 @@ export default function handleExtension(value, key, handlers, parent = null) {
         const unpackCachePath = trailingSlash.add(fileCachePath);
         value.unpack = async () =>
           systemCache.getOrInsertComputedAsync(unpackCachePath, async () => {
-            if (handler instanceof Promise) {
-              handler = await handler;
-            }
+            let handler = await handlers[handlerName];
             if (isUnpackable(handler)) {
               // The extension handler itself needs to be unpacked
               handler = await handler.unpack();
