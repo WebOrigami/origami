@@ -53,13 +53,13 @@ export default function AsyncCacheTransform(Base) {
           SystemCacheMap.joinPath(this[cachePathSymbol], key);
     }
 
-    async delete(key) {
-      const deleted = await super.delete(key);
-      if (typeof key === "string") {
-        systemCache.delete(this.cachePathForKey(key));
-      }
-      return deleted;
-    }
+    // async delete(key) {
+    //   const deleted = await super.delete(key);
+    //   if (typeof key === "string") {
+    //     systemCache.delete(this.cachePathForKey(key));
+    //   }
+    //   return deleted;
+    // }
 
     async get(key) {
       if (typeof key !== "string" || key.length === 0) {
@@ -116,16 +116,16 @@ export default function AsyncCacheTransform(Base) {
       systemCache.delete(this.cachePathForKey(key));
     }
 
-    async set(key, value) {
-      if (typeof key !== "string") {
-        return super.set(key, value);
-      }
-      systemCache.delete(this.cachePathForKey(key));
-      if (!this.has(key)) {
-        // Adding a new key, need to invalidate cached keys
-        this.invalidateKeys();
-      }
-      super.set(key, value);
-    }
+    // async set(key, value) {
+    //   if (typeof key !== "string") {
+    //     return super.set(key, value);
+    //   }
+    //   systemCache.delete(this.cachePathForKey(key));
+    //   if (!this.has(key)) {
+    //     // Adding a new key, need to invalidate cached keys
+    //     this.invalidateKeys();
+    //   }
+    //   super.set(key, value);
+    // }
   };
 }

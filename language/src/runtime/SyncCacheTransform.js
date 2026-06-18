@@ -53,17 +53,17 @@ export default function SyncCacheTransform(Base) {
           SystemCacheMap.joinPath(this[cachePathSymbol], key);
     }
 
-    delete(key) {
-      const deleted = super.delete(key);
-      if (typeof key === "string") {
-        systemCache.delete(this.cachePathForKey(key));
-        if (deleted) {
-          // Deleted an existing key, need to invalidate cached keys
-          this.invalidateKeys();
-        }
-      }
-      return deleted;
-    }
+    // delete(key) {
+    //   const deleted = super.delete(key);
+    //   if (typeof key === "string") {
+    //     systemCache.delete(this.cachePathForKey(key));
+    //     if (deleted) {
+    //       // Deleted an existing key, need to invalidate cached keys
+    //       this.invalidateKeys();
+    //     }
+    //   }
+    //   return deleted;
+    // }
 
     get(key) {
       if (typeof key !== "string" || key.length === 0) {
@@ -110,21 +110,21 @@ export default function SyncCacheTransform(Base) {
       systemCache.delete(this.cachePathForKey(key));
     }
 
-    set(key, value) {
-      if (!this._self) {
-        // Initializing in constructor
-        super.set(key, value);
-        return;
-      }
-      if (typeof key !== "string") {
-        return super.set(key, value);
-      }
-      systemCache.delete(this.cachePathForKey(key));
-      if (!this.has(key)) {
-        // Adding a new key, need to invalidate cached keys
-        this.invalidateKeys();
-      }
-      super.set(key, value);
-    }
+    // set(key, value) {
+    //   if (!this._self) {
+    //     // Initializing in constructor
+    //     super.set(key, value);
+    //     return;
+    //   }
+    //   if (typeof key !== "string") {
+    //     return super.set(key, value);
+    //   }
+    //   systemCache.delete(this.cachePathForKey(key));
+    //   if (!this.has(key)) {
+    //     // Adding a new key, need to invalidate cached keys
+    //     this.invalidateKeys();
+    //   }
+    //   super.set(key, value);
+    // }
   };
 }
