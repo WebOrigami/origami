@@ -3,7 +3,7 @@ import * as compile from "../compiler/compile.js";
 import coreGlobals from "../project/coreGlobals.js";
 import getGlobalsForTree from "../project/getGlobalsForTree.js";
 import getSource from "./getSource.js";
-import processOriExport from "./processOriExport.js";
+import processOrigamiExport from "./processOrigamiExport.js";
 
 /**
  * An Origami expression file
@@ -31,7 +31,7 @@ export default {
     // Evaluate the program
     let result = await fn();
 
-    result = processOriExport(result, source, parent);
+    result = processOrigamiExport(result, source, parent);
 
     return result;
   },

@@ -4,7 +4,7 @@ import coreGlobals from "../project/coreGlobals.js";
 import getGlobalsForTree from "../project/getGlobalsForTree.js";
 import addExtensionKeyFn from "./addExtensionKeyFn.js";
 import getSource from "./getSource.js";
-import processOriExport from "./processOriExport.js";
+import processOrigamiExport from "./processOrigamiExport.js";
 
 /**
  * An Origami template document: a plain text file that contains Origami
@@ -31,7 +31,7 @@ export default {
     // Invoke the definition to get back the template function or object
     let result = await fn();
 
-    result = processOriExport(result, source, parent);
+    result = processOrigamiExport(result, source, parent);
 
     if (result instanceof Function) {
       const key = options.key;

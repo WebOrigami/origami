@@ -24,9 +24,12 @@ export default function enableValueCaching(value, cachePath) {
     return value;
   }
 
-  const cacheable =
-    value[cachePathSymbol] === undefined && Tree.isMaplike(value);
-  if (cacheable) {
+  if (value[cachePathSymbol] !== undefined) {
+    // Already cacheable
+    return value;
+  }
+
+  if (Tree.isMaplike(value)) {
     if (isPlainObject(value)) {
       // Expression objects do their own caching
       // TODO: What if it's some other kind of plain object?

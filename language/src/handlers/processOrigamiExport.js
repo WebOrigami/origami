@@ -5,7 +5,7 @@ import enableValueCaching from "../runtime/enableValueCaching.js";
  * Given an object that's the top-level result of an Origami file, perform any
  * necessary processing.
  */
-export default function processOriExport(value, source, parent) {
+export default function processOrigamiExport(value, source, parent) {
   setParent(value, parent);
 
   if (source.cachePath) {
