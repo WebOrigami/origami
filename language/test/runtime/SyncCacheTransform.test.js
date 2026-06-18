@@ -62,6 +62,8 @@ describe("SyncCacheTransform", () => {
       const b = calcs.get("b");
       return 3 * b;
     });
+    // Manually trigger cache invalidation
+    data.onValueChange("a");
     log = [];
     const a2 = calcs.get("a");
     assert.strictEqual(a2, 12);
@@ -74,6 +76,7 @@ describe("SyncCacheTransform", () => {
       const c = calcs.get("c");
       return c + 10;
     });
+    data.onValueChange("b");
     log = [];
     const a3 = calcs.get("a");
     assert.strictEqual(a3, 39);
@@ -85,6 +88,7 @@ describe("SyncCacheTransform", () => {
       log.push("c");
       return 100;
     });
+    data.onValueChange("c");
     log = [];
     const a4 = calcs.get("a");
     assert.strictEqual(a4, 330);

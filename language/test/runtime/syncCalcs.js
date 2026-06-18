@@ -2,12 +2,35 @@ import { SyncMap } from "@weborigami/async-tree";
 import SyncCacheTransform from "../../src/runtime/SyncCacheTransform.js";
 
 export default function syncCalcs(iterable) {
-  const data = new (SyncCacheTransform(SyncMap))(iterable);
-  const calcs = new (SyncCacheTransform(SyncResultsMap))(data);
+  const data = new (SyncCacheTransform(SyncDataMap))(new Map(iterable));
+  const calcs = new (SyncCacheTransform(SyncCalcsMap))(data);
   return { calcs, data };
 }
 
-class SyncResultsMap extends SyncMap {
+class SyncDataMap extends SyncMap {
+  constructor(source) {
+    super();
+    this.source = source;
+  }
+
+  delete(key) {
+    return this.source.delete(key);
+  }
+
+  get(key) {
+    return this.source.get(key);
+  }
+
+  keys() {
+    return this.source.keys();
+  }
+
+  set(key, value) {
+    return this.source.set(key, value);
+  }
+}
+
+class SyncCalcsMap extends SyncMap {
   constructor(source) {
     super();
     this.source = source;

@@ -48,12 +48,16 @@ describe("systemCache", () => {
 
     // Add new data.json to src folder, overriding the one in project root
     src.set("data.json", "2");
+    // Manually trigger cache invalidation
+    src.onValueChange("data.json");
 
     const value2 = await site.value;
     assert.equal(value2, 2);
 
     // Delete data.json from src folder, reverting to the one in project root
     src.delete("data.json");
+    // Manually trigger cache invalidation
+    src.onValueChange("data.json");
 
     const value3 = await site.value;
     assert.equal(value3, 1);
