@@ -82,10 +82,11 @@ export default function debugTransform(input) {
     },
 
     // If this value is given to the server, the server will call this pack()
-    // method. We respond with the index page.
+    // method. If the source defines pack(), we use that, otherwise we return
+    // undefined. The server will redirect to the URL with a trailing slash,
+    // which will call `get("index.html")` (above) to get the index page.
     async pack() {
-      // @ts-ignore
-      return source.pack?.() ?? this.get("index.html");
+      return /** @type {any} */ (source)?.pack?.();
     },
 
     // @ts-ignore

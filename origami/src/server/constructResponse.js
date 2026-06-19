@@ -22,12 +22,16 @@ export default async function constructResponse(request, resource) {
   const url = new URL(request?.url ?? "", `https://${request?.headers.host}`);
 
   if (!isPacked(resource) && typeof resource.pack === "function") {
-    resource = await resource.pack();
-    if (typeof resource === "function") {
-      resource = await resource();
-    }
-    if (resource instanceof Response) {
-      return resource;
+    let packed = await resource.pack();
+    if (packed) {
+      if (typeof packed === "function") {
+        packed = await packed();
+      }
+      if (packed instanceof Response) {
+        // Already a Response
+        return packed;
+      }
+      resource = packed;
     }
   }
 
