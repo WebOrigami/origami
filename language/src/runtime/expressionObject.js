@@ -103,8 +103,7 @@ export default async function expressionObject(cachePath, entries, state = {}) {
  * Define a single property on the object
  */
 function defineProperty(object, propertyInfo, state, map) {
-  const { globals } = state;
-  let { enumerable, hasExtension, key, value, valueType } = propertyInfo;
+  let { enumerable, key, value, valueType } = propertyInfo;
   if (valueType == VALUE_TYPE.PRIMITIVE) {
     // Define simple property
     Object.defineProperty(object, key, {
@@ -119,42 +118,47 @@ function defineProperty(object, propertyInfo, state, map) {
       configurable: true,
       enumerable,
       get: async () => {
-        // Execute the code to get the value of the property
-        const propertyCachePath = getPropertyCachePath(object, key);
-
-        const newState = Object.assign({}, state, { object: map });
-        const cacheProperty =
-          valueType === VALUE_TYPE.GETTER && propertyCachePath;
-        let result = cacheProperty
-          ? await systemCache.getOrInsertComputedAsync(propertyCachePath, () =>
-              execute(value, newState),
-            )
-          : await execute(value, newState);
-
-        if (hasExtension) {
-          // Handle extension
-          result = handleExtension(result, key, globals, map);
-        }
-
-        if (propertyCachePath) {
-          // Enable caching on value
-          result = enableValueCaching(result, propertyCachePath);
-        }
-
-        if (valueType === VALUE_TYPE.EAGER) {
-          // Memoize result on the object itself
-          Object.defineProperty(object, key, {
-            configurable: true,
-            enumerable,
-            value: result,
-            writable: true,
-          });
-        }
-
-        return result;
+        return executeProperty(object, propertyInfo, state, map);
       },
     });
   }
+}
+
+// Execute the property code to get the value of the property
+async function executeProperty(object, propertyInfo, state, map) {
+  const { globals } = state;
+  let { enumerable, hasExtension, key, value, valueType } = propertyInfo;
+  const propertyCachePath = getPropertyCachePath(object, key);
+
+  const newState = Object.assign({}, state, { object: map });
+  const cacheProperty = valueType === VALUE_TYPE.GETTER && propertyCachePath;
+  let result = cacheProperty
+    ? await systemCache.getOrInsertComputedAsync(propertyCachePath, () =>
+        execute(value, newState),
+      )
+    : await execute(value, newState);
+
+  if (hasExtension) {
+    // Handle extension
+    result = handleExtension(result, key, globals, map);
+  }
+
+  if (propertyCachePath) {
+    // Enable caching on value
+    result = enableValueCaching(result, propertyCachePath);
+  }
+
+  if (valueType === VALUE_TYPE.EAGER) {
+    // Memoize result on the object itself
+    Object.defineProperty(object, key, {
+      configurable: true,
+      enumerable,
+      value: result,
+      writable: true,
+    });
+  }
+
+  return result;
 }
 
 function getPropertyCachePath(object, key) {
