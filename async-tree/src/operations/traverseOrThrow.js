@@ -96,7 +96,7 @@ export default async function traverseOrThrow(maplike, ...keys) {
             : "A path tried to unpack data that's already unpacked.";
       throw new TraverseError(message, {
         head: maplike,
-        lastValue,
+        lastValue: value ?? lastValue,
         keys,
         position,
       });

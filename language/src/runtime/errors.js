@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import codeFragment from "./codeFragment.js";
 import explainReferenceError from "./explainReferenceError.js";
 import explainTraverseError from "./explainTraverseError.js";
+import { ops } from "./internal.js";
 
 // Text we look for in an error stack to guess whether a given line represents a
 // function in the Origami source code.
@@ -61,7 +62,8 @@ export async function formatError(error) {
         message += "\n" + explanation;
       }
     } else if (error instanceof TraverseError) {
-      const explanation = await explainTraverseError(error);
+      // TraverseError explainer wants the full code
+      const explanation = await explainTraverseError(context.code, error);
       if (explanation) {
         message += "\n" + explanation;
       }
@@ -157,4 +159,34 @@ export function lineInfo(location) {
 
 export function maybeOrigamiSourceCode(text) {
   return origamiSourceSignals.some((signal) => text.includes(signal));
+}
+
+// Return the keys traversed by the given code, or null if undetermined.
+export function reconstructTraversalKeys(code) {
+  const [op, ...args] = code;
+
+  switch (op) {
+    case ops.cache:
+      return reconstructTraversalKeys(code[2]);
+
+    case ops.unpack:
+      return reconstructTraversalKeys(code[1]);
+  }
+
+  if (op instanceof Array) {
+    if (op[0] === ops.scope) {
+      // Simple scope reference
+      const key = args[0][1];
+      return [key];
+    } else if (op[0] === ops.cache) {
+      // Traversal starting with external scope reference
+      const head = op[2][1][1];
+      const tail = args.map((code) => code[1]);
+      const keys = [head, ...tail];
+      return keys;
+    }
+  }
+
+  // Can't determine keys
+  return null;
 }

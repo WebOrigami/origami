@@ -188,7 +188,7 @@ evaluating: \x1B[31mposts.md\x1B[0m
         `(post1/totle).toUpperCase()`,
         `ReferenceError: Tried to get a property of something that doesn't exist.
 This path returned undefined: post1/totle
-evaluating: \x1B[31mpost1/totle\x1B[0m`,
+evaluating: \x1B[31m(post1/totle)\x1B[0m`,
         { parent },
       );
     });
@@ -238,7 +238,7 @@ evaluating: \x1B[31msup/\x1B[0m`,
 Tried to traverse path:  map/1/a
 Stopped unexpectedly at: 1/
 Slash-separated keys are searched as strings. Here there's no string "1" key, but there is a number 1 key.
-To get the value for that number key, use parentheses: map/(1)
+To get the value for that number key, use parentheses: map/(1)/a
 evaluating: \x1B[31m1/\x1B[0m`,
         { parent },
       );
@@ -250,8 +250,8 @@ evaluating: \x1B[31m1/\x1B[0m`,
       });
       await assertError(
         `file.foo/bar`,
-        `TraverseError: A path hit binary data that can't be unpacked.
-Tried to traverse path:  file.foo/bar
+        `TraverseError: A path tried to unpack data but there's no unpack function.
+Tried to traverse path:  file.foo/
 Stopped unexpectedly at: file.foo/
 The value couldn't be unpacked because no file extension handler is registered for ".foo".
 evaluating: \x1B[31mfile.foo/\x1B[0m`,

@@ -6,6 +6,7 @@ import {
   TraverseError,
   Tree,
 } from "@weborigami/async-tree";
+import { reconstructTraversalKeys } from "./errors.js";
 import { typos } from "./typos.js";
 
 /**
@@ -14,7 +15,7 @@ import { typos } from "./typos.js";
  *
  * @param {TraverseError} error
  */
-export default async function explainTraverseError(error) {
+export default async function explainTraverseError(code, error) {
   const { lastValue, keys, position } = error;
   if (lastValue === undefined || keys === undefined || position === undefined) {
     // Don't have sufficient information; shouldn't happen
@@ -27,9 +28,15 @@ export default async function explainTraverseError(error) {
   }
 
   // The key that caused the error is the one before the current position
-  const path = pathFromKeys(keys);
-  const problemKey = keys[position - 1];
-  let message = `Tried to traverse path:  ${path}\nStopped unexpectedly at: ${problemKey}`;
+  const problemKey = error.keys[position - 1];
+  const reconstructedKeys = reconstructTraversalKeys(code);
+  let message;
+  if (reconstructedKeys === null) {
+    message = `Path traversal stopped unexpectedly at: ${problemKey}`;
+  } else {
+    const path = pathFromKeys(reconstructedKeys);
+    message = `Tried to traverse path:  ${path}\nStopped unexpectedly at: ${problemKey}`;
+  }
 
   const key = trailingSlash.remove(keys[position - 1]);
 
@@ -50,10 +57,12 @@ export default async function explainTraverseError(error) {
     const normalizedKeys = lastValueKeys.map(trailingSlash.remove);
 
     const keyAsNumber = Number(key);
-    if (!isNaN(keyAsNumber)) {
+    if (reconstructedKeys && !isNaN(keyAsNumber)) {
       // See if the string version of the key is present
       if (lastValueKeys.includes(keyAsNumber)) {
-        const suggestedPath = `${pathFromKeys(keys.slice(0, position - 1))}(${keyAsNumber})`;
+        const suggestedKeys = reconstructedKeys?.slice(0);
+        suggestedKeys[position] = `(${keyAsNumber})`;
+        const suggestedPath = pathFromKeys(suggestedKeys);
         message += `\nSlash-separated keys are searched as strings. Here there's no string "${key}" key, but there is a number ${keyAsNumber} key.
 To get the value for that number key, use parentheses: ${suggestedPath}`;
       }

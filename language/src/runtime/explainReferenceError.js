@@ -4,6 +4,7 @@ import {
   trailingSlash,
   Tree,
 } from "@weborigami/async-tree";
+import { reconstructTraversalKeys } from "./errors.js";
 import { ops } from "./internal.js";
 import { typos } from "./typos.js";
 
@@ -35,39 +36,25 @@ export default async function explainReferenceError(code, state) {
     return explanation;
   }
 
-  // See if the code looks like an external scope reference that failed
-  let key;
-  if (code[0] === ops.cache) {
-    // External scope reference
-    let refCall = code[2];
-    if (refCall[0] === ops.unpack) {
-      // Unwrap implied unpack
-      refCall = refCall[1];
-    }
-    const scopeArgs = refCall.slice(1); // get the scope reference arguments
-    const keys = scopeArgs.map((part) => part[1]);
-    const path = pathFromKeys(keys);
-
-    if (keys.length > 1) {
-      return `This path returned undefined: ${path}`;
-    }
-    key = keys[0];
-  } else if (code[0]?.[0] === ops.scope) {
-    // Simple scope reference
-    key = code[1][1];
-  } else {
-    // Generic reference error, can't offer help
+  const keys = reconstructTraversalKeys(code);
+  if (!keys) {
     return null;
+  } else if (keys.length > 1) {
+    const path = pathFromKeys(keys);
+    return `This path returned undefined: ${path}`;
   }
 
-  key = trailingSlash.remove(key);
+  // A single key caused the problem, try to explain it
+  let key = keys[0];
   if (typeof key !== "string") {
     return null;
   }
+  key = trailingSlash.remove(key);
 
-  // Common case of a single key
+  // Baseline message
   let message = `"${key}" is not in scope.`;
 
+  // Various explainers can add suggestions
   const explainers = [
     mathExplainer,
     qualifiedReferenceExplainer,
