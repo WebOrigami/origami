@@ -113,6 +113,13 @@ export default function optimize(code, options = {}) {
           );
           return annotate([optimizedKey, optimizedValue], child.location);
         }
+      } else if (op === ops.getter) {
+        if (index === 0) {
+          return child; // return op as is
+        } else {
+          // Already set up to optimize the (single) child
+          return optimize(/** @type {AnnotatedCode} */ (child), options);
+        }
       } else if (Array.isArray(child) && "location" in child) {
         // Review: Aside from ops.object (above), what non-instruction arrays
         // does this descend into?

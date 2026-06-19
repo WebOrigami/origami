@@ -16,8 +16,12 @@ import {
 
 describe("optimize", () => {
   test("define cache path based on source", () => {
-    const expression = "{ a: 1 }";
-    const expected = [ops.object, "/folder/test.ori/", ["a", 1]];
+    const expression = "{ a = { b: 1 } }";
+    const expected = [
+      ops.object,
+      "/folder/test.ori/",
+      ["a", [ops.getter, [ops.object, "/folder/test.ori/a/", ["b", 1]]]],
+    ];
     assertCompile(expression, expected);
   });
 
