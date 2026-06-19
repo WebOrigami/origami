@@ -1,4 +1,4 @@
-import { pathFromKeys, trailingSlash } from "@weborigami/async-tree";
+import { trailingSlash } from "@weborigami/async-tree";
 import jsGlobals from "../project/jsGlobals.js";
 import {
   KEY_TYPE,
@@ -187,13 +187,6 @@ function baseKeyName(key) {
     key = key.slice(1, -1);
   }
   return key;
-}
-
-function cacheExternalPath(code, cachePath) {
-  const keys = code.map(keyFromCode).filter((key) => key !== null);
-  const keysPath = pathFromKeys(keys);
-  const refCachePath = SystemCacheMap.joinPath(cachePath, "_refs", keysPath);
-  return annotate([ops.cache, refCachePath, code], code.location);
 }
 
 // A reference with periods like x.y.z
@@ -397,6 +390,13 @@ function resolvePath(code, globals, locals, cachePath) {
 
   let { type, result } = reference(head, globals, locals);
 
+  if (type === REFERENCE_EXTERNAL && cachePath) {
+    // External references should be cached
+    const headKey = keyFromCode(head);
+    const refCachePath = SystemCacheMap.joinPath(cachePath, "_refs", headKey);
+    result = annotate([ops.cache, refCachePath, result], head.location);
+  }
+
   if (tail.length > 0) {
     // If the result is a traversal, we can safely extend it
     const extendResult =
@@ -412,11 +412,6 @@ function resolvePath(code, globals, locals, cachePath) {
     } else {
       result = annotate([result, ...tail], code.location);
     }
-  }
-
-  if (type === REFERENCE_EXTERNAL && cachePath) {
-    // External references should be cached
-    return cacheExternalPath(result, cachePath);
   }
 
   return result;

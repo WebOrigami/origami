@@ -126,6 +126,31 @@ describe("optimize", () => {
       );
     });
 
+    test("external reference with path", () => {
+      // Compilation of `src/templates/page.ori` where src isn't a variable
+      const code = createCode([
+        markers.traverse,
+        [markers.reference, "src/"],
+        [ops.literal, "templates/"],
+        [ops.literal, "page.ori"],
+      ]);
+      const parent = {};
+      const expected = [
+        [
+          ops.cache,
+          "test.ori/_refs/src/",
+          [[ops.scope], [ops.literal, "src/"]],
+        ],
+        [ops.literal, "templates/"],
+        [ops.literal, "page.ori"],
+      ];
+      const globals = {};
+      assertCodeEqual(
+        optimize(code, { cachePath: "test.ori", globals, parent }),
+        expected,
+      );
+    });
+
     test("external reference with implied unpack", () => {
       // Compilation of `greet.ori("world")`
       const code = createCode([
@@ -246,9 +271,9 @@ describe("optimize", () => {
         [ops.literal, "passwd"],
       ]);
       const expected = [
-        ops.cache,
-        "test.ori/_refs//etc/passwd",
-        [[ops.rootDirectory], [ops.literal, "etc/"], [ops.literal, "passwd"]],
+        [ops.cache, "test.ori/_refs//", [ops.rootDirectory]],
+        [ops.literal, "etc/"],
+        [ops.literal, "passwd"],
       ];
       assertCodeEqual(optimize(code, { cachePath: "test.ori" }), expected);
     });
@@ -272,14 +297,13 @@ describe("optimize", () => {
       ]);
       const parent = {};
       const expected = [
-        ops.cache,
-        "test.ori/_refs/path/to/file",
         [
-          [ops.scope],
-          [ops.literal, "path/"],
-          [ops.literal, "to/"],
-          [ops.literal, "file"],
+          ops.cache,
+          "test.ori/_refs/path/",
+          [[ops.scope], [ops.literal, "path/"]],
         ],
+        [ops.literal, "to/"],
+        [ops.literal, "file"],
       ];
       assertCodeEqual(
         optimize(code, { cachePath: "test.ori", parent }),
@@ -297,9 +321,12 @@ describe("optimize", () => {
       const globals = {};
       const parent = {};
       const expected = [
-        ops.cache,
-        "test.ori/_refs/package.json/name",
-        [[ops.scope], [ops.literal, "package.json/"], [ops.literal, "name"]],
+        [
+          ops.cache,
+          "test.ori/_refs/package.json/",
+          [[ops.scope], [ops.literal, "package.json/"]],
+        ],
+        [ops.literal, "name"],
       ];
       assertCodeEqual(
         optimize(code, { cachePath: "test.ori", globals, parent }),
