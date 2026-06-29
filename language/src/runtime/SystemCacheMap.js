@@ -28,15 +28,16 @@ let nextPathId = 0;
 export default class SystemCacheMap extends SyncMap {
   delete(path) {
     // Find all entries that depend on this path directly or indirectly
-    const toDelete = this.dependentEntries(path);
+    const dependentEntries = new Map();
+    this.visitDependentEntries(path, dependentEntries);
 
     // Delete those dependent entries
-    for (const deletePath of toDelete.keys()) {
+    for (const deletePath of dependentEntries.keys()) {
       super.delete(deletePath);
     }
 
     // Remove deleted entries as being downstream from still-existing entries
-    for (const [deletePath, deleteEntry] of toDelete.entries()) {
+    for (const [deletePath, deleteEntry] of dependentEntries.entries()) {
       for (const upstreamPath of deleteEntry.upstreams ?? []) {
         const upstreamEntry = this.get(upstreamPath);
         if (upstreamEntry?.downstreams) {
@@ -53,36 +54,38 @@ export default class SystemCacheMap extends SyncMap {
   }
 
   // Return all entries that directly or indirectly depend on the given path
-  dependentEntries(path) {
-    const result = new Map();
+  visitDependentEntries(path, dependentEntries) {
+    // The entries that will be added for the given path
+    const pathAdditions = new Map();
 
     const entry = this.get(path);
     if (entry) {
       // Path itself has an entry
-      result.set(path, entry);
+      pathAdditions.set(path, entry);
     }
 
     // Add all entries with child paths that implicitly depend on this entry
+    // REVIEW: This is expensive: it iterates through the entire cache, and is
+    // done for each node visit.
     for (const [otherPath, otherEntry] of this.entries()) {
       if (this.isChildPath(path, otherPath)) {
-        result.set(otherPath, otherEntry);
+        pathAdditions.set(otherPath, otherEntry);
       }
     }
 
-    // For each entry, add all entries downstream of it
-    for (const entry of result.values()) {
-      for (const downstreamPath of entry.downstreams ?? []) {
-        if (!result.has(downstreamPath)) {
-          for (const [key, value] of this.dependentEntries(downstreamPath)) {
-            if (!result.has(key)) {
-              result.set(key, value);
-            }
+    // Add all the direct dependencies
+    for (const [dependentPath, dependentEntry] of pathAdditions.entries()) {
+      if (!dependentEntries.has(dependentPath)) {
+        // Didn't already have this path in the result set
+        dependentEntries.set(dependentPath, dependentEntry);
+        // Visit all entries downstream of this one
+        for (const downstreamPath of dependentEntry.downstreams ?? []) {
+          if (!dependentEntries.has(downstreamPath)) {
+            this.visitDependentEntries(downstreamPath, dependentEntries);
           }
         }
       }
     }
-
-    return result;
   }
 
   // REVIEW: This doesn't have the correct signature for getOrInsertComputed,
