@@ -45,6 +45,14 @@ export default class SystemCacheMap extends SyncMap {
           if (upstreamEntry.downstreams.size === 0) {
             // No more downstream dependencies, clean up entry
             delete upstreamEntry.downstreams;
+            if (upstreamEntry.upstreams?.size === 0) {
+              // No more upstream dependencies either, clean up entry
+              delete upstreamEntry.upstreams;
+              if (!("value" in upstreamEntry)) {
+                // No more data in this entry, delete it
+                super.delete(upstreamPath);
+              }
+            }
           }
         }
       }
