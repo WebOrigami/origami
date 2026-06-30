@@ -16,19 +16,22 @@ export default function toFunction(obj) {
     return obj;
   } else if (isUnpackable(obj)) {
     // Extract the contents of the object and convert that to a function.
-    let fnPromise;
-    return async function (...args) {
-      if (!fnPromise) {
-        // unpack() may return a function or a promise for a function; normalize
-        // to a promise for a function
-        const unpackPromise = Promise.resolve(
-          /** @type {any} */ (obj).unpack()
-        );
-        fnPromise = unpackPromise.then((content) => toFunction(content));
+    const unpacked = /** @type {any} */ (obj).unpack();
+    if (unpacked instanceof Promise) {
+      return async function (...args) {
+        const fn = toFunction(await unpacked);
+        if (fn === null) {
+          throw new TypeError("unpack() did not return a function");
+        }
+        return fn(...args);
+      };
+    } else {
+      const fn = toFunction(unpacked);
+      if (fn === null) {
+        throw new TypeError("unpack() did not return a function");
       }
-      const fn = await fnPromise;
-      return fn(...args);
-    };
+      return fn;
+    }
   } else if (isMaplike(obj)) {
     // Return a function that invokes the tree's getter.
     const tree = from(obj);

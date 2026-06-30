@@ -26,6 +26,14 @@ describe("toFunction", () => {
     assert.equal(await fn(), "result");
   });
 
+  test("can use a packed object's async `unpack` as a function", async () => {
+    const obj = new String();
+    /** @type {any} */ (obj).unpack = async () => () => "result";
+    const fn = toFunction(obj);
+    // @ts-ignore
+    assert.equal(await fn(), "result");
+  });
+
   test("returns null for something that's not a function", () => {
     // @ts-ignore
     const result = toFunction("this is not a function");
