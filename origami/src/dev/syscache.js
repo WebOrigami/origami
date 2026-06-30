@@ -15,9 +15,11 @@ export default function syscache() {
     const result = {};
     if (entry.downstreams) {
       result.downstreams = preferRelativePaths(projectRoot, entry.downstreams);
+      result.downstreams.sort((a, b) => a.localeCompare(b));
     }
     if (entry.upstreams) {
       result.upstreams = preferRelativePaths(projectRoot, entry.upstreams);
+      result.upstreams.sort((a, b) => a.localeCompare(b));
     }
     return [preferRelativePath(projectRoot, path), result];
   });
