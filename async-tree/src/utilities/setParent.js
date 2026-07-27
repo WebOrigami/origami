@@ -10,14 +10,15 @@ import * as symbols from "../symbols.js";
  *
  * @param {*} child
  * @param {any} parent
+ * @param {boolean} [force]
  */
-export default function setParent(child, parent) {
+export default function setParent(child, parent, force = false) {
   if (isMap(child)) {
     // Value is a subtree; set its parent to this tree.
-    if ("parent" in child && !child.parent) {
+    if ("parent" in child && (!child.parent || force)) {
       /** @type {any} */ (child).parent = parent;
     }
-  } else if (Object.isExtensible(child) && !child[symbols.parent]) {
+  } else if (Object.isExtensible(child) && (!child[symbols.parent] || force)) {
     try {
       // Add parent reference as a symbol to avoid polluting the object. This
       // reference will be used if the object is later used as a tree. We set

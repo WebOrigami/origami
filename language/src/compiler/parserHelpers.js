@@ -371,7 +371,10 @@ function makeMerge(spreads, location) {
   const topObject = annotate([ops.object, null, ...topEntries], location);
 
   // Get the _result property
-  const code = annotate([topObject, "_result"], location);
+  const getResult = annotate([topObject, "_result"], location);
+
+  // Reparent the result using the state's parent
+  const code = annotate([ops.reparent, getResult], location);
   return code;
 }
 

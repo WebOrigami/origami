@@ -31,4 +31,13 @@ describe("setParent", () => {
     setParent(treeWithParent, parent);
     assert.equal(treeWithParent.parent, parent);
   });
+
+  test("sets a child's parent when force is true", () => {
+    const parent = new SyncMap();
+    const child = {
+      [symbols.parent]: "parent",
+    };
+    setParent(child, parent, true);
+    assert.equal(child[symbols.parent], parent);
+  });
 });

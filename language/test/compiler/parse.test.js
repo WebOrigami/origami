@@ -1358,36 +1358,23 @@ Body`,
       ]);
     });
 
-    test("spreads", () => {
+    test("computed property keys", () => {
+      assertParse("objectLiteral", "{ [key]: value }", [
+        ops.object,
+        null,
+        [
+          [markers.traverse, [markers.reference, "key"]],
+          [markers.traverse, [markers.reference, "value"]],
+        ],
+      ]);
+    });
+  });
+
+  describe("object spread", () => {
+    test("simple spread that can be dropped", () => {
       assertParse("objectLiteral", "{ ...x }", [
         ops.unpack,
         [markers.traverse, [markers.reference, "x"]],
-      ]);
-      assertParse("objectLiteral", "{ a: 1, ...more, c: a }", [
-        [
-          ops.object,
-          null,
-          ["a", [ops.literal, 1]],
-          ["c", [markers.traverse, [markers.reference, "a"]]],
-          [
-            "_result",
-            [
-              ops.merge,
-              [
-                ops.object,
-                null,
-                ["a", [ops.getter, [[ops.inherited, 1], "a"]]],
-              ],
-              [markers.traverse, [markers.reference, "more"]],
-              [
-                ops.object,
-                null,
-                ["c", [ops.getter, [[ops.inherited, 1], "c"]]],
-              ],
-            ],
-          ],
-        ],
-        "_result",
       ]);
       assertParse("objectLiteral", "{ a: 1, ...{ b: 2 } }", [
         ops.object,
@@ -1397,13 +1384,34 @@ Body`,
       ]);
     });
 
-    test("computed property keys", () => {
-      assertParse("objectLiteral", "{ [key]: value }", [
-        ops.object,
-        null,
+    test.only("actual spread", () => {
+      assertParse("objectLiteral", "{ a: 1, ...more, c: a }", [
+        ops.reparent,
         [
-          [markers.traverse, [markers.reference, "key"]],
-          [markers.traverse, [markers.reference, "value"]],
+          [
+            ops.object,
+            null,
+            ["a", [ops.literal, 1]],
+            ["c", [markers.traverse, [markers.reference, "a"]]],
+            [
+              "_result",
+              [
+                ops.merge,
+                [
+                  ops.object,
+                  null,
+                  ["a", [ops.getter, [[ops.inherited, 1], "a"]]],
+                ],
+                [markers.traverse, [markers.reference, "more"]],
+                [
+                  ops.object,
+                  null,
+                  ["c", [ops.getter, [[ops.inherited, 1], "c"]]],
+                ],
+              ],
+            ],
+          ],
+          "_result",
         ],
       ]);
     });

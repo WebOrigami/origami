@@ -6,7 +6,13 @@
  * @typedef {import("@weborigami/async-tree").SyncOrAsyncMap} SyncOrAsyncMap
  */
 
-import { getParent, isUnpackable, SyncMap, Tree } from "@weborigami/async-tree";
+import {
+  getParent,
+  isUnpackable,
+  setParent,
+  SyncMap,
+  Tree,
+} from "@weborigami/async-tree";
 import os from "node:os";
 import execute from "./execute.js";
 import expressionObject from "./expressionObject.js";
@@ -511,6 +517,17 @@ export function remainder(a, b) {
   return a % b;
 }
 addOpLabel(remainder, "«ops.remainder»");
+
+/**
+ * Overwrite the value's parent with the parent from the state.
+ */
+export async function reparent(value, state = {}) {
+  const { parent } = state;
+  setParent(value, parent, true);
+  return value;
+}
+addOpLabel(reparent, "«ops.reparent»");
+reparent.needsState = true;
 
 /**
  * Files tree for the filesystem root.
