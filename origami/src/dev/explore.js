@@ -1,5 +1,5 @@
 import { args, Tree } from "@weborigami/async-tree";
-import { Handlers, OrigamiFileMap } from "@weborigami/language";
+import { Handlers, OrigamiFileMap, volatile } from "@weborigami/language";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { getDescriptor } from "../common/utilities.js";
@@ -22,7 +22,7 @@ export default async function explore(maplike) {
 
   // If the user navigates inside this page, unpack back to the original tree.
   /** @type {any} */
-  const result = new String(text);
+  const result = volatile(text);
   result.unpack = () => debug(tree);
 
   return result;
