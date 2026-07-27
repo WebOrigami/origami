@@ -33,7 +33,7 @@ async function getScopeData(scope) {
   const data = [];
   for (const tree of trees) {
     const name = getDescriptor(tree);
-    const treeKeys = Array.from(await tree.keys());
+    const treeKeys = await Tree.keys(tree);
     // Skip system-ish files that start with a period.
     const keys = treeKeys.filter((key) => !key.startsWith?.("."));
     data.push({ name, keys });
