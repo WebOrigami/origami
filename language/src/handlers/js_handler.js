@@ -1,3 +1,7 @@
+import { SystemCacheMap } from "../../main.js";
+import enableValueCaching from "../runtime/enableValueCaching.js";
+import { cachePathSymbol } from "../runtime/symbols.js";
+
 /**
  * A JavaScript file
  *
@@ -15,46 +19,59 @@ export default {
       importTarget = importTarget.source;
     }
 
-    if (!importTarget) {
+    if (!parent?.import) {
       throw new TypeError(
-        "The parent tree must support importing modules to unpack JavaScript files.",
+        "A parent that supports importing modules is required to unpack JavaScript files.",
       );
     }
 
-    const object = await importTarget.import?.(key);
+    const exports = await importTarget.import?.(key);
 
-    let bound;
-    let bindTarget = parent;
-    while (bindTarget.result) {
-      bindTarget = bindTarget.result;
-    }
-    if ("default" in object) {
+    let processed;
+    const cachePath = parent[cachePathSymbol]
+      ? SystemCacheMap.joinPath(parent[cachePathSymbol], key)
+      : null;
+    if ("default" in exports) {
       // Module with a default export; return that.
-      bound = bindToParent(object.default, bindTarget);
+      const exportCachePath = cachePath
+        ? SystemCacheMap.joinPath(cachePath, "")
+        : null;
+      processed = processExport(exports.default, parent, exportCachePath);
     } else {
       // Module with multiple named exports.
-      bound = {};
-      for (const [name, value] of Object.entries(object)) {
-        bound[name] = bindToParent(value, bindTarget);
+      processed = {};
+      for (const [name, value] of Object.entries(exports)) {
+        const exportCachePath = cachePath
+          ? SystemCacheMap.joinPath(cachePath, name)
+          : null;
+        processed[name] = processExport(value, parent, exportCachePath);
       }
     }
 
-    return bound;
+    return processed;
   },
 };
 
-// If the value is a function, bind it to the parent so that the function can,
-// e.g., find local files. Note: execute() supports a related but separate
-// mechanism called `parentAsTarget`. We want to use binding here so that, if
-// a function is handed to another to be called later, it still has the correct
-// `this`.
-function bindToParent(value, parent) {
+// Process an individual JavaScript export.
+//
+// - Bind functions to the parent tree so that they can find local files
+// - Enable caching for functions and objects
+//
+function processExport(value, parent, cachePath) {
+  let result;
+
   if (typeof value === "function") {
-    const result = value.bind(parent);
+    result = value.bind(parent);
     // Copy over any properties that were attached to the function
     Object.assign(result, value);
-    return result;
   } else {
-    return value;
+    result = value;
   }
+
+  if (cachePath) {
+    // Enable caching
+    result = enableValueCaching(result, cachePath);
+  }
+
+  return result;
 }

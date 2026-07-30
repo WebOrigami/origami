@@ -3,9 +3,18 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import js_handler from "../../src/handlers/js_handler.js";
 import ImportModulesMixin from "../../src/runtime/ImportModulesMixin.js";
+import SyncCacheTransform from "../../src/runtime/SyncCacheTransform.js";
+import { cachePathSymbol } from "../../src/runtime/symbols.js";
+import systemCache from "../../src/runtime/systemCache.js";
+
+class FixtureFileMap extends SyncCacheTransform(ImportModulesMixin(FileMap)) {
+  get [cachePathSymbol]() {
+    return this.path;
+  }
+}
 
 const fixturesUrl = new URL("fixtures", import.meta.url);
-const fixturesTree = new (ImportModulesMixin(FileMap))(fixturesUrl);
+const fixturesTree = new FixtureFileMap(fixturesUrl);
 
 describe(".js handler", () => {
   test("loads .js file that exports a string", async () => {
@@ -42,5 +51,19 @@ describe(".js handler", () => {
       parent: fixturesTree,
     });
     assert.deepEqual(obj, { n: 1, s: "string" });
+  });
+
+  test("enables caching for functions", async () => {
+    const buffer = await fixturesTree.get("greet.js");
+    const fn = await js_handler.unpack(buffer, {
+      key: "greet.js",
+      parent: fixturesTree,
+    });
+    const expectedPath = `${fixturesTree.path}/greet.js/`;
+    assert.equal(fn[cachePathSymbol], expectedPath);
+
+    const result1 = await fn("Alice");
+    assert.equal(result1, "Hello, Alice!");
+    assert(systemCache.has(`${expectedPath}Alice`));
   });
 });
