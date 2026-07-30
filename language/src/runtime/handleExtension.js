@@ -7,11 +7,11 @@ import {
   setParent,
   trailingSlash,
 } from "@weborigami/async-tree";
+import systemCache from "../cache/systemCache.js";
+import SystemCacheMap from "../cache/SystemCacheMap.js";
 import getPackedPath from "../handlers/getPackedPath.js";
 import mediaTypeExtensions from "../handlers/mediaTypeExtensions.json" with { type: "json" };
 import { cachePathSymbol } from "./symbols.js";
-import systemCache from "./systemCache.js";
-import SystemCacheMap from "./SystemCacheMap.js";
 
 // Base class for async functions
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;

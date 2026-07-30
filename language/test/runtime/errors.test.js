@@ -1,10 +1,10 @@
 import { ObjectMap } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { beforeEach, describe, test } from "node:test";
+import systemCache from "../../src/cache/systemCache.js";
 import coreGlobals from "../../src/project/coreGlobals.js";
 import { formatError } from "../../src/runtime/errors.js";
 import evaluate from "../../src/runtime/evaluate.js";
-import systemCache from "../../src/runtime/systemCache.js";
 
 const globals = await coreGlobals();
 

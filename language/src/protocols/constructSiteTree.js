@@ -1,6 +1,6 @@
 import { trailingSlash } from "@weborigami/async-tree";
+import systemCache from "../cache/systemCache.js";
 import HandleExtensionsTransform from "../runtime/HandleExtensionsTransform.js";
-import systemCache from "../runtime/systemCache.js";
 import constructHref from "./constructHref.js";
 
 /**

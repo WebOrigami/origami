@@ -1,8 +1,8 @@
 import assert from "node:assert";
 import { beforeEach, describe, test } from "node:test";
-import enableValueCaching from "../../src/runtime/enableValueCaching.js";
+import enableValueCaching from "../../src/cache/enableValueCaching.js";
+import systemCache from "../../src/cache/systemCache.js";
 import { cachePathSymbol } from "../../src/runtime/symbols.js";
-import systemCache from "../../src/runtime/systemCache.js";
 
 describe("enableValueCaching", () => {
   beforeEach(() => {

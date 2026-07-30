@@ -6,13 +6,13 @@ import {
   trailingSlash,
   Tree,
 } from "@weborigami/async-tree";
-import enableValueCaching from "./enableValueCaching.js";
+import enableValueCaching from "../cache/enableValueCaching.js";
+import systemCache from "../cache/systemCache.js";
+import SystemCacheMap from "../cache/SystemCacheMap.js";
 import execute from "./execute.js";
 import handleExtension from "./handleExtension.js";
 import { ops } from "./internal.js";
 import { cachePathSymbol } from "./symbols.js";
-import systemCache from "./systemCache.js";
-import SystemCacheMap from "./SystemCacheMap.js";
 
 export const KEY_TYPE = {
   STRING: 0, // Simple string key: `a: 1`

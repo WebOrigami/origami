@@ -1,5 +1,5 @@
 import { getParent, toString } from "@weborigami/async-tree";
-import SystemCacheMap from "../runtime/SystemCacheMap.js";
+import SystemCacheMap from "../cache/SystemCacheMap.js";
 
 let parentCounter = 0;
 

@@ -2,10 +2,10 @@ import { ObjectMap, symbols, SyncMap, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { beforeEach, describe, test } from "node:test";
 
+import systemCache from "../../src/cache/systemCache.js";
 import expressionObject from "../../src/runtime/expressionObject.js";
 import { ops } from "../../src/runtime/internal.js";
 import { cachePathSymbol } from "../../src/runtime/symbols.js";
-import systemCache from "../../src/runtime/systemCache.js";
 
 describe("expressionObject", () => {
   beforeEach(() => {

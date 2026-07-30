@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { beforeEach, describe, test } from "node:test";
-import systemCache from "../../src/runtime/systemCache.js";
+import systemCache from "../../src/cache/systemCache.js";
 
 // We test SyncCacheTransform via syncCalcs since it's a fairly small
 // application of the transform.

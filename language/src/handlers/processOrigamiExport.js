@@ -1,5 +1,5 @@
 import { setParent, trailingSlash } from "@weborigami/async-tree";
-import enableValueCaching from "../runtime/enableValueCaching.js";
+import enableValueCaching from "../cache/enableValueCaching.js";
 
 /**
  * Given an object that's the top-level result of an Origami file, perform any

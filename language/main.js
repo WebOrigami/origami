@@ -1,5 +1,7 @@
 export * from "./src/runtime/internal.js";
 
+export { default as systemCache } from "./src/cache/systemCache.js";
+export { default as SystemCacheMap } from "./src/cache/SystemCacheMap.js";
 export * as compile from "./src/compiler/compile.js";
 export { default as isOrigamiFrontMatter } from "./src/compiler/isOrigamiFrontMatter.js";
 export { parse } from "./src/compiler/parse.js";
@@ -29,8 +31,6 @@ export { default as ImportModulesMixin } from "./src/runtime/ImportModulesMixin.
 export * as moduleCache from "./src/runtime/moduleCache.js";
 export { default as OrigamiFileMap } from "./src/runtime/OrigamiFileMap.js";
 export * as symbols from "./src/runtime/symbols.js";
-export { default as systemCache } from "./src/runtime/systemCache.js";
-export { default as SystemCacheMap } from "./src/runtime/SystemCacheMap.js";
 export { default as TreeEvent } from "./src/runtime/TreeEvent.js";
 export { default as volatile } from "./src/runtime/volatile.js";
 export { default as WatchFilesMixin } from "./src/runtime/WatchFilesMixin.js";

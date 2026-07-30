@@ -2,9 +2,9 @@ import { ObjectMap, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { beforeEach, describe, test } from "node:test";
 
+import systemCache from "../../src/cache/systemCache.js";
 import execute from "../../src/runtime/execute.js";
 import { ops } from "../../src/runtime/internal.js";
-import systemCache from "../../src/runtime/systemCache.js";
 import { createCode } from "../compiler/codeHelpers.js";
 
 describe("ops", () => {

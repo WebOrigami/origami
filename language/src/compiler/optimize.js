@@ -1,4 +1,5 @@
 import { trailingSlash } from "@weborigami/async-tree";
+import SystemCacheMap from "../cache/SystemCacheMap.js";
 import jsGlobals from "../project/jsGlobals.js";
 import {
   KEY_TYPE,
@@ -6,7 +7,6 @@ import {
   propertyInfo,
 } from "../runtime/expressionObject.js";
 import { ops } from "../runtime/internal.js";
-import SystemCacheMap from "../runtime/SystemCacheMap.js";
 import { annotate, markers, spanLocations } from "./parserHelpers.js";
 
 export const REFERENCE_PARAM = 1;

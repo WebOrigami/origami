@@ -1,7 +1,7 @@
 import { SyncMap } from "@weborigami/async-tree";
 import path from "node:path";
-import { cachePathSymbol } from "./symbols.js";
-import systemCache from "./systemCache.js";
+import systemCache from "../cache/systemCache.js";
+import { cachePathSymbol } from "../runtime/symbols.js";
 
 /**
  * Return a sync map of all values in scope for the given sync source map.

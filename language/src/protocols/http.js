@@ -1,4 +1,4 @@
-import systemCache from "../runtime/systemCache.js";
+import systemCache from "../cache/systemCache.js";
 import constructHref from "./constructHref.js";
 import fetchAndHandleExtension from "./fetchAndHandleExtension.js";
 

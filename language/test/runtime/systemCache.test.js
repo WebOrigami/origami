@@ -5,9 +5,9 @@
 import { SyncMap, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import SyncCacheTransform from "../../src/cache/SyncCacheTransform.js";
 import * as handlers from "../../src/handlers/handlers.js";
 import HandleExtensionsTransform from "../../src/runtime/HandleExtensionsTransform.js";
-import SyncCacheTransform from "../../src/runtime/SyncCacheTransform.js";
 import { cachePathSymbol } from "../../src/runtime/symbols.js";
 
 describe("systemCache", () => {

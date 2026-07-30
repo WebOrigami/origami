@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { beforeEach, describe, test } from "node:test";
+import systemCache from "../../src/cache/systemCache.js";
 import https from "../../src/protocols/https.js";
-import systemCache from "../../src/runtime/systemCache.js";
 
 describe("https", () => {
   beforeEach(() => {

@@ -1,10 +1,10 @@
 import { ObjectMap } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import SyncCacheTransform from "../../src/cache/SyncCacheTransform.js";
+import systemCache from "../../src/cache/systemCache.js";
 import ScopeMap from "../../src/runtime/ScopeMap.js";
 import { cachePathSymbol } from "../../src/runtime/symbols.js";
-import SyncCacheTransform from "../../src/runtime/SyncCacheTransform.js";
-import systemCache from "../../src/runtime/systemCache.js";
 
 describe("scope", () => {
   test("gets the first defined value from the scope trees", async () => {

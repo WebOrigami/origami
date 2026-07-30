@@ -1,5 +1,5 @@
 import { SystemCacheMap } from "../../main.js";
-import enableValueCaching from "../runtime/enableValueCaching.js";
+import enableValueCaching from "../cache/enableValueCaching.js";
 import { cachePathSymbol } from "../runtime/symbols.js";
 
 /**

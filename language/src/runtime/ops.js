@@ -14,13 +14,13 @@ import {
   Tree,
 } from "@weborigami/async-tree";
 import os from "node:os";
+import systemCache from "../cache/systemCache.js";
 import execute from "./execute.js";
 import expressionObject from "./expressionObject.js";
 import mergeTrees from "./mergeTrees.js";
 import OrigamiFileMap from "./OrigamiFileMap.js";
 import ScopeMap from "./ScopeMap.js";
 import { codeSymbol } from "./symbols.js";
-import systemCache from "./systemCache.js";
 
 function addOpLabel(op, label) {
   Object.defineProperty(op, "toString", {

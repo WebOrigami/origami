@@ -1,7 +1,7 @@
+import systemCache from "../cache/systemCache.js";
+import SystemCacheMap from "../cache/SystemCacheMap.js";
+import { cachePathSymbol, noCacheSymbol } from "../runtime/symbols.js";
 import enableValueCaching from "./enableValueCaching.js";
-import { cachePathSymbol, noCacheSymbol } from "./symbols.js";
-import systemCache from "./systemCache.js";
-import SystemCacheMap from "./SystemCacheMap.js";
 
 /**
  * General-purpose mixin for Origami maps with dependency tracking, used for:
@@ -36,8 +36,8 @@ import SystemCacheMap from "./SystemCacheMap.js";
  *      b.ori -> { downstreams: Set(site.ori), value: ... }
  *      c.ori -> { downstreams: Set(a.ori, b.ori), value: ... }
  */
-export default function SyncCacheTransform(Base) {
-  return class SyncCache extends Base {
+export default function AsyncCacheTransform(Base) {
+  return class AsyncCache extends Base {
     constructor(...args) {
       super(...args);
 
@@ -53,36 +53,35 @@ export default function SyncCacheTransform(Base) {
           SystemCacheMap.joinPath(this[cachePathSymbol], key);
     }
 
-    // delete(key) {
-    //   const deleted = super.delete(key);
+    // async delete(key) {
+    //   const deleted = await super.delete(key);
     //   if (typeof key === "string") {
     //     systemCache.delete(this.cachePathForKey(key));
-    //     if (deleted) {
-    //       // Deleted an existing key, need to invalidate cached keys
-    //       this.invalidateKeys();
-    //     }
     //   }
     //   return deleted;
     // }
 
-    get(key) {
+    async get(key) {
       if (typeof key !== "string" || key.length === 0) {
         // Non-string keys and non-empty strings can't be cached
         return super.get(key);
       }
       const cachePath = this.cachePathForKey(key);
-      const value = systemCache.getOrInsertComputed(cachePath, () => {
-        let result = super.get(key);
-        if (result !== undefined) {
-          // @ts-ignore
-          if (this[noCacheSymbol]) {
-            result[noCacheSymbol] = true;
-          } else {
-            result = enableValueCaching(result, cachePath);
+      const value = await systemCache.getOrInsertComputedAsync(
+        cachePath,
+        async () => {
+          let result = await super.get(key);
+          if (result !== undefined) {
+            // @ts-ignore
+            if (this[noCacheSymbol]) {
+              result[noCacheSymbol] = true;
+            } else {
+              result = enableValueCaching(result, cachePath);
+            }
           }
-        }
-        return result;
-      });
+          return result;
+        },
+      );
       return value;
     }
 
@@ -91,11 +90,18 @@ export default function SyncCacheTransform(Base) {
       systemCache.delete(keysPath);
     }
 
-    *keys() {
+    async *keys() {
       const keysPath = this.cachePathForKey("_keys");
-      const keys = systemCache.getOrInsertComputed(keysPath, () =>
-        // We can't cache an iterator; convert to array
-        Array.from(super.keys()),
+      const keys = await systemCache.getOrInsertComputedAsync(
+        keysPath,
+        async () => {
+          // We can't cache an iterator; convert to array
+          const result = [];
+          for await (const key of super.keys()) {
+            result.push(key);
+          }
+          return result;
+        },
       );
       yield* keys;
     }
@@ -110,12 +116,7 @@ export default function SyncCacheTransform(Base) {
       systemCache.delete(this.cachePathForKey(key));
     }
 
-    // set(key, value) {
-    //   if (!this._self) {
-    //     // Initializing in constructor
-    //     super.set(key, value);
-    //     return;
-    //   }
+    // async set(key, value) {
     //   if (typeof key !== "string") {
     //     return super.set(key, value);
     //   }

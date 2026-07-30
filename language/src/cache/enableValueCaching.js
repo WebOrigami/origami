@@ -1,6 +1,6 @@
 import { AsyncMap, isPlainObject, SyncMap, Tree } from "@weborigami/async-tree";
+import { cachePathSymbol } from "../runtime/symbols.js";
 import AsyncCacheTransform from "./AsyncCacheTransform.js";
-import { cachePathSymbol } from "./symbols.js";
 import SyncCacheTransform from "./SyncCacheTransform.js";
 import systemCache from "./systemCache.js";
 import SystemCacheMap from "./SystemCacheMap.js";

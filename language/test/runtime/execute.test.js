@@ -2,8 +2,8 @@ import assert from "node:assert";
 import { beforeEach, describe, test } from "node:test";
 
 import { SyncMap } from "@weborigami/async-tree";
+import systemCache from "../../src/cache/systemCache.js";
 import execute from "../../src/runtime/execute.js";
-import systemCache from "../../src/runtime/systemCache.js";
 import { createCode } from "../compiler/codeHelpers.js";
 
 describe("execute", () => {

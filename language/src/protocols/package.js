@@ -1,6 +1,6 @@
 import { Tree, keysFromPath, pathFromKeys } from "@weborigami/async-tree";
+import systemCache from "../cache/systemCache.js";
 import projectRoot from "../project/projectRoot.js";
-import systemCache from "../runtime/systemCache.js";
 
 /**
  * The package: protocol handler

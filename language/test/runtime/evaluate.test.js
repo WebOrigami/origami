@@ -1,8 +1,8 @@
 import { ObjectMap, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { beforeEach, describe, test } from "node:test";
+import systemCache from "../../src/cache/systemCache.js";
 import evaluate from "../../src/runtime/evaluate.js";
-import systemCache from "../../src/runtime/systemCache.js";
 
 const globals = {
   concat: (...args) => args.join(""),

@@ -1,11 +1,11 @@
 import { FileMap } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import SyncCacheTransform from "../../src/cache/SyncCacheTransform.js";
+import systemCache from "../../src/cache/systemCache.js";
 import js_handler from "../../src/handlers/js_handler.js";
 import ImportModulesMixin from "../../src/runtime/ImportModulesMixin.js";
-import SyncCacheTransform from "../../src/runtime/SyncCacheTransform.js";
 import { cachePathSymbol } from "../../src/runtime/symbols.js";
-import systemCache from "../../src/runtime/systemCache.js";
 
 class FixtureFileMap extends SyncCacheTransform(ImportModulesMixin(FileMap)) {
   get [cachePathSymbol]() {

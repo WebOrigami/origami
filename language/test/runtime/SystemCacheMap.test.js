@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import SystemCacheMap from "../../src/runtime/SystemCacheMap.js";
+import SystemCacheMap from "../../src/cache/SystemCacheMap.js";
 import volatile from "../../src/runtime/volatile.js";
 
 describe("SystemCacheMap", () => {

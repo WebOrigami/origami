@@ -1,6 +1,6 @@
 import { SyncMap, trailingSlash } from "@weborigami/async-tree";
 import { AsyncLocalStorage } from "node:async_hooks";
-import { noCacheSymbol, volatileSymbol } from "./symbols.js";
+import { noCacheSymbol, volatileSymbol } from "../runtime/symbols.js";
 
 // Async storage for tracking dependencies encountered during function evaluation
 const asyncStorage = new AsyncLocalStorage();
