@@ -8,6 +8,9 @@ import SystemCacheMap from "./SystemCacheMap.js";
 // For detecting async functions
 const AsyncFunction = async function () {}.constructor;
 
+// Placeholder used in cache path if no argument is supplied to a function
+const NO_ARGUMENT = "_noarg\uFFFF";
+
 /**
  * Given a maplike object whose values can be cached, enable caching. This may
  * apply a caching transform, and sets a cache path on the object so that it can
@@ -67,25 +70,21 @@ export default function enableValueCaching(value, cachePath) {
 }
 
 /**
- * Cache a function with arity 1 or greater that takes string arguments
+ * Cache a function that takes no arguments or string arguments
  *
  * @param {Function} fn
  * @param {string} cachePath
  */
 export function cacheFunction(fn, cachePath) {
-  if (fn.length === 0) {
-    // Return as is
-    return fn;
-  }
   let result;
   if (fn instanceof AsyncFunction) {
     // Return an async function that caches results for a unary argument
     result = async (...args) => {
-      if (!allStringArguments(args)) {
+      const keyCachePath = getKeyCachePath(cachePath, args);
+      if (keyCachePath === null) {
         // Run function in context of this cache path, but don't cache result
         return systemCache.runInContextAsync(cachePath, () => fn(...args));
       }
-      const keyCachePath = SystemCacheMap.joinPath(cachePath, args.join("/"));
       let result = systemCache.getOrInsertComputedAsync(
         keyCachePath,
         async () => fn(...args),
@@ -96,11 +95,11 @@ export function cacheFunction(fn, cachePath) {
   } else {
     // Return a sync function that caches results for a unary argument
     result = (...args) => {
-      if (!allStringArguments(args)) {
+      const keyCachePath = getKeyCachePath(cachePath, args);
+      if (keyCachePath === null) {
         // Run function in context of this cache path, but don't cache result
         return systemCache.runInContext(cachePath, () => fn(...args));
       }
-      const keyCachePath = SystemCacheMap.joinPath(cachePath, args.join("/"));
       let result = systemCache.getOrInsertComputed(keyCachePath, () =>
         fn(...args),
       );
@@ -116,12 +115,16 @@ export function cacheFunction(fn, cachePath) {
   return result;
 }
 
-// Non-string keys and non-empty strings can't be cached
-function allStringArguments(args) {
-  return (
-    args.length > 0 &&
-    args.every((arg) => typeof arg === "string" && arg.length > 0)
-  );
+function getKeyCachePath(cachePath, args) {
+  const allStringArguments = args.every((arg) => typeof arg === "string");
+  if (!allStringArguments) {
+    return null;
+  } else if (args.length === 0) {
+    // Use a placeholder for no arguments
+    return SystemCacheMap.joinPath(cachePath, NO_ARGUMENT);
+  } else {
+    return SystemCacheMap.joinPath(cachePath, ...args);
+  }
 }
 
 export function isTransformApplied(Transform, obj) {

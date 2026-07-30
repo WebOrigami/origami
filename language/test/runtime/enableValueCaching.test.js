@@ -43,7 +43,18 @@ describe("enableValueCaching", () => {
     assert(systemCache.has("foo.ori/a"));
   });
 
-  test("applies cache to function with string arguments", () => {
+  test("applies cache to function with no arguments", () => {
+    function fn() {
+      return true;
+    }
+    const value = enableValueCaching(fn, "foo.ori/");
+    assert(typeof value === "function");
+    assert.equal(value(), true);
+    assert.equal(value[cachePathSymbol], "foo.ori/");
+    assert(systemCache.has("foo.ori/_noarg\uFFFF"));
+  });
+
+  test("applies cache to function with multiple string arguments", () => {
     function fn(x, y) {
       return `${x} ${y}`;
     }
