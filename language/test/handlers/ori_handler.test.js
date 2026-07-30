@@ -91,6 +91,7 @@ describe(".ori handler", async () => {
 
   test("enables caching for top-level object", async () => {
     const parent = new ObjectMap({});
+    /** @type {any} */ (parent).path = "parent";
     const source = `{
       message = "Hello"
     }`;
@@ -98,7 +99,7 @@ describe(".ori handler", async () => {
       key: "test.ori",
       parent,
     });
-    assert.equal(object[cachePathSymbol], "test.ori/");
+    assert.equal(object[cachePathSymbol], "parent/test.ori/");
     assert.deepEqual(await Tree.plain(object), {
       message: "Hello",
     });
