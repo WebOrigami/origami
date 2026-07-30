@@ -13,8 +13,15 @@ const syncStorage = {
 
   run(context, fn) {
     this.stack.push(context);
-    const value = fn();
-    this.stack.pop();
+    let value;
+    try {
+      value = fn();
+    } catch (error) {
+      throw error;
+    } finally {
+      // Pop the context off the stack even if there was an error
+      this.stack.pop();
+    }
     return value;
   },
 
