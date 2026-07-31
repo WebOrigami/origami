@@ -26,5 +26,5 @@ export default async function dimensions(input) {
 
   // Swap width and height for rotated images
   const rotated = orientation && orientation >= 5 && orientation <= 8;
-  return rotated ? { width: height, height: width } : { width, height };
+  return rotated ? { height: width, width: height } : { height, width };
 }
