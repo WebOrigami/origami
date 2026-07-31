@@ -40,7 +40,9 @@ const zip_handler = {
       // Special case for EPUB files, where `mimetype` must be uncompressed.
       if (path === "mimetype") {
         const entry = zip.getEntry(path);
-        entry.header.method = 0; // STORE (not DEFLATE)
+        if (entry) {
+          entry.header.method = 0; // STORE (not DEFLATE)
+        }
       }
     }
     const buffer = zip.toBuffer();
