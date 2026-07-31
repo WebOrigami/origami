@@ -1,6 +1,7 @@
 import { extension, isUnpackable, toString } from "@weborigami/async-tree";
 import highlight from "highlight.js";
 import { Marked } from "marked";
+import markedFootnote from "marked-footnote";
 import { gfmHeadingId as markedGfmHeadingId } from "marked-gfm-heading-id";
 import { markedHighlight } from "marked-highlight";
 import { markedSmartypants } from "marked-smartypants";
@@ -12,6 +13,8 @@ highlight.registerLanguage("ori", origamiHighlightDefinition);
 // Create our own marked instance so we don't interfere with the global one
 const marked = new Marked();
 marked.use(
+  // @ts-ignore
+  markedFootnote(),
   // @ts-ignore
   markedGfmHeadingId(),
   markedHighlight({

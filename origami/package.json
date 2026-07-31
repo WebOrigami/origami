@@ -25,6 +25,7 @@
     "highlight.js": "11.11.1",
     "jsdom": "30.0.1",
     "marked": "18.0.7",
+    "marked-footnote": "1.4.0",
     "marked-gfm-heading-id": "4.1.4",
     "marked-highlight": "2.2.4",
     "marked-smartypants": "1.1.12",
