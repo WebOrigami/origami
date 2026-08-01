@@ -25,7 +25,18 @@ export default class SyncMap extends Map {
   _initialized = false;
 
   constructor(iterable) {
-    super(iterable);
+    // We'd prefer to pass the iterable to the super constructor, but that would
+    // prevent us from being able to accept a rudimentary map that just
+    // implements get() and keys(). So we call super() with no arguments and
+    // then add the entries ourselves.
+    super();
+
+    if (iterable?.keys) {
+      for (const key of iterable.keys()) {
+        const value = iterable.get(key);
+        this.set(key, value);
+      }
+    }
 
     /** @type {SyncMap|null} */
     this._parent = null;
