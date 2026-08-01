@@ -11,6 +11,9 @@ const AsyncFunction = async function () {}.constructor;
 // Placeholder used in cache path if no argument is supplied to a function
 const NO_ARGUMENT = "_noarg\uFFFF";
 
+// Placeholder used in cache path if an empty string is supplied to a function
+const EMPTY_STRING_ARGUMENT = "_empty\uFFFF";
+
 /**
  * Given a maplike object whose values can be cached, enable caching. This may
  * apply a caching transform, and sets a cache path on the object so that it can
@@ -128,8 +131,11 @@ function getKeyCachePath(cachePath, args) {
     // Use a placeholder for no arguments
     return SystemCacheMap.joinPath(cachePath, NO_ARGUMENT);
   } else {
-    // Replace any slashes in arguments with encoded slashes
-    const escaped = args.map((arg) => arg.replace(/\//g, "%2F"));
+    // Replace any slashes in arguments with encoded slashes and replace empty
+    // string arguments with a placeholder
+    const escaped = args.map((arg) =>
+      arg === "" ? EMPTY_STRING_ARGUMENT : arg.replace(/\//g, "%2F"),
+    );
     return SystemCacheMap.joinPath(cachePath, ...escaped);
   }
 }
