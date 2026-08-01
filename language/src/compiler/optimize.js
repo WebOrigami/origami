@@ -97,7 +97,7 @@ export default function optimize(code, options = {}) {
             ? baseKeyName(key)
             : `_arg${index - 2}`;
           const childObjectCachePath = attached
-            ? SystemCacheMap.joinPath(objectCachePath, cachePathKey + "/")
+            ? SystemCacheMap.joinPath(objectCachePath, cachePathKey, "")
             : objectCachePath;
           const childOptions = {
             ...options,
@@ -128,7 +128,8 @@ export default function optimize(code, options = {}) {
           // Objects below this point are detached, use `_objects` cache path
           childObjectCachePath = SystemCacheMap.joinPath(
             objectCachePath,
-            `_objects/`,
+            "_objects",
+            "",
           );
         }
         const childOptions = {

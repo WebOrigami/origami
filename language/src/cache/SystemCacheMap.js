@@ -13,15 +13,8 @@ const syncStorage = {
 
   run(context, fn) {
     this.stack.push(context);
-    let value;
-    try {
-      value = fn();
-    } catch (error) {
-      throw error;
-    } finally {
-      // Pop the context off the stack even if there was an error
-      this.stack.pop();
-    }
+    const value = fn();
+    this.stack.pop();
     return value;
   },
 
@@ -192,14 +185,13 @@ export default class SystemCacheMap extends SyncMap {
    *
    * @param {string[]} segments
    */
-  static joinPath(...segments) {
-    let result = segments.shift() ?? "";
+  static joinPath(base, ...segments) {
+    let result = base ?? "";
     while (segments.length > 0) {
       if (!result.endsWith("/")) {
         result += "/";
       }
-      let segment = segments.shift() ?? "";
-      result += segment;
+      result += segments.shift() ?? "";
     }
     return result;
   }

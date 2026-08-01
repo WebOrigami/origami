@@ -107,10 +107,15 @@ export function cacheFunction(fn, cachePath) {
       return result;
     };
   }
+
+  // Copy over any properties that were attached to the function
+  Object.assign(result, fn);
+  // Ensure length matches
   Object.defineProperty(result, "length", {
     value: fn.length,
     configurable: true,
   });
+
   markCacheable(result, cachePath);
   return result;
 }
@@ -123,7 +128,9 @@ function getKeyCachePath(cachePath, args) {
     // Use a placeholder for no arguments
     return SystemCacheMap.joinPath(cachePath, NO_ARGUMENT);
   } else {
-    return SystemCacheMap.joinPath(cachePath, ...args);
+    // Replace any slashes in arguments with encoded slashes
+    const escaped = args.map((arg) => arg.replace(/\//g, "%2F"));
+    return SystemCacheMap.joinPath(cachePath, ...escaped);
   }
 }
 
