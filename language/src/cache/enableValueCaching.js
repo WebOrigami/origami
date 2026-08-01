@@ -55,8 +55,8 @@ export default function enableValueCaching(value, cachePath) {
       value = Tree.from(value);
       if (value instanceof Map) {
         if (!(value instanceof SyncMap)) {
-          // Convert regular Map to SyncMap so we can extend it
-          value = new (SyncCacheTransform(SyncMap))(value);
+          // Cache a standard map
+          value = cacheStandardMap(value);
         } else {
           // Cache a SyncMap
           value = transformObject(SyncCacheTransform, value);
@@ -123,6 +123,19 @@ export function cacheFunction(fn, cachePath) {
   return result;
 }
 
+// Create a cached, SyncMap wrapper around a standard map
+function cacheStandardMap(map) {
+  return Object.assign(new (SyncCacheTransform(SyncMap))(), {
+    get(key) {
+      return map.get(key);
+    },
+
+    keys() {
+      return map.keys();
+    },
+  });
+}
+
 function getKeyCachePath(cachePath, args) {
   const allStringArguments = args.every((arg) => typeof arg === "string");
   if (!allStringArguments) {
@@ -165,6 +178,7 @@ function markCacheable(object, cachePath) {
     value: cachePath,
   });
 }
+
 /**
  * Apply a functional class mixin to an individual object instance.
  *
