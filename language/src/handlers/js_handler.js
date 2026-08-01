@@ -1,3 +1,4 @@
+import { Tree } from "@weborigami/async-tree";
 import { SystemCacheMap } from "../../main.js";
 import enableValueCaching from "../cache/enableValueCaching.js";
 import { cachePathSymbol } from "../runtime/symbols.js";
@@ -55,7 +56,7 @@ export default {
 // Process an individual JavaScript export.
 //
 // - Bind functions to the parent tree so that they can find local files
-// - Enable caching for functions and objects
+// - Enable caching for functions and maps
 //
 function processExport(value, parent, cachePath) {
   let result;
@@ -68,7 +69,13 @@ function processExport(value, parent, cachePath) {
     result = value;
   }
 
-  if (cachePath) {
+  // Enable caching on the result if it is a function or a map. This is a
+  // stricter condition that enableValueCaching enforces. The idea is that
+  // object/array exports are most likely to have static properties that are
+  // already immediately returned, so caching them would just slow things down.
+  const cacheable =
+    cachePath && (typeof result === "function" || Tree.isMap(result));
+  if (cacheable) {
     // Enable caching
     result = enableValueCaching(result, cachePath);
   }
