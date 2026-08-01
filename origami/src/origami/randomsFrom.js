@@ -1,3 +1,4 @@
+import { noCacheSymbol } from "@weborigami/language/src/runtime/symbols.js";
 import hashBytes from "../common/hashBytes.js";
 
 /**
@@ -20,6 +21,10 @@ export default function randomsFrom(data) {
   const d = hash.readUInt32LE(12);
 
   const prng = xoshiro128ss(a, b, c, d);
+
+  // Don't cache the function's results
+  prng[noCacheSymbol] = true;
+
   return prng;
 }
 

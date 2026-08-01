@@ -1,5 +1,5 @@
 import { AsyncMap, isPlainObject, SyncMap, Tree } from "@weborigami/async-tree";
-import { cachePathSymbol } from "../runtime/symbols.js";
+import { cachePathSymbol, noCacheSymbol } from "../runtime/symbols.js";
 import AsyncCacheTransform from "./AsyncCacheTransform.js";
 import SyncCacheTransform from "./SyncCacheTransform.js";
 import systemCache from "./systemCache.js";
@@ -26,11 +26,12 @@ const EMPTY_STRING_ARGUMENT = "_empty\uFFFF";
  */
 export default function enableValueCaching(value, cachePath) {
   // Value must be a defined object or function, and not have already have a
-  // cache path, and be maplike.
+  // cache path, must not be marked as "no cache", and be maplike.
   const cachable =
     value &&
     (typeof value === "object" || typeof value === "function") &&
     value[cachePathSymbol] === undefined &&
+    value[noCacheSymbol] !== true &&
     Tree.isMaplike(value);
 
   if (cachable) {
