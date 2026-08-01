@@ -125,15 +125,16 @@ export function cacheFunction(fn, cachePath) {
 
 // Create a cached, SyncMap wrapper around a standard map
 function cacheStandardMap(map) {
-  return Object.assign(new (SyncCacheTransform(SyncMap))(), {
+  class DelegateMap extends SyncMap {
     get(key) {
       return map.get(key);
-    },
+    }
 
     keys() {
       return map.keys();
-    },
-  });
+    }
+  }
+  return new (SyncCacheTransform(DelegateMap))();
 }
 
 function getKeyCachePath(cachePath, args) {

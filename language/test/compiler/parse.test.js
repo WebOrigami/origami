@@ -1384,7 +1384,7 @@ Body`,
       ]);
     });
 
-    test.only("actual spread", () => {
+    test("actual spread", () => {
       assertParse("objectLiteral", "{ a: 1, ...more, c: a }", [
         ops.reparent,
         [
