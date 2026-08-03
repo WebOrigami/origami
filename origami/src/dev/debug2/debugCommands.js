@@ -10,3 +10,4 @@ export { default as explore } from "../explore.js";
 export { default as svg } from "../svg.js";
 export { default as syscache } from "../syscache.js";
 export { default as version } from "../version.js";
+export { default as eval } from "./oriEval.js";
