@@ -534,6 +534,7 @@ reparent.needsState = true;
  */
 export async function rootDirectory(...keys) {
   const tree = new OrigamiFileMap("/");
+  await tree.initializeGlobals();
   return keys.length > 0 ? Tree.traverse(tree, ...keys) : tree;
 }
 addOpLabel(rootDirectory, "«ops.rootDirectory»");
