@@ -1,4 +1,4 @@
-import { trailingSlash, Tree } from "@weborigami/async-tree";
+import { isUnpackable, trailingSlash, Tree } from "@weborigami/async-tree";
 import { evaluate, getGlobalsForTree } from "@weborigami/language";
 import debugTransform from "./debugTransform.js";
 
@@ -17,10 +17,11 @@ export default async function oriEval(parent) {
       parent,
     });
 
-    if (
-      (Tree.isMaplike(value) && typeof value !== "function") ||
-      value?.unpack
-    ) {
+    if (isUnpackable(value)) {
+      value = await value.unpack();
+    }
+
+    if (Tree.isMaplike(value) && typeof value !== "function") {
       value = debugTransform(value);
     }
 
