@@ -55,8 +55,6 @@ export default function WatchFilesMixin(Base) {
         this.watcher?.on("ready", resolve);
       });
       this.watcher.on("all", async (event, filePath) => {
-        this.onChange(filePath);
-
         const relativePath = path.relative(this.dirname, filePath);
         if (relativePath.startsWith(".git")) {
           return; // Ignore noisy events in .git folder
@@ -89,6 +87,8 @@ export default function WatchFilesMixin(Base) {
               break;
           }
         }
+
+        this.onChange(filePath);
       });
 
       return this.watching;
