@@ -48,6 +48,7 @@ export default function WatchFilesMixin(Base) {
       fs.mkdirSync(this.dirname, { recursive: true });
 
       this.watcher = new Watcher(this.dirname, {
+        debounce: 100,
         ignoreInitial: true,
         recursive: true,
       });
