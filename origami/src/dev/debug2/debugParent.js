@@ -165,6 +165,9 @@ async function onFileChange(filePath) {
     // Need to restart the child process
     console.log("JavaScript file changed, restarting server…");
     await emitter.restart();
+  } else {
+    // Let event listeners know about the file change
+    emitter.emit("change", { filePath });
   }
 }
 
