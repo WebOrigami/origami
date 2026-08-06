@@ -82,12 +82,12 @@ export default function enableValueCaching(value, cachePath) {
 export function cacheFunction(fn, cachePath) {
   let result;
   if (fn instanceof AsyncFunction) {
-    // Return an async function that caches results for a unary argument
+    // Return an async function that caches results
     result = async (...args) => {
       const keyCachePath = getKeyCachePath(cachePath, args);
       if (keyCachePath === null) {
-        // Run function in context of this cache path, but don't cache result
-        return systemCache.runInContextAsync(cachePath, () => fn(...args));
+        // Run function but don't cache result
+        return fn(...args);
       }
       let result = systemCache.getOrInsertComputedAsync(
         keyCachePath,
@@ -97,12 +97,12 @@ export function cacheFunction(fn, cachePath) {
       return result;
     };
   } else {
-    // Return a sync function that caches results for a unary argument
+    // Return a sync function that caches results
     result = (...args) => {
       const keyCachePath = getKeyCachePath(cachePath, args);
       if (keyCachePath === null) {
-        // Run function in context of this cache path, but don't cache result
-        return systemCache.runInContext(cachePath, () => fn(...args));
+        // Run function but don't cache result
+        return fn(...args);
       }
       let result = systemCache.getOrInsertComputed(keyCachePath, () =>
         fn(...args),

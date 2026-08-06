@@ -169,6 +169,7 @@ export default class SystemCacheMap extends SyncMap {
         // Add resolved value to cache
         entry.value = value;
       }
+      const _ = path;
       return value;
     });
 
@@ -207,16 +208,6 @@ export default class SystemCacheMap extends SyncMap {
     const cachePath = `_object${nextPathId}`;
     nextPathId++;
     return cachePath;
-  }
-
-  runInContext(cachePath, fn) {
-    const context = { downstream: cachePath };
-    return syncStorage.run(context, fn);
-  }
-
-  runInContextAsync(cachePath, fn) {
-    const context = { downstream: cachePath };
-    return asyncStorage.run(context, fn);
   }
 
   /**
