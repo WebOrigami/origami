@@ -269,6 +269,8 @@ function startChild(options) {
       stdio: ["inherit", "inherit", "inherit", "ipc"],
       env: {
         ...process.env,
+        // When launched in Projector, tell Electron not to start a new app window
+        ELECTRON_RUN_AS_NODE: "1",
         ORIGAMI_EXPRESSION: expression,
         ORIGAMI_PARENT_PATH: parentPath,
         ORIGAMI_QUIET: quiet ? "1" : "0",
