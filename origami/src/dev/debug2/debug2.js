@@ -42,8 +42,6 @@ export default async function debug2(code, state) {
   await debugParent.start();
 
   console.log(`Server running at ${debugParent.origin}. Press Ctrl+C to stop.`);
-
-  return debugParent;
 }
 debug2.needsState = true;
 debug2.unevaluatedArgs = true;

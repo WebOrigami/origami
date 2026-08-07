@@ -13,6 +13,10 @@ import expressionTree from "./expressionTree.js";
  * The debug parent runs this module in a child process, passing in a parent
  * path in an environment variable.
  *
+ * To support multiple parent sessions, the parent is represented by a
+ * DebugParent class instance — but each child process runs in a separate
+ * process so global state is fine.
+ *
  * This module starts an HTTP server that will serve resources from that tree.
  * When the server is ready, it sends a message to the parent process with the
  * port number. The parent then proxies incoming requests to that port.

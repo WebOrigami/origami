@@ -169,7 +169,6 @@ export default class SystemCacheMap extends SyncMap {
         // Add resolved value to cache
         entry.value = value;
       }
-      const _ = path;
       return value;
     });
 

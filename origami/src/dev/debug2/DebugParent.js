@@ -24,7 +24,7 @@ const childModuleUrl = new URL("./debugChild.js", import.meta.url);
  * @param {number} [options.port]
  * @param {boolean} [options.quiet]
  */
-export default class DebugParent {
+export default class DebugParent extends EventEmitter {
   /**
    * @param {Object} options
    * @param {string} options.expression - the Origami expression to evaluate in
@@ -35,6 +35,8 @@ export default class DebugParent {
    * @param {boolean} [options.quiet]
    */
   constructor(options) {
+    super();
+
     const { expression, parentPath, port, quiet } = options;
     if (expression === undefined) {
       throw new Error("A debugger must have an expression to evaluate.");
@@ -58,13 +60,6 @@ export default class DebugParent {
     this.pendingChild = null;
 
     this.closed = false;
-
-    /** @type {DebugParentHandle | null} */
-    this.emitter = Object.assign(new EventEmitter(), {
-      close: () => this.close(),
-      origin: this.origin,
-      restart: () => this.restart(),
-    });
   }
 
   async close() {
@@ -95,11 +90,8 @@ export default class DebugParent {
     this.activeChild = null;
     await Promise.all(children.map(drainAndStopChild));
 
-    if (this.emitter) {
-      this.emitter.emit("close");
-      this.emitter.removeAllListeners();
-      this.emitter = null;
-    }
+    this.emit("close");
+    this.removeAllListeners();
   }
 
   async onFileChange(filePath) {
@@ -107,9 +99,9 @@ export default class DebugParent {
       // Need to restart the child process.
       console.log("JavaScript file changed, restarting server...");
       await this.restart();
-    } else if (this.emitter) {
+    } else {
       // Let event listeners know about the file change.
-      this.emitter.emit("change", { filePath });
+      this.emit("change", { filePath });
     }
   }
 
@@ -121,6 +113,10 @@ export default class DebugParent {
    * @param {import("node:http").ServerResponse} response
    */
   proxyRequest(request, response) {
+    if (!request || !response) {
+      return;
+    }
+
     if (!this.activeChild) {
       response.statusCode = 503;
       response.setHeader("content-type", "text/plain; charset=utf-8");
@@ -158,12 +154,12 @@ export default class DebugParent {
         upstreamResponse.pipe(response);
 
         // Let caller know about Origami error messages.
-        if (statusCode !== undefined && statusCode >= 500 && this.emitter) {
+        if (statusCode !== undefined && statusCode >= 500) {
           const rawHeader = upstreamResponse.headers["x-error-details"];
           const raw = Array.isArray(rawHeader) ? rawHeader[0] : rawHeader;
           const message = raw ? decodeURIComponent(raw) : undefined;
           if (message) {
-            this.emitter.emit("origami-error", message);
+            this.emit("origami-error", message);
           }
         }
       },
@@ -201,8 +197,8 @@ export default class DebugParent {
   }
 
   /**
-   * Start the parent session and return an event emitter for it. This also
-   * starts the child process and waits for it to be ready.
+   * Start the parent session, which also starts the child process and waits for
+   * it to be ready.
    */
   async start() {
     this.port ??= await findOpenPort();
@@ -221,12 +217,6 @@ export default class DebugParent {
     await this.startChild();
 
     console.log(`Debug parent server running at ${this.origin}.`);
-    if (this.emitter) {
-      this.emitter.origin = this.origin;
-      return this.emitter;
-    }
-
-    throw new Error("Debug parent session failed to initialize emitter.");
   }
 
   /**
@@ -288,9 +278,7 @@ export default class DebugParent {
                 );
               }
 
-              if (this.emitter) {
-                this.emitter.emit("ready", { origin: this.origin });
-              }
+              this.emit("ready", { origin: this.origin });
               resolve();
             } else {
               // Child was superseded by a newer one.
