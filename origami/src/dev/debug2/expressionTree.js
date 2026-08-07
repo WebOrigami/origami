@@ -26,11 +26,7 @@ export default async function expressionTree(options) {
   let maplike;
   try {
     // Evaluate the expression
-    maplike = await evaluate(source, {
-      globals,
-      mode: "shell",
-      parent,
-    });
+    maplike = await evaluate(source, { globals, mode: "shell", parent });
     if (isUnpackable(maplike)) {
       maplike = await maplike.unpack();
     }
