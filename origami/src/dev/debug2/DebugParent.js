@@ -24,7 +24,7 @@ const childModuleUrl = new URL("./debugChild.js", import.meta.url);
  * @param {number} [options.port]
  * @param {boolean} [options.quiet]
  */
-export default class DebugParentSession {
+export default class DebugParent {
   /**
    * @param {Object} options
    * @param {string} options.expression - the Origami expression to evaluate in
@@ -48,8 +48,8 @@ export default class DebugParentSession {
     this.quiet = quiet ?? false;
 
     /** @type {import("node:http").Server | null} */
-    this.publicServer = null;
-    this.publicOrigin = "";
+    this.parentServer = null;
+    this.origin = "";
 
     /** @type {ChildInfo | null} */
     this.activeChild = null;
@@ -62,7 +62,7 @@ export default class DebugParentSession {
     /** @type {DebugParentHandle | null} */
     this.emitter = Object.assign(new EventEmitter(), {
       close: () => this.close(),
-      origin: this.publicOrigin,
+      origin: this.origin,
       restart: () => this.restart(),
     });
   }
@@ -75,8 +75,8 @@ export default class DebugParentSession {
 
     // Stop accepting new connections and force-close any keep-alive
     // connections so the close callback fires promptly.
-    const server = this.publicServer;
-    this.publicServer = null;
+    const server = this.parentServer;
+    this.parentServer = null;
     if (server) {
       const closeServer = new Promise((resolve) => server.close(resolve));
       server.closeAllConnections();
@@ -206,12 +206,12 @@ export default class DebugParentSession {
    */
   async start() {
     this.port ??= await findOpenPort();
-    this.publicOrigin = `http://localhost:${this.port}`;
+    this.origin = `http://localhost:${this.port}`;
 
-    this.publicServer = http.createServer((request, response) =>
+    this.parentServer = http.createServer((request, response) =>
       this.proxyRequest(request, response),
     );
-    const server = this.publicServer;
+    const server = this.parentServer;
     await /** @type {Promise<void>} */ (
       new Promise((resolve) =>
         server.listen(this.port, undefined, () => resolve()),
@@ -220,9 +220,9 @@ export default class DebugParentSession {
 
     await this.startChild();
 
-    console.log(`Debug parent server running at ${this.publicOrigin}.`);
+    console.log(`Debug parent server running at ${this.origin}.`);
     if (this.emitter) {
-      this.emitter.origin = this.publicOrigin;
+      this.emitter.origin = this.origin;
       return this.emitter;
     }
 
@@ -289,7 +289,7 @@ export default class DebugParentSession {
               }
 
               if (this.emitter) {
-                this.emitter.emit("ready", { origin: this.publicOrigin });
+                this.emitter.emit("ready", { origin: this.origin });
               }
               resolve();
             } else {

@@ -1,4 +1,4 @@
-import DebugParentSession from "./DebugParentSession.js";
+import DebugParent from "./DebugParent.js";
 
 /**
  * Given an Origami expression, start a new debug server with that parent as the
@@ -35,15 +35,15 @@ export default async function debug2(code, state) {
   }
 
   // Start the debug server
-  const session = new DebugParentSession({
+  const debugParent = new DebugParent({
     expression,
     parentPath,
   });
-  await session.start();
+  await debugParent.start();
 
-  console.log(
-    `Server running at ${session.publicOrigin}. Press Ctrl+C to stop.`,
-  );
+  console.log(`Server running at ${debugParent.origin}. Press Ctrl+C to stop.`);
+
+  return debugParent;
 }
 debug2.needsState = true;
 debug2.unevaluatedArgs = true;
