@@ -12,6 +12,7 @@ import {
 import indexPage from "../../origami/indexPage.js";
 import yaml from "../../origami/yaml.js";
 import * as debugCommands from "./debugCommands.js";
+import debugValue from "./debugValue.js";
 
 /**
  * Transform the given map-based tree to add debugging resources:
@@ -66,13 +67,8 @@ export default function debugTransform(input) {
         value = Tree.from(value);
       }
 
-      // Ensure this transform is applied to any map result, or any object with
-      // an unpack method that returns a map.
-      if (Tree.isMap(value)) {
-        value = debugTransform(value);
-      } else if (value?.unpack) {
-        value = debugPackedValue(value);
-      }
+      // Ensure this transform is applied to any map or unpackable result.
+      value = debugValue(value);
 
       return value;
     },
@@ -96,29 +92,6 @@ export default function debugTransform(input) {
 
     trailingSlashKeys: true,
   });
-}
-
-/**
- * If the value isn't a tree, but has a tree attached via an `unpack` method,
- * destructively wrap the unpack method to add this transform.
- *
- * @typedef {import("@weborigami/async-tree").Packed} Packed
- * @param {Packed} packed
- */
-function debugPackedValue(packed) {
-  if (isUnpackable(packed)) {
-    const original = packed.unpack.bind(packed);
-    packed.unpack = async () => {
-      const content = await original();
-      if (!Tree.isTraversable(content) || typeof content === "function") {
-        return content;
-      }
-      /** @type {any} */
-      let tree = Tree.from(content);
-      return debugTransform(tree);
-    };
-  }
-  return packed;
 }
 
 async function invokeOrigamiCommand(tree, key) {

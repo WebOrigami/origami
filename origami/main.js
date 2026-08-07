@@ -2,6 +2,7 @@ export { default as documentObject } from "./src/common/documentObject.js";
 export * from "./src/common/serialize.js";
 export { default as DebugParent } from "./src/dev/debug2/DebugParent.js";
 export { default as debugTransform } from "./src/dev/debug2/debugTransform.js";
+export { default as debugValue } from "./src/dev/debug2/debugValue.js";
 export * as Dev from "./src/dev/dev.js";
 export * from "./src/handlers/origamiHandlers.js";
 export * as Origami from "./src/origami/origami.js";
