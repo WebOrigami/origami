@@ -1,9 +1,4 @@
-import {
-  ConstantMap,
-  isUnpackable,
-  setParent,
-  Tree,
-} from "@weborigami/async-tree";
+import { ConstantMap, isUnpackable, Tree } from "@weborigami/async-tree";
 import { evaluate, getGlobalsForTree } from "@weborigami/language";
 import debugTransform from "./debugTransform.js";
 
@@ -31,7 +26,11 @@ export default async function expressionTree(options) {
   let maplike;
   try {
     // Evaluate the expression
-    maplike = await evaluate(source, { globals, mode: "shell", parent });
+    maplike = await evaluate(source, {
+      globals,
+      mode: "shell",
+      parent,
+    });
     if (isUnpackable(maplike)) {
       maplike = await maplike.unpack();
     }
@@ -44,9 +43,6 @@ export default async function expressionTree(options) {
       `Dev.debug2: expression did not evaluate to a resource tree: ${expression}`,
     );
   }
-
-  // Set the parent so that Origami debug commands can find things in scope
-  setParent(maplike, parent);
 
   // Add debugging resources
   const tree = debugTransform(maplike);
