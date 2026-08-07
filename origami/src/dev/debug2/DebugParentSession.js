@@ -7,11 +7,30 @@ import { findOpenPort } from "../../common/findOpenPort.js";
 // Module that loads the server in the child process
 const childModuleUrl = new URL("./debugChild.js", import.meta.url);
 
+/**
+ * An Origami debug server parent session.
+ *
+ * The session's `start` method starts a child server that evaluates the given
+ * expression with the given parent path. This arrangement ensures the
+ * expression is evaluated in a clean Node context (not polluted by previous
+ * evaluations). The parent server proxies requests to the child server.
+ *
+ * The `emitter` property is an EventEmitter that emits "error" events when the
+ * child server encounters an Origami error while handling a request.
+ *
+ * @param {Object} options
+ * @param {string} options.expression
+ * @param {string} options.parentPath
+ * @param {number} [options.port]
+ * @param {boolean} [options.quiet]
+ */
 export default class DebugParentSession {
   /**
    * @param {Object} options
-   * @param {string} options.expression
-   * @param {string} options.parentPath
+   * @param {string} options.expression - the Origami expression to evaluate in
+   *   the child process
+   * @param {string} options.parentPath - the path to the parent tree used for
+   * evaluation
    * @param {number} [options.port]
    * @param {boolean} [options.quiet]
    */
@@ -43,7 +62,7 @@ export default class DebugParentSession {
     /** @type {DebugParentHandle | null} */
     this.emitter = Object.assign(new EventEmitter(), {
       close: () => this.close(),
-      origin: "",
+      origin: this.publicOrigin,
       restart: () => this.restart(),
     });
   }
@@ -181,6 +200,10 @@ export default class DebugParentSession {
     await this.startChild();
   }
 
+  /**
+   * Start the parent session and return an event emitter for it. This also
+   * starts the child process and waits for it to be ready.
+   */
   async start() {
     this.port ??= await findOpenPort();
     this.publicOrigin = `http://localhost:${this.port}`;
