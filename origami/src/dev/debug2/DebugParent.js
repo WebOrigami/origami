@@ -146,10 +146,26 @@ export default class DebugParent extends EventEmitter {
       },
       (upstreamResponse) => {
         const { statusCode } = upstreamResponse;
+        const responseHeaders = { ...upstreamResponse.headers };
+
+        // Special case for viewing YAML files in the debugger. By default
+        // Chromium will download YAML files instead of rendering them. To
+        // override that, we switch the content type to "text/plain".
+        const contentTypeHeader = responseHeaders["content-type"];
+        const contentType = Array.isArray(contentTypeHeader)
+          ? contentTypeHeader[0]
+          : contentTypeHeader;
+        if (
+          typeof contentType === "string" &&
+          contentType.trim().toLowerCase() === "application/yaml"
+        ) {
+          responseHeaders["content-type"] = "text/plain; charset=utf-8";
+        }
+
         response.writeHead(
           statusCode ?? 502,
           upstreamResponse.statusMessage,
-          upstreamResponse.headers,
+          responseHeaders,
         );
         upstreamResponse.pipe(response);
 
