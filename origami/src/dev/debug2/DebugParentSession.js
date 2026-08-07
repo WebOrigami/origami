@@ -1,0 +1,374 @@
+import { fork } from "node:child_process";
+import { EventEmitter } from "node:events";
+import http from "node:http";
+import path from "node:path";
+import { findOpenPort } from "../../common/findOpenPort.js";
+
+// Module that loads the server in the child process
+const childModuleUrl = new URL("./debugChild.js", import.meta.url);
+
+export default class DebugParentSession {
+  /**
+   * @param {Object} options
+   * @param {string} options.expression
+   * @param {string} options.parentPath
+   * @param {number} [options.port]
+   * @param {boolean} [options.quiet]
+   */
+  constructor(options) {
+    const { expression, parentPath, port, quiet } = options;
+    if (expression === undefined) {
+      throw new Error("A debugger must have an expression to evaluate.");
+    }
+    if (parentPath === undefined) {
+      throw new Error("A debugger must have a parent path.");
+    }
+    this.expression = expression;
+    this.parentPath = parentPath;
+    this.port = port;
+    this.quiet = quiet ?? false;
+
+    /** @type {import("node:http").Server | null} */
+    this.publicServer = null;
+    this.publicOrigin = "";
+
+    /** @type {ChildInfo | null} */
+    this.activeChild = null;
+
+    /** @type {ChildInfo | null} */
+    this.pendingChild = null;
+
+    this.closed = false;
+
+    /** @type {DebugParentHandle | null} */
+    this.emitter = Object.assign(new EventEmitter(), {
+      close: () => this.close(),
+      origin: "",
+      restart: () => this.restart(),
+    });
+  }
+
+  async close() {
+    if (this.closed) {
+      return;
+    }
+    this.closed = true;
+
+    // Stop accepting new connections and force-close any keep-alive
+    // connections so the close callback fires promptly.
+    const server = this.publicServer;
+    this.publicServer = null;
+    if (server) {
+      const closeServer = new Promise((resolve) => server.close(resolve));
+      server.closeAllConnections();
+      await closeServer;
+    }
+
+    // Drain and stop any children concurrently.
+    const children = [
+      this.pendingChild?.process,
+      this.activeChild?.process,
+    ].filter(
+      /** @returns {child is ChildProcess} */
+      (child) => child !== undefined,
+    );
+    this.pendingChild = null;
+    this.activeChild = null;
+    await Promise.all(children.map(drainAndStopChild));
+
+    if (this.emitter) {
+      this.emitter.emit("close");
+      this.emitter.removeAllListeners();
+      this.emitter = null;
+    }
+  }
+
+  async onFileChange(filePath) {
+    if (isJavaScriptFile(filePath)) {
+      // Need to restart the child process.
+      console.log("JavaScript file changed, restarting server...");
+      await this.restart();
+    } else if (this.emitter) {
+      // Let event listeners know about the file change.
+      this.emitter.emit("change", { filePath });
+    }
+  }
+
+  /**
+   * Proxy incoming requests to the active child server, or return a 503 if
+   * not ready.
+   *
+   * @param {import("node:http").IncomingMessage} request
+   * @param {import("node:http").ServerResponse} response
+   */
+  proxyRequest(request, response) {
+    if (!this.activeChild) {
+      response.statusCode = 503;
+      response.setHeader("content-type", "text/plain; charset=utf-8");
+      response.end("Dev server is starting...\n");
+      return;
+    }
+
+    const childPort = this.activeChild.port;
+
+    // Minimal hop-by-hop header stripping.
+    const headers = { ...request.headers };
+    delete headers.connection;
+    delete headers["proxy-connection"];
+    delete headers["keep-alive"];
+    delete headers.te;
+    delete headers.trailer;
+    delete headers["transfer-encoding"];
+    delete headers.upgrade;
+
+    const upstreamRequest = http.request(
+      {
+        host: "localhost",
+        port: childPort,
+        method: request.method,
+        path: request.url,
+        headers,
+      },
+      (upstreamResponse) => {
+        const { statusCode } = upstreamResponse;
+        response.writeHead(
+          statusCode ?? 502,
+          upstreamResponse.statusMessage,
+          upstreamResponse.headers,
+        );
+        upstreamResponse.pipe(response);
+
+        // Let caller know about Origami error messages.
+        if (statusCode !== undefined && statusCode >= 500 && this.emitter) {
+          const rawHeader = upstreamResponse.headers["x-error-details"];
+          const raw = Array.isArray(rawHeader) ? rawHeader[0] : rawHeader;
+          const message = raw ? decodeURIComponent(raw) : undefined;
+          if (message) {
+            this.emitter.emit("origami-error", message);
+          }
+        }
+      },
+    );
+
+    upstreamRequest.on("error", (err) => {
+      // Stop piping the request body.
+      request.unpipe(upstreamRequest);
+      upstreamRequest.destroy();
+
+      // Only send error response if headers haven't been sent yet.
+      if (!response.headersSent) {
+        response.statusCode = 502;
+        response.setHeader("content-type", "text/plain; charset=utf-8");
+        response.end(`Upstream error: ${err.message}\n`);
+      } else {
+        // Headers already sent, can't send error message - just close.
+        response.destroy();
+      }
+    });
+
+    // Also handle errors on the incoming request.
+    request.on("error", () => {
+      upstreamRequest.destroy();
+    });
+
+    request.pipe(upstreamRequest);
+  }
+
+  async restart() {
+    if (this.closed) {
+      return;
+    }
+    await this.startChild();
+  }
+
+  async start() {
+    this.port ??= await findOpenPort();
+    this.publicOrigin = `http://localhost:${this.port}`;
+
+    this.publicServer = http.createServer((request, response) =>
+      this.proxyRequest(request, response),
+    );
+    const server = this.publicServer;
+    await /** @type {Promise<void>} */ (
+      new Promise((resolve) =>
+        server.listen(this.port, undefined, () => resolve()),
+      )
+    );
+
+    await this.startChild();
+
+    console.log(`Debug parent server running at ${this.publicOrigin}.`);
+    if (this.emitter) {
+      this.emitter.origin = this.publicOrigin;
+      return this.emitter;
+    }
+
+    throw new Error("Debug parent session failed to initialize emitter.");
+  }
+
+  /**
+   * Start a new child process.
+   *
+   * This will be a pending process until it sends a READY message, at which
+   * point it becomes active and any previous active child is drained/stopped.
+   */
+  startChild() {
+    // Start child process, passing parent path via environment variable.
+    /** @type {ChildProcess} */
+    let childProcess;
+    try {
+      childProcess = fork(childModuleUrl, [], {
+        stdio: ["inherit", "inherit", "inherit", "ipc"],
+        env: {
+          ...process.env,
+          // When launched in Projector, tell Electron not to start a new app window.
+          ELECTRON_RUN_AS_NODE: "1",
+          ORIGAMI_EXPRESSION: this.expression,
+          ORIGAMI_PARENT_PATH: this.parentPath,
+          ORIGAMI_QUIET: this.quiet ? "1" : "0",
+        },
+      });
+    } catch (error) {
+      throw new Error("Dev.debug2: failed to start child server:", {
+        cause: error,
+      });
+    }
+
+    // This becomes pending immediately.
+    this.pendingChild = { process: childProcess, port: null };
+
+    // Resolve on READY, reject on FATAL or unexpected pre-ready exit.
+    return /** @type {Promise<void>} */ (
+      new Promise((resolve, reject) => {
+        childProcess.on("message", (/** @type {any} */ message) => {
+          if (!message || typeof message !== "object") {
+            return;
+          } else if (
+            message.type === "READY" &&
+            typeof message.port === "number"
+          ) {
+            // Only promote if this is still the pending child.
+            if (this.pendingChild?.process === childProcess) {
+              const previousChild = this.activeChild;
+
+              this.activeChild = this.pendingChild;
+              this.pendingChild.port = message.port;
+              this.pendingChild = null;
+
+              // Drain previous child in background.
+              if (
+                previousChild?.process &&
+                previousChild.process !== childProcess
+              ) {
+                drainAndStopChild(previousChild.process).catch((err) =>
+                  console.error("[drain]", err),
+                );
+              }
+
+              if (this.emitter) {
+                this.emitter.emit("ready", { origin: this.publicOrigin });
+              }
+              resolve();
+            } else {
+              // Child was superseded by a newer one.
+              childProcess.kill("SIGTERM");
+            }
+          } else if (
+            message.type === "VALUE_CHANGE" &&
+            typeof message.path === "string"
+          ) {
+            // Avoid awaiting so file change handling doesn't block IPC.
+            this.onFileChange(message.path);
+          } else if (message.type === "FATAL") {
+            // Child couldn't start (import error, etc).
+            console.error("[child fatal]", message.error ?? message);
+            if (this.pendingChild?.process === childProcess) {
+              this.pendingChild = null;
+            }
+            reject(new Error(message.error ?? "Child server failed to start"));
+          }
+        });
+
+        childProcess.on("exit", (code, signal) => {
+          if (this.activeChild?.process === childProcess) {
+            this.activeChild = null;
+          }
+          if (this.pendingChild?.process === childProcess) {
+            this.pendingChild = null;
+            reject(
+              new Error(
+                `Child exited before ready (code=${code}, signal=${signal})`,
+              ),
+            );
+          }
+        });
+      })
+    );
+  }
+}
+
+/**
+ * Give a child process a chance to finish any in-flight requests before we kill
+ * it.
+ *
+ * @param {ChildProcess} childProcess
+ */
+async function drainAndStopChild(childProcess) {
+  if (childProcess.killed) {
+    return;
+  }
+
+  // Ask it to close first.
+  try {
+    childProcess.send({ type: "CLOSE" });
+  } catch {
+    // ignore
+  }
+
+  const closed = new Promise((resolve) => {
+    const onMessage = (msg) => {
+      if (msg && typeof msg === "object" && msg.type === "CLOSED") {
+        cleanup(resolve);
+      }
+    };
+    const onExit = () => cleanup(resolve);
+
+    function cleanup(done) {
+      childProcess.off("message", onMessage);
+      childProcess.off("exit", onExit);
+      done();
+    }
+
+    childProcess.on("message", onMessage);
+    childProcess.on("exit", onExit);
+  });
+
+  // Give it a short grace window to finish in-flight work.
+  const GRACE_MS = 1500;
+  await Promise.race([
+    closed,
+    new Promise((r) => setTimeout(r, GRACE_MS).unref()),
+  ]);
+
+  if (!childProcess.killed) {
+    childProcess.kill("SIGTERM");
+  }
+
+  // Final escalation.
+  setTimeout(() => {
+    // Child should have exited by now, but if not kill it
+    if (!childProcess.killed) {
+      childProcess.kill("SIGKILL");
+    }
+  }, GRACE_MS).unref();
+}
+
+/** @typedef {import("node:child_process").ChildProcess} ChildProcess */
+/** @typedef {{ process: ChildProcess, port: number | null }} ChildInfo */
+/** @typedef {EventEmitter & { close: () => Promise<void>, origin: string, restart: () => Promise<void> }} DebugParentHandle */
+
+function isJavaScriptFile(filePath) {
+  const extname = path.extname(filePath).toLowerCase();
+  const jsExtensions = [".cjs", ".js", ".mjs", ".ts"];
+  return jsExtensions.includes(extname);
+}
