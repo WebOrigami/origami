@@ -174,7 +174,7 @@ export async function respondWithError(response, error) {
 <head>
 <title>Error: ${error.message}</title>
 </head>
-<body>
+<body class="origami-server-error">
 <h1>Error</h1>
 <pre><code>
 ${message}
