@@ -16,6 +16,7 @@ export { default as deepEntries } from "./operations/deepEntries.js";
 export { default as deepEntriesIterator } from "./operations/deepEntriesIterator.js";
 export { default as deepMap } from "./operations/deepMap.js";
 export { default as deepMerge } from "./operations/deepMerge.js";
+export { default as deepPathsIterator } from "./operations/deepPathsIterator.js";
 export { default as deepReverse } from "./operations/deepReverse.js";
 export { default as deepTake } from "./operations/deepTake.js";
 export { default as deepText } from "./operations/deepText.js";

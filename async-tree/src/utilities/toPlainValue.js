@@ -7,6 +7,10 @@ import isStringlike from "./isStringlike.js";
 import toString from "./toString.js";
 import TypedArray from "./TypedArray.js";
 
+const isIterable = (v) => v != null && typeof v[Symbol.iterator] === "function";
+const isAsyncIterable = (v) =>
+  v != null && typeof v[Symbol.asyncIterator] === "function";
+
 /**
  * Convert the given input to the plainest possible JavaScript value. This is
  * useful for rendering data for display or serialization.
@@ -26,6 +30,9 @@ import TypedArray from "./TypedArray.js";
  * text if it does not contain unprintable characters. If it does, it will be
  * returned as a base64-encoded string.
  *
+ * If the input is an iterable or async iterable, it will be converted to an
+ * array of its yielded values.
+ *
  * If the input has a custom class instance, its public properties will be
  * returned as a plain object.
  *
@@ -35,7 +42,7 @@ import TypedArray from "./TypedArray.js";
  */
 export default async function toPlainValue(
   input,
-  reduceFn = reduceToPlainObject
+  reduceFn = reduceToPlainObject,
 ) {
   if (input instanceof Function) {
     // Invoke function
@@ -59,6 +66,13 @@ export default async function toPlainValue(
     } else {
       return toBase64(input);
     }
+  } else if (isIterable(input) || isAsyncIterable(input)) {
+    // Convert iterable to array of values.
+    const array = [];
+    for await (const value of input) {
+      array.push(await toPlainValue(value, reduceFn));
+    }
+    return array;
   } else if (isStringlike(input)) {
     return toString(input);
   } else {
