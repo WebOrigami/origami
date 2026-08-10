@@ -1,14 +1,18 @@
 import {
   AsyncMap,
   Tree,
+  box,
+  castArraylike,
   isUnpackable,
   jsonKeys,
   scope,
   trailingSlash,
 } from "@weborigami/async-tree";
+import { toYaml } from "../../common/serialize.js";
 import indexPage from "../../origami/indexPage.js";
 import * as debugCommands from "./debugCommands.js";
 import debugValue from "./debugValue.js";
+import isSimpleObject from "./isSimpleObject.js";
 
 /**
  * Transform the given map-based tree to add debugging resources:
@@ -36,8 +40,7 @@ export default function debugTransform(input) {
       if (value === undefined) {
         // Try the defaults and commands
         if (key === "index.html") {
-          // Generate an index page for this site
-          value = await indexPage(source);
+          value = await indexPageOrYaml(source);
         } else if (key === ".keys.json") {
           value = await jsonKeys.stringify(source);
         } else if (typeof key === "string" && key.startsWith("!")) {
@@ -70,6 +73,22 @@ export default function debugTransform(input) {
 
     trailingSlashKeys: true,
   });
+}
+
+async function indexPageOrYaml(value) {
+  // Try casting an arraylike map to an array
+  value = castArraylike(value);
+  if (isSimpleObject(value)) {
+    // Return YAML but allow it to be further traversed
+    const object = value;
+    const yamlText = await toYaml(object);
+    const boxed = box(yamlText);
+    boxed.unpack = () => debugTransform(object);
+    return boxed;
+  } else {
+    // Generate an index page for the value
+    return indexPage(value);
+  }
 }
 
 async function invokeOrigamiCommand(tree, key) {

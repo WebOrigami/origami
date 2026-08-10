@@ -1,12 +1,7 @@
-import {
-  Tree,
-  box,
-  isPlainObject,
-  isPrimitive,
-  isUnpackable,
-} from "@weborigami/async-tree";
+import { Tree, box, isUnpackable } from "@weborigami/async-tree";
 import { toYaml } from "../../common/serialize.js";
 import debugTransform from "./debugTransform.js";
+import isSimpleObject from "./isSimpleObject.js";
 
 /**
  * Process a value so it can be debugged
@@ -42,33 +37,4 @@ export default async function debugValue(value) {
   }
 
   return value;
-}
-
-/**
- * Returns true if the object is "simple": a plain object or array that does not
- * have any getters in its deep structure.
- *
- * This test is used to avoid serializing complex objects to YAML.
- *
- * @param {any} object
- */
-function isSimpleObject(object) {
-  if (!(object instanceof Array || isPlainObject(object))) {
-    return false;
-  }
-
-  for (const key of Object.keys(object)) {
-    const descriptor = Object.getOwnPropertyDescriptor(object, key);
-    if (!descriptor) {
-      continue; // not sure why this would happen
-    } else if (typeof descriptor.get === "function") {
-      return false; // Getters aren't simple
-    } else if (isPrimitive(descriptor.value)) {
-      continue; // Primitives are simple
-    } else if (!isSimpleObject(descriptor.value)) {
-      return false; // Deep structure wasn't simple
-    }
-  }
-
-  return true;
 }
