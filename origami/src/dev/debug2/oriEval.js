@@ -17,7 +17,7 @@ export default async function oriEval(parent) {
       parent,
     });
 
-    value = debugValue(value);
+    value = await debugValue(value);
 
     return value;
   };
