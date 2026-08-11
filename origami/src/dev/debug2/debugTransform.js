@@ -110,10 +110,6 @@ async function invokeOrigamiCommand(tree, key) {
     // Look for command in scope
     const parentScope = await scope(tree);
     value = await parentScope.get(commandName);
-
-    if (value === undefined) {
-      throw new Error(`Unknown Origami command: ${commandName}`);
-    }
   }
 
   if (trailingSlash.has(key) && isUnpackable(value)) {
