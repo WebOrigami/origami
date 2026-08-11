@@ -1,7 +1,7 @@
-import SyncMap from "../drivers/SyncMap.js";
-import * as trailingSlash from "../trailingSlash.js";
+import AsyncMap from "../drivers/AsyncMap.js";
 import * as args from "../utilities/args.js";
-import isMap from "./isMap.js";
+import deepPathsIterator from "./deepPathsIterator.js";
+import traversePath from "./traversePath.js";
 
 /**
  * Given a tree, return a flat mapping of string paths to values.
@@ -15,24 +15,14 @@ import isMap from "./isMap.js";
  */
 export default async function deflatePaths(maplike, basePath = "") {
   const tree = await args.map(maplike, "Tree.deflatePaths", { deep: true });
-  const result = new SyncMap();
-  for await (let [key, value] of tree) {
-    const normalizedKey = trailingSlash.remove(key);
-    let path = basePath;
-    if (path && !path.endsWith("/")) {
-      path += "/";
-    }
-    path += normalizedKey;
-    value = await value;
-    if (isMap(value)) {
-      const subResult = await deflatePaths(value, path);
-      for await (let [subPath, subValue] of subResult) {
-        subValue = await subValue;
-        result.set(subPath, subValue);
-      }
-    } else {
-      result.set(path, value);
-    }
-  }
-  return result;
+
+  return Object.assign(new AsyncMap(), {
+    async get(path) {
+      return traversePath(tree, path);
+    },
+
+    async *keys() {
+      yield* deepPathsIterator(tree, basePath);
+    },
+  });
 }

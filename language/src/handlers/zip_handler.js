@@ -26,7 +26,8 @@ const zip_handler = {
     }
     const tree = Tree.from(maplike, { deep: true });
     const deflated = await Tree.deflatePaths(tree);
-    for (let [path, value] of deflated) {
+    const entries = await deflated.entries();
+    for await (let [path, value] of entries) {
       if (typeof value === "function") {
         value = value();
       }

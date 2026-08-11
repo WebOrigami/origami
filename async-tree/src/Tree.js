@@ -23,7 +23,6 @@ export { default as deepText } from "./operations/deepText.js";
 export { default as deepValues } from "./operations/deepValues.js";
 export { default as deepValuesIterator } from "./operations/deepValuesIterator.js";
 export { default as deflatePaths } from "./operations/deflatePaths.js";
-export { default as deflatePaths2 } from "./operations/deflatePaths2.js";
 export { default as delete } from "./operations/delete.js";
 export { default as entries } from "./operations/entries.js";
 export { default as filter } from "./operations/filter.js";

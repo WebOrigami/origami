@@ -1,6 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import deflatePaths from "../../src/operations/deflatePaths.js";
+import plain from "../../src/operations/plain.js";
 
 describe("deflatePaths", () => {
   test("flattens a tree into a map of string paths to values", async () => {
@@ -14,7 +15,7 @@ describe("deflatePaths", () => {
       },
     };
     const result = await deflatePaths(maplike);
-    assert.deepStrictEqual(Object.fromEntries(result), {
+    assert.deepStrictEqual(await plain(result), {
       "foo/bar/baz.json": 123,
       "foo/bar/qux.json": 456,
       "foo/quux.json": 789,
