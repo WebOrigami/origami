@@ -77,7 +77,13 @@ export default function debugTransform(input) {
 
 async function indexPageOrYaml(value) {
   // Try casting an arraylike map to an array
-  value = castArraylike(value);
+  // This reads values, which might throw.
+  try {
+    value = castArraylike(value);
+  } catch (/** @type {any} */ error) {
+    return indexPage(value);
+  }
+
   if (isSimpleObject(value)) {
     // Return YAML but allow it to be further traversed
     const object = value;
