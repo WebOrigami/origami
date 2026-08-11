@@ -13,6 +13,8 @@ import { formatError, moduleCache } from "@weborigami/language";
  * @returns {Promise<Map|AsyncMap>}
  */
 export default async function watch(maplike, fn) {
+  console.log(`Warning: the watch command is deprecated; use debug2 instead.`);
+
   const container = await args.map(maplike, "Dev.watch");
   const treeFn = fn
     ? args.invocable(fn, "Dev.watch", { position: 2 })

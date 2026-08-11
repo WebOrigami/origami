@@ -13,6 +13,11 @@ import OriCommandTransform from "./OriCommandTransform.js";
  * @returns {Promise<Map|AsyncMap>}
  */
 export default async function debug(maplike) {
+  console.log(
+    `Warning: the original Origami debug command is deprecated; use debug2 instead.
+See https://github.com/WebOrigami/origami/releases/tag/0.7.0`,
+  );
+
   let tree = await args.map(maplike, "Dev.debug");
 
   if (!isTransformApplied(DebugTransform, tree)) {
