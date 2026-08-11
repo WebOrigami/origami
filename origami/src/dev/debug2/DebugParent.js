@@ -99,6 +99,9 @@ export default class DebugParent extends EventEmitter {
       // Need to restart the child process.
       console.log("JavaScript file changed, restarting server...");
       await this.restart();
+    } else if (filePath.endsWith("/config.ori")) {
+      console.log("Origami configuration file changed, restarting server...");
+      await this.restart();
     } else {
       // Let event listeners know about the file change.
       this.emit("change", { filePath });
