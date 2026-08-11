@@ -41,6 +41,28 @@ describe("SystemCacheMap", () => {
     assert.deepEqual(cacheEntries(cache), [["b", { value: 2 }]]);
   });
 
+  test("getOrInsertComputed doesn't cache errors", async () => {
+    const cache = new SystemCacheMap();
+    let count = 0;
+    const getA = () =>
+      cache.getOrInsertComputed("a", () => {
+        count++;
+        if (count === 1) {
+          throw new Error("fail");
+        }
+        return 42;
+      });
+
+    // First call throws an error
+    assert.throws(getA, /fail/);
+    assert.strictEqual(count, 1);
+
+    // Second call succeeds
+    const a2 = getA();
+    assert.strictEqual(a2, 42);
+    assert.strictEqual(count, 2);
+  });
+
   test("getOrInsertComputedAsync tracks async dependencies", async () => {
     const cache = new SystemCacheMap();
     let log;
@@ -131,6 +153,28 @@ describe("SystemCacheMap", () => {
     const a5 = await getA();
     assert.strictEqual(a5, 330);
     assert.deepEqual(log, ["a", "b", "c"]); // recalc all
+  });
+
+  test("getOrInsertComputedAsync doesn't cache errors", async () => {
+    const cache = new SystemCacheMap();
+    let count = 0;
+    const getA = async () =>
+      await cache.getOrInsertComputedAsync("a", async () => {
+        count++;
+        if (count === 1) {
+          throw new Error("fail");
+        }
+        return 42;
+      });
+
+    // First call throws an error
+    await assert.rejects(getA, /fail/);
+    assert.strictEqual(count, 1);
+
+    // Second call succeeds
+    const a2 = await getA();
+    assert.strictEqual(a2, 42);
+    assert.strictEqual(count, 2);
   });
 
   test("async function can track sync dependency", async () => {

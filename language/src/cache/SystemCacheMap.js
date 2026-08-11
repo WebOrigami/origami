@@ -13,8 +13,13 @@ const syncStorage = {
 
   run(context, fn) {
     this.stack.push(context);
-    const value = fn();
-    this.stack.pop();
+    let value;
+    try {
+      value = fn();
+    } finally {
+      // Take care to clean up stack even on an error
+      this.stack.pop();
+    }
     return value;
   },
 
@@ -161,7 +166,15 @@ export default class SystemCacheMap extends SyncMap {
     // Get value in async context, don't await the result yet. Add promise to
     // cache so concurrent requests get the same promise.
     entry.value = asyncStorage.run(context, async () => {
-      const value = await computeFn();
+      let value;
+      try {
+        value = await computeFn();
+      } catch (/** @type {any} */ error) {
+        // At this point we have a promise in the cache; delete it
+        delete entry.value;
+        throw error;
+      }
+
       if (value?.[noCacheSymbol] || value?.[volatileSymbol]) {
         // Don't cache value
         delete entry.value;
@@ -169,6 +182,7 @@ export default class SystemCacheMap extends SyncMap {
         // Add resolved value to cache
         entry.value = value;
       }
+
       return value;
     });
 
