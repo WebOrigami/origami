@@ -19,7 +19,7 @@ Dev:
     crawl:
       args: (tree, base)
       description: A tree of a site's discoverable resources
-    debug:
+    debug2:
       args: (tree)
       description: Add debug features to the tree
     explore:
@@ -45,9 +45,6 @@ Dev:
     version:
       args: ()
       description: Return the version number of the Origami language
-    watch:
-      args: (tree, fn)
-      description: Reevaluate fn when tree changes
 
 Origami:
   description: Create sites and other digital artifacts
