@@ -66,6 +66,8 @@ export default async function toPlainValue(
     } else {
       return toBase64(input);
     }
+  } else if (isStringlike(input)) {
+    return toString(input);
   } else if (isIterable(input) || isAsyncIterable(input)) {
     // Convert iterable to array of values.
     const array = [];
@@ -73,8 +75,6 @@ export default async function toPlainValue(
       array.push(await toPlainValue(value, reduceFn));
     }
     return array;
-  } else if (isStringlike(input)) {
-    return toString(input);
   } else {
     // Some other kind of class instance; return its public properties.
     const plain = {};
