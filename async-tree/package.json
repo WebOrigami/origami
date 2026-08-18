@@ -9,7 +9,7 @@
   "devDependencies": {
     "@types/node": "26.1.2",
     "puppeteer": "25.4.0",
-    "typescript": "6.0.3"
+    "typescript": "7.0.2"
   },
   "scripts": {
     "headlessTest": "node scripts/headlessTest.js",

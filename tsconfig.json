@@ -3,7 +3,7 @@
     "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
     "checkJs": true,
-    "lib": ["ES2022", "DOM"],
+    "lib": ["ES2024", "DOM"],
     "noEmit": true,
     "noImplicitAny": false,
     "noImplicitReturns": true,
@@ -11,8 +11,7 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "skipLibCheck": true,
-    "strict": true,
-    "target": "ES2022"
+    "target": "ES2024"
   },
   "include": ["**/*.js"],
   "exclude": ["origami/src/dev/explore.inline.js"]
