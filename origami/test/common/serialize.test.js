@@ -27,7 +27,9 @@ c: Hello, c.`;
     // @ts-ignore
     const map = new Map([
       ["x", "y"],
+      // @ts-ignore
       [1, "a"],
+      // @ts-ignore
       [0, "b"],
     ]);
     const yaml = await serialize.toYaml(map);

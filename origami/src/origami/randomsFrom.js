@@ -8,7 +8,6 @@ import hashBytes from "../common/hashBytes.js";
  * @typedef {import("@weborigami/async-tree").Stringlike} Stringlike
  *
  * @param {Uint8Array|Stringlike} data
- * @return {function(): number}
  */
 export default function randomsFrom(data) {
   const hash = hashBytes(data);
@@ -44,7 +43,6 @@ function rotl(x, k) {
  * @param {number} b
  * @param {number} c
  * @param {number} d
- * @returns {function(): number}
  */
 function xoshiro128ss(a, b, c, d) {
   let s0 = a >>> 0;

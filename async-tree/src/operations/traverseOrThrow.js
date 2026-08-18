@@ -10,12 +10,14 @@ import isMaplike from "./isMaplike.js";
  * step of the path doesn't lead to a result.
  *
  * @typedef {import("../../index.ts").Maplike} Maplike
+ * @typedef {import("../../index.ts").Unpackable} Unpackable
  *
  * @param {Maplike} maplike
  * @param  {...any} keys
  * @returns {Promise<any>}
  */
 export default async function traverseOrThrow(maplike, ...keys) {
+  /** @type {any} */
   let value = maplike;
 
   // For error reporting
@@ -39,7 +41,7 @@ export default async function traverseOrThrow(maplike, ...keys) {
 
     // If the value is packed and can be unpacked, unpack it.
     if (isPacked(value)) {
-      if (typeof (/** @type {any} */ (value).unpack) === "function") {
+      if (typeof value.unpack === "function") {
         value = await value.unpack();
       } else {
         const type =

@@ -5,7 +5,7 @@ export default function EventTargetMixin(Base) {
   return class EventTarget extends Base {
     constructor(...args) {
       super(...args);
-      this[listenersKey] = {};
+      /** @type {any} */ (this)[listenersKey] = {};
     }
 
     addEventListener(type, callback) {
@@ -13,10 +13,10 @@ export default function EventTargetMixin(Base) {
         return;
       }
 
-      let listenersOfType = this[listenersKey][type];
+      let listenersOfType = /** @type {any} */ (this)[listenersKey][type];
       if (!listenersOfType) {
-        this[listenersKey][type] = [];
-        listenersOfType = this[listenersKey][type];
+        /** @type {any} */ (this)[listenersKey][type] = [];
+        listenersOfType = /** @type {any} */ (this)[listenersKey][type];
       }
 
       // Don't add the same callback twice.
@@ -80,7 +80,8 @@ export default function EventTargetMixin(Base) {
       };
 
       const type = event.type;
-      const listenersOfType = this[listenersKey][type] || [];
+      const listenersOfType =
+        /** @type {any} */ (this)[listenersKey][type] || [];
       for (const listener of listenersOfType) {
         if (stopImmediatePropagation) {
           break;
@@ -96,21 +97,21 @@ export default function EventTargetMixin(Base) {
         return;
       }
 
-      let listenersOfType = this[listenersKey][type];
+      let listenersOfType = /** @type {any} */ (this)[listenersKey][type];
       if (!listenersOfType) {
         return;
       }
 
       // Remove callback from listeners.
       listenersOfType = listenersOfType.filter(
-        (listener) => listener !== callback
+        (listener) => listener !== callback,
       );
 
       // If there are no more listeners for this type, remove the type.
       if (listenersOfType.length === 0) {
-        delete this[listenersKey][type];
+        delete (/** @type {any} */ (this)[listenersKey][type]);
       } else {
-        this[listenersKey][type] = listenersOfType;
+        /** @type {any} */ (this)[listenersKey][type] = listenersOfType;
       }
     }
   };

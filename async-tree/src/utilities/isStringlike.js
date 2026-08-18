@@ -7,7 +7,7 @@ import getRealmObjectPrototype from "./getRealmObjectPrototype.js";
  * @typedef {import("../../index.ts").Stringlike} Stringlike
  *
  * @param {any} object
- * @returns {obj is Stringlike}
+ * @returns {object is Stringlike}
  */
 export default function isStringlike(object) {
   if (typeof object === "string") {

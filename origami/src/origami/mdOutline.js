@@ -22,6 +22,7 @@ export default async function mdOutline(input) {
   const outline = {};
   const stack = [];
   let sectionText = "";
+  /** @type {any} */
   let sectionTextTrimmed = null;
   /** @type {any} */
   let current = outline;

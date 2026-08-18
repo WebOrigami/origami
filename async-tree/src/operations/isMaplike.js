@@ -19,7 +19,7 @@ import isMap from "./isMap.js";
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
  * @param {any} object
- * @returns {obj is Maplike}
+ * @returns {object is Maplike}
  */
 export default function isMaplike(object) {
   return (

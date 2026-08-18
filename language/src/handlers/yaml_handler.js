@@ -23,6 +23,7 @@ let hasOriTags = false;
 // When processing the !ori tag, the YAML parser will convert our compiler
 // errors into YAML syntax errors. We track the last compiler error so we can
 // re-throw it.
+/** @type {any} */
 let lastCompilerError = null;
 
 // The source of the last Origami line parsed in a YAML file, used for errors

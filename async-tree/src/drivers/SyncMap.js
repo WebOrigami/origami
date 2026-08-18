@@ -25,6 +25,7 @@ export default class SyncMap extends Map {
   _initialized = false;
 
   constructor(iterable) {
+    // @ts-ignore TS thinks super expects 0 arguments
     super(iterable);
 
     /** @type {SyncMap|null} */

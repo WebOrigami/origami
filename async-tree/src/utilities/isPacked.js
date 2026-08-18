@@ -6,15 +6,15 @@ import TypedArray from "./TypedArray.js";
  *
  * @typedef {import("../../index.ts").Packed} Packed
  *
- * @param {any} obj
- * @returns {obj is Packed}
+ * @param {any} object
+ * @returns {object is Packed}
  */
-export default function isPacked(obj) {
+export default function isPacked(object) {
   return (
-    typeof obj === "string" ||
-    obj instanceof ArrayBuffer ||
-    obj instanceof ReadableStream ||
-    obj instanceof String ||
-    obj instanceof TypedArray
+    typeof object === "string" ||
+    object instanceof ArrayBuffer ||
+    object instanceof ReadableStream ||
+    object instanceof String ||
+    object instanceof TypedArray
   );
 }
