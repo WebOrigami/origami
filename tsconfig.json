@@ -1,15 +1,14 @@
 {
   "compilerOptions": {
     "allowImportingTsExtensions": true,
-    "allowSyntheticDefaultImports": true,
     "checkJs": true,
     "lib": ["ES2024", "DOM"],
     "noEmit": true,
+    "noFallthroughCasesInSwitch": true,
     "noImplicitAny": false,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "module": "NodeNext",
-    "moduleResolution": "NodeNext",
     "skipLibCheck": true,
     "target": "ES2024"
   },
