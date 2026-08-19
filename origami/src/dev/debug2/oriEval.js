@@ -1,4 +1,4 @@
-import { trailingSlash } from "@weborigami/async-tree";
+import { trailingSlash, Tree } from "@weborigami/async-tree";
 import { evaluate, getGlobalsForTree } from "@weborigami/language";
 import * as Dev from "../dev.js";
 import debugValue from "./debugValue.js";
@@ -8,6 +8,7 @@ import debugValue from "./debugValue.js";
  */
 export default async function oriEval(parent) {
   const globals = getGlobalsForTree(parent);
+  const root = Tree.root(parent);
 
   // Also add the Dev globals
   Object.assign(globals, Dev);
@@ -19,7 +20,7 @@ export default async function oriEval(parent) {
     let value = await evaluate(expression, {
       globals,
       mode: "shell",
-      parent,
+      parent: root,
     });
 
     value = await debugValue(value);
