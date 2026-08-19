@@ -2,7 +2,7 @@ import { fork } from "node:child_process";
 import { EventEmitter } from "node:events";
 import http from "node:http";
 import path from "node:path";
-import { findOpenPort } from "../../common/findOpenPort.js";
+import findOpenPort from "../findOpenPort.js";
 
 // Module that loads the server in the child process
 const childModuleUrl = new URL("./debugChild.js", import.meta.url);
@@ -235,7 +235,7 @@ export default class DebugParent extends EventEmitter {
 
     await this.startChild();
 
-    console.log(`Debug parent server running at ${this.origin}.`);
+    // console.log(`Debug parent server running at ${this.origin}.`);
   }
 
   /**

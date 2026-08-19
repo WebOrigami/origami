@@ -1,10 +1,10 @@
 import { args } from "@weborigami/async-tree";
 import http from "node:http";
-import { createServer } from "node:net";
 import process from "node:process";
 import { isTransformApplied, transformObject } from "../common/utilities.js";
 import { requestListener } from "../server/server.js";
 import ExplorableSiteTransform from "./ExplorableSiteTransform.js";
+import findOpenPort from "./findOpenPort.js";
 
 const defaultPort = 5000;
 
@@ -43,18 +43,4 @@ export default async function serve(maplike, port) {
       `Server running at http://localhost:${port}. Press Ctrl+C to stop.`,
     );
   });
-}
-
-// Return the first open port number on or after the given port number.
-// From https://gist.github.com/mikeal/1840641?permalink_comment_id=2896667#gistcomment-2896667
-function findOpenPort(port) {
-  const server = createServer();
-  return new Promise((resolve, reject) =>
-    server
-      .on("error", (/** @type {any} */ error) =>
-        error.code === "EADDRINUSE" ? server.listen(++port) : reject(error),
-      )
-      .on("listening", () => server.close(() => resolve(port)))
-      .listen(port),
-  );
 }
