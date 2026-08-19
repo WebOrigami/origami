@@ -150,6 +150,7 @@ export default class AsyncMap {
     }
     return value;
   }
+
   /**
    * Groups items from an async iterable into an AsyncMap according to the keys
    * returned by the given function.
