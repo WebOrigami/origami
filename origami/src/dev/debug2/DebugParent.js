@@ -102,10 +102,10 @@ export default class DebugParent extends EventEmitter {
     } else if (filePath.endsWith("/config.ori")) {
       console.log("Origami configuration file changed, restarting server...");
       await this.restart();
-    } else {
-      // Let event listeners know about the file change.
-      this.emit("change", { filePath });
     }
+
+    // Let event listeners know about the file change.
+    this.emit("change", { filePath });
   }
 
   /**
