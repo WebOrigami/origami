@@ -54,8 +54,8 @@ export default function debugTransform(input) {
       return value;
     },
 
-    async keys() {
-      return source.keys();
+    async *keys() {
+      yield* source.keys();
     },
 
     // If this value is given to the server, the server will call this pack()

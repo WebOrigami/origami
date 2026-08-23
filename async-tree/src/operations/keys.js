@@ -9,15 +9,12 @@ import * as args from "../utilities/args.js";
  */
 export default async function keys(maplike) {
   const map = await args.map(maplike, "Tree.keys");
-  let keys;
-  let iterable = map.keys();
-  if (Symbol.asyncIterator in iterable) {
-    keys = [];
-    for await (const key of iterable) {
-      keys.push(key);
-    }
-  } else {
-    keys = Array.from(iterable);
+  const keys = [];
+  const iterator = map.keys();
+  let next = await iterator.next();
+  while (!next.done) {
+    keys.push(next.value);
+    next = await iterator.next();
   }
   return keys;
 }

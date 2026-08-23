@@ -85,10 +85,11 @@ export default class ObjectMap extends SyncMap {
     return this.deep && (value instanceof Array || isPlainObject(value));
   }
 
-  keys() {
+  *keys() {
     // Defer to symbols.keys if defined
     if (typeof this.object[symbols.keys] === "function") {
-      return this.object[symbols.keys]();
+      yield* this.object[symbols.keys]();
+      return;
     }
 
     const result = new Set();
@@ -125,7 +126,7 @@ export default class ObjectMap extends SyncMap {
       }
     }
 
-    return result[Symbol.iterator]();
+    yield* result;
   }
 
   set(key, value) {

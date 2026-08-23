@@ -86,13 +86,15 @@ export default async function expressionObject(cachePath, entries, state = {}) {
 
   // Attach a keys method, where keys for primitive/eager properties with
   // maplike values get a trailing slash.
+  const keysGenerator = function* () {
+    yield* infos
+      .filter((info) => info.enumerable)
+      .map((info) => normalizeKey(info, object));
+  };
   Object.defineProperty(object, symbols.keys, {
     configurable: true,
     enumerable: false,
-    value: () =>
-      infos
-        .filter((info) => info.enumerable)
-        .map((info) => normalizeKey(info, object)),
+    value: keysGenerator,
     writable: true,
   });
 

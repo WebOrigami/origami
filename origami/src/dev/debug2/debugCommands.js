@@ -14,4 +14,4 @@ export { default as version } from "../version.js";
 // Someone might accidentally deploy a debug server so we don't give acces to
 // eval by default, but it can be useful for debugging Origami.
 
-// export { default as eval } from "./oriEval.js";
+export { default as eval } from "./oriEval.js";
