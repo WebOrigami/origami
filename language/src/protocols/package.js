@@ -1,4 +1,9 @@
-import { Tree, keysFromPath, pathFromKeys } from "@weborigami/async-tree";
+import {
+  Tree,
+  keysFromPath,
+  pathFromKeys,
+  trailingSlash,
+} from "@weborigami/async-tree";
 import systemCache from "../cache/systemCache.js";
 import projectRoot from "../project/projectRoot.js";
 
@@ -30,7 +35,7 @@ async function loadPackage(root, args) {
   if (name.startsWith("@")) {
     // First key is an npm organization, add next key as name
     const nameArg = args.shift();
-    name = pathFromKeys([name, nameArg]);
+    name = trailingSlash.remove(pathFromKeys([name, nameArg]));
     packageRootKeys.push(nameArg);
   }
   const packageRootPath = pathFromKeys(packageRootKeys);
