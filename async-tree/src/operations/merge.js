@@ -48,6 +48,11 @@ export default async function merge(...treelikes) {
 
   const sources = unpacked.map((maplike) => from(maplike));
 
+  // Do all sources support trailing slash keys?
+  const trailingSlashKeys = sources.every(
+    (source) => /** @type {any} */ (source).trailingSlashKeys,
+  );
+
   if (sources.length === 0) {
     throw new TypeError("Tree.merge: all trees are null or undefined");
   } else if (sources.length === 1) {
@@ -92,6 +97,6 @@ export default async function merge(...treelikes) {
 
     sources,
 
-    trailingSlashKeys: true,
+    trailingSlashKeys,
   });
 }
