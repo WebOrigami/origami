@@ -1,4 +1,5 @@
 export { default as documentObject } from "./src/common/documentObject.js";
+export { default as fetchWithBackoff } from "./src/common/fetchWithBackoff.js";
 export * from "./src/common/serialize.js";
 export { default as DebugParent } from "./src/dev/debug2/DebugParent.js";
 export { default as debugTransform } from "./src/dev/debug2/debugTransform.js";
