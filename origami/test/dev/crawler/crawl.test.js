@@ -6,8 +6,11 @@ import crawl from "../../../src/dev/crawler/crawl.js";
 // Test version of ObjectMap that doesn't return keys so we can confirm
 // that the crawler is able to find linked resources without them.
 class ObjectMapWithoutKeys extends ObjectMap {
-  async *keys() {
-    yield* [];
+  keys() {
+    function* gen() {
+      yield* [];
+    }
+    return /** @type {MapIterator<any>} */ (gen());
   }
 }
 

@@ -140,7 +140,8 @@ describe("expressionObject", () => {
       [[ops.deepText, [ops.array, "data", ".json"]], 1],
     ];
     const object = await expressionObject("test.ori/", entries);
-    assert.deepEqual(object[symbols.keys](), [
+    const keys = Array.from(object[symbols.keys]());
+    assert.deepEqual(keys, [
       "getter/",
       "hasSlash/",
       "message",

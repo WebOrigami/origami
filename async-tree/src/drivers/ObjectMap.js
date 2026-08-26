@@ -85,48 +85,55 @@ export default class ObjectMap extends SyncMap {
     return this.deep && (value instanceof Array || isPlainObject(value));
   }
 
-  *keys() {
-    // Defer to symbols.keys if defined
-    if (typeof this.object[symbols.keys] === "function") {
-      yield* this.object[symbols.keys]();
-      return;
-    }
-
-    const result = new Set();
-
-    // Walk up the prototype chain
-    for (
-      let current = this.object;
-      current !== null;
-      current = Object.getPrototypeOf(current)
-    ) {
-      // Look at all the properties at this level of the prototype chain
-      const descriptors = Object.getOwnPropertyDescriptors(current);
-      for (const [name, descriptor] of Object.entries(descriptors)) {
-        if (name === "constructor" || name === "__proto__") {
-          continue; // Uninteresting property
-        }
-        // Skip non-enumerable properties unless they have get/set
-        if (
-          !descriptor.enumerable &&
-          descriptor.get === undefined &&
-          descriptor.set === undefined
-        ) {
-          continue;
-        }
-        // Preserve existing slash; add slash for subtrees
-        const key = trailingSlash.has(name)
-          ? name
-          : trailingSlash.toggle(
-              name,
-              descriptor.value !== undefined &&
-                this.isSubtree(descriptor.value),
-            );
-        result.add(key);
+  keys() {
+    // We'd like to just define keys() as a generator but TypeScript complains
+    // that it doesn't match the Map interface. We define the generator
+    // internally and then cast it to the expected type.
+    const self = this;
+    function* gen() {
+      // Defer to symbols.keys if defined
+      if (typeof self.object[symbols.keys] === "function") {
+        yield* self.object[symbols.keys]();
+        return;
       }
-    }
 
-    yield* result;
+      const result = new Set();
+
+      // Walk up the prototype chain
+      for (
+        let current = self.object;
+        current !== null;
+        current = Object.getPrototypeOf(current)
+      ) {
+        // Look at all the properties at this level of the prototype chain
+        const descriptors = Object.getOwnPropertyDescriptors(current);
+        for (const [name, descriptor] of Object.entries(descriptors)) {
+          if (name === "constructor" || name === "__proto__") {
+            continue; // Uninteresting property
+          }
+          // Skip non-enumerable properties unless they have get/set
+          if (
+            !descriptor.enumerable &&
+            descriptor.get === undefined &&
+            descriptor.set === undefined
+          ) {
+            continue;
+          }
+          // Preserve existing slash; add slash for subtrees
+          const key = trailingSlash.has(name)
+            ? name
+            : trailingSlash.toggle(
+                name,
+                descriptor.value !== undefined &&
+                  self.isSubtree(descriptor.value),
+              );
+          result.add(key);
+        }
+      }
+
+      yield* result;
+    }
+    return /** @type {MapIterator<any>} */ (gen());
   }
 
   set(key, value) {
