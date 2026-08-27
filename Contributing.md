@@ -1,4 +1,4 @@
-Please read the section on [Respectful open source participation](ReadMe.md#respectful-open-source-participation)
+Please read the section on [Respectful open source participation](ReadMe.md#respectful-open-source-participation).
 
 ## Reporting bugs
 
@@ -31,7 +31,7 @@ Identifying the smallest breaking change may give you insight into what the actu
 
 ## Developing
 
-Before embarking on a non-trivial feature idea, it's a good idea to solicit feedback from someone. Contacting [Jan Miksovsky](https://jan.miksovsky.com) or posting on the [Web Origami chat room](https://weborigami.zulipchat.com/login/) are good places to start.
+Before embarking on a non-trivial feature idea, it's a good idea to solicit feedback from someone. The [Web Origami chat room](https://weborigami.zulipchat.com/login/) is an excellent place to start, or contact [Jan Miksovsky](https://jan.miksovsky.com/contact).
 
 ### Setup
 
@@ -84,3 +84,13 @@ Exploring a new feature idea in the context of your own Origami project can be b
 - You'll almost certainly encounter practical challenges in the context of your real project that will raise important design questions
 - Pros and cons of the feature can be explored in the context of a functional project instead of debating the idea in the abstract
 - It is easier to develop a feature in relative isolation before trying to integrate it into the Origami monorepo
+
+## AI
+
+All parts of the Web Origami project are nearly entirely handwritten, and the plan is to keep it that way. Prompt-generated submissions (including bug reports and pull requests) will be rejected.
+
+AI is used on the project for autocompleting short code fragments in a code editor; all such code is extensively reviewed and tested. Prompting an LLM to generate non-trivial code, however, is avoided. It has very occasionally been done in narrow circumstances meeting some or all of these criteria:
+
+- Arcane technology. Example: an Origami language syntax definition for an obscure syntax highlighting system.
+- Code or data that isn't load-bearing. Examples: a test server for a unit test for a specific network feature; a corpus of sample blog posts.
+- Complicated orchestration in a specialized domain. Example: the tricky dance required for a debug parent web server to launch and manage a debug child web server.
