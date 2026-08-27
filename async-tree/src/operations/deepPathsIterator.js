@@ -13,6 +13,14 @@ import keys from "./keys.js";
  */
 export default async function* deepPathsIterator(maplike, options = {}) {
   const assumeSlashKeys = options.assumeSlashKeys ?? false;
+
+  if (typeof options === "string") {
+    console.warn(
+      "Warning: Passing a base path string as the second argument is deprecated. Use an options object with a `base` property instead.",
+    );
+    options = { base: options };
+  }
+
   const basePath = options.base ?? "";
   const tree = await args.map(maplike, "Tree.deepPathsIterator", {
     deep: true,
