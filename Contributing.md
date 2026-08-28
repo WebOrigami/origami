@@ -94,3 +94,5 @@ AI is used on the project for autocompleting short code fragments in a code edit
 - Arcane technology. Example: an Origami language syntax definition for an obscure syntax highlighting system.
 - Code or data that isn't load-bearing. Examples: a test server for a unit test for a specific network feature; a corpus of sample blog posts.
 - Complicated orchestration in a specialized domain. Example: the tricky dance required for a debug parent web server to launch and manage a debug child web server.
+
+Even if these criteria are met, project features are never "vibecoded". The output of the AI is always thoroughly analyzed, tested, and iterated upon until it meets the project's standards. Often, once the implementation is understood, the feature is substantially or entirely rewritten by hand.
