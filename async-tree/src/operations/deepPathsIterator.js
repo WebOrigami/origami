@@ -1,6 +1,8 @@
 import * as trailingSlash from "../trailingSlash.js";
 import * as args from "../utilities/args.js";
+import from from "./from.js";
 import isMap from "./isMap.js";
+import isMaplike from "./isMaplike.js";
 import keys from "./keys.js";
 
 /**
@@ -44,6 +46,10 @@ export default async function* deepPathsIterator(maplike, options = {}) {
       // a subtree. If we can rely on slash keys, we already know the value will
       // be a subtree, but we need to get the value anyway in order to recurse.
       value = await tree.get(key);
+      if (trailingSlash.has(key) && isMaplike(value)) {
+        // We expected to get a map, so coerce the value to one
+        value = from(value);
+      }
       isLeaf = !isMap(value);
     }
 
