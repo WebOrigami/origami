@@ -8,13 +8,16 @@ const exec = util.promisify(callbackExec);
  *
  * @param {string} command
  */
-export default async function shell(command) {
+export default async function shell(command, state = {}) {
+  const { parent } = state;
+  const cwd = parent?.path || process.cwd();
   command = args.string(command, "Origami.shell");
   try {
-    const { stdout } = await exec(command);
+    const { stdout } = await exec(command, { cwd });
     return stdout;
   } catch (/** @type {any} */ error) {
     console.error(error.stderr);
     return undefined;
   }
 }
+shell.needsState = true;
