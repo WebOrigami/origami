@@ -45,6 +45,7 @@ export { default as isReadOnlyMap } from "./operations/isReadOnlyMap.js";
 export { default as isTraversable } from "./operations/isTraversable.js";
 export { default as json } from "./operations/json.js";
 export { default as keys } from "./operations/keys.js";
+export { default as manifest } from "./operations/manifest.js";
 export { default as map } from "./operations/map.js";
 export { default as mapExtension } from "./operations/mapExtension.js";
 export { default as mapReduce } from "./operations/mapReduce.js";
