@@ -1,32 +1,25 @@
 import crypto from "node:crypto";
-import deflatePaths from "./deflatePaths.js";
 import map from "./map.js";
 import sync from "./sync.js";
 
 /**
- * Return a Map whose keys are paths for all resources in the map-based tree
- * and whose values are the hashes of those resources.
+ * Return a map whose values are the hashes of the original values.
  *
  * @param {import("@weborigami/async-tree").Maplike} maplike
- * @param {{ base?: string }} options
  * @returns {Promise<Map<string, string>>}
  */
-export default async function manifest(maplike, options = {}) {
-  const base = options.base ?? "";
-  const deflated = await deflatePaths(maplike, { base });
-
-  // Map values to hashes
-  const mapped = await map(deflated, hash);
+export default async function manifest(maplike) {
+  const mapped = await map(maplike, { deep: true, value: hash });
   const result = await sync(mapped);
   return result;
 }
 
-function hash(value, path) {
-  const buffer = toBuffer(value, path);
+function hash(value, key) {
+  const buffer = toBuffer(value, key);
   return crypto.createHash("sha1").update(buffer).digest("hex");
 }
 
-function toBuffer(value, path) {
+function toBuffer(value, key) {
   if (typeof value === "string") {
     return new TextEncoder().encode(value);
   } else if (value instanceof String) {
@@ -36,6 +29,6 @@ function toBuffer(value, path) {
   } else if (value instanceof Uint8Array) {
     return value;
   } else {
-    throw new TypeError(`Couldn't convert to buffer: ${path}`);
+    throw new TypeError(`Couldn't convert to buffer: ${key}`);
   }
 }
