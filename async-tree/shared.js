@@ -33,6 +33,7 @@ export { default as isStringlike } from "./src/utilities/isStringlike.js";
 export { default as isUnpackable } from "./src/utilities/isUnpackable.js";
 export { default as keysFromPath } from "./src/utilities/keysFromPath.js";
 export { default as naturalOrder } from "./src/utilities/naturalOrder.js";
+export { default as pack } from "./src/utilities/pack.js";
 export { default as pathFromKeys } from "./src/utilities/pathFromKeys.js";
 export { default as setParent } from "./src/utilities/setParent.js";
 export { default as toPlainValue } from "./src/utilities/toPlainValue.js";
