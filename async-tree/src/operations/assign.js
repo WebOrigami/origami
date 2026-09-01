@@ -25,6 +25,11 @@ export default async function assign(target, source) {
     throw new TypeError("assign: Target must be a read/write map");
   }
 
+  // Prefer the target's assign() method if it exists
+  if (typeof targetTree.assign === "function") {
+    return await targetTree.assign(sourceTree);
+  }
+
   // Fire off requests to update all keys, then wait for all of them to finish.
   const promises = [];
   for await (const key of sourceTree.keys()) {

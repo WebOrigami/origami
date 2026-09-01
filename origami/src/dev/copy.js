@@ -29,27 +29,27 @@ export default async function copy(source, target) {
   }
 }
 
-// Wrap the source tree to show progress on set() operations. Handle both sync
+// Wrap the target tree to show progress on set() operations. Handle both sync
 // and async trees. All child trees will share the same counts object.
-function showSetProgress(source, counts) {
+function showSetProgress(target, counts) {
   function showProgress() {
     process.stdout.clearLine(0);
     process.stdout.cursorTo(0);
     process.stdout.write(`Copied ${counts.copied} of ${counts.total}`);
   }
 
-  const isSync = source instanceof Map;
+  const isSync = target instanceof Map;
   const MapClass = isSync ? SyncMap : AsyncMap;
   const iteratorKey = isSync ? Symbol.iterator : Symbol.asyncIterator;
 
   const progressTree = Object.assign(new MapClass(), {
-    delete: source.delete.bind(source),
-    keys: source.keys.bind(source),
-    [iteratorKey]: source[iteratorKey].bind(source),
+    delete: target.delete.bind(target),
+    keys: target.keys.bind(target),
+    [iteratorKey]: target[iteratorKey].bind(target),
 
     // Wrap get() to apply progress tracking
     get(key) {
-      return awaitIfPromise(source.get(key), (value) => {
+      return awaitIfPromise(target.get(key), (value) => {
         return Tree.isMap(value) ? showSetProgress(value, counts) : value;
       });
     },
@@ -58,7 +58,7 @@ function showSetProgress(source, counts) {
     set(key, value) {
       counts.total++;
       showProgress();
-      const setResult = source.set(key, value);
+      const setResult = target.set(key, value);
       return awaitIfPromise(setResult, () => {
         counts.copied++;
         showProgress();
@@ -67,18 +67,23 @@ function showSetProgress(source, counts) {
     },
   });
 
-  if (typeof source.child === "function") {
+  if (typeof target.child === "function") {
     // @ts-ignore
     progressTree.child = async function (key) {
       counts.total++;
       showProgress();
-      const childResult = source.child(key);
+      const childResult = target.child(key);
       return awaitIfPromise(childResult, (child) => {
         counts.copied++;
         showProgress();
         return showSetProgress(child, counts);
       });
     };
+  }
+
+  if (typeof target.assign === "function") {
+    // @ts-ignore
+    progressTree.assign = target.assign.bind(target);
   }
 
   return progressTree;
