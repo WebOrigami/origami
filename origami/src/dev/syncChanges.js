@@ -1,4 +1,4 @@
-import { isUnpackable, Tree } from "@weborigami/async-tree";
+import { isUnpackable, SyncMap, Tree } from "@weborigami/async-tree";
 import changes from "./changes.js";
 import copy from "./copy.js";
 
@@ -45,13 +45,16 @@ export default async function syncChanges(source, target, options, state) {
     return;
   }
 
-  // Write out added/changed files. As a side effect, deleted files will be
-  // mapped to undefined, which will have the desired effect of removing them.
-  const updateMask = await Tree.filter(
+  // Create a tree of the updates. Deleted files will be mapped to undefined,
+  // which will have the desired effect of removing them.
+  const changedSource = await Tree.mask(source, changeManifest);
+  const updates = await combine(
+    changedSource,
     changeManifest,
-    (value) => value === "added" || value === "changed",
+    (value, change) =>
+      change === "added" || change === "changed" ? value : undefined,
   );
-  const updates = await Tree.mask(source, updateMask);
+
   await copy(updates, target);
 
   if (!target.manifest) {
@@ -61,3 +64,32 @@ export default async function syncChanges(source, target, options, state) {
   }
 }
 syncChanges.needsState = true;
+
+// Like Tree.combine but can return undefined values
+async function combine(maplike1, maplike2, fn) {
+  const tree1 = await Tree.from(maplike1, { deep: true });
+  const tree2 = await Tree.from(maplike2, { deep: true });
+
+  const keys1 = await Tree.keys(tree1);
+  const keys2 = await Tree.keys(tree2);
+  const combinedKeys = new Set([...keys1, ...keys2]);
+
+  const result = new SyncMap();
+  result.trailingSlashKeys =
+    /** @type {any} */ (tree1).trailingSlashKeys &&
+    /** @type {any} */ (tree2).trailingSlashKeys;
+
+  for (const key of combinedKeys) {
+    const value1 = await tree1.get(key);
+    const value2 = await tree2.get(key);
+
+    const combination =
+      Tree.isMap(value1) && Tree.isMap(value2)
+        ? await combine(value1, value2, fn)
+        : await fn(value1, value2);
+
+    result.set(key, combination);
+  }
+
+  return result;
+}
