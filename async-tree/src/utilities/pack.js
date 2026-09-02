@@ -1,3 +1,5 @@
+import toString from "./toString.js";
+
 /**
  * Converts a value to a Uint8Array, e.g., for transmission.
  *
@@ -15,9 +17,14 @@ export default function pack(value, descriptor) {
   } else if (value instanceof Uint8Array) {
     return value;
   } else {
-    const message = descriptor
-      ? `Couldn't convert to buffer: ${descriptor}`
-      : "Couldn't convert to buffer";
-    throw new TypeError(message);
+    const string = toString(value);
+    if (string !== null) {
+      return new TextEncoder().encode(string);
+    } else {
+      const message = descriptor
+        ? `Couldn't convert to buffer: ${descriptor}`
+        : "Couldn't convert to buffer";
+      throw new TypeError(message);
+    }
   }
 }

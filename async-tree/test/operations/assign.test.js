@@ -49,7 +49,6 @@ describe("assign", () => {
 
   test("defers to the target's assign method if it exists", async () => {
     let called = false;
-    /** @type {import("../../index.ts").SyncTree} */
     const target = new SyncMap();
     target.assign = async (source) => {
       called = true;

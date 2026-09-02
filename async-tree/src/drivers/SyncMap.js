@@ -1,5 +1,6 @@
 import * as trailingSlash from "../trailingSlash.js";
 import setParent from "../utilities/setParent.js";
+import syncManifest from "../utilities/syncManifest.js";
 
 const previewSymbol = Symbol("preview");
 
@@ -19,6 +20,8 @@ const previewSymbol = Symbol("preview");
  * support optional trailing slashes on keys.
  *
  * @typedef {import("../../index.ts").SyncTree<SyncMap>} SyncTree
+ * @typedef {import("../../index.ts").SyncOrAsyncMap} SyncOrAsyncMap
+ *
  * @implements {SyncTree}
  */
 export default class SyncMap extends Map {
@@ -28,7 +31,7 @@ export default class SyncMap extends Map {
     // @ts-ignore TS thinks super expects 0 arguments
     super(iterable);
 
-    /** @type {SyncMap|null} */
+    /** @type {SyncOrAsyncMap|null} */
     this._parent = null;
 
     // Record self-reference for use in Map method calls that insist on the
@@ -211,6 +214,18 @@ export default class SyncMap extends Map {
    */
   keys() {
     return super.keys.call(this._self);
+  }
+
+  /**
+   * Returns a new Map of string keys to hash values for the values in this map.
+   *
+   * Child maps with their own manifest() implementation will be invoked. If a
+   * child is an AsyncMap, the value will be a Promise for the manifest.
+   *
+   * @returns {Map<string, string>}
+   */
+  manifest() {
+    return syncManifest(this);
   }
 
   /**

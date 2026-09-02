@@ -49,16 +49,19 @@ export type MapOptions = {
   value?: ValueKeyFn;
 };
 
-export interface SyncTree<MapType> {
-  assign?(source: SyncOrAsyncMap): Promise<void>;
-  child(key: any): MapType;
-  parent: MapType | null;
+export interface SyncTree<K, V> extends Map<K, V> {
+  assign?(source: Map<K, V>): SyncTree<K, V>;
+  child(key: any): SyncTree<K, V>;
+  manifest?(): Map<string, string>;
+  parent: SyncOrAsyncMap | null;
   trailingSlashKeys: boolean;
 }
 
-export interface AsyncTree<MapType> {
-  child(key: any): Promise<MapType>;
-  parent: MapType | null;
+export interface AsyncTree<K, V> extends AsyncMap {
+  assign?(source: SyncOrAsyncMap): Promise<AsyncTree<K, V>>;
+  child(key: any): Promise<AsyncTree<K, V>>;
+  manifest?(): Promise<Map<string, any>>;
+  parent: SyncOrAsyncMap | null;
   trailingSlashKeys: boolean;
 }
 

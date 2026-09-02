@@ -6,10 +6,12 @@ import * as trailingSlash from "../trailingSlash.js";
  * are asynchronous.
  *
  * @typedef {import("../../index.ts").AsyncTree<AsyncMap>} AsyncTree
+ * @typedef {import("../../index.ts").SyncOrAsyncMap} SyncOrAsyncMap
+ *
  * @implements {AsyncTree}
  */
 export default class AsyncMap {
-  /** @type {AsyncMap|null} */
+  /** @type {SyncOrAsyncMap|null} */
   _parent = null;
 
   _readOnly;
@@ -207,6 +209,13 @@ export default class AsyncMap {
   async *keys() {
     throw new Error("keys() not implemented");
   }
+
+  // This class does *not* implement manifest(). Although a default
+  // implementation could be provided, it wouldn't be efficient. It's preferable
+  // to signal that a map doesn't support a manifest of its own so that callers
+  // can decide what to do (e.g., maintain a separate local manifest).
+
+  // get manifest() {}
 
   /**
    * The parent of this node in a tree.

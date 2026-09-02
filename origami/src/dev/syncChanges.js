@@ -7,7 +7,11 @@ export default async function syncChanges(source, target, options, state) {
     // Shift state from options
     state = options;
     options = {};
+  } else {
+    options ??= {};
+    state ??= {};
   }
+
   let manifestContainer = options.manifestContainer ?? state.parent;
   let manifestKey = options.manifest ?? "previous-sync.json";
 
