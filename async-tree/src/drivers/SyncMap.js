@@ -1,6 +1,5 @@
 import * as trailingSlash from "../trailingSlash.js";
 import setParent from "../utilities/setParent.js";
-import syncManifest from "../utilities/syncManifest.js";
 
 const previewSymbol = Symbol("preview");
 
@@ -214,18 +213,6 @@ export default class SyncMap extends Map {
    */
   keys() {
     return super.keys.call(this._self);
-  }
-
-  /**
-   * Returns a new Map of string keys to hash values for the values in this map.
-   *
-   * Child maps with their own manifest() implementation will be invoked. If a
-   * child is an AsyncMap, the value will be a Promise for the manifest.
-   *
-   * @returns {Map<string, string>}
-   */
-  manifest() {
-    return syncManifest(this);
   }
 
   /**
