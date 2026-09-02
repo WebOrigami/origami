@@ -50,6 +50,7 @@ export type MapOptions = {
 };
 
 export interface SyncTree<MapType> {
+  assign?(source: SyncOrAsyncMap): Promise<void>;
   child(key: any): MapType;
   parent: MapType | null;
   trailingSlashKeys: boolean;

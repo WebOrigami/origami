@@ -8,7 +8,7 @@ import plain from "../../src/operations/plain.js";
 import SampleAsyncMap from "../SampleAsyncMap.js";
 
 describe("assign", () => {
-  test("assign can apply updates from an async tree to a sync tree", async () => {
+  test("can apply updates from an async tree to a sync tree", async () => {
     const target = new SyncMap([
       ["a", 1],
       ["b", 2],
@@ -41,9 +41,20 @@ describe("assign", () => {
     ]);
   });
 
-  test("assign() can apply updates to an array", async () => {
+  test("can apply updates to an array", async () => {
     const target = new ObjectMap(["a", "b", "c"]);
     await assign(target, ["d", "e"]);
     assert.deepEqual(await plain(target), ["d", "e", "c"]);
+  });
+
+  test("defers to the target's assign method if it exists", async () => {
+    let called = false;
+    /** @type {import("../../index.ts").SyncTree} */
+    const target = new SyncMap();
+    target.assign = async (source) => {
+      called = true;
+    };
+    await assign(target, { a: 1 });
+    assert.equal(called, true);
   });
 });
