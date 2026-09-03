@@ -6,10 +6,10 @@ import executionContext from "./executionContext.js";
  * Inject our warning function into async-tree calls
  */
 interop.warn = function warn(...args) {
-  interop.warn(...args);
+  console.warn(...args);
   const context = executionContext.getStore();
   const location = context?.code?.location;
   if (location) {
-    interop.warn(lineInfo(location));
+    console.warn(lineInfo(location));
   }
 };
