@@ -11,11 +11,11 @@ import copy from "./copy.js";
  *   source tree, comparing the manifests of both trees to determine what has
  *   changed.
  * - If a `publishedFiles` option is provided, this indicates the container and
- *   the key of a (local) manifest of the files published last time. This
- *   manifest will be compared to the current source manifest to determine what
- *   has changed. The changed files will be assigned to the target via
- *   `Tree.apply()`. The current source manifest will be written to the
- *   container at the key provided.
+ *   the key of a (typically local) manifest of the files published last time.
+ *   This manifest will be compared to the current source manifest to determine
+ *   what has changed. The changed files will be assigned to the target via
+ *   `Tree.apply()`, and then the current source manifest will be written back
+ *   to the same container and key provided.
  * - Otherwise the existing contents of the target will be cleared with
  *   `clear()` before copying everything the source to the target with
  *   `Tree.apply()`.
@@ -24,7 +24,7 @@ import copy from "./copy.js";
  *
  * @param {Maplike} source
  * @param {Maplike} target
- * @param {{ publishedFiles?: { container?: string, key?: string }}} options
+ * @param {{ publishedFiles?: { container?: string, key: string }}} options
  * @param {any} state
  */
 export default async function publish(source, target, options, state) {
@@ -45,7 +45,7 @@ export default async function publish(source, target, options, state) {
   }
 
   if (typeof (/** @type {any} */ (target).replaceWith) === "function") {
-    return target.replaceWith(source);
+    return /** @type {any} */ (target).replaceWith(source);
   }
 
   const targetHasManifest =
