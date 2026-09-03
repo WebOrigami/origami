@@ -1,11 +1,11 @@
 import { Tree } from "@weborigami/async-tree";
+export const changes = Tree.changes;
 export const clear = Tree.clear;
 export const keys = Tree.keys;
 
 export { default as indexPage } from "../origami/indexPage.js";
 export { default as yaml } from "../origami/yaml.js";
 export { default as breakpoint } from "./breakpoint.js";
-export { default as changes } from "./changes.js";
 export { default as code } from "./code.js";
 export { default as copy } from "./copy.js";
 export { default as audit } from "./crawler/audit.js";

@@ -4,8 +4,10 @@
 
 export { default as addNextPrevious } from "./operations/addNextPrevious.js";
 export { default as assign } from "./operations/assign.js";
+export { default as assignChanges } from "./operations/assignChanges.js";
 export { default as cache } from "./operations/cache.js";
 export { default as calendar } from "./operations/calendar.js";
+export { default as changes } from "./operations/changes.js";
 export { default as child } from "./operations/child.js";
 export { default as clear } from "./operations/clear.js";
 export { default as combine } from "./operations/combine.js";

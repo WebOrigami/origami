@@ -1,8 +1,8 @@
 import { isUnpackable, SyncMap, Tree } from "@weborigami/async-tree";
+import assign from "./assign.js";
 import changes from "./changes.js";
-import copy from "./copy.js";
 
-export default async function syncChanges(source, target, options, state) {
+export default async function assignChanges(source, target, options, state) {
   if (!state && options) {
     // Shift state from options
     state = options;
@@ -59,7 +59,7 @@ export default async function syncChanges(source, target, options, state) {
       change === "added" || change === "changed" ? value : undefined,
   );
 
-  await copy(updates, target);
+  await assign(updates, target);
 
   if (!target.manifest) {
     // Write out source manifest as the previous manifest
@@ -67,9 +67,9 @@ export default async function syncChanges(source, target, options, state) {
     await manifestContainer.set(manifestKey, manifestJson);
   }
 }
-syncChanges.needsState = true;
+assignChanges.needsState = true;
 
-// Like Tree.combine but can return undefined values
+// Like regular combine() but can return undefined values
 async function combine(maplike1, maplike2, fn) {
   const tree1 = await Tree.from(maplike1, { deep: true });
   const tree2 = await Tree.from(maplike2, { deep: true });
