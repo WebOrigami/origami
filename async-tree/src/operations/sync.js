@@ -1,5 +1,5 @@
 import * as args from "../utilities/args.js";
-import reduce from "./reduce.js";
+import resolve from "./resolve.js";
 
 /**
  * Resolve the async tree to a synchronous tree.
@@ -9,6 +9,7 @@ import reduce from "./reduce.js";
  * @param {Maplike} source
  */
 export default async function sync(source) {
+  console.warn("Tree.sync is deprecated. Use Tree.resolve instead.");
   const tree = await args.map(source, "Tree.sync");
-  return reduce(tree, (mapped) => mapped);
+  return resolve(tree);
 }

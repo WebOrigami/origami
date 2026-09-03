@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import AsyncMap from "../../src/drivers/AsyncMap.js";
-import sync from "../../src/operations/sync.js";
+import resolve from "../../src/operations/resolve.js";
 
 class SampleAsyncMap extends AsyncMap {
   constructor(iterable) {
@@ -18,7 +18,7 @@ class SampleAsyncMap extends AsyncMap {
   }
 }
 
-describe("sync", () => {
+describe("resolve", () => {
   test("converts an async tree to a sync tree", async () => {
     const fixture = new SampleAsyncMap([
       ["a", 1],
@@ -31,7 +31,7 @@ describe("sync", () => {
         ]),
       ],
     ]);
-    const result = await sync(fixture);
+    const result = await resolve(fixture);
     assert(result instanceof Map);
     assert.strictEqual(result.get("a"), 1);
     assert.strictEqual(result.get("b"), 2);
