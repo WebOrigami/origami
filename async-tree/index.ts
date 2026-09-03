@@ -61,6 +61,7 @@ export interface AsyncTree<K, V> extends AsyncMap {
   apply?(source: SyncOrAsyncMap): Promise<AsyncTree<K, V>>;
   child(key: any): Promise<AsyncTree<K, V>>;
   manifest?(): Promise<Map<string, any>>;
+  replaceWith?(source: SyncOrAsyncMap): Promise<AsyncTree<K, V>>;
   parent: SyncOrAsyncMap | null;
   trailingSlashKeys: boolean;
 }
