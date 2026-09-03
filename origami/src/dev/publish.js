@@ -55,23 +55,38 @@ export default async function publish(source, target, options, state) {
   }
 
   const publishedFiles = options.publishedFiles;
+  const publishedFilesContainer = publishedFiles?.container ?? state.parent;
+  const publishedFilesKey = publishedFiles?.key;
+  let sourceManifest;
+  let changes;
   if (publishedFiles) {
-    // // Use the published files manifest to determine what changed
-    // const container = publishedFiles.container ?? state.parent;
-    // const key = publishedFiles.key ?? "published-files.json";
-    // // Read in previous manifest
-    // let previousManifest = await container.get(key);
-    // if (isUnpackable(previousManifest)) {
-    //   previousManifest = await previousManifest.unpack();
-    // }
+    // Use the published files manifest to determine what changed
+    if (!publishedFilesKey) {
+      throw new Error("Missing `key` property for publishedFiles option");
+    }
+
+    // Read in published files and use it as the target manifest
+    let targetManifest = await publishedFilesContainer.get(publishedFilesKey);
+    if (isUnpackable(targetManifest)) {
+      targetManifest = await targetManifest.unpack();
+    }
+
+    // Extend the source and target to use our copies of those manifests
+    sourceManifest = await Tree.manifest(source);
+    const extendedSource = Object.create(source);
+    extendedSource.manifest = () => sourceManifest;
+    const extendedTarget = Object.create(target);
+    extendedTarget.manifest = () => targetManifest;
+
+    changes = await Tree.applyChanges(extendedTarget, extendedSource);
+  } else {
+    await copy(source, target);
   }
 
-  await copy(source, target);
-
-  // if (!target.manifest) {
-  //   // Write out source manifest as the previous manifest
-  //   const manifestJson = await Tree.json(sourceManifest);
-  //   await manifestContainer.set(manifestKey, manifestJson);
-  // }
+  if (changes && publishedFiles && sourceManifest) {
+    // Write out source manifest as the previous manifest
+    const manifestJson = await Tree.json(sourceManifest);
+    await publishedFilesContainer.set(publishedFilesKey, manifestJson);
+  }
 }
 publish.needsState = true;

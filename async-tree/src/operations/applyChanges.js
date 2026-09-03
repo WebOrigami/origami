@@ -8,6 +8,14 @@ import keys from "./keys.js";
 import mask from "./mask.js";
 
 /**
+ * Given a target tree and a source tree, this compares the manifests of both
+ * trees and applies the changes to the target tree. For network targets, this
+ * is a more efficient way to update the target tree than clearing it and
+ * copying everything from the source.
+ *
+ * This returns a tree of changes with with values: "added", "changed", or
+ * "deleted". If there were no changes, this returns `undefined`.
+ *
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
  * @param {Maplike} target
@@ -41,6 +49,8 @@ export default async function applyChanges(target, source) {
   if (updates) {
     await apply(target, updates);
   }
+
+  return manifestChanges;
 }
 applyChanges.needsState = true;
 
