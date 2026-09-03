@@ -59,6 +59,7 @@ export { default as paginate } from "./operations/paginate.js";
 export { default as parent } from "./operations/parent.js";
 export { default as paths } from "./operations/paths.js";
 export { default as plain } from "./operations/plain.js";
+export { default as publish } from "./operations/publish.js";
 export { default as reduce } from "./operations/reduce.js";
 export { default as regExpKeys } from "./operations/regExpKeys.js";
 export { default as resolve } from "./operations/resolve.js";

@@ -10,5 +10,10 @@ import showProgress from "./showProgress.js";
 export default async function copy(source, target) {
   const sourceTree = await args.map(source, "Dev.copy", { position: 1 });
   let targetTree = await args.map(target, "Dev.copy", { position: 2 });
-  await showProgress(Tree.apply, sourceTree, targetTree);
+  await showProgress(
+    0, // Wrap writes to the target argument with progress
+    Tree.apply,
+    targetTree,
+    sourceTree,
+  );
 }

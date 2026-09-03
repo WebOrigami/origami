@@ -1,18 +1,27 @@
 import { AsyncMap, SyncMap, Tree } from "@weborigami/async-tree";
 import process, { stdout } from "node:process";
 
-export default async function showProgress(fn, source, target) {
+/**
+ * Wrap the nth (zero-based) argument with a tree that shows progress in the
+ * console when set() is called, then invoke the given function with the
+ * arguments.
+ *
+ * @param {number} wrapArgIndex
+ * @param {Function} fn
+ * @param  {...any} args
+ */
+export default async function showProgress(wrapArgIndex, fn, ...args) {
   let progressTree;
   if (stdout.isTTY) {
+    const target = args[wrapArgIndex];
     progressTree = wrapWithProgress(target, {
       copied: 0,
       total: 0,
     });
-  } else {
-    progressTree = target;
+    args[wrapArgIndex] = progressTree;
   }
 
-  await fn(progressTree, source);
+  await fn(...args);
 
   if (stdout.isTTY) {
     process.stdout.clearLine(0);
