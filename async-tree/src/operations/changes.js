@@ -2,10 +2,12 @@ import * as args from "../utilities/args.js";
 import isStringlike from "../utilities/isStringlike.js";
 import toString from "../utilities/toString.js";
 import combine from "./combine.js";
+import manifest from "./manifest.js";
 
 /**
- * Given an old tree and a new tree, return a tree of changes indicated by the
- * values: "added", "changed", or "deleted".
+ * Given an old tree and a new tree, this compares the manifests of both trees
+ * and returns a tree of changes with with values: "added", "changed", or
+ * "deleted".
  *
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
@@ -22,7 +24,10 @@ export default async function changes(oldMaplike, newMaplike) {
     position: 2,
   });
 
-  const combination = await combine(oldTree, newTree, compare);
+  const oldManifest = await manifest(oldTree);
+  const newManifest = await manifest(newTree);
+
+  const combination = await combine(oldManifest, newManifest, compare);
   return combination;
 }
 

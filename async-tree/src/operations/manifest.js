@@ -8,7 +8,7 @@ import resolve from "./resolve.js";
  * Return a map whose keys are the original keys (without trailing slashes, if
  * present) and whose values are the hashes of the original values.
  *
- * @param {import("@weborigami/async-tree").Maplike} maplike
+ * @param {import("../../index.ts").Maplike} maplike
  * @returns {Promise<Map<string, string>>}
  */
 export default async function manifest(maplike) {
