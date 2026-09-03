@@ -40,6 +40,9 @@ export default async function assign(target, source) {
         // Recurse to copy subtree
         const targetChild = await child(targetTree, key);
         await assign(targetChild, sourceValue);
+      } else if (sourceValue === undefined) {
+        // Delete the key from the target.
+        await targetTree.delete(key);
       } else {
         // Copy the value from the source to the target.
         await targetTree.set(key, sourceValue);

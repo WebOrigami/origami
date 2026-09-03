@@ -12,14 +12,16 @@ describe("assign", () => {
     const target = new SyncMap([
       ["a", 1],
       ["b", 2],
-      ["more", new SyncMap([["d", 3]])],
+      ["c", 3],
+      ["more", new SyncMap([["e", 3]])],
     ]);
 
     const source = new SampleAsyncMap([
       ["a", 4], // Overwrite existing value
-      ["c", 5], // Add
-      ["more", [["e", 6]]], // Should leave existing `more` keys alone.
-      ["extra", [["f", 7]]], // Add new subtree
+      ["c", undefined], // Delete existing value
+      ["d", 5], // Add
+      ["more", [["f", 6]]], // Should leave existing `more` keys alone.
+      ["extra", [["g", 7]]], // Add new subtree
     ]);
 
     // Apply changes.
@@ -32,12 +34,12 @@ describe("assign", () => {
       [
         "more",
         [
-          ["d", 3],
-          ["e", 6],
+          ["e", 3],
+          ["f", 6],
         ],
       ],
-      ["c", 5],
-      ["extra", [["f", 7]]],
+      ["d", 5],
+      ["extra", [["g", 7]]],
     ]);
   });
 

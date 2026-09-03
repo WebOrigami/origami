@@ -28,16 +28,20 @@ describe("assignChanges", () => {
     /** @type {SyncTree} */
     const source = new ObjectMap(
       {
-        a: 1,
-        e: 5,
+        a: 1, // left as is
         sub: {
-          d: undefined,
+          b: 2, // left as is
+          more: {
+            c: 3, // left as is
+          },
+          d: undefined, // deletes d
         },
+        e: 5, // adds e
       },
       { deep: true },
     );
 
-    await assignChanges(source, target);
+    await assignChanges(target, source);
 
     assert.deepEqual(await plain(target), {
       a: 1,
