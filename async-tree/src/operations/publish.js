@@ -71,9 +71,9 @@ export default async function publish(source, target, options = {}) {
       targetManifest = await targetManifest.unpack();
     }
 
+    // Extend the source and target to use our copies of those manifests
+    sourceManifest = await manifest(sourceTree);
     if (targetManifest) {
-      // Extend the source and target to use our copies of those manifests
-      sourceManifest = await manifest(sourceTree);
       const extendedSource = Object.create(sourceTree);
       extendedSource.manifest = () => sourceManifest;
       const extendedTarget = Object.create(targetTree);
@@ -87,7 +87,11 @@ export default async function publish(source, target, options = {}) {
     await apply(sourceTree, targetTree);
   }
 
-  if (changes && sourceManifest && publishedFilesContainer) {
+  if (
+    (!targetManifest || changes) &&
+    sourceManifest &&
+    publishedFilesContainer
+  ) {
     // Write out source manifest as the previous manifest
     const manifestJson = await json(sourceManifest);
     await publishedFilesContainer.set(publishedFilesKey, manifestJson);
