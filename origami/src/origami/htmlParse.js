@@ -1,4 +1,4 @@
-import { args } from "@weborigami/async-tree";
+import { args, interop } from "@weborigami/async-tree";
 import htmlDom from "./htmlDom.js";
 
 /**
@@ -7,7 +7,7 @@ import htmlDom from "./htmlDom.js";
  * @param {import("@weborigami/async-tree").Stringlike} html
  */
 export default async function htmlParse(html) {
-  console.warn("Origami.htmlParse is deprecated. Use Origami.htmlDom instead.");
+  interop.warn("Origami.htmlParse is deprecated. Use Origami.htmlDom instead.");
 
   html = args.stringlike(html, "Origami.htmlParse");
   const dom = await htmlDom(html);

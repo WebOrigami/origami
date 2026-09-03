@@ -1,4 +1,4 @@
-import { args } from "@weborigami/async-tree";
+import { args, interop } from "@weborigami/async-tree";
 import xmlDom from "./xmlDom.js";
 
 /**
@@ -7,7 +7,7 @@ import xmlDom from "./xmlDom.js";
  * @param {import("@weborigami/async-tree").Stringlike} xml
  */
 export default async function xmlParse(xml) {
-  console.warn("Origami.xmlParse is deprecated. Use Origami.xmlDom instead.");
+  interop.warn("Origami.xmlParse is deprecated. Use Origami.xmlDom instead.");
 
   xml = args.stringlike(xml, "Origami.xmlParse");
   const dom = await xmlDom(xml);

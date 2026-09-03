@@ -1,5 +1,6 @@
 import * as trailingSlash from "../trailingSlash.js";
 import * as args from "../utilities/args.js";
+import interop from "../utilities/interop.js";
 import from from "./from.js";
 import isMap from "./isMap.js";
 import isMaplike from "./isMaplike.js";
@@ -17,7 +18,7 @@ export default async function* deepPathsIterator(maplike, options = {}) {
   const assumeSlashKeys = options.assumeSlashKeys ?? false;
 
   if (typeof options === "string") {
-    console.warn(
+    interop.warn(
       "Warning: Passing a base path string as the second argument is deprecated. Use an options object with a `base` property instead.",
     );
     options = { base: options };
