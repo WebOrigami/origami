@@ -41,7 +41,7 @@ describe("applyChanges", () => {
       { deep: true },
     );
 
-    await applyChanges(target, source);
+    await applyChanges(source, target);
 
     assert.deepEqual(await plain(target), {
       a: 1,

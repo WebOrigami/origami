@@ -11,14 +11,14 @@ import isMaplike from "./isMaplike.js";
  *
  * @typedef  {import("../../index.ts").Maplike} Maplike
  *
- * @param {Maplike} target
  * @param {Maplike} source
+ * @param {Maplike} target
  */
-export default async function apply(target, source) {
-  const targetTree = await args.map(target, "Tree.apply", {
+export default async function apply(source, target) {
+  const sourceTree = await args.map(source, "Tree.apply", {
     position: 1,
   });
-  const sourceTree = await args.map(source, "Tree.apply", {
+  const targetTree = await args.map(target, "Tree.apply", {
     position: 2,
   });
 
@@ -39,7 +39,7 @@ export default async function apply(target, source) {
       if (isMaplike(sourceValue)) {
         // Recurse to copy subtree
         const targetChild = await child(targetTree, key);
-        await apply(targetChild, sourceValue);
+        await apply(sourceValue, targetChild);
       } else if (sourceValue === undefined) {
         // Delete the key from the target.
         await targetTree.delete(key);

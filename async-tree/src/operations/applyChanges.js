@@ -18,14 +18,14 @@ import mask from "./mask.js";
  *
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
- * @param {Maplike} target
  * @param {Maplike} source
+ * @param {Maplike} target
  */
-export default async function applyChanges(target, source) {
-  const targetTree = await args.map(target, "Tree.applyChanges", {
+export default async function applyChanges(source, target) {
+  const sourceTree = await args.map(source, "Tree.applyChanges", {
     position: 1,
   });
-  const sourceTree = await args.map(source, "Tree.applyChanges", {
+  const targetTree = await args.map(target, "Tree.applyChanges", {
     position: 2,
   });
 
@@ -47,7 +47,7 @@ export default async function applyChanges(target, source) {
       change === "added" || change === "changed" ? value : undefined,
   );
   if (updates) {
-    await apply(target, updates);
+    await apply(updates, target);
   }
 
   return manifestChanges;

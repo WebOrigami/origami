@@ -25,7 +25,7 @@ describe("apply", () => {
     ]);
 
     // Apply changes.
-    const result = await apply(target, source);
+    const result = await apply(source, target);
 
     assert.equal(result, target);
     assert.deepEqual(await deepArrays(target), [
@@ -45,7 +45,7 @@ describe("apply", () => {
 
   test("can apply updates to an array", async () => {
     const target = new ObjectMap(["a", "b", "c"]);
-    await apply(target, ["d", "e"]);
+    await apply(["d", "e"], target);
     assert.deepEqual(await plain(target), ["d", "e", "c"]);
   });
 
@@ -55,7 +55,7 @@ describe("apply", () => {
     /** @type {any} */ (target).apply = async (source) => {
       called = true;
     };
-    await apply(target, { a: 1 });
+    await apply({ a: 1 }, target);
     assert.equal(called, true);
   });
 });
