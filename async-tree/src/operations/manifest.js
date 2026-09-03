@@ -2,7 +2,7 @@ import * as trailingSlash from "../trailingSlash.js";
 import * as args from "../utilities/args.js";
 import hash from "../utilities/hash.js";
 import map from "./map.js";
-import sync from "./sync.js";
+import resolve from "./resolve.js";
 
 /**
  * Return a map whose keys are the original keys (without trailing slashes, if
@@ -28,6 +28,6 @@ export default async function manifest(maplike) {
     });
   }
 
-  result = await sync(result);
+  result = await resolve(result);
   return result;
 }
