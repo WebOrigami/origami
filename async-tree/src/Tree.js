@@ -58,6 +58,7 @@ export { default as paths } from "./operations/paths.js";
 export { default as plain } from "./operations/plain.js";
 export { default as reduce } from "./operations/reduce.js";
 export { default as regExpKeys } from "./operations/regExpKeys.js";
+export { default as resolve } from "./operations/resolve.js";
 export { default as reverse } from "./operations/reverse.js";
 export { default as root } from "./operations/root.js";
 export { default as scope } from "./operations/scope.js";
