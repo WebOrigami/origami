@@ -83,7 +83,7 @@ export default class FileMap extends SyncMap {
     if (key == null) {
       // Reject nullish key
       throw new ReferenceError(
-        `${this.constructor.name}: Cannot get a null or undefined key.`
+        `${this.constructor.name}: Cannot get a null or undefined key.`,
       );
     }
     if (key === "") {
@@ -112,7 +112,7 @@ export default class FileMap extends SyncMap {
     value.parent =
       key === ".."
         ? // Special case: ".." parent is the grandparent (if it exists)
-          this.parent?.parent
+          /** @type {any} */ (this.parent)?.parent
         : this;
     setParent(value, this);
 
@@ -133,7 +133,7 @@ export default class FileMap extends SyncMap {
 
     // Add slashes to directory names.
     let names = dirEntries.map((dirEntry) =>
-      trailingSlash.toggle(dirEntry.name, dirEntry.isDirectory())
+      trailingSlash.toggle(dirEntry.name, dirEntry.isDirectory()),
     );
 
     // Filter out unhelpful file names.
@@ -201,7 +201,7 @@ export default class FileMap extends SyncMap {
     } else {
       const typeName = value?.constructor?.name ?? "unknown";
       throw new TypeError(
-        `Cannot write a value of type ${typeName} as ${stringKey}`
+        `Cannot write a value of type ${typeName} as ${stringKey}`,
       );
     }
 

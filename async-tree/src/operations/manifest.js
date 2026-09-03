@@ -15,9 +15,9 @@ export default async function manifest(maplike) {
   const tree = await args.map(maplike, "Tree.manifest", { position: 1 });
 
   let result;
-  if (tree.manifest) {
+  if (/** @type {any} */ (tree).manifest) {
     // Defer to tree's own implementation
-    result = await tree.manifest();
+    result = await /** @type {any} */ (tree).manifest();
   } else {
     result = await map(tree, {
       deep: true,

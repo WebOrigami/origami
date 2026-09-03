@@ -26,8 +26,8 @@ export default async function assign(target, source) {
   }
 
   // Prefer the target's assign() method if it exists
-  if (typeof targetTree.assign === "function") {
-    return await targetTree.assign(sourceTree);
+  if (typeof (/** @type {any} */ (targetTree).assign) === "function") {
+    return await /** @type {any} */ (targetTree).assign(sourceTree);
   }
 
   // Fire off requests to update all keys, then wait for all of them to finish.

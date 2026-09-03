@@ -64,7 +64,8 @@ export default class ScopeMap extends SyncMap {
     let current = this.source;
     while (current) {
       result.push(current);
-      current = "parent" in current ? current.parent : null;
+      current =
+        "parent" in current ? /** @type {any} */ (current).parent : null;
     }
 
     return result;

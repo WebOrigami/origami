@@ -4,6 +4,6 @@
 
 export default {
   warn(...args) {
-    interop.warn(...args);
+    console.warn(...args);
   },
 };

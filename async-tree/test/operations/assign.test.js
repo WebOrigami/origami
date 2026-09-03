@@ -50,7 +50,7 @@ describe("assign", () => {
   test("defers to the target's assign method if it exists", async () => {
     let called = false;
     const target = new SyncMap();
-    target.assign = async (source) => {
+    /** @type {any} */ (target).assign = async (source) => {
       called = true;
     };
     await assign(target, { a: 1 });
