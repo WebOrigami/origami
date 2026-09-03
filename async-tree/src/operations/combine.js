@@ -1,3 +1,4 @@
+import SyncMap from "../drivers/SyncMap.js";
 import * as args from "../utilities/args.js";
 import isUnpackable from "../utilities/isUnpackable.js";
 import isMap from "./isMap.js";
@@ -39,7 +40,10 @@ export default async function combine(maplike1, maplike2, combineFn) {
   const keys2 = await keys(tree2);
   const combinedKeys = new Set([...keys1, ...keys2]);
 
-  const result = {};
+  const result = new SyncMap();
+  result.trailingSlashKeys =
+    /** @type {any} */ (tree1).trailingSlashKeys &&
+    /** @type {any} */ (tree2).trailingSlashKeys;
 
   for (const key of combinedKeys) {
     const value1 = await tree1.get(key);
@@ -51,9 +55,9 @@ export default async function combine(maplike1, maplike2, combineFn) {
         : await fn(value1, value2);
 
     if (combination !== undefined) {
-      result[key] = combination;
+      result.set(key, combination);
     }
   }
 
-  return Object.keys(result).length > 0 ? result : undefined;
+  return result.size > 0 ? result : undefined;
 }

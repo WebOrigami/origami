@@ -9,6 +9,8 @@ import manifest from "./manifest.js";
  * and returns a tree of changes with with values: "added", "changed", or
  * "deleted".
  *
+ * If there were no changes, this returns `undefined`.
+ *
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
  * @param {Maplike} oldMaplike
@@ -27,8 +29,8 @@ export default async function changes(oldMaplike, newMaplike) {
   const oldManifest = await manifest(oldTree);
   const newManifest = await manifest(newTree);
 
-  const combination = await combine(oldManifest, newManifest, compare);
-  return combination;
+  const combined = await combine(oldManifest, newManifest, compare);
+  return combined;
 }
 
 function compare(oldValue, newValue) {

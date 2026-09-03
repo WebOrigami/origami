@@ -1,8 +1,33 @@
-import { isUnpackable, SyncMap, Tree } from "@weborigami/async-tree";
+import { isUnpackable, Tree } from "@weborigami/async-tree";
 import changes from "./changes.js";
 import copy from "./copy.js";
 
-export default async function syncChanges(source, target, options, state) {
+/**
+ * Publish the source tree to the target tree by the most efficient method.
+ *
+ * - If both the source and target trees support the `manifest()` method, then
+ *   the manifests of both trees will be compared to determine what has changed.
+ *   The changed files will be assigned to the target via `assign()`.
+ * - If a `publishedManifest` option is provided, this indicates the container
+ *   and the key of a (local) manifest of the files published last time. This
+ *   manifest will be compared to the current source manifest to determine what
+ *   has changed. The changed files will be assigned to the target via
+ *   `assign()`. The current source manifest will be written to the container at
+ *   the key provided.
+ * - If the target provides a `replaceWith()` method, the source will be passed
+ *   to that method.
+ * - Otherwise the existing contents of the target will be cleared with
+ *   `clear()`, and the source tree will be traversed and assigned to the target
+ *   via `assign()`.
+ *
+ * @typedef {import("@weborigami/async-tree").Maplike} Maplike
+ *
+ * @param {Maplike} source
+ * @param {Maplike} target
+ * @param {*} options
+ * @param {any} state
+ */
+export default async function publish(source, target, options, state) {
   if (!state && options) {
     // Shift state from options
     state = options;
@@ -67,33 +92,4 @@ export default async function syncChanges(source, target, options, state) {
     await manifestContainer.set(manifestKey, manifestJson);
   }
 }
-syncChanges.needsState = true;
-
-// Like Tree.combine but can return undefined values
-async function combine(maplike1, maplike2, fn) {
-  const tree1 = await Tree.from(maplike1, { deep: true });
-  const tree2 = await Tree.from(maplike2, { deep: true });
-
-  const keys1 = await Tree.keys(tree1);
-  const keys2 = await Tree.keys(tree2);
-  const combinedKeys = new Set([...keys1, ...keys2]);
-
-  const result = new SyncMap();
-  result.trailingSlashKeys =
-    /** @type {any} */ (tree1).trailingSlashKeys &&
-    /** @type {any} */ (tree2).trailingSlashKeys;
-
-  for (const key of combinedKeys) {
-    const value1 = await tree1.get(key);
-    const value2 = await tree2.get(key);
-
-    const combination =
-      Tree.isMap(value1) && Tree.isMap(value2)
-        ? await combine(value1, value2, fn)
-        : await fn(value1, value2);
-
-    result.set(key, combination);
-  }
-
-  return result;
-}
+publish.needsState = true;

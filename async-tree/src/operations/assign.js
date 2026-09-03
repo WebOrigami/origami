@@ -21,13 +21,14 @@ export default async function assign(target, source) {
   const sourceTree = await args.map(source, "Tree.assign", {
     position: 2,
   });
-  if ("readOnly" in targetTree && targetTree.readOnly) {
-    throw new TypeError("assign: Target must be a read/write map");
-  }
 
   // Prefer the target's assign() method if it exists
   if (typeof (/** @type {any} */ (targetTree).assign) === "function") {
     return await /** @type {any} */ (targetTree).assign(sourceTree);
+  }
+
+  if ("readOnly" in targetTree && targetTree.readOnly) {
+    throw new TypeError("assign: Target must be a read/write map");
   }
 
   // Fire off requests to update all keys, then wait for all of them to finish.
