@@ -50,7 +50,7 @@ export type MapOptions = {
 };
 
 export interface SyncTree<K, V> extends Map<K, V> {
-  assign?(source: Map<K, V>): SyncTree<K, V>;
+  apply?(source: Map<K, V>): SyncTree<K, V>;
   child(key: any): SyncTree<K, V>;
   manifest?(): Map<string, string>;
   parent: SyncOrAsyncMap | null;
@@ -58,7 +58,7 @@ export interface SyncTree<K, V> extends Map<K, V> {
 }
 
 export interface AsyncTree<K, V> extends AsyncMap {
-  assign?(source: SyncOrAsyncMap): Promise<AsyncTree<K, V>>;
+  apply?(source: SyncOrAsyncMap): Promise<AsyncTree<K, V>>;
   child(key: any): Promise<AsyncTree<K, V>>;
   manifest?(): Promise<Map<string, any>>;
   parent: SyncOrAsyncMap | null;

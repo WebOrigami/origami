@@ -1,14 +1,14 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import ObjectMap from "../../src/drivers/ObjectMap.js";
-import assignChanges from "../../src/operations/assignChanges.js";
+import applyChanges from "../../src/operations/applyChanges.js";
 import plain from "../../src/operations/plain.js";
 
 /**
  * @typedef {import("../../index.ts").SyncTree} SyncTree
  */
 
-describe("assignChanges", () => {
+describe("applyChanges", () => {
   test("applies changes indicated in source and target manifests", async () => {
     /** @type {SyncTree} */
     const target = new ObjectMap(
@@ -41,7 +41,7 @@ describe("assignChanges", () => {
       { deep: true },
     );
 
-    await assignChanges(target, source);
+    await applyChanges(target, source);
 
     assert.deepEqual(await plain(target), {
       a: 1,

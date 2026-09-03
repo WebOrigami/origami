@@ -2,12 +2,12 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import ObjectMap from "../../src/drivers/ObjectMap.js";
 import SyncMap from "../../src/drivers/SyncMap.js";
-import assign from "../../src/operations/assign.js";
+import apply from "../../src/operations/apply.js";
 import deepArrays from "../../src/operations/deepArrays.js";
 import plain from "../../src/operations/plain.js";
 import SampleAsyncMap from "../SampleAsyncMap.js";
 
-describe("assign", () => {
+describe("apply", () => {
   test("can apply updates from an async tree to a sync tree", async () => {
     const target = new SyncMap([
       ["a", 1],
@@ -25,7 +25,7 @@ describe("assign", () => {
     ]);
 
     // Apply changes.
-    const result = await assign(target, source);
+    const result = await apply(target, source);
 
     assert.equal(result, target);
     assert.deepEqual(await deepArrays(target), [
@@ -45,17 +45,17 @@ describe("assign", () => {
 
   test("can apply updates to an array", async () => {
     const target = new ObjectMap(["a", "b", "c"]);
-    await assign(target, ["d", "e"]);
+    await apply(target, ["d", "e"]);
     assert.deepEqual(await plain(target), ["d", "e", "c"]);
   });
 
-  test("defers to the target's assign method if it exists", async () => {
+  test("defers to the target's apply method if it exists", async () => {
     let called = false;
     const target = new SyncMap();
-    /** @type {any} */ (target).assign = async (source) => {
+    /** @type {any} */ (target).apply = async (source) => {
       called = true;
     };
-    await assign(target, { a: 1 });
+    await apply(target, { a: 1 });
     assert.equal(called, true);
   });
 });

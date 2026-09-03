@@ -21,7 +21,7 @@ export default async function copy(source, target) {
     progressTree = targetTree;
   }
 
-  await Tree.assign(progressTree, sourceTree);
+  await Tree.apply(progressTree, sourceTree);
 
   if (stdout.isTTY) {
     process.stdout.clearLine(0);

@@ -1,6 +1,6 @@
 import SyncMap from "../drivers/SyncMap.js";
 import * as args from "../utilities/args.js";
-import assign from "./assign.js";
+import apply from "./apply.js";
 import changes from "./changes.js";
 import from from "./from.js";
 import isMap from "./isMap.js";
@@ -13,11 +13,11 @@ import mask from "./mask.js";
  * @param {Maplike} target
  * @param {Maplike} source
  */
-export default async function assignChanges(target, source) {
-  const targetTree = await args.map(target, "Tree.assignChanges", {
+export default async function applyChanges(target, source) {
+  const targetTree = await args.map(target, "Tree.applyChanges", {
     position: 1,
   });
-  const sourceTree = await args.map(source, "Tree.assignChanges", {
+  const sourceTree = await args.map(source, "Tree.applyChanges", {
     position: 2,
   });
 
@@ -39,10 +39,10 @@ export default async function assignChanges(target, source) {
       change === "added" || change === "changed" ? value : undefined,
   );
   if (updates) {
-    await assign(target, updates);
+    await apply(target, updates);
   }
 }
-assignChanges.needsState = true;
+applyChanges.needsState = true;
 
 // Like regular combine() but can return undefined values
 async function combine(maplike1, maplike2, fn) {

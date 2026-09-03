@@ -3,8 +3,9 @@
  */
 
 export { default as addNextPrevious } from "./operations/addNextPrevious.js";
+export { default as apply } from "./operations/apply.js";
+export { default as applyChanges } from "./operations/applyChanges.js";
 export { default as assign } from "./operations/assign.js";
-export { default as assignChanges } from "./operations/assignChanges.js";
 export { default as cache } from "./operations/cache.js";
 export { default as calendar } from "./operations/calendar.js";
 export { default as changes } from "./operations/changes.js";
