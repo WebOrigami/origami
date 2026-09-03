@@ -213,6 +213,14 @@ function compoundReference(key, globals, locals, location) {
     return null;
   }
 
+  // Special case: ignore compound refereneces that start with Dev globals. In
+  // shell mode we add the Dev members directly to the globals so that, e.g.,
+  // Dev.copy can be invoked with `copy`. But we don't want a reference like
+  // `copy.js` as a reference to the `js` property of the `copy` method.
+  if (globals.Dev && head in globals.Dev) {
+    return null;
+  }
+
   let result = headReference.result;
 
   // Process the remaining parts as property accesses
