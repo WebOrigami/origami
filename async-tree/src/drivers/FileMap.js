@@ -160,12 +160,6 @@ export default class FileMap extends SyncMap {
     const dirname = path.dirname(destPath);
     fs.mkdirSync(dirname, { recursive: true });
 
-    if (value === undefined) {
-      // Special case: undefined value is equivalent to delete()
-      this.delete(normalized);
-      return this;
-    }
-
     if (typeof value === "function") {
       // Invoke function; write out the result.
       value = value();
@@ -198,6 +192,10 @@ export default class FileMap extends SyncMap {
 
     if (packed) {
       writeFile(value, destPath);
+    } else if (packed == null) {
+      throw new TypeError(
+        `${this.constructor.name}: Cannot write a ${value === null ? "null" : "undefined"} value to a file.`,
+      );
     } else {
       const typeName = value?.constructor?.name ?? "unknown";
       throw new TypeError(
