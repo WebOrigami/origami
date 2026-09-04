@@ -15,11 +15,26 @@ describe("mapReduce", () => {
         },
         d: 4,
       },
-      { deep: true }
+      { deep: true },
     );
     const reduced = await mapReduce(tree, null, async (mapped) =>
-      String.prototype.concat(...(await values(mapped)))
+      String.prototype.concat(...(await values(mapped))),
     );
     assert.deepEqual(reduced, "1234");
+  });
+
+  test("can handle duplicate keys after mapping", async () => {
+    const map = {
+      get(key) {
+        return 1;
+      },
+
+      *keys() {
+        yield "a";
+        yield "a";
+      },
+    };
+    const reduced = await mapReduce(map, null, (result) => result);
+    assert.deepEqual([...reduced.entries()], [["a", 1]]);
   });
 });

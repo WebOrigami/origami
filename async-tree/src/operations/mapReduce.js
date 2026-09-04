@@ -31,7 +31,15 @@ export default async function mapReduce(source, valueFn, reduceFn) {
   const mapped = new Map();
   const promises = [];
   for await (const key of sourceMap.keys()) {
-    mapped.set(key, null); // placeholder
+    if (mapped.has(key)) {
+      // We've already seen this key, so map has a duplicate; skip.
+      continue;
+    }
+
+    // We set a placeholder for the key so that it keeps its position
+    // even before the actual value is resolved.
+    mapped.set(key, null);
+
     const promise = (async () => {
       const value = await sourceMap.get(key);
       return isMap(value)
@@ -40,6 +48,7 @@ export default async function mapReduce(source, valueFn, reduceFn) {
           ? valueFn(value, key, sourceMap)
           : value;
     })();
+
     promises.push(promise);
   }
 
@@ -48,9 +57,10 @@ export default async function mapReduce(source, valueFn, reduceFn) {
   const values = await Promise.all(promises);
 
   // Replace the placeholders with the actual values.
-  const keys = Array.from(mapped.keys());
-  for (let i = 0; i < values.length; i++) {
-    mapped.set(keys[i], values[i]);
+  let i = 0;
+  for (const key of mapped.keys()) {
+    mapped.set(key, values[i]);
+    i++;
   }
 
   // Reduce the values to a single result.
