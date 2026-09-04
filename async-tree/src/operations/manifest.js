@@ -1,6 +1,7 @@
 import * as trailingSlash from "../trailingSlash.js";
 import * as args from "../utilities/args.js";
 import hash from "../utilities/hash.js";
+import isMaplike from "./isMaplike.js";
 import map from "./map.js";
 import resolve from "./resolve.js";
 
@@ -12,7 +13,10 @@ import resolve from "./resolve.js";
  * @returns {Promise<Map<string, string>>}
  */
 export default async function manifest(maplike) {
-  const tree = await args.map(maplike, "Tree.manifest", { position: 1 });
+  const tree = await args.map(maplike, "Tree.manifest", {
+    deep: true,
+    position: 1,
+  });
 
   let result;
   if (/** @type {any} */ (tree).manifest) {
@@ -23,8 +27,8 @@ export default async function manifest(maplike) {
       deep: true,
       key: (value, key) => trailingSlash.remove(key),
       keyNeedsSourceValue: false,
-      value: (value, key) =>
-        value.manifest ? value.manifest() : hash(value, key),
+      value: async (value, key) =>
+        isMaplike(value) ? await manifest(value) : hash(value, key),
     });
   }
 
