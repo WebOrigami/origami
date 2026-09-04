@@ -217,7 +217,11 @@ function compoundReference(key, globals, locals, location) {
   // shell mode we add the Dev members directly to the globals so that, e.g.,
   // Dev.copy can be invoked with `copy`. But we don't want a reference like
   // `copy.js` as a reference to the `js` property of the `copy` method.
-  if (globals.Dev && head in globals.Dev) {
+  if (
+    headReference.type === REFERENCE_GLOBAL &&
+    globals.Dev &&
+    head in globals.Dev
+  ) {
     return null;
   }
 
