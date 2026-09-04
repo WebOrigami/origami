@@ -33,9 +33,11 @@ import manifest from "./manifest.js";
  */
 export default async function publish(source, target, options = {}) {
   const sourceTree = await args.map(source, "Tree.publish", {
+    deep: true,
     position: 1,
   });
   const targetTree = await args.map(target, "Tree.publish", {
+    deep: true,
     position: 2,
   });
 
@@ -78,7 +80,7 @@ export default async function publish(source, target, options = {}) {
       extendedSource.manifest = () => sourceManifest;
       const extendedTarget = Object.create(targetTree);
       extendedTarget.manifest = () => targetManifest;
-      changes = await applyChanges(extendedTarget, extendedSource);
+      changes = await applyChanges(extendedSource, extendedTarget);
     }
   }
 
