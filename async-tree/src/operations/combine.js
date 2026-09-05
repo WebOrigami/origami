@@ -1,4 +1,5 @@
 import SyncMap from "../drivers/SyncMap.js";
+import * as trailingSlash from "../trailingSlash.js";
 import * as args from "../utilities/args.js";
 import isUnpackable from "../utilities/isUnpackable.js";
 import isMap from "./isMap.js";
@@ -36,18 +37,23 @@ export default async function combine(maplike1, maplike2, combineFn) {
     position: 3,
   });
 
-  const keys1 = await keys(tree1);
-  const keys2 = await keys(tree2);
-  const combinedKeys = new Set([...keys1, ...keys2]);
-
   const result = new SyncMap();
   result.trailingSlashKeys =
     /** @type {any} */ (tree1).trailingSlashKeys &&
     /** @type {any} */ (tree2).trailingSlashKeys;
 
+  const keys1 = await keys(tree1);
+  const keys2 = await keys(tree2);
+  const normalized1 = keys1.map(trailingSlash.remove);
+  const normalized2 = keys2.map(trailingSlash.remove);
+  const combinedKeys = new Set([...normalized1, ...normalized2]);
+
   for (const key of combinedKeys) {
-    const value1 = await tree1.get(key);
-    const value2 = await tree2.get(key);
+    // Try the key as is; if not found try toggling a trailing slash
+    const value1 =
+      (await tree1.get(key)) ?? (await tree1.get(trailingSlash.toggle(key)));
+    const value2 =
+      (await tree2.get(key)) ?? (await tree2.get(trailingSlash.toggle(key)));
 
     const combination =
       isMap(value1) && isMap(value2)
