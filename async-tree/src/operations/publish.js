@@ -14,12 +14,12 @@ import manifest from "./manifest.js";
  *   `Tree.applyChanges()` to update the target tree with the changes in the
  *   source tree, comparing the manifests of both trees to determine what has
  *   changed.
- * - If a `publishedFiles` option is provided, this indicates the container and
- *   the key of a (typically local) manifest of the files published last time.
- *   This manifest will be compared to the current source manifest to determine
- *   what has changed. The changed files will be assigned to the target via
- *   `Tree.apply()`, and then the current source manifest will be written back
- *   to the same container and key provided.
+ * - If a `manifestContainer` and `manifest` options are provided, this
+ *   indicates the container and name of a (typically local) manifest of the
+ *   files published last time. This manifest will be compared to the current
+ *   source manifest to determine what has changed. The changed files will be
+ *   assigned to the target via `Tree.apply()`, and then the current source
+ *   manifest will be written back to the same container and name provided.
  * - Otherwise the existing contents of the target will be cleared with
  *   `clear()` before copying everything the source to the target with
  *   `Tree.apply()`.
@@ -29,7 +29,7 @@ import manifest from "./manifest.js";
  *
  * @param {Maplike} source
  * @param {Maplike} target
- * @param {{ publishedFiles?: { container?: SyncOrAsyncMap, key: string }}} options
+ * @param {{ manifestContainer?: SyncOrAsyncMap, manifest?: string }} options
  */
 export default async function publish(source, target, options = {}) {
   const sourceTree = await args.map(source, "Tree.publish", {
@@ -42,6 +42,7 @@ export default async function publish(source, target, options = {}) {
   });
 
   if (typeof (/** @type {any} */ (target).replaceWith) === "function") {
+    // Use target's replaceWith() method
     return /** @type {any} */ (target).replaceWith(sourceTree);
   }
 
@@ -51,26 +52,30 @@ export default async function publish(source, target, options = {}) {
     return applyChanges(targetTree, sourceTree);
   }
 
-  const publishedFiles = options.publishedFiles;
-  const publishedFilesContainer = publishedFiles?.container;
-  const publishedFilesKey = publishedFiles?.key;
+  // Explicit manifest options
+  const manifestContainer = options.manifestContainer;
+  const manifestKey = options.manifest;
+
   let sourceManifest;
   let targetManifest;
   let changes;
-  if (publishedFiles) {
-    // Use the published files manifest to determine what changed
-    if (!publishedFilesContainer) {
-      throw new Error("Missing `container` property for publishedFiles option");
-    }
-    if (!publishedFilesKey) {
-      throw new Error("Missing `key` property for publishedFiles option");
+  if (manifestKey) {
+    // Use the indicated manifest to determine what changed.
+
+    if (!manifestContainer) {
+      throw new Error("Missing `manifestContainer` for manifest option");
     }
 
-    // Read in published files and use it as the target manifest. If we don't
-    // find an existing manifest, we'll fall through to do a full copy.
-    targetManifest = await publishedFilesContainer.get(publishedFilesKey);
+    // Read in the manifest to use as the target manifest. If we don't find an
+    // existing manifest, we'll fall through to do a full copy.
+    targetManifest = await manifestContainer.get(manifestKey);
     if (isUnpackable(targetManifest)) {
-      targetManifest = await targetManifest.unpack();
+      try {
+        targetManifest = await targetManifest.unpack();
+      } catch (error) {
+        // Treat unpacking errors as a missing manifest
+        targetManifest = null;
+      }
     }
 
     // Extend the source and target to use our copies of those manifests
@@ -89,13 +94,9 @@ export default async function publish(source, target, options = {}) {
     await apply(sourceTree, targetTree);
   }
 
-  if (
-    (!targetManifest || changes) &&
-    sourceManifest &&
-    publishedFilesContainer
-  ) {
+  if ((!targetManifest || changes) && sourceManifest && manifestContainer) {
     // Write out source manifest as the previous manifest
     const manifestJson = await json(sourceManifest);
-    await publishedFilesContainer.set(publishedFilesKey, manifestJson);
+    await manifestContainer.set(manifestKey, manifestJson);
   }
 }

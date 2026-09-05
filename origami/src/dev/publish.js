@@ -4,14 +4,14 @@ import showProgress from "./showProgress.js";
 /**
  * Call `Tree.publish` while showing publish progress in the console.
  *
- * If a `publishedFiles` option is provided without a `container`, the parent
+ * If a `manifest` option is provided without a `manifestContainer`, the parent
  * folder will be used as the container for the published files manifest.
  *
  * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  *
  * @param {Maplike} source
  * @param {Maplike} target
- * @param {{ publishedFiles?: { container?: string, key: string }}} options
+ * @param {{ manifest?: string, manifestContainer?: string }} options
  * @param {any} state
  */
 export default async function publish(source, target, options, state) {
@@ -31,12 +31,10 @@ export default async function publish(source, target, options, state) {
     state ??= {};
   }
 
-  const publishedFiles = options.publishedFiles;
-  if (publishedFiles && !publishedFiles.container) {
-    publishedFiles.container = state.parent;
+  const progressOptions = { ...options };
+  if (options.manifest && !options.manifestContainer) {
+    progressOptions.manifestContainer = state.parent;
   }
-
-  const progressOptions = { ...options, publishedFiles };
 
   return await showProgress(
     1, // wrap writes to the target argument with progress
