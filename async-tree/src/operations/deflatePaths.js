@@ -18,7 +18,12 @@ export default async function deflatePaths(maplike, options = {}) {
 
   return Object.assign(new AsyncMap(), {
     async get(path) {
-      return traversePath(tree, path);
+      // Subtract the base path from the beginning of the path if it exists
+      if (options.base && path.startsWith(options.base)) {
+        path = path.slice(options.base.length);
+      }
+      const value = await traversePath(tree, path);
+      return value;
     },
 
     async *keys() {

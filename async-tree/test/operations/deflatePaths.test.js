@@ -21,4 +21,22 @@ describe("deflatePaths", () => {
       "foo/quux.json": 789,
     });
   });
+
+  test("accepts an optional base path", async () => {
+    const maplike = {
+      foo: {
+        bar: {
+          "baz.json": 123,
+          "qux.json": 456,
+        },
+        "quux.json": 789,
+      },
+    };
+    const result = await deflatePaths(maplike, { base: "https://example.com" });
+    assert.deepStrictEqual(await plain(result), {
+      "https://example.com/foo/bar/baz.json": 123,
+      "https://example.com/foo/bar/qux.json": 456,
+      "https://example.com/foo/quux.json": 789,
+    });
+  });
 });
