@@ -61,7 +61,13 @@ export default async function combine(maplike1, maplike2, combineFn) {
         : await fn(value1, value2);
 
     if (combination !== undefined) {
-      result.set(key, combination);
+      // Use a trailing slash on the key if either of the original trees had it.
+      const withSlash = trailingSlash.add(key);
+      const setKey =
+        keys1.includes(withSlash) || keys2.includes(withSlash)
+          ? withSlash
+          : key;
+      result.set(setKey, combination);
     }
   }
 

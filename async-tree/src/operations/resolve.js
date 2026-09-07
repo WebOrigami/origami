@@ -9,6 +9,6 @@ import reduce from "./reduce.js";
  * @param {Maplike} source
  */
 export default async function resolve(source) {
-  const tree = await args.map(source, "Tree.resolve");
+  const tree = await args.map(source, "Tree.resolve", { deep: true });
   return reduce(tree, (mapped) => mapped);
 }

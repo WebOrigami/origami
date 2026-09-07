@@ -13,10 +13,7 @@ import resolve from "./resolve.js";
  * @returns {Promise<Map<string, string>>}
  */
 export default async function manifest(maplike) {
-  const tree = await args.map(maplike, "Tree.manifest", {
-    deep: true,
-    position: 1,
-  });
+  const tree = await args.map(maplike, "Tree.manifest", { deep: true });
 
   let result;
   if (/** @type {any} */ (tree).manifest) {

@@ -1,5 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import ObjectMap from "../../src/drivers/ObjectMap.js";
 import changes from "../../src/operations/changes.js";
 import plain from "../../src/operations/plain.js";
 
@@ -41,34 +42,35 @@ describe("changes", () => {
     assert.strictEqual(result, undefined);
   });
 
-  // test("uses manifests if both trees have them", async () => {
-  //   const oldTree = new ObjectMap({});
-  //   /** @type {any} */ (oldTree).manifest = () => ({
-  //     a: "a hash",
-  //     sub: {
-  //       b: "b hash",
-  //       c: "c hash",
-  //     },
-  //   });
+  test("uses manifests if both trees have them", async () => {
+    const oldTree = new ObjectMap({});
+    /** @type {any} */ (oldTree).manifest = () => ({
+      a: "a hash",
+      sub: {
+        b: "b hash",
+        c: "c hash",
+      },
+    });
 
-  //   const newTree = new ObjectMap({});
-  //   /** @type {any} */ (newTree).manifest = () => ({
-  //     a: "a hash",
-  //     sub: {
-  //       c: "c hash new",
-  //       d: "d hash",
-  //     },
-  //     e: "e hash",
-  //   });
+    const newTree = new ObjectMap({});
+    /** @type {any} */ (newTree).manifest = () => ({
+      a: "a hash",
+      e: "e hash",
+      sub: {
+        c: "c hash new",
+        d: "d hash",
+      },
+    });
 
-  //   const result = await changes(oldTree, newTree);
-  //   assert.deepEqual(result, {
-  //     "sub/": {
-  //       b: "deleted",
-  //       c: "changed",
-  //       d: "added",
-  //     },
-  //     e: "added",
-  //   });
-  // });
+    const result = await changes(oldTree, newTree);
+    assert(result);
+    assert.deepEqual(await plain(result), {
+      e: "added",
+      sub: {
+        b: "deleted",
+        c: "changed",
+        d: "added",
+      },
+    });
+  });
 });
