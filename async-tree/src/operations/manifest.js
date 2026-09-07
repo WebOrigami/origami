@@ -27,8 +27,18 @@ export default async function manifest(maplike) {
       deep: true,
       key: (value, key) => trailingSlash.remove(key),
       keyNeedsSourceValue: false,
-      value: async (value, key) =>
-        isMaplike(value) ? await manifest(value) : hash(value, key),
+      value: async (value, key) => {
+        if (isMaplike(value)) {
+          return await manifest(value);
+        }
+        let packed;
+        try {
+          packed = value;
+        } catch (error) {
+          throw new Error(`Couldn't convert to buffer: ${key}`);
+        }
+        return hash(packed);
+      },
     });
   }
 

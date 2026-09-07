@@ -4,10 +4,9 @@ import toString from "./toString.js";
  * Converts a value to a Uint8Array, e.g., for transmission.
  *
  * @param {any} value
- * @param {string} [descriptor]
  * @returns {Uint8Array}
  */
-export default function pack(value, descriptor) {
+export default function pack(value) {
   if (typeof value === "string") {
     return new TextEncoder().encode(value);
   } else if (value instanceof String) {
@@ -21,10 +20,7 @@ export default function pack(value, descriptor) {
     if (string !== null) {
       return new TextEncoder().encode(string);
     } else {
-      const message = descriptor
-        ? `Couldn't convert to buffer: ${descriptor}`
-        : "Couldn't convert to buffer";
-      throw new TypeError(message);
+      throw new TypeError("Couldn't convert to buffer");
     }
   }
 }
