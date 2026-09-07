@@ -1,4 +1,4 @@
-import { toString } from "@weborigami/async-tree";
+import { pack } from "@weborigami/async-tree";
 import { createHash } from "node:crypto";
 
 /**
@@ -10,17 +10,7 @@ import { createHash } from "node:crypto";
  * @param {Uint8Array|Stringlike} data
  */
 export default function hashBytes(data) {
-  let bytes;
-  if (data instanceof Uint8Array) {
-    bytes = data;
-  } else {
-    const text = toString(data);
-    if (!text) {
-      throw new TypeError("Data must be a string or Uint8Array");
-    }
-    bytes = new TextEncoder().encode(text);
-  }
-
-  const hash = createHash("sha256").update(bytes).digest();
+  const buffer = pack(data);
+  const hash = createHash("sha256").update(buffer).digest();
   return hash;
 }
