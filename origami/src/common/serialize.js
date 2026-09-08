@@ -5,7 +5,12 @@
  * @typedef {import("@weborigami/async-tree").SyncOrAsyncMap} SyncOrAsyncMap
  */
 
-import { castArraylike, toPlainValue } from "@weborigami/async-tree";
+import {
+  castArraylike,
+  SyncMap,
+  toPlainValue,
+  trailingSlash,
+} from "@weborigami/async-tree";
 import * as YAMLModule from "yaml";
 
 // The "yaml" package doesn't seem to provide a default export that the browser can
@@ -22,8 +27,15 @@ export function parseYaml(text) {
 }
 
 function reduceToMap(map) {
-  // createFn parameter returns as map as is
-  return castArraylike(map, (result) => result);
+  // Remove trailing slashes in keys.
+  const normalized = new SyncMap();
+  for (const [key, value] of map.entries()) {
+    const normalizedKey = trailingSlash.remove(key);
+    normalized.set(normalizedKey, value);
+  }
+
+  // createFn parameter returns a map as is
+  return castArraylike(normalized, (result) => result);
 }
 
 /**
