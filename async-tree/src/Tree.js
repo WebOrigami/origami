@@ -11,6 +11,7 @@ export { default as calendar } from "./operations/calendar.js";
 export { default as changes } from "./operations/changes.js";
 export { default as child } from "./operations/child.js";
 export { default as clear } from "./operations/clear.js";
+export { default as clone } from "./operations/clone.js";
 export { default as combine } from "./operations/combine.js";
 export { default as concat } from "./operations/concat.js";
 export { default as constant } from "./operations/constant.js";
