@@ -190,9 +190,9 @@ Tree:
     addNextPrevious:
       args: (map)
       description: Add next/previous fields to the map's values
-    assign:
+    apply:
       args: (target, source)
-      description: Apply key/values from source to target
+      description: Copy all key/values from source to target
     cache:
       args: (tree, [cache])
       description: Caches values from the tree
