@@ -20,9 +20,11 @@ import mask from "./mask.js";
  */
 export default async function applyChanges(source, target) {
   const sourceTree = await args.map(source, "Tree.applyChanges", {
+    deep: true,
     position: 1,
   });
   const targetTree = await args.map(target, "Tree.applyChanges", {
+    deep: true,
     position: 2,
   });
 

@@ -191,8 +191,11 @@ Tree:
       args: (map)
       description: Add next/previous fields to the map's values
     apply:
-      args: (target, source)
+      args: (source, target)
       description: Copy all key/values from source to target
+    applyChanges:
+      args: (source, target)
+      description: Compare source to target and apply any changes to target
     cache:
       args: (tree, [cache])
       description: Caches values from the tree
