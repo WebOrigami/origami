@@ -15,12 +15,13 @@ import keys from "./keys.js";
  * result is itself `undefined`.
  *
  * @typedef {import("../../index.ts").Maplike} Maplike
+ * @typedef {{ compare: function, includeUndefined?: boolean }} CombineOptions
  *
  * @param {Maplike} maplike1
  * @param {Maplike} maplike2
- * @param {function} combineFn
+ * @param {function|CombineOptions} options
  */
-export default async function combine(maplike1, maplike2, combineFn) {
+export default async function combine(maplike1, maplike2, options) {
   const tree1 = await args.map(maplike1, "Tree.combine", {
     deep: true,
     position: 1,
@@ -30,12 +31,22 @@ export default async function combine(maplike1, maplike2, combineFn) {
     position: 2,
   });
 
-  if (isUnpackable(combineFn)) {
-    combineFn = await combineFn.unpack();
+  if (isUnpackable(options)) {
+    options = await options.unpack();
   }
-  const fn = args.fn(combineFn, "Tree.combine", {
-    position: 3,
-  });
+
+  let compareFn;
+  let includeUndefined;
+  if (typeof options === "function") {
+    compareFn = options;
+    includeUndefined = false;
+  } else if (options && typeof options === "object") {
+    compareFn = options.compare;
+    includeUndefined = options.includeUndefined ?? false;
+  }
+  if (isUnpackable(compareFn)) {
+    compareFn = await compareFn.unpack();
+  }
 
   const result = new SyncMap();
   result.trailingSlashKeys =
@@ -57,10 +68,14 @@ export default async function combine(maplike1, maplike2, combineFn) {
 
     const combination =
       isMap(value1) && isMap(value2)
-        ? await combine(value1, value2, fn)
-        : await fn(value1, value2);
+        ? await combine(value1, value2, {
+            compare: compareFn,
+            includeUndefined,
+          })
+        : await compareFn(value1, value2, key);
 
-    if (combination !== undefined) {
+    const include = includeUndefined || combination !== undefined;
+    if (include) {
       // Use a trailing slash on the key if either of the original trees had it.
       const withSlash = trailingSlash.add(key);
       const setKey =

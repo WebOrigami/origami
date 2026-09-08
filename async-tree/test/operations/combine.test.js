@@ -19,7 +19,12 @@ describe("combine", () => {
       },
       e: "new",
     };
-    const combined = await combine(oldTree, newTree, compareFn);
+
+    function compare(a, b) {
+      return [a, b];
+    }
+
+    const combined = await combine(oldTree, newTree, compare);
     assert(combined);
     assert.deepEqual(await plain(combined), {
       a: {
@@ -30,8 +35,32 @@ describe("combine", () => {
       e: [undefined, "new"],
     });
   });
-});
 
-function compareFn(a, b) {
-  return [a, b];
-}
+  test("includeUndefined", async () => {
+    const oldTree = {
+      a: 1,
+      b: 2,
+      c: undefined,
+    };
+    const newTree = {
+      a: 10,
+      b: undefined,
+      c: 30,
+    };
+
+    function compare(a, b) {
+      return a !== undefined && b !== undefined ? a + b : undefined;
+    }
+
+    const combined = await combine(oldTree, newTree, {
+      compare,
+      includeUndefined: true,
+    });
+    assert(combined);
+    assert.deepEqual(await plain(combined), {
+      a: 11,
+      b: undefined,
+      c: undefined,
+    });
+  });
+});
