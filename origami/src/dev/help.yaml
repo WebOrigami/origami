@@ -9,7 +9,7 @@ Dev:
       description: Break into the JavaScript debugger, then return arg
     changes:
       args: (old, new)
-      description: Return a tree of changes
+      description: Return the differences between the old and new trees
     clear:
       args: (tree)
       description: Remove all values from the tree (alias of Tree.clear)
@@ -32,8 +32,11 @@ Dev:
       args: (tree)
       description: The keys of the tree (alias of Tree.keys)
     log:
-      args: (a, message)
-      description: Log message to the console and return a
+      args: (x, [message])
+      description: Log a message to the console and return x
+    publish:
+      args: (source, target, [options])
+      description: Efficiently update the target tree to match the source
     serve:
       args: (tree, port)
       description: Start a web server for the tree
@@ -208,6 +211,9 @@ Tree:
     clear:
       args: (map)
       description: Remove all values from the map
+    changes:
+      args: (old, new)
+      description: Return the differences between the old and new trees
     combine:
       args: (tree1, tree2, combineFn)
       description: Pairwise application of combineFn to the trees' values
