@@ -49,7 +49,7 @@ export default async function publish(source, target, options = {}) {
   const targetHasManifest =
     typeof (/** @type {any} */ (target).manifest) === "function";
   if (targetHasManifest) {
-    return applyChanges(targetTree, sourceTree);
+    return applyChanges(sourceTree, targetTree);
   }
 
   // Explicit manifest options
