@@ -67,6 +67,8 @@ function wrapWithProgress(target, counts) {
     },
   });
 
+  progressTree.trailingSlashKeys = target.trailingSlashKeys;
+
   if (typeof target.child === "function") {
     // @ts-ignore
     progressTree.child = async function (key) {
@@ -84,6 +86,10 @@ function wrapWithProgress(target, counts) {
   if (typeof target.apply === "function") {
     // @ts-ignore
     progressTree.apply = target.apply.bind(target);
+  }
+  if (typeof target.manifest === "function") {
+    // @ts-ignore
+    progressTree.manifest = target.manifest.bind(target);
   }
   if (typeof target.replaceWith === "function") {
     // @ts-ignore
