@@ -301,6 +301,9 @@ Tree:
     keys:
       args: (map)
       description: The keys of the map
+    manifest:
+      args: (tree)
+      description: Nested structure of all hash values in the tree
     map:
       args: (source, options)
       description: Create a new map by transforming keys and/or values
