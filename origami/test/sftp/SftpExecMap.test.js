@@ -11,7 +11,7 @@ const fixturePath = new URL("fixture", import.meta.url).pathname;
 const fixtureFiles = new FileMap(fixturePath);
 const fixture = await sftp(
   {
-    exec: true,
+    shellAccess: true,
     host: "localhost",
     path: fixturePath,
   },

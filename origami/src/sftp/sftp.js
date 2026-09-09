@@ -8,20 +8,13 @@ import SftpMap from "./SftpMap.js";
  *
  * @typedef {import("@weborigami/async-tree").AsyncMap} AsyncMap
  *
- * @param {{ agent?: string, exec?: boolean, host: string, passphrase?: string, password?: string, path?: string, port?: number, privateKey?: string, username?: string }} options
+ * @param {{ agent?: string, host: string, passphrase?: string, password?: string, path?: string, port?: number, privateKey?: string, shellAccess?: boolean, username?: string, userName?: string }} options
  * @returns {Promise<SftpMap>}
  */
 export default async function sftp(options, state = {}) {
-  const {
-    agent,
-    exec,
-    host,
-    passphrase,
-    password,
-    port,
-    privateKey,
-    username,
-  } = options;
+  const { agent, host, passphrase, password, port, privateKey, shellAccess } =
+    options;
+  const username = options.username ?? options.userName; // allow camelCase
   const path = options.path;
 
   const client = new SftpClient({
@@ -34,14 +27,14 @@ export default async function sftp(options, state = {}) {
     username,
   });
 
-  const classFn = exec ? SftpExecMap : SftpMap;
+  const classFn = shellAccess ? SftpExecMap : SftpMap;
   const tree = new (HandleExtensionsTransform(classFn))({
     client,
     path,
   });
 
   // Set globals for extension handlers
-  tree.globals = state?.globals || (await coreGlobals());
+  /** @type {any} */ (tree).globals = state?.globals || (await coreGlobals());
 
   return tree;
 }
