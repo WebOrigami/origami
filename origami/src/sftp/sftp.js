@@ -1,3 +1,4 @@
+import { args, Tree } from "@weborigami/async-tree";
 import { coreGlobals, HandleExtensionsTransform } from "@weborigami/language";
 import SftpClient from "./SftpClient.js";
 import SftpExecMap from "./SftpExecMap.js";
@@ -12,10 +13,12 @@ import SftpMap from "./SftpMap.js";
  * @returns {Promise<SftpMap>}
  */
 export default async function sftp(options, state = {}) {
+  const optionsMap = await args.map(options, "Origami.sftp");
+  const optionsPlain = await Tree.plain(optionsMap);
   const { agent, host, passphrase, password, port, privateKey, shellAccess } =
-    options;
-  const username = options.username ?? options.userName; // allow camelCase
-  const path = options.path;
+    optionsPlain;
+  const username = optionsPlain.username ?? optionsPlain.userName; // allow camelCase
+  const path = optionsPlain.path ?? ".";
 
   const client = new SftpClient({
     agent,
