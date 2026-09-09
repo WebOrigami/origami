@@ -1,5 +1,6 @@
 export { extension, hash } from "@weborigami/async-tree";
 export { default as help } from "../dev/help.js"; // Alias
+export { default as sftp } from "../sftp/sftp.js";
 export { default as basename } from "./basename.js";
 export { default as csv } from "./csv.js";
 export { default as document } from "./document.js";

@@ -131,6 +131,9 @@ Origami:
     rss:
       args: (feed)
       description: Transforms a JSON Feed tree to RSS XML
+    sftp:
+      args: (options)
+      description: Represent files on an SFTP server as a tree
     shell:
       args: (text)
       description: Run the text as a shell command, return the output
