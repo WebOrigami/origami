@@ -38,7 +38,7 @@ export default async function mask(aMaplike, bMaplike) {
         ? key
         : trailingSlash.remove(key);
       let aValue = await aMap.get(normalized);
-      if (isMaplike(aValue)) {
+      if (isMaplike(aValue) && isMaplike(bValue)) {
         // Filter the subtree
         return mask(aValue, bValue);
       } else {
