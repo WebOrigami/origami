@@ -140,7 +140,7 @@ export default class SftpClient {
         chunks.push(chunk);
       }
       return Buffer.concat(chunks);
-    } catch (error) {
+    } catch (/** @type {any} */ error) {
       if (error.code === 2) {
         // No such file or directory
         return undefined;
@@ -160,7 +160,7 @@ export default class SftpClient {
 
       try {
         await this.callSftp("mkdir", current);
-      } catch (error) {
+      } catch (/** @type {any} */ error) {
         if (error.code === 4) {
           // SSH_FX_FAILURE: directory already exists; ignore
         } else {

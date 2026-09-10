@@ -52,7 +52,7 @@ export default class SftpMap extends AsyncMap {
       // Trailing slash: delete the directory
       try {
         await this.client.rmdir(valuePath, true);
-      } catch (error) {
+      } catch (/** @type {any} */ error) {
         if (error.code === 2) {
           // No such file: nothing to delete
           return false;
@@ -64,7 +64,7 @@ export default class SftpMap extends AsyncMap {
 
     try {
       await this.client.unlink(valuePath);
-    } catch (error) {
+    } catch (/** @type {any} */ error) {
       const { code } = error;
       if (code === 2) {
         // No such file: nothing to delete
@@ -96,7 +96,7 @@ export default class SftpMap extends AsyncMap {
       // File
       try {
         value = await this.client.get(valuePath);
-      } catch (error) {
+      } catch (/** @type {any} */ error) {
         const { code } = error;
         if (code === 2) {
           // File not found
@@ -159,6 +159,8 @@ export default class SftpMap extends AsyncMap {
       value = Buffer.from(value);
     }
     await this.client.put(value, valuePath);
+
+    return this;
   }
 
   trailingSlashKeys = true;

@@ -11,6 +11,7 @@ describe("clone", () => {
       ["b", 2],
       [
         "sub",
+        // @ts-ignore
         new Map([
           ["c", 3],
           ["d", 4],

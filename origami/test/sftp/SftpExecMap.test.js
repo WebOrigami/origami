@@ -2,6 +2,7 @@ import { FileMap } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import sftp from "../../src/sftp/sftp.js";
+import SftpExecMap from "../../src/sftp/SftpExecMap.js";
 
 const parentUrl = new URL(".", import.meta.url);
 const parent = new FileMap(parentUrl);
@@ -70,6 +71,7 @@ describe("SftpExecMap", () => {
   });
 
   test("manifest", async () => {
+    assert(fixture instanceof SftpExecMap);
     const manifest = await fixture.manifest();
     const greetingsHash = manifest.get("greetings.yaml");
     assert.equal(greetingsHash, "7227b6f0c50442a4396a230665f505568642094f");
