@@ -1,24 +1,42 @@
-import { args, Tree } from "@weborigami/async-tree";
+import { args } from "@weborigami/async-tree";
 import { coreGlobals, HandleExtensionsTransform } from "@weborigami/language";
 import SftpClient from "./SftpClient.js";
 import SftpExecMap from "./SftpExecMap.js";
 import SftpMap from "./SftpMap.js";
 
 /**
- * Return an AsyncMap for the files in a remote SFTP server.
+ * Return an AsyncMap for files on an SFTP server.
  *
  * @typedef {import("@weborigami/async-tree").AsyncMap} AsyncMap
  *
- * @param {{ agent?: string, host: string, passphrase?: string, password?: string, path?: string, port?: number, privateKey?: string, shellAccess?: boolean, username?: string, userName?: string }} options
+ * @param {{ agent?: string, host: string, passphrase?: string, password?: string, path?: string, port?: number, privateKey?: string, shellAccess?: boolean, username?: string }} options
+ * @param {*} state
  * @returns {Promise<SftpMap>}
  */
-export default async function sftp(options, state = {}) {
-  const optionsMap = await args.map(options, "Origami.sftp");
-  const optionsPlain = await Tree.plain(optionsMap);
-  const { agent, host, passphrase, password, port, privateKey, shellAccess } =
-    optionsPlain;
-  const username = optionsPlain.username ?? optionsPlain.userName; // allow camelCase
-  const path = optionsPlain.path ?? ".";
+export default async function sftp(options, state) {
+  let {
+    agent,
+    host,
+    passphrase,
+    password,
+    path,
+    port,
+    privateKey,
+    shellAccess,
+    username,
+  } = await args.options(options, "Origami.sftp", {
+    agent: { required: false },
+    host: {},
+    passphrase: { required: false },
+    password: { required: false },
+    path: { required: false },
+    port: { required: false, type: "number" },
+    privateKey: { required: false },
+    shellAccess: { required: false, type: "boolean" },
+    username: { required: false },
+  });
+
+  path = path ?? ".";
 
   const client = new SftpClient({
     agent,

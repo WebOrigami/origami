@@ -1,4 +1,5 @@
 import from from "../operations/from.js";
+import plain from "../operations/plain.js";
 import isUnpackable from "./isUnpackable.js";
 import toFunction from "./toFunction.js";
 import toString from "./toString.js";
@@ -90,6 +91,61 @@ export function number(arg, operation, options = {}) {
     throw error;
   }
   return arg;
+}
+
+/**
+ * Check an option.
+ */
+export function option(object, optionKey, operation, options = {}) {
+  const value = object[optionKey];
+
+  const required = options.required ?? true;
+  if (value == null) {
+    if (required) {
+      /** @type {any} */
+      const error = new TypeError(
+        `${operation}: Missing required option "${optionKey}".`,
+      );
+      error.position = options.position ?? 1;
+      throw error;
+    }
+    return;
+  }
+
+  const expectedType = options.type ?? "string";
+  if (typeof value !== expectedType) {
+    /** @type {any} */
+    const error = new TypeError(
+      `${operation}: option "${optionKey}" must be a ${expectedType}.`,
+    );
+    error.position = options.position ?? 1;
+    throw error;
+  }
+
+  return value;
+}
+
+/**
+ * Check an options dictionary
+ *
+ * @param {Maplike} maplike
+ * @param {string} operation
+ * @param {Record<string, { type?: string, required?: boolean }>} schema
+ */
+export async function options(maplike, operation, schema) {
+  const optionsMap = await map(maplike, operation);
+  const optionsPlain = await plain(optionsMap);
+
+  const result = {};
+  for (const [optionKey, optionSchema] of Object.entries(schema)) {
+    result[optionKey] = option(
+      optionsPlain,
+      optionKey,
+      operation,
+      optionSchema,
+    );
+  }
+  return result;
 }
 
 /**
