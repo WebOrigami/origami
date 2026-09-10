@@ -50,14 +50,13 @@ export default class SftpClient {
       username,
     };
 
-    this.client = new SshClient();
+    this.client = null;
     this.sftp = null;
 
     this.connectionCount = 0;
     this.disconnectTimeout = null;
     this.connectionPromise = null;
     this.endPromise = null;
-    this.pending = Promise.resolve();
   }
 
   async callSftp(fnName, ...args) {
@@ -88,18 +87,38 @@ export default class SftpClient {
         await this.endPromise;
       }
       this.connectionPromise = new Promise((resolve, reject) => {
-        this.client.once("ready", () => {
-          this.client.sftp((error, sftp) => {
+        const client = new SshClient();
+        this.client = client;
+
+        client.once("ready", () => {
+          client.sftp((error, sftp) => {
             if (error) {
+              this.connectionPromise = null;
+              this.client = null;
               reject(error);
             } else {
               this.sftp = sftp;
+              sftp.on("error", () => {});
               resolve(sftp);
             }
           });
         });
-        this.client.once("error", reject);
-        this.client.connect(this.options);
+
+        client.once("error", (error) => {
+          this.connectionPromise = null;
+          this.client = null;
+          reject(error);
+        });
+
+        client.on("close", () => {
+          this.sftp = null;
+          this.client = null;
+          this.connectionPromise = null;
+        });
+
+        client.on("error", () => {});
+
+        client.connect(this.options);
       });
     }
     return this.connectionPromise;
@@ -110,10 +129,11 @@ export default class SftpClient {
     try {
       return await new Promise((resolve, reject) => {
         // Prepend a cd command so it runs in the appropriate directory
-        const fullCommand = `cd ${path}\n${command}`;
+        const fullCommand = path ? `cd ${path}\n${command}` : command;
         this.client.exec(fullCommand, (error, stream) => {
           if (error) {
             reject(error);
+            return;
           }
 
           const chunks = [];
@@ -125,6 +145,9 @@ export default class SftpClient {
             const text = new TextDecoder().decode(buffer);
             resolve(text);
           });
+          stream.on("error", (err) => {
+            reject(err);
+          });
         });
       });
     } finally {
@@ -133,21 +156,14 @@ export default class SftpClient {
   }
 
   async get(path) {
-    await this.connect();
     try {
-      const chunks = [];
-      for await (const chunk of this.sftp.createReadStream(path)) {
-        chunks.push(chunk);
-      }
-      return Buffer.concat(chunks);
+      return await this.callSftp("readFile", path);
     } catch (/** @type {any} */ error) {
       if (error.code === 2) {
         // No such file or directory
         return undefined;
       }
       throw error;
-    } finally {
-      this.scheduleDisconnect();
     }
   }
 
@@ -171,17 +187,7 @@ export default class SftpClient {
   }
 
   async put(value, path) {
-    await this.connect();
-    try {
-      const stream = this.sftp.createWriteStream(path);
-      await new Promise((resolve, reject) => {
-        stream.on("error", reject);
-        stream.on("close", resolve);
-        stream.end(value);
-      });
-    } finally {
-      this.scheduleDisconnect();
-    }
+    return this.callSftp("writeFile", path, value);
   }
 
   async readdir(path) {
@@ -216,17 +222,24 @@ export default class SftpClient {
         this.connectionPromise &&
         !this.endPromise
       ) {
-        this.endPromise = new Promise((resolve) => {
-          this.client.once("close", resolve);
-          this.client.end();
-        });
-        await this.endPromise;
+        const client = this.client;
+        if (client) {
+          this.endPromise = new Promise((resolve) => {
+            client.once("close", resolve);
+            client.end();
+          });
+          await this.endPromise;
+        }
         this.sftp = null;
+        this.client = null;
         this.connectionPromise = null;
         this.endPromise = null;
       }
       this.disconnectTimeout = null;
-    });
+    }, 100);
+    if (this.disconnectTimeout.unref) {
+      this.disconnectTimeout.unref();
+    }
   }
 
   async unlink(path) {
