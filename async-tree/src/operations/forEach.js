@@ -7,20 +7,21 @@ import isMap from "./isMap.js";
  *
  * @param {Maplike} maplike
  * @param {Function} callbackFn
- * @param {{ deep: boolean }} [options]
+ * @param {{ deep?: boolean }} [options]
  */
-export default async function forEach(maplike, callbackFn, options) {
-  const map = await args.map(maplike, "Tree.forEach", options);
-  if (typeof callbackFn !== "function") {
-    throw new TypeError("Tree.forEach: Expected a function argument.");
-  }
+export default async function forEach(maplike, callbackFn, options = {}) {
+  const { deep } = await args.options(options, "Tree.forEach", {
+    deep: { required: false, type: "boolean" },
+  });
+  const map = await args.map(maplike, "Tree.forEach", { deep: deep ?? true });
+  const fn = args.fn(callbackFn, "Tree.forEach");
 
   for await (const key of map.keys()) {
     const value = await map.get(key);
     if (isMap(value) && options?.deep) {
-      await forEach(value, callbackFn, options);
+      await forEach(value, fn, options);
     } else {
-      await callbackFn(value, key, map);
+      await fn(value, key, map);
     }
   }
 }

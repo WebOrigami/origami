@@ -15,19 +15,27 @@ import traversePath from "./traversePath.js";
  */
 export default async function deflatePaths(maplike, options = {}) {
   const tree = await args.map(maplike, "Tree.deflatePaths", { deep: true });
+  const { assumeSlashKeys, base } = await args.options(
+    options,
+    "Tree.deflatePaths",
+    {
+      assumeSlashKeys: { required: false, type: "boolean" },
+      base: { required: false, type: "string" },
+    },
+  );
 
   return Object.assign(new AsyncMap(), {
     async get(path) {
       // Subtract the base path from the beginning of the path if it exists
-      if (options.base && path.startsWith(options.base)) {
-        path = path.slice(options.base.length);
+      if (base && path.startsWith(base)) {
+        path = path.slice(base.length);
       }
       const value = await traversePath(tree, path);
       return value;
     },
 
     async *keys() {
-      yield* deepPathsIterator(tree, options);
+      yield* deepPathsIterator(tree, { assumeSlashKeys, base });
     },
   });
 }

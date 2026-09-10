@@ -13,8 +13,13 @@ import deepPathsIterator from "./deepPathsIterator.js";
  */
 export default async function paths(maplike, options = {}) {
   const tree = await args.map(maplike, "Tree.paths", { deep: true });
+  const { assumeSlashKeys, base } = await args.options(options, "Tree.paths", {
+    assumeSlashKeys: { required: false, type: "boolean" },
+    base: { required: false, type: "string" },
+  });
+
   const result = [];
-  for await (const path of deepPathsIterator(tree, options)) {
+  for await (const path of deepPathsIterator(tree, { assumeSlashKeys, base })) {
     result.push(path);
   }
   return result;
