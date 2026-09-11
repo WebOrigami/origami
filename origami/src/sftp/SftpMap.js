@@ -1,6 +1,8 @@
 import {
   AsyncMap,
+  handleDotKey,
   naturalOrder,
+  resolveChildPath,
   setParent,
   trailingSlash,
 } from "@weborigami/async-tree";
@@ -19,7 +21,7 @@ export default class SftpMap extends AsyncMap {
   }
 
   async child(key) {
-    const valuePath = this.pathForKey(key);
+    const childPath = resolveChildPath(this.path, key);
 
     const existingChild = await this.get(key);
     if (existingChild) {
@@ -32,13 +34,13 @@ export default class SftpMap extends AsyncMap {
     }
 
     // Create the directory on the SFTP server
-    await this.client.mkdir(valuePath);
+    await this.client.mkdir(childPath);
 
     // Return an SftpMap for the new directory
     const child = Reflect.construct(this.constructor, [
       {
         client: this.client,
-        path: valuePath,
+        path: childPath,
       },
     ]);
     setParent(child, this);
@@ -46,12 +48,12 @@ export default class SftpMap extends AsyncMap {
   }
 
   async delete(key) {
-    const valuePath = this.pathForKey(key);
+    const childPath = resolveChildPath(this.path, key);
 
-    if (trailingSlash.has(valuePath)) {
+    if (trailingSlash.has(childPath)) {
       // Trailing slash: delete the directory
       try {
-        await this.client.rmdir(valuePath, true);
+        await this.client.rmdir(childPath, true);
       } catch (/** @type {any} */ error) {
         if (error.code === 2) {
           // No such file: nothing to delete
@@ -63,7 +65,7 @@ export default class SftpMap extends AsyncMap {
     }
 
     try {
-      await this.client.unlink(valuePath);
+      await this.client.unlink(childPath);
     } catch (/** @type {any} */ error) {
       const { code } = error;
       if (code === 2) {
@@ -71,7 +73,7 @@ export default class SftpMap extends AsyncMap {
         return false;
       } else if (code === 3) {
         // Permission denied: probably a directory, try deleting it
-        await this.client.rmdir(valuePath, true);
+        await this.client.rmdir(childPath, true);
       } else {
         throw error;
       }
@@ -81,9 +83,12 @@ export default class SftpMap extends AsyncMap {
   }
 
   async get(key) {
-    const valuePath = this.pathForKey(key);
+    let value = handleDotKey(this, key);
+    if (value) {
+      return value;
+    }
 
-    let value;
+    const valuePath = resolveChildPath(this.path, key);
     if (trailingSlash.has(valuePath)) {
       // Trailing slash: return a new SftpMap immediately
       value = Reflect.construct(this.constructor, [
@@ -132,25 +137,11 @@ export default class SftpMap extends AsyncMap {
 
   [symbols.noCacheSymbol] = true;
 
-  // Return the full path for the given key
-  pathForKey(key) {
-    if (!key.startsWith("..")) {
-      // Normal traversal
-      return `${this.path}${key}`;
-    } else if (this.parent instanceof SftpMap) {
-      // Traversal to parent
-      return trailingSlash.add(path.resolve(this.path, key));
-    }
-
-    // Traversal above the root is not allowed
-    throw new Error(`SftpMap: cannot traverse above root`);
-  }
-
   async set(key, value) {
-    const valuePath = this.pathForKey(key);
+    const childPath = resolveChildPath(this.path, key);
 
     // Ensure the target directory exists
-    const parentPath = path.dirname(valuePath);
+    const parentPath = path.dirname(childPath);
     await this.client.mkdir(parentPath);
 
     if (!(value instanceof Buffer)) {
@@ -158,7 +149,7 @@ export default class SftpMap extends AsyncMap {
       // also to avoid having a string value interpreted as a local file path.
       value = Buffer.from(value);
     }
-    await this.client.put(value, valuePath);
+    await this.client.put(value, childPath);
 
     return this;
   }

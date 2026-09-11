@@ -54,7 +54,7 @@ describe("SftpMap", () => {
   test("can't get '..' from root", async () => {
     await assert.rejects(async () => fixture.get(".."), {
       name: "Error",
-      message: /cannot traverse above root/,
+      message: /Cannot use "\.\." to navigate to parent/,
     });
   });
 

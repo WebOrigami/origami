@@ -1,4 +1,4 @@
-import { setParent, Tree } from "@weborigami/async-tree";
+import { resolveChildPath, setParent, Tree } from "@weborigami/async-tree";
 import fs from "node:fs/promises";
 import SftpMap from "./SftpMap.js";
 
@@ -26,20 +26,20 @@ export default class SftpExecMap extends SftpMap {
   // Takes advantage of executing commands on the remote SFTP server to create
   // child directories more efficiently than the base SftpClient can.
   async child(key) {
-    const valuePath = this.pathForKey(key);
+    const childPath = resolveChildPath(this.path, key);
 
     // Command needs to
     // - delete any existing file (not directory) with the given path
     // - create the directory if it doesn't exist
     // Also see command notes above.
-    const command = `test -f "${valuePath}" && rm "${valuePath}"; mkdir -p "${valuePath}"`;
+    const command = `test -f "${childPath}" && rm "${childPath}"; mkdir -p "${childPath}"`;
     await this.client.exec(command);
 
     // Return an SftpMap for the new directory
     const child = Reflect.construct(this.constructor, [
       {
         client: this.client,
-        path: valuePath,
+        path: childPath,
       },
     ]);
     setParent(child, this);
@@ -47,13 +47,13 @@ export default class SftpExecMap extends SftpMap {
   }
 
   async delete(key) {
-    const valuePath = this.pathForKey(key);
+    const childPath = resolveChildPath(this.path, key);
 
     // Command needs to
     // - delete the file or directory if it exists
     // - signal whether the deletion was successful (i.e., file/directory existed)
     // Also see command notes above.
-    const command = `test -e "${valuePath}" && (rm -rf "${valuePath}"; echo true) || echo false`;
+    const command = `test -e "${childPath}" && (rm -rf "${childPath}"; echo true) || echo false`;
     const result = await this.client.exec(command);
     return result.trim() === "true";
   }
