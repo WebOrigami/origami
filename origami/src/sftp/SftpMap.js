@@ -137,13 +137,13 @@ export default class SftpMap extends AsyncMap {
     if (!key.startsWith("..")) {
       // Normal traversal
       return `${this.path}${key}`;
-    } else if (this.parent) {
+    } else if (this.parent instanceof SftpMap) {
       // Traversal to parent
       return trailingSlash.add(path.resolve(this.path, key));
     }
 
     // Traversal above the root is not allowed
-    throw new Error(`SftpMap: cannot traverse above root to reach '${key}'`);
+    throw new Error(`SftpMap: cannot traverse above root`);
   }
 
   async set(key, value) {
