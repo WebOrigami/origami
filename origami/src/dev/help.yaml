@@ -202,6 +202,9 @@ Tree:
     applyChanges:
       args: (source, target)
       description: Compare source to target and apply any changes to target
+    awaitValues:
+      args: (tree)
+      description: Awaits all asynchronous values in the tree
     cache:
       args: (tree, [cache])
       description: Caches values from the tree
@@ -352,9 +355,6 @@ Tree:
     regExpKeys:
       args: (tree)
       description: A tree whose keys are regular expression strings
-    resolve:
-      args: (tree)
-      description: Awaits all asynchronous values in the tree
     reverse:
       args: (map)
       description: Reverse the order of the map's keys

@@ -1,9 +1,9 @@
 import * as trailingSlash from "../trailingSlash.js";
 import * as args from "../utilities/args.js";
 import hash from "../utilities/hash.js";
+import awaitValues from "./awaitValues.js";
 import isMaplike from "./isMaplike.js";
 import map from "./map.js";
-import resolve from "./resolve.js";
 
 /**
  * Return a map whose keys are the original keys (without trailing slashes, if
@@ -39,6 +39,6 @@ export default async function manifest(maplike) {
     });
   }
 
-  result = await resolve(result);
+  result = await awaitValues(result);
   return result;
 }

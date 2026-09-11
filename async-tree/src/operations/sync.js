@@ -1,6 +1,6 @@
 import * as args from "../utilities/args.js";
 import interop from "../utilities/interop.js";
-import resolve from "./resolve.js";
+import resolve from "./awaitValues.js";
 
 /**
  * Resolve the async tree to a synchronous tree.
