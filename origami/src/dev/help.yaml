@@ -352,6 +352,9 @@ Tree:
     regExpKeys:
       args: (tree)
       description: A tree whose keys are regular expression strings
+    resolve:
+      args: (tree)
+      description: Awaits all asynchronous values in the tree
     reverse:
       args: (map)
       description: Reverse the order of the map's keys
@@ -373,9 +376,6 @@ Tree:
     sort:
       args: (map, options)
       description: A new map with its keys sorted
-    sync:
-      args: (tree)
-      description: Awaits all asynchronous values in the tree
     take:
       args: (map, n)
       description: The first n values in the map
