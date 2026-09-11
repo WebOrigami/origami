@@ -25,9 +25,16 @@ export default async function* deepPathsIterator(maplike, options = {}) {
   }
 
   const basePath = options.base ?? "";
-  const tree = await args.map(maplike, "Tree.deepPathsIterator", {
+  let tree = await args.map(maplike, "Tree.deepPathsIterator", {
     deep: true,
   });
+
+  if (typeof (/** @type {any} */ (tree).manifest) === "function") {
+    // Probably a network host driver, getting its manifest will probably be
+    // faster, even though we won't use the hash values.
+    tree = await /** @type {any} */ (tree).manifest();
+  }
+
   const trailingSlashKeys =
     /** @type {any} */ (tree).trailingSlashKeys ?? false;
 
