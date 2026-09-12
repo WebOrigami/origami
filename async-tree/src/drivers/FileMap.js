@@ -3,10 +3,11 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { hiddenFileNames } from "../constants.js";
 import * as trailingSlash from "../trailingSlash.js";
+import handleDotKey from "../utilities/handleDotKey.js";
 import isPacked from "../utilities/isPacked.js";
 import isStringlike from "../utilities/isStringlike.js";
 import naturalOrder from "../utilities/naturalOrder.js";
-import setParent from "../utilities/setParent.js";
+import resolveChildPath from "../utilities/resolveChildPath.js";
 import SyncMap from "./SyncMap.js";
 
 /**
@@ -39,37 +40,27 @@ export default class FileMap extends SyncMap {
 
   // Return the (possibly new) subdirectory with the given key.
   child(key) {
-    const stringKey = key != null ? String(key) : "";
-    const baseKey = trailingSlash.remove(stringKey);
-    const destPath = path.resolve(this.dirname, baseKey);
-    const destTree = Reflect.construct(this.constructor, [destPath]);
+    const childPath = resolveChildPath(this.dirname, key);
 
-    const stats = getStats(destPath);
+    const stats = getStats(childPath);
     if (stats === null || !stats.isDirectory()) {
       if (stats !== null) {
         // File with the same name exists; delete it.
-        fs.rmSync(destPath);
+        fs.rmSync(childPath);
       }
       // Ensure the directory exists.
-      fs.mkdirSync(destPath, { recursive: true });
+      fs.mkdirSync(childPath, { recursive: true });
     }
 
-    return destTree;
+    const child = Reflect.construct(this.constructor, [childPath]);
+    child.parent = this;
+    return child;
   }
 
   delete(key) {
-    if (key === "" || key == null) {
-      // Can't have a file with no name or a nullish name
-      throw new Error("delete: key was empty or nullish");
-    }
-
-    // What file or directory are we going to delete?
-    const stringKey = key != null ? String(key) : "";
-    const baseKey = trailingSlash.remove(stringKey);
-    const destPath = path.resolve(this.dirname, baseKey);
-
+    const childPath = resolveChildPath(this.dirname, key);
     try {
-      fs.rmSync(destPath, { recursive: true });
+      fs.rmSync(childPath, { recursive: true });
       return true;
     } catch (/** @type {any} */ error) {
       if (error.code === "ENOENT") {
@@ -80,42 +71,30 @@ export default class FileMap extends SyncMap {
   }
 
   get(key) {
-    if (key == null) {
-      // Reject nullish key
-      throw new ReferenceError(
-        `${this.constructor.name}: Cannot get a null or undefined key.`,
-      );
-    }
-    if (key === "") {
-      // Can't have a file with no name
-      return undefined;
+    let value = handleDotKey(this, key);
+    if (value) {
+      return value;
     }
 
-    key = trailingSlash.remove(key); // normalize key
-    const filePath = path.resolve(this.dirname, key);
-
-    const stats = getStats(filePath);
+    // TODO: We eventually want FileMap to interpret a trailing slash as a
+    // subdirectory and immediately return a FileMap instance for it. Until
+    // that's done, it's possible for someone to call get("file.txt/") with a
+    // trailing slash and still expect to get the plain file. So we have to
+    // remove the trailing slash here.
+    const valuePath = resolveChildPath(this.dirname, trailingSlash.remove(key));
+    const stats = getStats(valuePath);
     if (stats === null) {
       return undefined; // File or directory doesn't exist
-    }
-
-    let value;
-    if (stats.isDirectory()) {
+    } else if (stats.isDirectory()) {
       // Return subdirectory as an instance of this class
-      value = Reflect.construct(this.constructor, [filePath]);
+      value = Reflect.construct(this.constructor, [valuePath]);
     } else {
       // Return file contents as a standard Uint8Array
-      const buffer = fs.readFileSync(filePath);
+      const buffer = fs.readFileSync(valuePath);
       value = Uint8Array.from(buffer);
     }
 
-    value.parent =
-      key === ".."
-        ? // Special case: ".." parent is the grandparent (if it exists)
-          /** @type {any} */ (this.parent)?.parent
-        : this;
-    setParent(value, this);
-
+    value.parent = this;
     return value;
   }
 
@@ -151,13 +130,10 @@ export default class FileMap extends SyncMap {
   }
 
   set(key, value) {
-    // Where are we going to write this value?
-    const stringKey = key != null ? String(key) : "";
-    const normalized = trailingSlash.remove(stringKey);
-    const destPath = path.resolve(this.dirname, normalized);
+    const childPath = resolveChildPath(this.dirname, key);
 
     // Ensure this directory exists.
-    const dirname = path.dirname(destPath);
+    const dirname = path.dirname(childPath);
     fs.mkdirSync(dirname, { recursive: true });
 
     if (typeof value === "function") {
@@ -191,16 +167,14 @@ export default class FileMap extends SyncMap {
     }
 
     if (packed) {
-      writeFile(value, destPath);
+      writeFile(value, childPath);
     } else if (packed == null) {
       throw new TypeError(
         `${this.constructor.name}: Cannot write a ${value === null ? "null" : "undefined"} value to a file.`,
       );
     } else {
       const typeName = value?.constructor?.name ?? "unknown";
-      throw new TypeError(
-        `Cannot write a value of type ${typeName} as ${stringKey}`,
-      );
+      throw new TypeError(`Cannot write a value of type ${typeName} as ${key}`);
     }
 
     return this;

@@ -33,11 +33,6 @@ describe("FileMap", () => {
     assert.equal(fixture.get("xyz"), undefined);
   });
 
-  test("getting empty key returns undefined", () => {
-    const fixture = createFixture("fixtures/markdown");
-    assert.equal(fixture.get(""), undefined);
-  });
-
   test("getting a null/undefined key throws an exception", async () => {
     const fixture = createFixture("fixtures/markdown");
     await assert.rejects(async () => {

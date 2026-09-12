@@ -43,7 +43,7 @@ export default class SftpMap extends AsyncMap {
         path: childPath,
       },
     ]);
-    setParent(child, this);
+    child.parent = this;
     return child;
   }
 
