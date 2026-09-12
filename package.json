@@ -12,5 +12,8 @@
     "publish-all": "cd async-tree; npm publish; cd ../language; npm publish; cd ../origami; npm publish",
     "test": "node --test --test-reporter=spec",
     "typecheck": "tsc"
+  },
+  "overrides": {
+    "sharp": "0.35.4"
   }
 }
