@@ -298,11 +298,11 @@ export default class SyncMap extends Map {
   }
 }
 
-// For debugging we make entries() available as a gettable property.
+// For debugging we make the entries available as a plain Map.
 Object.defineProperty(SyncMap.prototype, previewSymbol, {
   configurable: true,
   enumerable: false,
   get: function () {
-    return Array.from(this.entries());
+    return new Map(this);
   },
 });
