@@ -8,7 +8,7 @@
   "types": "./index.ts",
   "devDependencies": {
     "@types/node": "26.1.2",
-    "puppeteer": "25.4.0",
+    "puppeteer": "25.10.0",
     "typescript": "7.0.2"
   },
   "scripts": {

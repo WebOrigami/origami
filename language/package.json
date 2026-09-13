@@ -12,10 +12,10 @@
   },
   "dependencies": {
     "@weborigami/async-tree": "0.7.1",
-    "adm-zip": "0.6.0",
+    "adm-zip": "0.6.1",
     "exif-parser": "0.1.12",
     "watcher": "2.3.1",
-    "yaml": "2.9.0"
+    "yaml": "2.9.1"
   },
   "scripts": {
     "build": "peggy --allowed-start-rules=\"*\" --format es src/compiler/origami.pegjs --output src/compiler/parse.js",
