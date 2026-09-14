@@ -21,7 +21,7 @@ export default class SftpMap extends AsyncMap {
   }
 
   async child(key) {
-    const childPath = resolveChildPath(this.path, key);
+    const childPath = resolveChildPath.required(this.path, key);
 
     const existingChild = await this.get(key);
     if (existingChild) {
@@ -48,7 +48,7 @@ export default class SftpMap extends AsyncMap {
   }
 
   async delete(key) {
-    const childPath = resolveChildPath(this.path, key);
+    const childPath = resolveChildPath.required(this.path, key);
 
     if (trailingSlash.has(childPath)) {
       // Trailing slash: delete the directory
@@ -88,7 +88,11 @@ export default class SftpMap extends AsyncMap {
       return value;
     }
 
-    const valuePath = resolveChildPath(this.path, key);
+    const valuePath = resolveChildPath.optional(this.path, key);
+    if (valuePath === undefined) {
+      return undefined; // Invalid child key
+    }
+
     if (trailingSlash.has(valuePath)) {
       // Trailing slash: return a new SftpMap immediately
       value = Reflect.construct(this.constructor, [
@@ -138,7 +142,7 @@ export default class SftpMap extends AsyncMap {
   [symbols.noCacheSymbol] = true;
 
   async set(key, value) {
-    const childPath = resolveChildPath(this.path, key);
+    const childPath = resolveChildPath.required(this.path, key);
 
     // Ensure the target directory exists
     const parentPath = path.dirname(childPath);

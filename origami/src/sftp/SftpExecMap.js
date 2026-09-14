@@ -26,7 +26,7 @@ export default class SftpExecMap extends SftpMap {
   // Takes advantage of executing commands on the remote SFTP server to create
   // child directories more efficiently than the base SftpClient can.
   async child(key) {
-    const childPath = resolveChildPath(this.path, key);
+    const childPath = resolveChildPath.required(this.path, key);
 
     // Command needs to
     // - delete any existing file (not directory) with the given path
@@ -47,7 +47,7 @@ export default class SftpExecMap extends SftpMap {
   }
 
   async delete(key) {
-    const childPath = resolveChildPath(this.path, key);
+    const childPath = resolveChildPath.required(this.path, key);
 
     // Command needs to
     // - delete the file or directory if it exists

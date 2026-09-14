@@ -36,7 +36,7 @@ export { default as keysFromPath } from "./src/utilities/keysFromPath.js";
 export { default as naturalOrder } from "./src/utilities/naturalOrder.js";
 export { default as pack } from "./src/utilities/pack.js";
 export { default as pathFromKeys } from "./src/utilities/pathFromKeys.js";
-export { default as resolveChildPath } from "./src/utilities/resolveChildPath.js";
+export * as resolveChildPath from "./src/utilities/resolveChildPath.js";
 export { default as resolvePath } from "./src/utilities/resolvePath.js";
 export { default as setParent } from "./src/utilities/setParent.js";
 export { default as toPlainValue } from "./src/utilities/toPlainValue.js";

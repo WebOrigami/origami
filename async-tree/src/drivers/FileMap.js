@@ -7,7 +7,7 @@ import handleDotKey from "../utilities/handleDotKey.js";
 import isPacked from "../utilities/isPacked.js";
 import isStringlike from "../utilities/isStringlike.js";
 import naturalOrder from "../utilities/naturalOrder.js";
-import resolveChildPath from "../utilities/resolveChildPath.js";
+import * as resolveChildPath from "../utilities/resolveChildPath.js";
 import SyncMap from "./SyncMap.js";
 
 /**
@@ -40,7 +40,7 @@ export default class FileMap extends SyncMap {
 
   // Return the (possibly new) subdirectory with the given key.
   child(key) {
-    const childPath = resolveChildPath(this.dirname, key);
+    const childPath = resolveChildPath.required(this.dirname, key);
 
     const stats = getStats(childPath);
     if (stats === null || !stats.isDirectory()) {
@@ -58,7 +58,7 @@ export default class FileMap extends SyncMap {
   }
 
   delete(key) {
-    const childPath = resolveChildPath(this.dirname, key);
+    const childPath = resolveChildPath.required(this.dirname, key);
     try {
       fs.rmSync(childPath, { recursive: true });
       return true;
@@ -81,7 +81,14 @@ export default class FileMap extends SyncMap {
     // that's done, it's possible for someone to call get("file.txt/") with a
     // trailing slash and still expect to get the plain file. So we have to
     // remove the trailing slash here.
-    const valuePath = resolveChildPath(this.dirname, trailingSlash.remove(key));
+    const valuePath = resolveChildPath.optional(
+      this.dirname,
+      trailingSlash.remove(key),
+    );
+    if (valuePath === undefined) {
+      return undefined; // Invalid child key
+    }
+
     const stats = getStats(valuePath);
     if (stats === null) {
       return undefined; // File or directory doesn't exist
@@ -130,7 +137,7 @@ export default class FileMap extends SyncMap {
   }
 
   set(key, value) {
-    const childPath = resolveChildPath(this.dirname, key);
+    const childPath = resolveChildPath.required(this.dirname, key);
 
     // Ensure this directory exists.
     const dirname = path.dirname(childPath);
