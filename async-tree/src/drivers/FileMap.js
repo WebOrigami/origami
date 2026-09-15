@@ -88,8 +88,13 @@ export default class FileMap extends SyncMap {
     );
 
     if (valuePath === undefined) {
-      // TODO: Remove the deprecation warning and return undefined
+      // TODO: Remove the empty string special case and deprecation warning
+      // and instead return undefined.
+
       // return undefined;
+      if (key === "") {
+        return undefined;
+      }
       interop.warn(
         `Warning: ".", "..", and "/" are deprecated in file keys: "${key}"`,
       );
