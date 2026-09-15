@@ -91,6 +91,7 @@ export default async function publish(source, target, options = {}) {
 
   if (!targetManifest) {
     // No manifest specified or found, do a full copy
+    await targetTree.clear();
     await apply(sourceTree, targetTree);
   }
 
