@@ -1,4 +1,5 @@
 import { args } from "@weborigami/async-tree";
+import { executionContext } from "@weborigami/language";
 import { exec as callbackExec } from "node:child_process";
 import util from "node:util";
 const exec = util.promisify(callbackExec);
@@ -8,9 +9,9 @@ const exec = util.promisify(callbackExec);
  *
  * @param {string} command
  */
-export default async function shell(command, state = {}) {
-  const { parent } = state;
-  const cwd = parent?.path || process.cwd();
+export default async function shell(command) {
+  const parent = executionContext.getStore()?.parent;
+  const cwd = parent?.path;
   command = args.string(command, "Origami.shell");
   try {
     const { stdout } = await exec(command, { cwd });
@@ -20,4 +21,3 @@ export default async function shell(command, state = {}) {
     return undefined;
   }
 }
-shell.needsState = true;

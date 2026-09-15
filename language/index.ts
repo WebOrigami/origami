@@ -23,15 +23,6 @@ export type AnnotatedCode = (AnnotatedCode | AnnotatedCodeItem)[] & {
  */
 export type Code = Array<any>;
 
-/**
- * The context in which code is executed, including the code itself and the
- * runtime state, used for reporting errors and warnings.
- */
-export type CodeContext = {
-  code: Code;
-  state: RuntimeState;
-};
-
 export type CodeLocation = {
   end: Position;
   source: Source;
@@ -43,6 +34,27 @@ export type CodeLocation = {
  * instance of the indicated type.
  */
 export type Constructor<T> = new (...args: any[]) => T;
+
+/**
+ * The context in which code is executed
+ */
+export type ExecutionContext = {
+  // The code being run
+  code?: Code;
+
+  // Global variables that were used when compiling the code. These aren't used
+  // by the code itself, but help generate meaningful error messages.
+  globals?: any;
+  
+  // The object to which this code is attached
+  object?: any;
+  
+  // The container (e.g., file system folder) that holds the code
+  parent?: SyncOrAsyncMap | null;
+
+  // The current stack of function parameter assignments
+  stack?: Array<Record<string, any>>;
+}
 
 /**
  * A structure associating a media type and an unpack function with a given file
@@ -69,21 +81,6 @@ export type Position = {
   column: number;
   line: number;
   offset: number;
-}
-
-export type RuntimeState = {
-  // Global variables that were used when compiling the code. These aren't used
-  // by the code itself, but help generate meaningful error messages.
-  globals?: any;
-  
-  // The object to which this code is attached
-  object?: any;
-  
-  // The container (e.g., file system folder) that holds the code
-  parent?: SyncOrAsyncMap | null;
-
-  // The current stack of function parameter assignments
-  stack?: Array<Record<string, any>>;
 }
 
 /**

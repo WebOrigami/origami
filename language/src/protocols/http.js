@@ -10,10 +10,8 @@ import fetchAndHandleExtension from "./fetchAndHandleExtension.js";
  * @param  {...any} keys
  */
 export default async function http(host, ...keys) {
-  const state = keys.pop();
   const href = constructHref("http:", host, ...keys);
   return systemCache.getOrInsertComputedAsync(href, () =>
-    fetchAndHandleExtension(href, null, state),
+    fetchAndHandleExtension(href),
   );
 }
-http.needsState = true;

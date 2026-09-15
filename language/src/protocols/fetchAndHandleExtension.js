@@ -1,5 +1,6 @@
 import { args, Tree } from "@weborigami/async-tree";
 import handleExtension from "../../src/runtime/handleExtension.js";
+import executionContext from "../runtime/executionContext.js";
 
 /**
  * Extend the JavaScript `fetch` function to implicity return an ArrayBuffer
@@ -7,14 +8,9 @@ import handleExtension from "../../src/runtime/handleExtension.js";
  * type.
  *
  * @param {string} href
+ * @param {RequestInit} [options]
  */
-export default async function fetchAndHandleExtension(href, options, state) {
-  if (options && state === undefined) {
-    // Options weren't provided
-    state = options;
-    options = undefined;
-  }
-
+export default async function fetchAndHandleExtension(href, options) {
   href = args.string(href, "Origami.fetch");
   const response = await fetch(href, options);
   if (!response.ok) {
@@ -29,7 +25,7 @@ export default async function fetchAndHandleExtension(href, options, state) {
   }
 
   // Attach any handler defined for the file type or MIME type.
-  const parent = state?.parent;
+  const parent = executionContext.getStore()?.parent;
   const url = new URL(href);
   if (parent) {
     const root = await Tree.root(parent);
@@ -40,4 +36,3 @@ export default async function fetchAndHandleExtension(href, options, state) {
 
   return buffer;
 }
-fetchAndHandleExtension.needsState = true;

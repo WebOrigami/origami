@@ -4,6 +4,7 @@ import { beforeEach, describe, test } from "node:test";
 
 import systemCache from "../../src/cache/systemCache.js";
 import execute from "../../src/runtime/execute.js";
+import executionContext from "../../src/runtime/executionContext.js";
 import { ops } from "../../src/runtime/internal.js";
 import { createCode } from "../compiler/codeHelpers.js";
 
@@ -57,7 +58,7 @@ describe("ops", () => {
   test("ops.cache", async () => {
     const fn = () => 1;
     const code = createCode([ops.object, null, ["a", [ops.getter, [fn]]]]);
-    const result = await ops.cache("a.ori/_refs/b.ori/", code, {});
+    const result = await ops.cache("a.ori/_refs/b.ori/", code);
     assert.deepEqual(await Tree.plain(result), { a: 1 });
     const cachedResult = await systemCache.get("a.ori/_refs/b.ori/");
     assert.strictEqual(await cachedResult.value.a, 1);
@@ -222,7 +223,13 @@ describe("ops", () => {
       { deep: true },
     );
     const b = await Tree.traverse(tree, "a", "b");
-    assert.equal(await ops.inherited(2, { object: b }), tree);
+    const context = {
+      object: b,
+    };
+    const result = await executionContext.run(context, async () =>
+      ops.inherited(2),
+    );
+    assert.equal(result, tree);
   });
 
   test("ops.instanceOf checks prototype chain", () => {
@@ -462,7 +469,13 @@ describe("ops", () => {
       );
       const a = await tree.get("a");
       const b = await a.get("b");
-      const scope = await ops.scope({ parent: b });
+
+      const context = {
+        parent: b,
+      };
+      const scope = await executionContext.run(context, async () =>
+        ops.scope(),
+      );
       assert.equal(await scope?.get("c"), 1);
     });
   });

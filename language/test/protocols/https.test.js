@@ -9,11 +9,11 @@ describe("https", () => {
   });
 
   test("caches fetched resources", async () => {
-    const result1 = await https("example.com", {});
+    const result1 = await https("example.com");
     assert(systemCache.has("https://example.com"));
     const text = new TextDecoder().decode(result1);
     assert(text.includes("Example Domain"));
-    const result2 = await https("example.com", {});
+    const result2 = await https("example.com");
     assert.strictEqual(result1, result2);
   });
 });

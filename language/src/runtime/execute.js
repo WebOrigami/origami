@@ -9,12 +9,12 @@ import "./interop.js";
  * `this` should be the map used as the context for the evaluation.
  *
  * @typedef {import("../../index.ts").AnnotatedCode} AnnotatedCode
- * @typedef {import("../../index.ts").RuntimeState} RuntimeState
+ * @typedef {import("../../index.ts").ExecutionContext} ExecutionContext
  *
  * @param {AnnotatedCode} code
- * @param {RuntimeState} [state]
+ * @param {ExecutionContext} [context]
  */
-export default async function execute(code, state = {}) {
+export default async function execute(code, context = {}) {
   counters.executions++;
 
   if (!(code instanceof Array)) {
@@ -22,13 +22,15 @@ export default async function execute(code, state = {}) {
     return code;
   }
 
-  // Add the code to the runtime state
-  /** @type {import("../../index.ts").CodeContext} */
-  const context = { state, code };
+  // Add the code to the execution context
+  context = {
+    ...context,
+    code,
+  };
 
   // Start by evaluating the head of the instruction
   const [head, ...tail] = code;
-  let fn = await execute(head, state);
+  let fn = await execute(head, context);
 
   if (!fn) {
     // The code wants to invoke something that's couldn't be found in scope.
@@ -53,19 +55,13 @@ export default async function execute(code, state = {}) {
   } else {
     // Evaluate each instruction in the code.
     args = await Promise.all(
-      tail.map((instruction) => execute(instruction, state)),
+      tail.map((instruction) => execute(instruction, context)),
     );
   }
 
-  if (fn.needsState) {
-    // The function is an op that wants the runtime state
-    args.push(state);
-  } else if (fn.needsContext) {
-    // The function is an op that wants the code context
-    args.push(context);
-  } else if (fn.parentAsTarget && state.parent) {
+  if (fn.parentAsTarget && context.parent) {
     // The function wants the code's parent as the `this` target
-    fn = fn.bind(state.parent);
+    fn = fn.bind(context.parent);
   }
 
   // Execute the function or traverse the map.

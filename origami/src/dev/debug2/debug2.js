@@ -1,3 +1,4 @@
+import { executionContext } from "@weborigami/language";
 import DebugParent from "./DebugParent.js";
 
 /**
@@ -8,17 +9,15 @@ import DebugParent from "./DebugParent.js";
  * extract the source code of the expression to be debugged. (If it were
  * evaluated, the function will be called with the result of the expression.)
  *
- * @typedef {import("@weborigami/language").RuntimeState} RuntimeState
  * @typedef {import("@weborigami/language").AnnotatedCode} AnnotatedCode
  *
  * @param {AnnotatedCode} code
- * @param {RuntimeState} state
  */
-export default async function debug2(code, state) {
+export default async function debug2(code) {
   if (
     !(code instanceof Array) ||
     code.source === undefined ||
-    arguments.length < 2
+    arguments.length < 1
   ) {
     throw new TypeError(
       "Dev.debug2 expects an Origami expression to evaluate: `debug2 <expression>`",
@@ -27,7 +26,7 @@ export default async function debug2(code, state) {
 
   const expression = code.source;
 
-  const { parent } = state;
+  const parent = executionContext.getStore()?.parent;
   // @ts-ignore
   const parentPath = parent?.path;
   if (parentPath === undefined) {
@@ -43,5 +42,4 @@ export default async function debug2(code, state) {
 
   console.log(`Server running at ${debugParent.origin}. Press Ctrl+C to stop.`);
 }
-debug2.needsState = true;
 debug2.unevaluatedArgs = true;

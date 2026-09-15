@@ -3,19 +3,13 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import sftp from "../../src/sftp/sftp.js";
 
-const parentUrl = new URL(".", import.meta.url);
-const parent = new FileMap(parentUrl);
-
 // Traverse to the fixture directory in the SFTP server
 const fixturePath = new URL("fixture", import.meta.url).pathname;
 const fixtureFiles = new FileMap(fixturePath);
-const fixture = await sftp(
-  {
-    host: "localhost",
-    path: fixturePath,
-  },
-  { parent },
-);
+const fixture = await sftp({
+  host: "localhost",
+  path: fixturePath,
+});
 
 describe("SftpMap", () => {
   test("returns keys", async () => {

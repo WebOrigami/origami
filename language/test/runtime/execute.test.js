@@ -20,17 +20,6 @@ describe("execute", () => {
     assert.equal(result, "a,b,c");
   });
 
-  test("if function has needsState, it gets the state", async () => {
-    const fn = (state) => {
-      return state;
-    };
-    fn.needsState = true;
-    const state = {};
-    const code = createCode([fn]);
-    const result = await execute(code, state);
-    assert.equal(result, state);
-  });
-
   test("if function has parentAsTarget, it gets bound to state.container", async () => {
     /** @this {import("@weborigami/async-tree").SyncOrAsyncMap} */
     const fn = function () {

@@ -1,4 +1,5 @@
 import { args, Tree } from "@weborigami/async-tree";
+import { executionContext } from "@weborigami/language";
 import showProgress from "./showProgress.js";
 
 /**
@@ -11,10 +12,9 @@ import showProgress from "./showProgress.js";
  *
  * @param {Maplike} source
  * @param {Maplike} target
- * @param {{ manifest?: string, manifestContainer?: string }} options
- * @param {any} state
+ * @param {{ manifest?: string, manifestContainer?: string }} [options]
  */
-export default async function publish(source, target, options, state) {
+export default async function publish(source, target, options = {}) {
   const sourceTree = await args.map(source, "Dev.publish", {
     position: 1,
   });
@@ -22,18 +22,10 @@ export default async function publish(source, target, options, state) {
     position: 2,
   });
 
-  if (!state && options) {
-    // Shift state from options
-    state = options;
-    options = {};
-  } else {
-    options ??= {};
-    state ??= {};
-  }
-
   const progressOptions = { ...options };
   if (options.manifest && !options.manifestContainer) {
-    progressOptions.manifestContainer = state.parent;
+    const parent = executionContext.getStore()?.parent;
+    progressOptions.manifestContainer = parent;
   }
 
   return await showProgress(
@@ -44,4 +36,3 @@ export default async function publish(source, target, options, state) {
     progressOptions,
   );
 }
-publish.needsState = true;

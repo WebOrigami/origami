@@ -17,14 +17,14 @@ const binaryOperatorRegex =
  * code and suggesting possible typos.
  *
  * @param {import("../../index.ts").AnnotatedCode} code
- * @param {import("../../index.ts").RuntimeState} state
+ * @param {import("../../index.ts").ExecutionContext} context
  */
-export default async function explainReferenceError(code, state) {
-  if (!state) {
+export default async function explainReferenceError(code, context) {
+  if (!context) {
     return null;
   }
 
-  const stateKeys = await getStateKeys(state);
+  const stateKeys = await getContextKeys(context);
 
   if (code[0] === ops.property) {
     // An inner property access returned undefined.
@@ -112,9 +112,9 @@ If you intended to reference a file, use angle brackets: <${key}>`;
   return null;
 }
 
-// Return global, local, and object keys in scope for the given state
-async function getStateKeys(state) {
-  const { globals, parent, object, stack } = state;
+// Return global, local, and object keys in scope for the given context
+async function getContextKeys(context) {
+  const { globals, parent, object, stack } = context;
   const objectScope = object ? await scope(object) : null;
   const parentScope = parent ? await scope(parent) : null;
 
@@ -162,7 +162,7 @@ async function getStateKeys(state) {
 /**
  * If it looks like a math operation, suggest adding spaces around the operator.
  */
-function mathExplainer(key, stateKeys) {
+function mathExplainer(key, contextKeys) {
   if (!binaryOperatorRegex.test(key)) {
     return null;
   }
@@ -176,12 +176,12 @@ function mathExplainer(key, stateKeys) {
  * If the key is an unqualified reference (`repeat`), but there's a qualified
  * version in scope (`Origami.repeat`), suggest that.
  */
-async function qualifiedReferenceExplainer(key, stateKeys) {
+async function qualifiedReferenceExplainer(key, contextKeys) {
   if (key.includes(".")) {
     return null;
   }
 
-  const qualifiedKeys = stateKeys.qualifiedGlobal.filter((k) =>
+  const qualifiedKeys = contextKeys.qualifiedGlobal.filter((k) =>
     k.endsWith("." + key),
   );
 
@@ -202,13 +202,13 @@ async function qualifiedReferenceExplainer(key, stateKeys) {
 /**
  * Suggest possible typos for the given key based on the keys in scope.
  */
-async function typoExplainer(key, stateKeys) {
+async function typoExplainer(key, contextKeys) {
   const allKeys = [
     ...new Set([
-      ...stateKeys.global,
-      ...stateKeys.object,
-      ...stateKeys.scope,
-      ...stateKeys.stack,
+      ...contextKeys.global,
+      ...contextKeys.object,
+      ...contextKeys.scope,
+      ...contextKeys.stack,
     ]),
   ];
 

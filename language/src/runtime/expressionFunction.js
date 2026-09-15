@@ -3,15 +3,15 @@ import execute from "./execute.js";
 /**
  * Given parsed Origami code, return a function that executes that code.
  *
- * @typedef {import("../../index.ts").RuntimeState} RuntimeState
+ * @typedef {import("../../index.ts").ExecutionContext} ExecutionContext
  * @typedef {import("../../index.js").AnnotatedCode} AnnotatedCode
  *
  * @param {AnnotatedCode} code - parsed Origami expression
- * @param {RuntimeState} [state] - runtime state
+ * @param {ExecutionContext} [context] - runtime state
  */
-export function createExpressionFunction(code, state) {
+export function createExpressionFunction(code, context) {
   async function fn() {
-    return execute(code, state);
+    return execute(code, context);
   }
   fn.code = code;
   fn.toString = () => code.location.source.text;

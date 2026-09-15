@@ -34,12 +34,16 @@ const mapUnattachedObjectToIndex = new Map();
  *
  * @param {string|null} cachePath
  * @param {*} entries
- * @param {import("../../index.ts").RuntimeState} [state]
+ * @param {import("../../index.ts").ExecutionContext} [context]
  */
-export default async function expressionObject(cachePath, entries, state = {}) {
+export default async function expressionObject(
+  cachePath,
+  entries,
+  context = {},
+) {
   // Create the object and set its parent
   const object = {};
-  const parent = state?.object ?? null;
+  const parent = context?.object ?? null;
   if (parent !== null && !Tree.isMap(parent)) {
     throw new TypeError(`Parent must be a map or null`);
   }
@@ -62,7 +66,7 @@ export default async function expressionObject(cachePath, entries, state = {}) {
   // First pass: define all properties with plain string keys
   for (const info of infos) {
     if (info.keyType === KEY_TYPE.STRING) {
-      defineProperty(object, info, state, map);
+      defineProperty(object, info, context, map);
     }
   }
 
@@ -70,11 +74,11 @@ export default async function expressionObject(cachePath, entries, state = {}) {
   // properties we just defined.
   for (const info of infos) {
     if (info.keyType === KEY_TYPE.COMPUTED) {
-      const newState = Object.assign({}, state, { object: map });
+      const newState = Object.assign({}, context, { object: map });
       const key = await execute(/** @type {any} */ (info.key), newState);
       // Destructively update the property info with the computed key
       info.key = key;
-      defineProperty(object, info, state, map);
+      defineProperty(object, info, context, map);
     }
   }
 
@@ -104,7 +108,7 @@ export default async function expressionObject(cachePath, entries, state = {}) {
 /**
  * Define a single property on the object
  */
-function defineProperty(object, propertyInfo, state, map) {
+function defineProperty(object, propertyInfo, context, map) {
   let { enumerable, key, value, valueType } = propertyInfo;
   if (valueType == VALUE_TYPE.PRIMITIVE) {
     // Define simple property
@@ -120,25 +124,25 @@ function defineProperty(object, propertyInfo, state, map) {
       configurable: true,
       enumerable,
       get: async () => {
-        return executeProperty(object, propertyInfo, state, map);
+        return executeProperty(object, propertyInfo, context, map);
       },
     });
   }
 }
 
 // Execute the property code to get the value of the property
-async function executeProperty(object, propertyInfo, state, map) {
-  const { globals } = state;
+async function executeProperty(object, propertyInfo, context, map) {
+  const { globals } = context;
   let { enumerable, hasExtension, key, value, valueType } = propertyInfo;
   const propertyCachePath = getPropertyCachePath(object, key);
 
-  const newState = Object.assign({}, state, { object: map });
+  const newContext = Object.assign({}, context, { object: map });
   const cacheProperty = valueType === VALUE_TYPE.GETTER && propertyCachePath;
   let result = cacheProperty
     ? await systemCache.getOrInsertComputedAsync(propertyCachePath, () =>
-        execute(value, newState),
+        execute(value, newContext),
       )
-    : await execute(value, newState);
+    : await execute(value, newContext);
 
   if (hasExtension) {
     // Handle extension

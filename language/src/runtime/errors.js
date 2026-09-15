@@ -57,7 +57,7 @@ export async function formatError(error) {
   // See if we can explain the error message
   try {
     if (error instanceof ReferenceError && code && context) {
-      const explanation = await explainReferenceError(code, context.state);
+      const explanation = await explainReferenceError(code, context);
       if (explanation) {
         message += "\n" + explanation;
       }

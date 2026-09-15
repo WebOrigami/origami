@@ -13,7 +13,8 @@ describe("package: protocol", () => {
     const globals = await coreGlobals();
     /** @type {any} */ (parent).globals = globals;
     const context = {
-      state: { globals, parent },
+      globals,
+      parent,
     };
 
     const result = await executionContext.run(context, async () =>

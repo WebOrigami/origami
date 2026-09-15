@@ -1,6 +1,5 @@
 /**
  * @typedef {import("../../index.ts").AnnotatedCode} AnnotatedCode
- * @typedef {import("../../index.ts").RuntimeState} RuntimeState
  * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
  * @typedef {import("@weborigami/async-tree").SyncOrAsyncMap} SyncOrAsyncMap
@@ -16,6 +15,7 @@ import {
 import os from "node:os";
 import systemCache from "../cache/systemCache.js";
 import execute from "./execute.js";
+import executionContext from "./executionContext.js";
 import expressionObject from "./expressionObject.js";
 import mergeTrees from "./mergeTrees.js";
 import OrigamiFileMap from "./OrigamiFileMap.js";
@@ -38,14 +38,10 @@ addOpLabel(addition, "«ops.addition»");
  * Flatten the arguments and then apply the function.
  * This is used to handle spreads in function calls.
  */
-export async function apply(fn, args, state) {
+export async function apply(fn, args) {
   // TODO: This is starting to recapitulate much of execute()
   if (isUnpackable(fn)) {
     fn = await fn.unpack();
-  }
-  if (fn.needsState) {
-    // The function is an op that wants the runtime state
-    args.push(state);
   }
   const result =
     fn instanceof Function
@@ -54,7 +50,6 @@ export async function apply(fn, args, state) {
   return result;
 }
 addOpLabel(apply, "«ops.apply»");
-apply.needsState = true;
 
 /**
  * Construct an array.
@@ -91,16 +86,15 @@ addOpLabel(bitwiseXor, "«ops.bitwiseXor»");
  *
  * @param {string} cachePath
  * @param {AnnotatedCode} code
- * @param {RuntimeState} state
  */
-export function cache(cachePath, code, state) {
+export function cache(cachePath, code) {
+  const context = executionContext.getStore();
   const result = systemCache.getOrInsertComputedAsync(cachePath, () =>
-    execute(code, state),
+    execute(code, context),
   );
   return result;
 }
 addOpLabel(cache, "«ops.cache»");
-cache.needsState = true;
 cache.unevaluatedArgs = true;
 
 /**
@@ -109,17 +103,14 @@ cache.unevaluatedArgs = true;
  * @param  {...AnnotatedCode} args
  */
 export async function comma(...args) {
-  /** @type {RuntimeState} */
-  // @ts-ignore
-  const state = args.pop(); // The runtime state is passed as the last argument
   let result;
+  const context = executionContext.getStore();
   for (const arg of args) {
-    result = await execute(arg, state);
+    result = await execute(arg, context);
   }
   return result;
 }
 addOpLabel(comma, "«ops.comma»");
-comma.needsState = true;
 comma.unevaluatedArgs = true;
 
 export async function conditional(condition, truthy, falsy) {
@@ -219,10 +210,10 @@ addOpLabel(inOperator, "«ops.inOperator»");
  * parent chain `depth` levels and return that tree.
  *
  * @param {number} depth
- * @param {RuntimeState} state
  */
-export async function inherited(depth, state) {
-  let current = state.object;
+export async function inherited(depth) {
+  const context = executionContext.getStore();
+  let current = context.object;
   for (let i = 0; i < depth; i++) {
     if (!current) {
       throw new ReferenceError(
@@ -234,7 +225,6 @@ export async function inherited(depth, state) {
   return current;
 }
 addOpLabel(inherited, "«ops.inherited»");
-inherited.needsState = true;
 
 export function instanceOf(a, b) {
   return a instanceof b;
@@ -247,20 +237,21 @@ addOpLabel(instanceOf, "«ops.instanceOf»");
  * @param {string[]} parameters
  * @param {AnnotatedCode} code
  */
-export function lambda(length, parameters, code, state = {}) {
-  const stack = state.stack ?? [];
+export function lambda(length, parameters, code) {
+  const context = executionContext.getStore();
+  const stack = context.stack ?? [];
 
   async function invoke(...args) {
-    let newState;
+    let newContext;
     if (parameters.length === 0) {
       // No parameters
-      newState = state;
+      newContext = context;
     } else {
       // Create a stack frame for the parameters. Add the arguments as an
       // interim stack frame.
       const interimStack = stack.slice();
       interimStack.push(args);
-      const paramState = { ...state, stack: interimStack };
+      const paramState = { ...context, stack: interimStack };
       const frame = await expressionObject(null, parameters, paramState);
       // Record which code this stack frame is associated with
       Object.defineProperty(frame, codeSymbol, {
@@ -269,10 +260,10 @@ export function lambda(length, parameters, code, state = {}) {
       });
       const newStack = stack.slice();
       newStack.push(frame);
-      newState = Object.assign({}, state, { stack: newStack });
+      newContext = Object.assign({}, context, { stack: newStack });
     }
 
-    const result = await execute(code, newState);
+    const result = await execute(code, newContext);
     return result;
   }
 
@@ -291,7 +282,6 @@ export function lambda(length, parameters, code, state = {}) {
 }
 addOpLabel(lambda, "«ops.lambda»");
 lambda.unevaluatedArgs = true;
-lambda.needsState = true;
 
 export function lessThan(a, b) {
   return a < b;
@@ -424,12 +414,11 @@ addOpLabel(nullishCoalescing, "«ops.nullishCoalescing»");
  * @param {any[]} entries
  */
 export async function object(cachePath, ...entries) {
-  const state = entries.pop();
-  return expressionObject(cachePath, entries, state);
+  const context = executionContext.getStore();
+  return expressionObject(cachePath, entries, context);
 }
 addOpLabel(object, "«ops.object»");
 object.unevaluatedArgs = true;
-object.needsState = true;
 
 export async function objectRest(source, excludeKeys) {
   const result = {};
@@ -446,14 +435,13 @@ addOpLabel(objectRest, "«ops.objectRest»");
  * Return the stack frame that's `depth` levels up the stack.
  *
  * @param {number} depth
- * @param {RuntimeState} state
  */
-export async function params(depth, state = {}) {
-  const stack = state.stack ?? [];
+export async function params(depth) {
+  const context = executionContext.getStore();
+  const stack = context.stack ?? [];
   return stack[stack.length - 1 - depth];
 }
 addOpLabel(params, "«ops.params»");
-params.needsState = true;
 
 /**
  * If the value is null or undefined, return undefined; otherwise, invoke the
@@ -521,13 +509,12 @@ addOpLabel(remainder, "«ops.remainder»");
 /**
  * Overwrite the value's parent with the parent from the state.
  */
-export async function reparent(value, state = {}) {
-  const { parent } = state;
+export async function reparent(value) {
+  const parent = executionContext.getStore().parent;
   setParent(value, parent, true);
   return value;
 }
 addOpLabel(reparent, "«ops.reparent»");
-reparent.needsState = true;
 
 /**
  * Files tree for the filesystem root.
@@ -541,11 +528,9 @@ addOpLabel(rootDirectory, "«ops.rootDirectory»");
 
 /**
  * Return the scope of the current tree
- *
- * @param {RuntimeState} state
  */
-export async function scope(state = {}) {
-  const { parent } = state;
+export async function scope() {
+  const parent = executionContext.getStore().parent;
   if (!parent) {
     return new SyncMap(); // empty scope if there's no parent
   }
@@ -553,7 +538,6 @@ export async function scope(state = {}) {
   return scopeMap;
 }
 addOpLabel(scope, "«ops.scope»");
-scope.needsState = true;
 
 export function shiftLeft(a, b) {
   return a << b;

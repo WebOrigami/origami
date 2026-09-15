@@ -4,20 +4,14 @@ import { describe, test } from "node:test";
 import sftp from "../../src/sftp/sftp.js";
 import SftpExecMap from "../../src/sftp/SftpExecMap.js";
 
-const parentUrl = new URL(".", import.meta.url);
-const parent = new FileMap(parentUrl);
-
 // Traverse to the fixture directory in the SFTP server
 const fixturePath = new URL("fixture", import.meta.url).pathname;
 const fixtureFiles = new FileMap(fixturePath);
-const fixture = await sftp(
-  {
-    shellAccess: true,
-    host: "localhost",
-    path: fixturePath,
-  },
-  { parent },
-);
+const fixture = await sftp({
+  shellAccess: true,
+  host: "localhost",
+  path: fixturePath,
+});
 
 describe("SftpExecMap", () => {
   test("child calls mkdir", async () => {

@@ -67,15 +67,15 @@ describe("expressionObject", () => {
       ["name", "world"],
       ["message", [ops.deepText, "Hello, ", [[ops.inherited, 0], "name"], "!"]],
     ];
-    const context = new SyncMap();
-    const object = await expressionObject("test.ori/", entries, {
-      object: context,
+    const object = new SyncMap();
+    const result = await expressionObject("test.ori/", entries, {
+      object,
     });
-    assert.deepEqual(await Tree.plain(object), {
+    assert.deepEqual(await Tree.plain(result), {
       name: "world",
       message: "Hello, world!",
     });
-    assert.equal(object[symbols.parent], context);
+    assert.equal(result[symbols.parent], object);
   });
 
   test("can compute a property key", async () => {

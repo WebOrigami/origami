@@ -1,5 +1,9 @@
 import { args } from "@weborigami/async-tree";
-import { coreGlobals, HandleExtensionsTransform } from "@weborigami/language";
+import {
+  coreGlobals,
+  executionContext,
+  HandleExtensionsTransform,
+} from "@weborigami/language";
 import SftpClient from "./SftpClient.js";
 import SftpExecMap from "./SftpExecMap.js";
 import SftpMap from "./SftpMap.js";
@@ -10,10 +14,9 @@ import SftpMap from "./SftpMap.js";
  * @typedef {import("@weborigami/async-tree").AsyncMap} AsyncMap
  *
  * @param {{ agent?: string, host: string, passphrase?: string, password?: string, path?: string, port?: number, privateKey?: string, shellAccess?: boolean, username?: string }} options
- * @param {*} state
  * @returns {Promise<SftpMap>}
  */
-export default async function sftp(options, state) {
+export default async function sftp(options) {
   let {
     agent,
     host,
@@ -55,8 +58,8 @@ export default async function sftp(options, state) {
   });
 
   // Set globals for extension handlers
-  /** @type {any} */ (tree).globals = state?.globals || (await coreGlobals());
+  const globals = executionContext.getStore()?.globals;
+  /** @type {any} */ (tree).globals = globals ?? (await coreGlobals());
 
   return tree;
 }
-sftp.needsState = true;
