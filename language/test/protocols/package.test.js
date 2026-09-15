@@ -4,6 +4,7 @@ import { describe, test } from "node:test";
 import coreGlobals from "../../src/project/coreGlobals.js";
 import projectRootFromPath from "../../src/project/projectRootFromPath.js";
 import packageProtocol from "../../src/protocols/package.js";
+import executionContext from "../../src/runtime/executionContext.js";
 
 describe("package: protocol", () => {
   test("returns a package's main export(s)", async () => {
@@ -11,9 +12,13 @@ describe("package: protocol", () => {
     const parent = await projectRootFromPath(process.cwd());
     const globals = await coreGlobals();
     /** @type {any} */ (parent).globals = globals;
-    const state = { globals, parent };
+    const context = {
+      state: { globals, parent },
+    };
 
-    const result = await packageProtocol("@weborigami", "async-tree", state);
+    const result = await executionContext.run(context, async () =>
+      packageProtocol("@weborigami", "async-tree"),
+    );
 
     // Try a method from the package
     const { toString } = result;

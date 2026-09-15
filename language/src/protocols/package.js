@@ -13,8 +13,7 @@ import projectRoot from "../project/projectRoot.js";
  * @param {any[]} args
  */
 export default async function packageProtocol(...args) {
-  const state = args.pop(); // Remaining args are the path
-  const root = await projectRoot(state);
+  const root = await projectRoot();
   const path = pathFromKeys(args);
   if (!path) {
     throw new Error("package: protocol requires a package name");
@@ -25,7 +24,6 @@ export default async function packageProtocol(...args) {
   );
   return result;
 }
-packageProtocol.needsState = true;
 
 async function loadPackage(root, args) {
   // Identify the path to the package root
