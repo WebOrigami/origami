@@ -16,7 +16,7 @@ describe("execute", () => {
     const packed = new String();
     /** @type {any} */ (packed).unpack = async () => fn;
     const code = createCode([packed, "a", "b", "c"]);
-    const result = await execute(code);
+    const result = await execute({ code });
     assert.equal(result, "a,b,c");
   });
 
@@ -27,9 +27,8 @@ describe("execute", () => {
     };
     fn.parentAsTarget = true;
     const parent = new SyncMap();
-    const state = { parent };
     const code = createCode([fn]);
-    const result = await execute(code, state);
+    const result = await execute({ code, parent });
     assert.equal(result, parent);
   });
 });

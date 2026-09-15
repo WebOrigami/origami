@@ -28,13 +28,13 @@ describe("ops", () => {
 
   test("ops.apply applies a function to arguments", async () => {
     const code = createCode([ops.apply, ops.addition, [ops.array, 1, 2]]);
-    const result = await execute(code);
+    const result = await execute({ code });
     assert.strictEqual(result, 3);
   });
 
   test("ops.array creates an array", async () => {
     const code = createCode([ops.array, 1, 2, 3]);
-    const result = await execute(code);
+    const result = await execute({ code });
     assert.deepEqual(result, [1, 2, 3]);
   });
 
@@ -66,7 +66,7 @@ describe("ops", () => {
 
   test("ops.comma returns the last value", async () => {
     const code = createCode([ops.comma, 1, 2, 3]);
-    const result = await execute(code);
+    const result = await execute({ code });
     assert.strictEqual(result, 3);
   });
 
@@ -95,7 +95,7 @@ describe("ops", () => {
       ".",
     ]);
 
-    const result = await execute(code, { parent });
+    const result = await execute({ code, parent });
     assert.strictEqual(result, "Hello, world.");
   });
 
@@ -134,9 +134,9 @@ describe("ops", () => {
       "_refs/test.ori/group/count",
       [[ops.scope], [ops.literal, "group"], [ops.literal, "count"]],
     ]);
-    const result = await execute(code, { parent });
+    const result = await execute({ code, parent });
     assert.strictEqual(result, 1);
-    const result2 = await execute(code, { parent });
+    const result2 = await execute({ code, parent });
     assert.strictEqual(result2, 1);
   });
 
@@ -244,7 +244,7 @@ describe("ops", () => {
 
   test("ops.lambda defines a function with no inputs", async () => {
     const code = createCode([ops.lambda, 0, [], [ops.literal, "result"]]);
-    const fn = await execute(code);
+    const fn = await execute({ code });
     assert.equal(fn.length, 0);
     const result = await fn();
     assert.strictEqual(result, "result");
@@ -262,7 +262,7 @@ describe("ops", () => {
       [[ops.scope], "message"],
     ]);
 
-    const fn = await execute(code, { parent });
+    const fn = await execute({ code, parent });
     assert.equal(fn.length, 1);
     const result = await fn();
     assert.strictEqual(result, "Hello");
@@ -278,7 +278,7 @@ describe("ops", () => {
       ],
       [ops.deepText, [[ops.params, 0], "b"], [[ops.params, 0], "a"]],
     ]);
-    const fn = await execute(code);
+    const fn = await execute({ code });
     assert.equal(fn.length, 2);
     const result = await fn("x", "y");
     assert.strictEqual(result, "yx");
@@ -355,7 +355,7 @@ describe("ops", () => {
       ],
       "_result",
     ]);
-    const result = await execute(code, { parent });
+    const result = await execute({ code, parent });
     assert.deepEqual(await Tree.plain(result), { a: 1, b: 2, c: 1 });
   });
 
@@ -403,7 +403,7 @@ describe("ops", () => {
       ["world", [[[ops.scope], "upper"], "world"]],
     ]);
 
-    const result = await execute(code, { parent });
+    const result = await execute({ code, parent });
     assert.strictEqual(result.hello, "HELLO");
     assert.strictEqual(result.world, "WORLD");
   });
@@ -438,7 +438,7 @@ describe("ops", () => {
     const frame1 = { a: 1 };
     const frame2 = { b: 2 };
     const stack = [frame1, frame2];
-    const result = await execute(code, { stack });
+    const result = await execute({ code, stack });
     assert.strictEqual(result, frame1);
   });
 

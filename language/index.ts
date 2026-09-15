@@ -40,7 +40,7 @@ export type Constructor<T> = new (...args: any[]) => T;
  */
 export type ExecutionContext = {
   // The code being run
-  code?: Code;
+  code: AnnotatedCode;
 
   // Global variables that were used when compiling the code. These aren't used
   // by the code itself, but help generate meaningful error messages.
@@ -55,6 +55,9 @@ export type ExecutionContext = {
   // The current stack of function parameter assignments
   stack?: Array<Record<string, any>>;
 }
+
+/** Context without code */
+export type ExecutionOptions = Omit<ExecutionContext, "code">;
 
 /**
  * A structure associating a media type and an unpack function with a given file

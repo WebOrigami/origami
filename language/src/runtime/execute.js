@@ -6,31 +6,25 @@ import "./interop.js";
 /**
  * Execute the given code and return the result.
  *
- * `this` should be the map used as the context for the evaluation.
- *
- * @typedef {import("../../index.ts").AnnotatedCode} AnnotatedCode
  * @typedef {import("../../index.ts").ExecutionContext} ExecutionContext
  *
- * @param {AnnotatedCode} code
- * @param {ExecutionContext} [context]
+ * @param {ExecutionContext} context
  */
-export default async function execute(code, context = {}) {
+export default async function execute(context) {
   counters.executions++;
 
+  const { code } = context;
   if (!(code instanceof Array)) {
     // Simple scalar; return as is.
     return code;
   }
 
-  // Add the code to the execution context
-  context = {
-    ...context,
-    code,
-  };
-
   // Start by evaluating the head of the instruction
   const [head, ...tail] = code;
-  let fn = await execute(head, context);
+  let fn = await execute({
+    ...context,
+    code: head,
+  });
 
   if (!fn) {
     // The code wants to invoke something that's couldn't be found in scope.
@@ -50,12 +44,17 @@ export default async function execute(code, context = {}) {
 
   let args;
   if (fn?.unevaluatedArgs) {
-    // Don't evaluate instructions, use as is.
+    // Use unevaluated arguments as is
     args = tail;
   } else {
-    // Evaluate each instruction in the code.
+    // Evaluate each instruction in the code
     args = await Promise.all(
-      tail.map((instruction) => execute(instruction, context)),
+      tail.map((instruction) =>
+        execute({
+          ...context,
+          code: instruction,
+        }),
+      ),
     );
   }
 

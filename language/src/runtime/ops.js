@@ -90,7 +90,7 @@ addOpLabel(bitwiseXor, "«ops.bitwiseXor»");
 export function cache(cachePath, code) {
   const context = executionContext.getStore();
   const result = systemCache.getOrInsertComputedAsync(cachePath, () =>
-    execute(code, context),
+    execute({ ...context, code }),
   );
   return result;
 }
@@ -105,8 +105,8 @@ cache.unevaluatedArgs = true;
 export async function comma(...args) {
   let result;
   const context = executionContext.getStore();
-  for (const arg of args) {
-    result = await execute(arg, context);
+  for (const code of args) {
+    result = await execute({ ...context, code });
   }
   return result;
 }
@@ -242,11 +242,8 @@ export function lambda(length, parameters, code) {
   const stack = context.stack ?? [];
 
   async function invoke(...args) {
-    let newContext;
-    if (parameters.length === 0) {
-      // No parameters
-      newContext = context;
-    } else {
+    let newContext = { ...context, code };
+    if (parameters.length > 0) {
       // Create a stack frame for the parameters. Add the arguments as an
       // interim stack frame.
       const interimStack = stack.slice();
@@ -260,15 +257,15 @@ export function lambda(length, parameters, code) {
       });
       const newStack = stack.slice();
       newStack.push(frame);
-      newContext = Object.assign({}, context, { stack: newStack });
+      newContext.stack = newStack;
     }
 
-    const result = await execute(code, newContext);
+    const result = await execute(newContext);
     return result;
   }
 
-  // Retain a reference to the original code for debugging, and so that functions
-  // can be compared by their code (e.g., for caching purposes).
+  // Retain a reference to the original code for debugging, and so that
+  // functions can be compared by their code.
   invoke.code = code;
 
   // We set the `length` property on the function so that Tree.traverseOrThrow()

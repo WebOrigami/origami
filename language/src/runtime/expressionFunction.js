@@ -6,13 +6,13 @@ import execute from "./execute.js";
  * @typedef {import("../../index.ts").ExecutionContext} ExecutionContext
  * @typedef {import("../../index.js").AnnotatedCode} AnnotatedCode
  *
- * @param {AnnotatedCode} code - parsed Origami expression
- * @param {ExecutionContext} [context] - runtime state
+ * @param {ExecutionContext} context
  */
-export function createExpressionFunction(code, context) {
+export function createExpressionFunction(context) {
   async function fn() {
-    return execute(code, context);
+    return execute(context);
   }
+  const { code } = context;
   fn.code = code;
   fn.toString = () => code.location.source.text;
   return fn;

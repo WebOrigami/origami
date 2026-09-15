@@ -34,16 +34,16 @@ const mapUnattachedObjectToIndex = new Map();
  *
  * @param {string|null} cachePath
  * @param {*} entries
- * @param {import("../../index.ts").ExecutionContext} [context]
+ * @param {import("../../index.ts").ExecutionOptions} [options]
  */
 export default async function expressionObject(
   cachePath,
   entries,
-  context = {},
+  options = {},
 ) {
   // Create the object and set its parent
   const object = {};
-  const parent = context?.object ?? null;
+  const parent = options?.object ?? null;
   if (parent !== null && !Tree.isMap(parent)) {
     throw new TypeError(`Parent must be a map or null`);
   }
@@ -66,7 +66,7 @@ export default async function expressionObject(
   // First pass: define all properties with plain string keys
   for (const info of infos) {
     if (info.keyType === KEY_TYPE.STRING) {
-      defineProperty(object, info, context, map);
+      defineProperty(object, info, options, map);
     }
   }
 
@@ -74,11 +74,14 @@ export default async function expressionObject(
   // properties we just defined.
   for (const info of infos) {
     if (info.keyType === KEY_TYPE.COMPUTED) {
-      const newState = Object.assign({}, context, { object: map });
-      const key = await execute(/** @type {any} */ (info.key), newState);
+      const key = await execute({
+        ...options,
+        code: info.key,
+        object: map,
+      });
       // Destructively update the property info with the computed key
       info.key = key;
-      defineProperty(object, info, context, map);
+      defineProperty(object, info, options, map);
     }
   }
 
@@ -136,13 +139,17 @@ async function executeProperty(object, propertyInfo, context, map) {
   let { enumerable, hasExtension, key, value, valueType } = propertyInfo;
   const propertyCachePath = getPropertyCachePath(object, key);
 
-  const newContext = Object.assign({}, context, { object: map });
+  const newContext = {
+    ...context,
+    code: value,
+    object: map,
+  };
   const cacheProperty = valueType === VALUE_TYPE.GETTER && propertyCachePath;
   let result = cacheProperty
     ? await systemCache.getOrInsertComputedAsync(propertyCachePath, () =>
-        execute(value, newContext),
+        execute(newContext),
       )
-    : await execute(value, newContext);
+    : await execute(newContext);
 
   if (hasExtension) {
     // Handle extension
