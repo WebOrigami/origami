@@ -11,6 +11,7 @@ export * as activeProjectRoot from "./src/project/activeProjectRoot.js";
 export { default as coreGlobals } from "./src/project/coreGlobals.js";
 export { default as getGlobalsForTree } from "./src/project/getGlobalsForTree.js";
 export { default as initializeGlobalsForTree } from "./src/project/initializeGlobalsForTree.js";
+export { default as initializeGlobalsFromContext } from "./src/project/initializeGlobalsFromContext.js";
 export { default as jsGlobals } from "./src/project/jsGlobals.js";
 export { default as projectConfig } from "./src/project/projectConfig.js";
 export { default as projectRoot } from "./src/project/projectRoot.js";
