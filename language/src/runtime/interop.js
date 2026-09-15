@@ -9,7 +9,8 @@ interop.warn = function warn(...args) {
   console.warn(...args);
   const context = executionContext.getStore();
   const location = context?.code?.location;
-  if (location) {
-    console.warn(lineInfo(location));
+  const info = location ? lineInfo(location) : null;
+  if (info) {
+    console.warn(info);
   }
 };

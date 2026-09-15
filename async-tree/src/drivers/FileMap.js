@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { hiddenFileNames } from "../constants.js";
 import * as trailingSlash from "../trailingSlash.js";
 import handleDotKey from "../utilities/handleDotKey.js";
+import interop from "../utilities/interop.js";
 import isPacked from "../utilities/isPacked.js";
 import isStringlike from "../utilities/isStringlike.js";
 import naturalOrder from "../utilities/naturalOrder.js";
@@ -81,12 +82,18 @@ export default class FileMap extends SyncMap {
     // that's done, it's possible for someone to call get("file.txt/") with a
     // trailing slash and still expect to get the plain file. So we have to
     // remove the trailing slash here.
-    const valuePath = resolveChildPath.optional(
+    let valuePath = resolveChildPath.optional(
       this.dirname,
       trailingSlash.remove(key),
     );
+
     if (valuePath === undefined) {
-      return undefined; // Invalid child key
+      // TODO: Remove the deprecation warning and return undefined
+      // return undefined;
+      interop.warn(
+        `Warning: ".", "..", and "/" are deprecated in file keys: "${key}"`,
+      );
+      valuePath = `${this.path}/${key}`;
     }
 
     const stats = getStats(valuePath);
