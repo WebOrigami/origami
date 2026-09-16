@@ -22,3 +22,4 @@ export default async function resize(input, options) {
   // not accepted in some contexts, so we convert it to a regular Uint8Array.
   return new Uint8Array(data);
 }
+resize.unpackArgs = false;

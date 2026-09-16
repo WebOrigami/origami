@@ -8,7 +8,7 @@ let sharp;
  * format
  * @param {any} options
  */
-export default async function imageFormat(input, format, options) {
+export default async function format(input, format, options) {
   if (!sharp) {
     // Dynamic import to avoid loading Sharp until needed
     sharp = (await import("sharp")).default;
@@ -24,3 +24,4 @@ export default async function imageFormat(input, format, options) {
   // not accepted in some contexts, so we convert it to a regular Uint8Array.
   return new Uint8Array(data);
 }
+format.unpackArgs = false;
