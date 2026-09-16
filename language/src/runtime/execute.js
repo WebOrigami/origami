@@ -47,20 +47,17 @@ export default async function execute(context) {
     // Use unevaluated arguments as is
     args = tail;
   } else {
-    const unpackArgs = fn.unpackArgs !== false;
-
-    // Process each argument
-    args = await Promise.all(
-      tail.map((arg) => {
-        if (unpackArgs && isUnpackable(arg)) {
-          return arg.unpack();
-        } else if (unpackArgs && isPlainObject(arg)) {
-          return unpackPlainObject(arg);
-        } else {
-          return execute({ ...context, code: arg });
-        }
-      }),
+    // Evaluate each argument
+    const evaluated = await Promise.all(
+      tail.map((arg) => execute({ ...context, code: arg })),
     );
+
+    args =
+      fn.unpackArgs !== false
+        ? // Unpack arguments
+          await unpackArguments(evaluated)
+        : // Function has opted out of argument unpacking
+          evaluated;
   }
 
   if (fn.parentAsTarget && context.parent) {
@@ -86,6 +83,20 @@ export default async function execute(context) {
   }
 
   return result;
+}
+
+async function unpackArguments(args) {
+  return await Promise.all(
+    args.map(async (arg) => {
+      if (isUnpackable(arg)) {
+        return await arg.unpack();
+      } else if (isPlainObject(arg)) {
+        return unpackPlainObject(arg);
+      } else {
+        return arg;
+      }
+    }),
+  );
 }
 
 async function unpackPlainObject(object) {

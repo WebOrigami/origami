@@ -12,4 +12,8 @@ export default async function clear(maplike) {
 
   // Call the map's own clear() method
   await map.clear();
+
+  // Return the standard map for convenience, even though the standard clear()
+  // method doesn't.
+  return map;
 }
