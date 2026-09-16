@@ -58,6 +58,14 @@ export default class FileMap extends SyncMap {
     return child;
   }
 
+  clear() {
+    // Ensure this directory exists.
+    fs.mkdirSync(this.dirname, { recursive: true });
+
+    // Clear any existing contents
+    super.clear();
+  }
+
   delete(key) {
     const childPath = resolveChildPath.required(this.dirname, key);
     try {
@@ -103,7 +111,17 @@ export default class FileMap extends SyncMap {
 
     const stats = getStats(valuePath);
     if (stats === null) {
-      return undefined; // File or directory doesn't exist
+      if (trailingSlash.has(key)) {
+        // Assume this is a reference to a desired but nonexistent subdirectory
+        value = Reflect.construct(this.constructor, [valuePath]);
+      } else if (directoryExists(this.path)) {
+        // This directory exists, but doesn't have the indicated file or subfolder
+        return undefined;
+      } else {
+        throw new Error(
+          `Tried to access "${key}" in a directory that doesn't exist: ${this.path}`,
+        );
+      }
     } else if (stats.isDirectory()) {
       // Return subdirectory as an instance of this class
       value = Reflect.construct(this.constructor, [valuePath]);
@@ -200,6 +218,11 @@ export default class FileMap extends SyncMap {
   }
 
   trailingSlashKeys = true;
+}
+
+function directoryExists(dirPath) {
+  const stats = getStats(dirPath);
+  return stats !== null && stats.isDirectory();
 }
 
 // Return stats for the path, or null if it doesn't exist.
