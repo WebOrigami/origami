@@ -9,13 +9,7 @@ import * as args from "../utilities/args.js";
  */
 export default async function clear(maplike) {
   const map = await args.map(maplike, "Tree.clear");
-  if ("readOnly" in map && map.readOnly) {
-    throw new TypeError("Tree.clear: target map is read-only");
-  }
-  const promises = [];
-  for await (const key of map.keys()) {
-    promises.push(map.delete(key));
-  }
-  await Promise.all(promises);
-  return map;
+
+  // Call the map's own clear() method
+  await map.clear();
 }
