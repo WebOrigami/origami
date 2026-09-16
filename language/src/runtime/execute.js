@@ -1,4 +1,4 @@
-import { isUnpackable, Tree } from "@weborigami/async-tree";
+import { isPlainObject, isUnpackable, Tree } from "@weborigami/async-tree";
 import counters from "../runtime/counters.js";
 import executionContext from "./executionContext.js";
 import "./interop.js";
@@ -43,18 +43,23 @@ export default async function execute(context) {
   }
 
   let args;
-  if (fn?.unevaluatedArgs) {
+  if (fn.unevaluatedArgs) {
     // Use unevaluated arguments as is
     args = tail;
   } else {
-    // Evaluate each instruction in the code
+    const unpackArgs = fn.unpackArgs !== false;
+
+    // Process each argument
     args = await Promise.all(
-      tail.map((instruction) =>
-        execute({
-          ...context,
-          code: instruction,
-        }),
-      ),
+      tail.map((arg) => {
+        if (unpackArgs && isUnpackable(arg)) {
+          return arg.unpack();
+        } else if (unpackArgs && isPlainObject(arg)) {
+          return unpackPlainObject(arg);
+        } else {
+          return execute({ ...context, code: arg });
+        }
+      }),
     );
   }
 
@@ -81,4 +86,17 @@ export default async function execute(context) {
   }
 
   return result;
+}
+
+async function unpackPlainObject(object) {
+  const entries = Object.entries(object);
+  const processedEntries = await Promise.all(
+    entries.map(async ([key, value]) => {
+      if (isUnpackable(value)) {
+        value = await value.unpack();
+      }
+      return [key, value];
+    }),
+  );
+  return Object.fromEntries(processedEntries);
 }
