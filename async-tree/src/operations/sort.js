@@ -17,7 +17,7 @@ import keys from "./keys.js";
  * @param {SortOptions|ValueKeyFn} [options]
  */
 export default async function sort(maplike, options) {
-  const source = await args.map(maplike, "Tree.sort");
+  const source = args.map(maplike, "Tree.sort");
 
   let sortKey;
   let compare;

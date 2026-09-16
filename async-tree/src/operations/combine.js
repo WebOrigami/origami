@@ -22,11 +22,11 @@ import keys from "./keys.js";
  * @param {function|CombineOptions} options
  */
 export default async function combine(maplike1, maplike2, options) {
-  const tree1 = await args.map(maplike1, "Tree.combine", {
+  const tree1 = args.map(maplike1, "Tree.combine", {
     deep: true,
     position: 1,
   });
-  const tree2 = await args.map(maplike2, "Tree.combine", {
+  const tree2 = args.map(maplike2, "Tree.combine", {
     deep: true,
     position: 2,
   });

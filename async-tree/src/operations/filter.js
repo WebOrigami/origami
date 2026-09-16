@@ -23,7 +23,7 @@ export default async function filter(maplike, options) {
     deep = options.deep ?? false;
   }
 
-  const tree = await args.map(maplike, "Tree.filter", { deep });
+  const tree = args.map(maplike, "Tree.filter", { deep });
   return map(tree, {
     deep,
 

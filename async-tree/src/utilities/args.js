@@ -1,6 +1,4 @@
 import from from "../operations/from.js";
-import plain from "../operations/plain.js";
-import isUnpackable from "./isUnpackable.js";
 import toFunction from "./toFunction.js";
 import toString from "./toString.js";
 
@@ -49,20 +47,15 @@ export function invocable(arg, operation, options = {}) {
  *
  * @typedef {import("../../index.ts").AsyncMap} AsyncMap
  * @typedef {import("../../index.ts").Maplike} Maplike
- * @typedef {import("../../index.ts").Unpackable} Unpackable
  *
- * @param {Maplike|Unpackable} arg
+ * @param {Maplike} arg
  * @param {string} operation
  * @param {{ deep?: boolean, position?: number }} [options]
- * @returns {Promise<Map|AsyncMap>}
+ * @returns {Map|AsyncMap}
  */
-export async function map(arg, operation, options = {}) {
+export function map(arg, operation, options = {}) {
   const deep = options.deep;
   const position = options.position ?? 1;
-
-  if (isUnpackable(arg)) {
-    arg = await arg.unpack();
-  }
 
   let map;
   try {
@@ -96,11 +89,9 @@ export function number(arg, operation, options = {}) {
 /**
  * Check an option.
  */
-export function option(object, optionKey, operation, options = {}) {
-  const value = object[optionKey];
-
+export function option(optionValue, optionKey, operation, options = {}) {
   const required = options.required ?? true;
-  if (value == null) {
+  if (optionValue == null) {
     if (required) {
       /** @type {any} */
       const error = new TypeError(
@@ -113,7 +104,7 @@ export function option(object, optionKey, operation, options = {}) {
   }
 
   const expectedType = options.type ?? "string";
-  if (typeof value !== expectedType) {
+  if (typeof optionValue !== expectedType) {
     /** @type {any} */
     const error = new TypeError(
       `${operation}: option "${optionKey}" must be a ${expectedType}.`,
@@ -122,7 +113,7 @@ export function option(object, optionKey, operation, options = {}) {
     throw error;
   }
 
-  return value;
+  return optionValue;
 }
 
 /**
@@ -132,18 +123,13 @@ export function option(object, optionKey, operation, options = {}) {
  * @param {string} operation
  * @param {Record<string, { type?: string, required?: boolean }>} schema
  */
-export async function options(maplike, operation, schema) {
-  const optionsMap = await map(maplike, operation);
-  const optionsPlain = await plain(optionsMap);
+export function options(maplike, operation, schema) {
+  const optionsMap = map(maplike, operation);
 
   const result = {};
   for (const [optionKey, optionSchema] of Object.entries(schema)) {
-    result[optionKey] = option(
-      optionsPlain,
-      optionKey,
-      operation,
-      optionSchema,
-    );
+    const optionValue = optionsMap.get(optionKey);
+    result[optionKey] = option(optionValue, optionKey, operation, optionSchema);
   }
   return result;
 }

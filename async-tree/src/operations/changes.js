@@ -17,11 +17,11 @@ import manifest from "./manifest.js";
  * @param {Maplike} newMaplike
  */
 export default async function changes(oldMaplike, newMaplike) {
-  const oldTree = await args.map(oldMaplike, "Tree.changes", {
+  const oldTree = args.map(oldMaplike, "Tree.changes", {
     deep: true,
     position: 1,
   });
-  const newTree = await args.map(newMaplike, "Tree.changes", {
+  const newTree = args.map(newMaplike, "Tree.changes", {
     deep: true,
     position: 2,
   });

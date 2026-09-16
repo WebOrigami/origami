@@ -26,7 +26,7 @@ export default async function map(maplike, options = {}) {
   const validated = validateOptions(options);
   const mapFn = createMapFn(validated);
 
-  const tree = await args.map(maplike, "Tree.map", {
+  const tree = args.map(maplike, "Tree.map", {
     deep: validated.deep,
   });
   return mapFn(tree);

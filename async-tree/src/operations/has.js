@@ -9,6 +9,6 @@ import * as args from "../utilities/args.js";
  * @param {any} key
  */
 export default async function has(maplike, key) {
-  const map = await args.map(maplike, "Tree.has");
+  const map = args.map(maplike, "Tree.has");
   return map.has(key);
 }

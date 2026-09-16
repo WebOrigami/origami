@@ -18,7 +18,7 @@ export default async function debug(maplike) {
 See https://github.com/WebOrigami/origami/releases/tag/0.7.0`,
   );
 
-  let tree = await args.map(maplike, "Dev.debug");
+  let tree = args.map(maplike, "Dev.debug");
 
   if (!isTransformApplied(DebugTransform, tree)) {
     tree = transformObject(DebugTransform, tree);

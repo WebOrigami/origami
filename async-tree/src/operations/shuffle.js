@@ -17,7 +17,7 @@ import keys from "./keys.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function shuffle(maplike, options = {}) {
-  const source = await args.map(maplike, "Tree.shuffle");
+  const source = args.map(maplike, "Tree.shuffle");
   const randoms = options?.randoms ?? Math.random;
 
   let mapKeys;

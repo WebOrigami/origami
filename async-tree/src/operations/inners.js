@@ -12,7 +12,7 @@ import isMap from "./isMap.js";
  * @param {Maplike} maplike
  */
 export default async function inners(maplike) {
-  const source = await args.map(maplike, "Tree.inners");
+  const source = args.map(maplike, "Tree.inners");
 
   return Object.assign(new AsyncMap(), {
     async get(key) {

@@ -9,7 +9,7 @@ import deepValuesIterator from "./deepValuesIterator.js";
  * @param {import("../../index.ts").Maplike} maplike
  */
 export default async function deepText(maplike) {
-  const tree = await args.map(maplike, "Tree.deepText", { deep: true });
+  const tree = args.map(maplike, "Tree.deepText", { deep: true });
   const strings = [];
   for await (const value of deepValuesIterator(tree, { expand: true })) {
     let string;

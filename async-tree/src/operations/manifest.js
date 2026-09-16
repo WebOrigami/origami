@@ -13,7 +13,7 @@ import map from "./map.js";
  * @returns {Promise<Map<string, string>>}
  */
 export default async function manifest(maplike) {
-  const tree = await args.map(maplike, "Tree.manifest", { deep: true });
+  const tree = args.map(maplike, "Tree.manifest", { deep: true });
 
   let result;
   if (/** @type {any} */ (tree).manifest) {

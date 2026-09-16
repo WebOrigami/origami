@@ -9,7 +9,7 @@ import * as args from "../utilities/args.js";
  * @returns {Promise<Array<[any, any]>>}
  */
 export default async function entries(maplike) {
-  const map = await args.map(maplike, "Tree.entries");
+  const map = args.map(maplike, "Tree.entries");
   if (map instanceof Map) {
     return Array.from(map.entries());
   } else {

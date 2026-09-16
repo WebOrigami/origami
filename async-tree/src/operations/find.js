@@ -10,7 +10,7 @@ import * as args from "../utilities/args.js";
  * @param {Function} predicate
  */
 export default async function find(maplike, predicate) {
-  const map = await args.map(maplike, "Tree.find");
+  const map = args.map(maplike, "Tree.find");
   for await (const key of map.keys()) {
     const value = await map.get(key);
     if (await predicate(value, key, map)) {

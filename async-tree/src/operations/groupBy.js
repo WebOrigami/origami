@@ -12,7 +12,7 @@ import values from "./values.js";
  * @param {import("../../index.ts").ValueKeyFn} groupKeyFn
  */
 export default async function groupBy(maplike, groupKeyFn) {
-  const source = await args.map(maplike, "Tree.groupBy");
+  const source = args.map(maplike, "Tree.groupBy");
   const fn = args.invocable(groupKeyFn, "Tree.groupBy", { position: 2 });
 
   const result = new SyncMap();

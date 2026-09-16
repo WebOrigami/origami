@@ -32,11 +32,11 @@ import manifest from "./manifest.js";
  * @param {{ manifestContainer?: SyncOrAsyncMap, manifest?: string }} options
  */
 export default async function publish(source, target, options = {}) {
-  const sourceTree = await args.map(source, "Tree.publish", {
+  const sourceTree = args.map(source, "Tree.publish", {
     deep: true,
     position: 1,
   });
-  const targetTree = await args.map(target, "Tree.publish", {
+  const targetTree = args.map(target, "Tree.publish", {
     deep: true,
     position: 2,
   });

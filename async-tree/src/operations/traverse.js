@@ -11,7 +11,7 @@ import traverseOrThrow from "./traverseOrThrow.js";
  * @param {...any} keys
  */
 export default async function traverse(maplike, ...keys) {
-  const map = await args.map(maplike, "Tree.traverse");
+  const map = args.map(maplike, "Tree.traverse");
   try {
     // Await the result here so that, if the path doesn't exist, the catch
     // block below will catch the exception.

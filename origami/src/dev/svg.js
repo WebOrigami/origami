@@ -18,7 +18,7 @@ export default async function svg(maplike, options = {}) {
   if (!graphviz) {
     graphviz = await Graphviz.load();
   }
-  const tree = await args.map(maplike, "Dev.svg", { deep: true });
+  const tree = args.map(maplike, "Dev.svg", { deep: true });
   const dotText = await dot(tree, options);
   if (dotText === undefined) {
     return undefined;

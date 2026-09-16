@@ -15,10 +15,10 @@ import showProgress from "./showProgress.js";
  * @param {{ manifest?: string, manifestContainer?: string }} [options]
  */
 export default async function publish(source, target, options = {}) {
-  const sourceTree = await args.map(source, "Dev.publish", {
+  const sourceTree = args.map(source, "Dev.publish", {
     position: 1,
   });
-  const targetTree = await args.map(target, "Dev.publish", {
+  const targetTree = args.map(target, "Dev.publish", {
     position: 2,
   });
 

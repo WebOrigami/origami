@@ -25,7 +25,7 @@ export default async function* deepPathsIterator(maplike, options = {}) {
   }
 
   const basePath = options.base ?? "";
-  let tree = await args.map(maplike, "Tree.deepPathsIterator", {
+  let tree = args.map(maplike, "Tree.deepPathsIterator", {
     deep: true,
   });
 

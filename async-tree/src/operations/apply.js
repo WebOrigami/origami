@@ -15,11 +15,11 @@ import isMaplike from "./isMaplike.js";
  * @param {Maplike} target
  */
 export default async function apply(source, target) {
-  const sourceTree = await args.map(source, "Tree.apply", {
+  const sourceTree = args.map(source, "Tree.apply", {
     deep: true,
     position: 1,
   });
-  const targetTree = await args.map(target, "Tree.apply", {
+  const targetTree = args.map(target, "Tree.apply", {
     deep: true,
     position: 2,
   });

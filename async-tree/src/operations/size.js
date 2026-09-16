@@ -8,6 +8,6 @@ import * as args from "../utilities/args.js";
  * @param {Maplike} maplike
  */
 export default async function size(maplike) {
-  const map = await args.map(maplike, "Tree.size");
+  const map = args.map(maplike, "Tree.size");
   return map.size;
 }

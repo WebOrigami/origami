@@ -8,7 +8,7 @@ import * as args from "../utilities/args.js";
  * @param {Maplike} maplike
  */
 export default async function values(maplike) {
-  const map = await args.map(maplike, "Tree.values");
+  const map = args.map(maplike, "Tree.values");
   let result;
   /** @type {any} */
   let iterable = map.values();

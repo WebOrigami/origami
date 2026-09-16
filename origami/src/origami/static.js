@@ -10,7 +10,7 @@ import indexPage from "./indexPage.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function staticBuiltin(maplike) {
-  const source = await args.map(maplike, "Origami.static");
+  const source = args.map(maplike, "Origami.static");
   return staticMap(source);
 }
 

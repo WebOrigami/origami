@@ -11,7 +11,7 @@ let templatePromise;
  * Display a debug/explore page for the current tree.
  */
 export default async function explore(maplike) {
-  const tree = await args.map(maplike, "Dev.explore");
+  const tree = args.map(maplike, "Dev.explore");
 
   // Construct the template page
   const scope = await Tree.scope(tree);

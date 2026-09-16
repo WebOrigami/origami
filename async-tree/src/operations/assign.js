@@ -6,10 +6,10 @@ export default async function assign(target, source) {
   interop.warn(
     "Tree.assign is deprecated. Use Tree.apply instead -- but note that the order of arguments is reversed.",
   );
-  const targetTree = await args.map(target, "Tree.assign", {
+  const targetTree = args.map(target, "Tree.assign", {
     position: 1,
   });
-  const sourceTree = await args.map(source, "Tree.assign", {
+  const sourceTree = args.map(source, "Tree.assign", {
     position: 2,
   });
   return apply(sourceTree, targetTree);

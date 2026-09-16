@@ -18,7 +18,7 @@ import isMaplike from "./isMaplike.js";
  * @returns {AsyncGenerator<[any, any], void, undefined>}
  */
 export default async function* deepEntriesIterator(maplike, options = {}) {
-  const tree = await args.map(maplike, "Tree.deepEntriesIterator", {
+  const tree = args.map(maplike, "Tree.deepEntriesIterator", {
     deep: !options.expand,
   });
 

@@ -10,7 +10,7 @@ import isMap from "./isMap.js";
  * @param {Maplike} maplike
  */
 export default async function deepEntries(maplike) {
-  const tree = await args.map(maplike, "Tree.deepEntries");
+  const tree = args.map(maplike, "Tree.deepEntries");
 
   const treeEntries = await entries(tree);
   const result = await Promise.all(

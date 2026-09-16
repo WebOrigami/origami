@@ -10,7 +10,7 @@ import * as args from "../utilities/args.js";
  * @param {any} value
  */
 export default async function set(maplike, key, value) {
-  const map = await args.map(maplike, "Tree.set");
+  const map = args.map(maplike, "Tree.set");
   await map.set(key, value);
 
   // Unlike Map.prototype.set, we return undefined. This is more useful when

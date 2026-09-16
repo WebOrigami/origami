@@ -10,7 +10,7 @@ import { getDescriptor } from "../common/utilities.js";
  * @param {string} [basePath]
  */
 export default async function indexPage(maplike, basePath) {
-  const tree = await args.map(maplike, "Origami.indexPage");
+  const tree = args.map(maplike, "Origami.indexPage");
   if (basePath !== undefined) {
     basePath = args.string(basePath, "Origami.indexPage", { position: 2 });
   }

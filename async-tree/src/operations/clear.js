@@ -8,7 +8,7 @@ import * as args from "../utilities/args.js";
  * @param {Maplike} maplike
  */
 export default async function clear(maplike) {
-  const map = await args.map(maplike, "Tree.clear");
+  const map = args.map(maplike, "Tree.clear");
 
   // Call the map's own clear() method
   await map.clear();

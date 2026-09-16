@@ -17,7 +17,7 @@ const defaultPort = 5000;
  * @param {number} [port]
  */
 export default async function serve(maplike, port) {
-  let tree = await args.map(maplike, "Dev.serve");
+  let tree = args.map(maplike, "Dev.serve");
   port =
     port !== undefined
       ? args.number(port, "Dev.serve", { position: 2 })

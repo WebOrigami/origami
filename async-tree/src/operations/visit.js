@@ -9,6 +9,6 @@ import reduce from "./reduce.js";
  * @param {Maplike} source
  */
 export default async function visit(source) {
-  const tree = await args.map(source, "Tree.visit", { deep: true });
+  const tree = args.map(source, "Tree.visit", { deep: true });
   return reduce(tree, () => undefined);
 }

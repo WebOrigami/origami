@@ -12,8 +12,8 @@ import deepPathsIterator from "./deepPathsIterator.js";
  * @param {{ assumeSlashKeys?: boolean, base?: string }} options
  */
 export default async function paths(maplike, options = {}) {
-  const tree = await args.map(maplike, "Tree.paths", { deep: true });
-  const { assumeSlashKeys, base } = await args.options(options, "Tree.paths", {
+  const tree = args.map(maplike, "Tree.paths", { deep: true });
+  const { assumeSlashKeys, base } = args.options(options, "Tree.paths", {
     assumeSlashKeys: { required: false, type: "boolean" },
     base: { required: false, type: "string" },
   });

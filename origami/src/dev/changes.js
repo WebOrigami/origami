@@ -10,11 +10,11 @@ import { args, isStringlike, toString, Tree } from "@weborigami/async-tree";
  * @param {Maplike} newMaplike
  */
 export default async function changes(oldMaplike, newMaplike) {
-  const oldTree = await args.map(oldMaplike, "Dev.changes", {
+  const oldTree = args.map(oldMaplike, "Dev.changes", {
     deep: true,
     position: 1,
   });
-  const newTree = await args.map(newMaplike, "Dev.changes", {
+  const newTree = args.map(newMaplike, "Dev.changes", {
     deep: true,
     position: 2,
   });

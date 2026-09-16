@@ -14,15 +14,11 @@ import traversePath from "./traversePath.js";
  * @param {{ assumeSlashKeys?: boolean, base?: string }} options
  */
 export default async function deflatePaths(maplike, options = {}) {
-  const tree = await args.map(maplike, "Tree.deflatePaths", { deep: true });
-  const { assumeSlashKeys, base } = await args.options(
-    options,
-    "Tree.deflatePaths",
-    {
-      assumeSlashKeys: { required: false, type: "boolean" },
-      base: { required: false, type: "string" },
-    },
-  );
+  const tree = args.map(maplike, "Tree.deflatePaths", { deep: true });
+  const { assumeSlashKeys, base } = args.options(options, "Tree.deflatePaths", {
+    assumeSlashKeys: { required: false, type: "boolean" },
+    base: { required: false, type: "string" },
+  });
 
   return Object.assign(new AsyncMap(), {
     async get(path) {

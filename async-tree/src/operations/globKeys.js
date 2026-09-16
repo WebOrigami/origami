@@ -9,7 +9,7 @@ const globstar = "**";
 const globstarSlash = `${globstar}/`;
 
 export default async function globKeys(maplike) {
-  const source = await args.map(maplike, "Tree.globKeys", { deep: true });
+  const source = args.map(maplike, "Tree.globKeys", { deep: true });
   return Object.assign(new AsyncMap(), {
     async get(key) {
       if (typeof key !== "string") {

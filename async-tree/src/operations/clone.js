@@ -9,7 +9,7 @@ import awaitValues from "./awaitValues.js";
  * @param {import("../../index.ts").Maplike} maplike
  */
 export default async function clone(maplike) {
-  const source = await args.map(maplike, "Tree.clone", { deep: true });
+  const source = args.map(maplike, "Tree.clone", { deep: true });
   const cloned = await awaitValues(source);
   return cloned;
 }

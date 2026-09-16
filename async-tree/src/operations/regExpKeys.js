@@ -18,7 +18,7 @@ import isMap from "./isMap.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function regExpKeys(maplike) {
-  const source = await args.map(maplike, "Tree.regExpKeys", {
+  const source = args.map(maplike, "Tree.regExpKeys", {
     deep: true,
   });
 

@@ -16,11 +16,11 @@ import keys from "./keys.js";
  * @returns {Promise<AsyncMap>}
  */
 export default async function mask(aMaplike, bMaplike) {
-  const aMap = await args.map(aMaplike, "Tree.mask", {
+  const aMap = args.map(aMaplike, "Tree.mask", {
     deep: true,
     position: 1,
   });
-  const bMap = await args.map(bMaplike, "Tree.mask", {
+  const bMap = args.map(bMaplike, "Tree.mask", {
     deep: true,
     position: 2,
   });

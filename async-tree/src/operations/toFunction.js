@@ -9,6 +9,6 @@ import * as args from "../utilities/args.js";
  * @returns {Promise<Function>}
  */
 export default async function toFunction(maplike) {
-  const map = await args.map(maplike, "Tree.toFunction");
+  const map = args.map(maplike, "Tree.toFunction");
   return map.get.bind(map);
 }

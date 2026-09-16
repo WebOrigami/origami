@@ -10,6 +10,6 @@ import * as args from "../utilities/args.js";
  */
 export default async function del(maplike, key) {
   // `delete` is reserved word so can't use that as function name
-  const map = await args.map(maplike, "Tree.delete");
+  const map = args.map(maplike, "Tree.delete");
   return map.delete(key);
 }

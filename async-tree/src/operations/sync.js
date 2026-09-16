@@ -11,6 +11,6 @@ import resolve from "./awaitValues.js";
  */
 export default async function sync(source) {
   interop.warn("Tree.sync is deprecated. Use Tree.resolve instead.");
-  const tree = await args.map(source, "Tree.sync");
+  const tree = args.map(source, "Tree.sync");
   return resolve(tree);
 }

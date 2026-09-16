@@ -6,7 +6,7 @@ import keysFromPath from "../utilities/keysFromPath.js";
  * Given a mapping of string paths to values, return the described tree.
  */
 export default async function inflatePaths(maplike, options = {}) {
-  const map = await args.map(maplike, "Tree.inflatePaths");
+  const map = args.map(maplike, "Tree.inflatePaths");
 
   const classFn = options.classFn ?? SyncMap;
   const result = new classFn();

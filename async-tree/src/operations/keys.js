@@ -8,7 +8,7 @@ import * as args from "../utilities/args.js";
  * @param {Maplike} maplike
  */
 export default async function keys(maplike) {
-  const map = await args.map(maplike, "Tree.keys");
+  const map = args.map(maplike, "Tree.keys");
   const keys = [];
   const iterator = map.keys();
   let next = await iterator.next();

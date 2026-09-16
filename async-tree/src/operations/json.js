@@ -7,7 +7,7 @@ import toPlainValue from "../utilities/toPlainValue.js";
  * @param {import("../../index.ts").Maplike} maplike
  */
 export default async function json(maplike) {
-  const tree = await args.map(maplike, "Tree.json");
+  const tree = args.map(maplike, "Tree.json");
   const value = await toPlainValue(tree);
   return JSON.stringify(value, null, 2);
 }

@@ -12,7 +12,7 @@ import traverse from "./traverse.js";
  * @param {string} path
  */
 export default async function traversePath(maplike, path) {
-  const map = await args.map(maplike, "Tree.traversePath");
+  const map = args.map(maplike, "Tree.traversePath");
   const keys = keysFromPath(path);
   return traverse(map, ...keys);
 }
