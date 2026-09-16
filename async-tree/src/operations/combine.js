@@ -1,7 +1,6 @@
 import SyncMap from "../drivers/SyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import * as args from "../utilities/args.js";
-import isUnpackable from "../utilities/isUnpackable.js";
 import isMap from "./isMap.js";
 import keys from "./keys.js";
 
@@ -31,10 +30,6 @@ export default async function combine(maplike1, maplike2, options) {
     position: 2,
   });
 
-  if (isUnpackable(options)) {
-    options = await options.unpack();
-  }
-
   let compareFn;
   let includeUndefined;
   if (typeof options === "function") {
@@ -43,9 +38,6 @@ export default async function combine(maplike1, maplike2, options) {
   } else if (options && typeof options === "object") {
     compareFn = options.compare;
     includeUndefined = options.includeUndefined ?? false;
-  }
-  if (isUnpackable(compareFn)) {
-    compareFn = await compareFn.unpack();
   }
 
   const result = new SyncMap();

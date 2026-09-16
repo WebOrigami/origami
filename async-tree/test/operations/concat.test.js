@@ -45,22 +45,4 @@ describe("concat", () => {
       ],
     );
   });
-
-  test("can unpack arguments", async () => {
-    /** @type {any} */
-    const packed1 = new String("Packed array");
-    packed1.unpack = async function () {
-      return ["a", "b"];
-    };
-    /** @type {any} */
-    const packed2 = new String("Packed object");
-    packed2.unpack = async function () {
-      return {
-        0: "c",
-        1: "d",
-      };
-    };
-    const result = await concat(packed1, packed2);
-    assert.deepEqual(result, ["a", "b", "c", "d"]);
-  });
 });

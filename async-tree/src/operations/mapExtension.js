@@ -1,5 +1,4 @@
 import isPlainObject from "../utilities/isPlainObject.js";
-import isUnpackable from "../utilities/isUnpackable.js";
 import extensionKeyFunctions from "./extensionKeyFunctions.js";
 import map from "./map.js";
 import parseExtensions from "./parseExtensions.js";
@@ -43,9 +42,9 @@ import parseExtensions from "./parseExtensions.js";
  * @param {Maplike} maplike
  * @param {string|MapExtensionOptions} arg2
  * @param {ValueKeyFn|MapExtensionOptions} [arg3]
- * @returns {Promise<AsyncMap>}
+ * @returns {AsyncMap}
  */
-export default async function mapExtension(maplike, arg2, arg3) {
+export default function mapExtension(maplike, arg2, arg3) {
   let extension;
 
   /** @type {import("../../index.ts").MapOptions} */
@@ -69,9 +68,6 @@ export default async function mapExtension(maplike, arg2, arg3) {
       );
     }
     extension = arg2;
-    if (isUnpackable(arg3)) {
-      arg3 = await arg3.unpack();
-    }
     if (typeof arg3 === "function") {
       options.value = arg3;
     } else if (isPlainObject(arg3)) {

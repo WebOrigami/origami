@@ -1,6 +1,5 @@
 import SyncMap from "../drivers/SyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
-import isUnpackable from "../utilities/isUnpackable.js";
 import entries from "./entries.js";
 
 /**
@@ -17,14 +16,7 @@ export default async function concat(...trees) {
   // Filter out null or undefined trees.
   /** @type {Maplike[]}
    * @ts-ignore */
-  const filtered = trees.filter((tree) => tree);
-
-  // Unpack any packed objects.
-  const sources = await Promise.all(
-    filtered.map((obj) =>
-      isUnpackable(obj) ? /** @type {any} */ (obj).unpack() : obj,
-    ),
-  );
+  const sources = trees.filter((tree) => tree);
 
   if (sources.length === 0) {
     throw new TypeError("Tree.concat: all arguments are null or undefined");
