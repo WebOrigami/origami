@@ -23,7 +23,7 @@ describe("merge", () => {
         e: {
           f: 4,
         },
-      })
+      }),
     );
 
     assert.deepEqual(await plain(fixture), {
@@ -52,33 +52,14 @@ describe("merge", () => {
             b: 2,
           },
         },
-        { deep: true }
-      )
+        { deep: true },
+      ),
     );
     assert.deepEqual(await keys(fixture), ["a/"]);
     assert.deepEqual(await plain(fixture), {
       a: {
         b: 2,
       },
-    });
-  });
-
-  test("if all arguments are plain objects, result is a plain object", async () => {
-    const result = await merge(
-      {
-        a: 1,
-        b: 2,
-      },
-      {
-        c: 3,
-        d: 4,
-      }
-    );
-    assert.deepEqual(result, {
-      a: 1,
-      b: 2,
-      c: 3,
-      d: 4,
     });
   });
 });

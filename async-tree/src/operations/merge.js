@@ -1,10 +1,7 @@
 import AsyncMap from "../drivers/AsyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
-import assignPropertyDescriptors from "../utilities/assignPropertyDescriptors.js";
-import isPlainObject from "../utilities/isPlainObject.js";
 import isUnpackable from "../utilities/isUnpackable.js";
 import from from "./from.js";
-import isMap from "./isMap.js";
 import isMaplike from "./isMaplike.js";
 import keys from "./keys.js";
 
@@ -39,11 +36,6 @@ export default async function merge(...treelikes) {
       error.position = Number(index) + 1;
       throw error;
     }
-  }
-
-  // If all arguments are plain objects, return a plain object.
-  if (unpacked.every((source) => !isMap(source) && isPlainObject(source))) {
-    return assignPropertyDescriptors({}, ...unpacked);
   }
 
   const sources = unpacked.map((maplike) => from(maplike));

@@ -10,6 +10,13 @@ import {
 /**
  * Create a tree that's the result of merging the given trees.
  *
+ * This method is what handles an Origami object spread. In the common case that
+ * the arguments are all plain (expression) objects, this will return a plain
+ * object.
+ *
+ * Otherwise this calls Tree.merge to merge the arguments as maps, and will
+ * return a new map representing the merged result.
+ *
  * @typedef {import("@weborigami/async-tree").Maplike} Maplike
  *
  * @param {(Maplike|null)[]} trees
