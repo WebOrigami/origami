@@ -14,9 +14,9 @@ import keys from "./keys.js";
  *
  * @param {Maplike} maplike
  * @param {{ randoms?: (() => number) }?} options
- * @returns {Promise<AsyncMap>}
+ * @returns {AsyncMap}
  */
-export default async function shuffle(maplike, options = {}) {
+export default function shuffle(maplike, options = {}) {
   const source = args.map(maplike, "Tree.shuffle");
   const randoms = options?.randoms ?? Math.random;
 

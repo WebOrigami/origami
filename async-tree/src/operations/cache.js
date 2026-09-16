@@ -16,9 +16,9 @@ import keys from "./keys.js";
  *
  * @param {Maplike} sourceMaplike
  * @param {Maplike} [cacheMaplike]
- * @returns {Promise<SyncMap|AsyncMap>}
+ * @returns {SyncMap|AsyncMap}
  */
-export default async function treeCache(sourceMaplike, cacheMaplike) {
+export default function treeCache(sourceMaplike, cacheMaplike) {
   const source = args.map(sourceMaplike, "Tree.cache", {
     position: 1,
   });

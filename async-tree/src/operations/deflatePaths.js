@@ -11,9 +11,9 @@ import traversePath from "./traversePath.js";
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
  * @param {Maplike} maplike
- * @param {{ assumeSlashKeys?: boolean, base?: string }} options
+ * @param {{ assumeSlashKeys?: boolean, base?: string }} [options]
  */
-export default async function deflatePaths(maplike, options = {}) {
+export default function deflatePaths(maplike, options = {}) {
   const tree = args.map(maplike, "Tree.deflatePaths", { deep: true });
   const { assumeSlashKeys, base } = args.options(options, "Tree.deflatePaths", {
     assumeSlashKeys: { required: false, type: "boolean" },

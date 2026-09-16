@@ -1,6 +1,5 @@
 import AsyncMap from "../drivers/AsyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
-import isUnpackable from "../utilities/isUnpackable.js";
 import from from "./from.js";
 import isMap from "./isMap.js";
 import isMaplike from "./isMaplike.js";
@@ -12,19 +11,14 @@ import keys from "./keys.js";
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
  * @param {Maplike[]} maplikes
- * @returns {Promise<AsyncMap>}
+ * @returns {AsyncMap}
  */
-export default async function deepMerge(...maplikes) {
+export default function deepMerge(...maplikes) {
   const filtered = maplikes.filter((source) => source);
-  const unpacked = await Promise.all(
-    filtered.map(async (source) =>
-      isUnpackable(source) ? await source.unpack() : source,
-    ),
-  );
 
   // If any argument isn't maplike, throw an error.
-  for (const index in unpacked) {
-    if (!isMaplike(unpacked[index])) {
+  for (const index in filtered) {
+    if (!isMaplike(filtered[index])) {
       /** @type {any} */
       const error = new TypeError(
         `Tree.deepMerge: an argument wasn't maplike.`,
@@ -34,7 +28,7 @@ export default async function deepMerge(...maplikes) {
     }
   }
 
-  const sources = unpacked.map((maplike) => from(maplike, { deep: true }));
+  const sources = filtered.map((maplike) => from(maplike, { deep: true }));
 
   return Object.assign(new AsyncMap(), {
     description: "deepMerge",

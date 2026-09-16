@@ -9,9 +9,9 @@ import keys from "./keys.js";
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
  * @param {Maplike} maplike
- * @returns {Promise<AsyncMap>}
+ * @returns {AsyncMap}
  */
-export default async function deepReverse(maplike) {
+export default function deepReverse(maplike) {
   const source = args.map(maplike, "Tree.deepReverse", {
     deep: true,
   });

@@ -7,7 +7,7 @@ import * as args from "../utilities/args.js";
  *
  * @param {Maplike} maplike
  */
-export default async function parent(maplike) {
+export default function parent(maplike) {
   const map = args.map(maplike, "Tree.parent");
   return "parent" in map ? map.parent : undefined;
 }

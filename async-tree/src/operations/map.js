@@ -2,7 +2,6 @@ import AsyncMap from "../drivers/AsyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import * as args from "../utilities/args.js";
 import isPlainObject from "../utilities/isPlainObject.js";
-import isUnpackable from "../utilities/isUnpackable.js";
 import toFunction from "../utilities/toFunction.js";
 import cachedKeyFunctions from "./cachedKeyFunctions.js";
 import isMap from "./isMap.js";
@@ -17,12 +16,9 @@ import keys from "./keys.js";
  *
  * @param {import("../../index.ts").Maplike} maplike
  * @param {MapOptions|ValueKeyFn} options
- * @returns {Promise<AsyncMap>}
+ * @returns {AsyncMap}
  */
-export default async function map(maplike, options = {}) {
-  if (isUnpackable(options)) {
-    options = await options.unpack();
-  }
+export default function map(maplike, options = {}) {
   const validated = validateOptions(options);
   const mapFn = createMapFn(validated);
 

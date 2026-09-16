@@ -9,9 +9,9 @@ import getParent from "../utilities/getParent.js";
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
  * @param {Maplike} maplike
- * @returns {Promise<AsyncMap>}
+ * @returns {AsyncMap}
  */
-export default async function scope(maplike) {
+export default function scope(maplike) {
   const source = args.map(maplike, "Tree.scope");
 
   return Object.assign(new AsyncMap(), {

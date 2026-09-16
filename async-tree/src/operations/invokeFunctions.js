@@ -2,7 +2,7 @@ import AsyncMap from "../drivers/AsyncMap.js";
 import * as args from "../utilities/args.js";
 import isMap from "./isMap.js";
 
-export default async function invokeFunctions(maplike) {
+export default function invokeFunctions(maplike) {
   const source = args.map(maplike, "Tree.invokeFunctions", {
     deep: true,
   });

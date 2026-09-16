@@ -12,9 +12,9 @@ import map from "./map.js";
  *
  * @param {Maplike} maplike
  * @param {ValueKeyFn|MapOptions} options
- * @returns {Promise<AsyncMap>}
+ * @returns {AsyncMap}
  */
-export default async function deepMap(maplike, options) {
+export default function deepMap(maplike, options) {
   const tree = args.map(maplike, "Tree.deepMap", { deep: true });
   const withDeep = isPlainObject(options)
     ? // Dictionary

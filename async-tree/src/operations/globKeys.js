@@ -8,7 +8,7 @@ import merge from "./merge.js";
 const globstar = "**";
 const globstarSlash = `${globstar}/`;
 
-export default async function globKeys(maplike) {
+export default function globKeys(maplike) {
   const source = args.map(maplike, "Tree.globKeys", { deep: true });
   return Object.assign(new AsyncMap(), {
     async get(key) {

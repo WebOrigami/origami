@@ -13,9 +13,9 @@ import keys from "./keys.js";
  *
  * @param {Maplike} aMaplike
  * @param {Maplike} bMaplike
- * @returns {Promise<AsyncMap>}
+ * @returns {AsyncMap}
  */
-export default async function mask(aMaplike, bMaplike) {
+export default function mask(aMaplike, bMaplike) {
   const aMap = args.map(aMaplike, "Tree.mask", {
     deep: true,
     position: 1,

@@ -8,9 +8,9 @@ import keys from "./keys.js";
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
  * @param {Maplike} maplike
- * @returns {Promise<AsyncMap>}
+ * @returns {AsyncMap}
  */
-export default async function reverse(maplike) {
+export default function reverse(maplike) {
   const source = args.map(maplike, "Tree.reverse");
   return Object.assign(new AsyncMap(), {
     description: "reverse",

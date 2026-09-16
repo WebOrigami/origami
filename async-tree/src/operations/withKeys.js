@@ -10,9 +10,9 @@ import values from "./values.js";
  *
  * @param {Maplike} maplike
  * @param {Maplike} keysMaplike
- * @returns {Promise<AsyncMap>}
+ * @returns {AsyncMap}
  */
-export default async function withKeys(maplike, keysMaplike) {
+export default function withKeys(maplike, keysMaplike) {
   const source = args.map(maplike, "Tree.withKeys", {
     position: 1,
   });

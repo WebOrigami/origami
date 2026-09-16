@@ -10,9 +10,9 @@ import map from "./map.js";
  *
  * @param {Maplike} maplike
  * @param {function|any} options
- * @returns {Promise<AsyncMap>}
+ * @returns {AsyncMap}
  */
-export default async function filter(maplike, options) {
+export default function filter(maplike, options) {
   let testFn;
   let deep;
   if (typeof options === "function") {

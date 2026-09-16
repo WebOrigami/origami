@@ -7,7 +7,7 @@ import * as args from "../utilities/args.js";
  * @param {import("../../index.ts").Maplike} maplike
  * @param {number} count
  */
-export default async function take(maplike, count) {
+export default function take(maplike, count) {
   const source = args.map(maplike, "Tree.take");
   count = args.number(count, "Tree.take", { position: 2 });
   return Object.assign(new AsyncMap(), {
