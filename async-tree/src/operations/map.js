@@ -1,7 +1,6 @@
 import AsyncMap from "../drivers/AsyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import * as args from "../utilities/args.js";
-import toFunction from "../utilities/toFunction.js";
 import cachedKeyFunctions from "./cachedKeyFunctions.js";
 import isMap from "./isMap.js";
 import keys from "./keys.js";
@@ -183,14 +182,4 @@ function validateOptions(options) {
     keyNeedsSourceValue,
     value,
   };
-}
-
-function castToFunction(object, name) {
-  const fn = toFunction(object);
-  if (!fn) {
-    throw new TypeError(
-      `Tree.map: The ${name} option must be a function but couldn't be treated as one.`,
-    );
-  }
-  return fn;
 }

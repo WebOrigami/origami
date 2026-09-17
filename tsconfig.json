@@ -2,7 +2,7 @@
   "compilerOptions": {
     "allowImportingTsExtensions": true,
     "checkJs": true,
-    "lib": ["ES2024", "DOM"],
+    "lib": ["ES2024", "ESNext.Array", "DOM"],
     "noEmit": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": false,

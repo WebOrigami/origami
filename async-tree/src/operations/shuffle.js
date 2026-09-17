@@ -1,3 +1,4 @@
+import SyncMap from "../drivers/SyncMap.js";
 import * as args from "../utilities/args.js";
 import keys from "./keys.js";
 import withKeys from "./withKeys.js";
@@ -30,13 +31,24 @@ export default function shuffle(maplike, options = {}) {
   randoms = randoms ?? Math.random;
 
   let mapKeys;
-  const shuffledKeys = async function* () {
-    if (!mapKeys) {
-      mapKeys = await keys(source);
-      shuffleArray(mapKeys, randoms);
-    }
-    yield* mapKeys;
-  };
+  let shuffledKeys;
+  if (source instanceof SyncMap) {
+    shuffledKeys = function* () {
+      if (!mapKeys) {
+        mapKeys = Array.from(source.keys());
+        shuffleArray(mapKeys, randoms);
+      }
+      yield* mapKeys;
+    };
+  } else {
+    shuffledKeys = async function* () {
+      if (!mapKeys) {
+        mapKeys = await keys(source);
+        shuffleArray(mapKeys, randoms);
+      }
+      yield* mapKeys;
+    };
+  }
 
   return withKeys(source, shuffledKeys, { description: "shuffle" });
 }
