@@ -1,4 +1,3 @@
-import AsyncMap from "../drivers/AsyncMap.js";
 import * as args from "../utilities/args.js";
 import keys from "./keys.js";
 import withKeys from "./withKeys.js";
@@ -12,10 +11,11 @@ import withKeys from "./withKeys.js";
  *
  * @typedef {import("../../index.ts").Maplike} Maplike
  * @typedef {import("../../index.ts").Stringlike} Stringlike
+ * @typedef {import("../../index.ts").SyncOrAsyncMap} SyncOrAsyncMap
  *
  * @param {Maplike} maplike
  * @param {{ randoms?: (() => number) }} [options]
- * @returns {AsyncMap}
+ * @returns {SyncOrAsyncMap}
  */
 export default function shuffle(maplike, options = {}) {
   const source = args.map(maplike, "Tree.shuffle");

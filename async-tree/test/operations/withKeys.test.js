@@ -39,7 +39,7 @@ describe("withKeys", () => {
   });
 
   test("accepts an async keys generator", async () => {
-    function* keysGen() {
+    async function* keysGen() {
       yield "a";
       yield "c";
     }

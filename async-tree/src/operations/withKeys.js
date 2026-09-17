@@ -1,4 +1,5 @@
 import AsyncMap from "../drivers/AsyncMap.js";
+import SyncMap from "../drivers/SyncMap.js";
 import * as ambi from "../utilities/ambi.js";
 import * as args from "../utilities/args.js";
 
@@ -7,11 +8,12 @@ import * as args from "../utilities/args.js";
  * an array of keys).
  *
  * @typedef {import("../../index.ts").Maplike} Maplike
+ * @typedef {import("../../index.ts").SyncOrAsyncMap} SyncOrAsyncMap
  *
  * @param {Maplike} maplike
  * @param {AsyncGeneratorFunction|GeneratorFunction|Maplike} keysSource
  * @param {{ description?: string }} [options]
- * @returns {AsyncMap}
+ * @returns {SyncOrAsyncMap}
  */
 export default function withKeys(maplike, keysSource, options = {}) {
   const source = args.map(maplike, "Tree.withKeys", {
@@ -47,20 +49,19 @@ export default function withKeys(maplike, keysSource, options = {}) {
   );
   description ??= "withKeys";
 
-  return Object.assign(new AsyncMap(), {
+  const base = ambi.allSync(source, keysIterator) ? SyncMap : AsyncMap;
+  const result = Object.assign(new base(), {
     description,
 
-    async get(key) {
+    get(key) {
       return source.get(key);
-    },
-
-    async *keys() {
-      // @ts-ignore
-      yield* keysIterator();
     },
 
     source: source,
 
     trailingSlashKeys: /** @type {any} */ (source).trailingSlashKeys,
   });
+  /** @type {any} */ (result).keys = keysIterator;
+
+  return result;
 }
