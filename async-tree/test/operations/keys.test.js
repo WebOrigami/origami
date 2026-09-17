@@ -5,13 +5,13 @@ import ObjectMap from "../../src/drivers/ObjectMap.js";
 import keys from "../../src/operations/keys.js";
 
 describe("keys", () => {
-  test("handles regular iterable", async () => {
+  test("handles regular iterable", () => {
     const obj = new ObjectMap({
       a: 1,
       b: 2,
       c: 3,
     });
-    const result = await keys(obj);
+    const result = keys(obj);
     assert.deepEqual(result, ["a", "b", "c"]);
   });
 

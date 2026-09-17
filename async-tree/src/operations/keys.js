@@ -7,14 +7,9 @@ import * as args from "../utilities/args.js";
  *
  * @param {Maplike} maplike
  */
-export default async function keys(maplike) {
+export default function keys(maplike) {
   const map = args.map(maplike, "Tree.keys");
-  const keys = [];
-  const iterator = map.keys();
-  let next = await iterator.next();
-  while (!next.done) {
-    keys.push(next.value);
-    next = await iterator.next();
-  }
-  return keys;
+  return map instanceof Map
+    ? Array.from(map.keys())
+    : Array.fromAsync(map.keys());
 }
