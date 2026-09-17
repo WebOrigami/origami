@@ -1,16 +1,32 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import SyncMap from "../../src/drivers/SyncMap.js";
 import from from "../../src/operations/from.js";
 import keys from "../../src/operations/keys.js";
 import sort from "../../src/operations/sort.js";
+import SampleAsyncMap from "../SampleAsyncMap.js";
 
 describe("sort", () => {
-  test("sorts keys using default sort order", async () => {
+  test("sorts keys in a sync map using default sort order", () => {
     const tree = from({
       file10: null,
       file1: null,
       file9: null,
     });
+    const sorted = sort(tree);
+    assert(sorted instanceof SyncMap);
+    const keys = Array.from(sorted.keys());
+    assert.deepEqual(keys, ["file1", "file10", "file9"]);
+  });
+
+  test("sorts keys in an async map using default sort order", async () => {
+    const tree = new SampleAsyncMap(
+      Object.entries({
+        file10: null,
+        file1: null,
+        file9: null,
+      }),
+    );
     const sorted = sort(tree);
     assert.deepEqual(Array.from(await keys(sorted)), [
       "file1",

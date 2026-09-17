@@ -1,3 +1,7 @@
+import sortKeysAsync from "../async/sortKeysAsync.js";
+import SyncMap from "../drivers/SyncMap.js";
+import sortKeysSync from "../sync/sortKeysSync.js";
+import * as ambi from "../utilities/ambi.js";
 import * as args from "../utilities/args.js";
 import withKeys from "./withKeys.js";
 
@@ -28,7 +32,13 @@ export default function sort(maplike, options = {}) {
     { position: 2 },
   );
 
-  const sortedKeys = 
+  const allSync =
+    source instanceof SyncMap &&
+    !(compare instanceof ambi.AsyncFunction) &&
+    !(sortKey instanceof ambi.AsyncFunction);
+  const sortedKeys = allSync
+    ? sortKeysSync(source, compare, sortKey)
+    : sortKeysAsync(source, compare, sortKey);
 
   return withKeys(source, sortedKeys, { description: "sort" });
 }

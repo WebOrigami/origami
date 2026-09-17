@@ -12,6 +12,7 @@
     "typescript": "7.0.2"
   },
   "scripts": {
+    "build": "node scripts/build.js",
     "headlessTest": "node scripts/headlessTest.js",
     "test": "node --test --test-reporter=spec",
     "typecheck": "tsc"
