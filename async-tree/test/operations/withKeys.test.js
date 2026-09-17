@@ -18,4 +18,42 @@ describe("withKeys", () => {
       c: 3,
     });
   });
+
+  test("accepts a sync keys generator", async () => {
+    function* keysGen() {
+      yield "a";
+      yield "c";
+    }
+    const result = withKeys(
+      {
+        a: 1,
+        b: 2,
+        c: 3,
+      },
+      keysGen,
+    );
+    assert.deepEqual(await plain(result), {
+      a: 1,
+      c: 3,
+    });
+  });
+
+  test("accepts an async keys generator", async () => {
+    function* keysGen() {
+      yield "a";
+      yield "c";
+    }
+    const result = withKeys(
+      {
+        a: 1,
+        b: 2,
+        c: 3,
+      },
+      keysGen,
+    );
+    assert.deepEqual(await plain(result), {
+      a: 1,
+      c: 3,
+    });
+  });
 });

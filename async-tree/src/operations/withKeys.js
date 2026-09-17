@@ -1,6 +1,6 @@
 import AsyncMap from "../drivers/AsyncMap.js";
+import * as ambi from "../utilities/ambi.js";
 import * as args from "../utilities/args.js";
-import values from "./values.js";
 
 /**
  * Return a map whose keys are provided by the _values_ of a second map (e.g.,
@@ -9,29 +9,54 @@ import values from "./values.js";
  * @typedef {import("../../index.ts").Maplike} Maplike
  *
  * @param {Maplike} maplike
- * @param {Maplike} keysMaplike
+ * @param {AsyncGeneratorFunction|GeneratorFunction|Maplike} keysSource
+ * @param {{ description?: string }} [options]
  * @returns {AsyncMap}
  */
-export default function withKeys(maplike, keysMaplike) {
+export default function withKeys(maplike, keysSource, options = {}) {
   const source = args.map(maplike, "Tree.withKeys", {
     position: 1,
   });
-  const keysMap = args.map(keysMaplike, "Tree.withKeys", {
-    position: 2,
-  });
 
-  let keys;
+  let keysIterator;
+  if (
+    keysSource instanceof ambi.AsyncGeneratorFunction ||
+    keysSource instanceof ambi.GeneratorFunction
+  ) {
+    keysIterator = keysSource;
+  } else if (keysSource instanceof Array) {
+    keysIterator = function* () {
+      yield* keysSource;
+    };
+  } else {
+    const keysMap = args.map(keysSource, "Tree.withKeys", {
+      position: 2,
+    });
+    keysIterator = keysMap.keys;
+  }
+
+  let { description } = args.dictionary(
+    options,
+    "Tree.withKeys",
+    {
+      description: { type: "string", required: false },
+    },
+    {
+      position: 3,
+    },
+  );
+  description ??= "withKeys";
 
   return Object.assign(new AsyncMap(), {
-    description: "withKeys",
+    description,
 
     async get(key) {
       return source.get(key);
     },
 
     async *keys() {
-      keys ??= await values(keysMap);
-      yield* keys;
+      // @ts-ignore
+      yield* keysIterator();
     },
 
     source: source,
