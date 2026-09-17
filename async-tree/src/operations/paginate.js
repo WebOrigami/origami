@@ -13,12 +13,11 @@ import keys from "./keys.js";
  * @param {Maplike} maplike
  * @param {number} [size=10]
  */
-export default async function paginate(maplike, size = 10) {
+export default function paginate(maplike, size = 10) {
   const source = args.map(maplike, "Tree.paginate");
   size = args.number(size, "Tree.paginate", { position: 2 });
 
-  const treeKeys = await keys(source);
-  const pageCount = Math.ceil(treeKeys.length / size);
+  let treeKeys;
 
   const paginated = Object.assign(new AsyncMap(), {
     description: "paginate",
@@ -30,6 +29,9 @@ export default async function paginate(maplike, size = 10) {
       if (Number.isNaN(pageNumber)) {
         return undefined;
       }
+
+      treeKeys ??= await keys(source);
+      const pageCount = Math.ceil(treeKeys.length / size);
       const nextPage = pageNumber + 1 <= pageCount ? pageNumber + 1 : null;
       const previousPage = pageNumber - 1 >= 1 ? pageNumber - 1 : null;
       const items = new SyncMap();
@@ -53,6 +55,8 @@ export default async function paginate(maplike, size = 10) {
 
     async *keys() {
       // Return from 1..totalPages
+      treeKeys ??= await keys(source);
+      const pageCount = Math.ceil(treeKeys.length / size);
       yield* Array.from({ length: pageCount }, (_, index) => index + 1);
     },
 
