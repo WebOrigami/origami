@@ -1,22 +1,22 @@
 import FileMap from "../src/drivers/FileMap.js";
-import map from "../src/operations/map.js";
+import SyncMap from "../src/drivers/SyncMap.js";
 import asyncToSync from "./asyncToSync.js";
 
 /**
  * Convert async source code to its synchronous equivalent.
  *
- * This uses AsyncTree drivers and functions directly instead of using Origami to
- * coordinate the transformation.
+ * This uses the SyncMap and FileMap drivers, and `npm run build` will copy the
+ * files using the `apply` operation. Beyond that, this avoids using other
+ * higher-level map operations or Origami in order to avoid self-hosting issues.
  */
 const asyncFilesUrl = new URL("../src/async", import.meta.url);
 const asyncFiles = new FileMap(asyncFilesUrl);
-const syncFiles = map(asyncFiles, {
-  key: (value, key) =>
-    key.endsWith("Async.js") ? key.replace("Async.js", "Sync.js") : key,
-  keyNeedsSourceValue: false,
-  inverseKey: (key) =>
-    key.endsWith("Sync.js") ? key.replace("Sync.js", "Async.js") : key,
-  value: asyncToSync,
-});
+
+const syncFiles = new SyncMap();
+for (const [key, value] of asyncFiles) {
+  const syncKey = key.replace("Async", "Sync");
+  const syncValue = asyncToSync(value);
+  syncFiles.set(syncKey, syncValue);
+}
 
 export default syncFiles;
