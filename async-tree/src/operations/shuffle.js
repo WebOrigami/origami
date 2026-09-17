@@ -1,6 +1,7 @@
 import AsyncMap from "../drivers/AsyncMap.js";
 import * as args from "../utilities/args.js";
 import keys from "./keys.js";
+import withKeys from "./withKeys.js";
 
 /**
  * Return a new tree with the original's keys shuffled.
@@ -13,34 +14,31 @@ import keys from "./keys.js";
  * @typedef {import("../../index.ts").Stringlike} Stringlike
  *
  * @param {Maplike} maplike
- * @param {{ randoms?: (() => number) }?} options
+ * @param {{ randoms?: (() => number) }} [options]
  * @returns {AsyncMap}
  */
 export default function shuffle(maplike, options = {}) {
   const source = args.map(maplike, "Tree.shuffle");
-  const randoms = options?.randoms ?? Math.random;
+  let { randoms } = args.dictionary(
+    options,
+    "Tree.shuffle",
+    {
+      randoms: { type: "fn", required: false },
+    },
+    { position: 2 },
+  );
+  randoms = randoms ?? Math.random;
 
   let mapKeys;
+  const shuffledKeys = async function* () {
+    if (!mapKeys) {
+      mapKeys = await keys(source);
+      shuffleArray(mapKeys, randoms);
+    }
+    yield* mapKeys;
+  };
 
-  return Object.assign(new AsyncMap(), {
-    description: "shuffle",
-
-    async get(key) {
-      return source.get(key);
-    },
-
-    async *keys() {
-      if (!mapKeys) {
-        mapKeys = await keys(source);
-        shuffleArray(mapKeys, randoms);
-      }
-      yield* mapKeys;
-    },
-
-    source,
-
-    trailingSlashKeys: /** @type {any} */ (source).trailingSlashKeys,
-  });
+  return withKeys(source, shuffledKeys, { description: "shuffle" });
 }
 
 /*
