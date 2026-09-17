@@ -1,8 +1,6 @@
 import * as trailingSlash from "../trailingSlash.js";
 import setParent from "../utilities/setParent.js";
 
-const previewSymbol = Symbol("preview");
-
 /**
  * A base class for creating custom Map subclasses for use in trees.
  *
@@ -40,6 +38,16 @@ export default class SyncMap extends Map {
     // We separately use this member to determine whether the constructor has
     // been called to initialize the instance. See set().
     this._self = this;
+  }
+
+  /**
+   * Clone this as a standard Map.
+   *
+   * One use for this is in debugging, where the debugger may have facilities
+   * for inspecting the keys and values of a standard Map.
+   */
+  get asMap() {
+    return new Map(this);
   }
 
   /**
@@ -297,12 +305,3 @@ export default class SyncMap extends Map {
     return /** @type {MapIterator<[any]>} */ (gen());
   }
 }
-
-// For debugging we make the entries available as a plain Map.
-Object.defineProperty(SyncMap.prototype, previewSymbol, {
-  configurable: true,
-  enumerable: false,
-  get: function () {
-    return new Map(this);
-  },
-});
