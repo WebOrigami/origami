@@ -1,4 +1,5 @@
 import from from "../operations/from.js";
+import isMaplike from "../operations/isMaplike.js";
 import toFunction from "./toFunction.js";
 import toString from "./toString.js";
 
@@ -12,34 +13,19 @@ import toString from "./toString.js";
  */
 
 /**
- * Check a function argument.
+ * Check a function argument. If it's a map, coerce it to a function.
  */
 export function fn(arg, operation, options = {}) {
-  if (typeof arg !== "function") {
+  if (typeof arg === "function") {
+    return arg;
+  } else if (isMaplike(arg)) {
+    return toFunction(arg);
+  } else {
     /** @type {any} */
     const error = new TypeError(`${operation}: Expected a function argument.`);
     error.position = options.position ?? 1;
     throw error;
   }
-  return arg;
-}
-
-/**
- * Check an invocable argument and return it as a function.
- *
- * @param {import("../../index.ts").Invocable} arg
- * @param {string} operation
- * @returns {Function}
- */
-export function invocable(arg, operation, options = {}) {
-  const fn = toFunction(arg);
-  if (!fn) {
-    /** @type {any} */
-    const error = new TypeError(`${operation}: Expected a function argument.`);
-    error.position = options.position ?? 1;
-    throw error;
-  }
-  return fn;
 }
 
 /**
