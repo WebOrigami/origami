@@ -14,7 +14,7 @@ describe("deflatePaths", () => {
         "quux.json": 789,
       },
     };
-    const result = await deflatePaths(maplike);
+    const result = deflatePaths(maplike);
     assert.deepStrictEqual(await plain(result), {
       "foo/bar/baz.json": 123,
       "foo/bar/qux.json": 456,
@@ -32,7 +32,7 @@ describe("deflatePaths", () => {
         "quux.json": 789,
       },
     };
-    const result = await deflatePaths(maplike, { base: "https://example.com" });
+    const result = deflatePaths(maplike, { base: "https://example.com" });
     assert.deepStrictEqual(await plain(result), {
       "https://example.com/foo/bar/baz.json": 123,
       "https://example.com/foo/bar/qux.json": 456,

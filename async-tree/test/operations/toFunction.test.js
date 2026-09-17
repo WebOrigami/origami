@@ -9,7 +9,7 @@ describe("toFunction", () => {
       a: 1,
       b: 2,
     });
-    const fn = await toFunction(tree);
+    const fn = toFunction(tree);
     assert.equal(await fn("a"), 1);
     assert.equal(await fn("b"), 2);
   });

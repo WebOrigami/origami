@@ -6,7 +6,7 @@ import plain from "../../src/operations/plain.js";
 
 describe("mask", () => {
   test("removes keys and values whose mask values are falsy", async () => {
-    const result = await mask(
+    const result = mask(
       {
         a: 1,
         b: 2,
@@ -20,7 +20,7 @@ describe("mask", () => {
         c: {
           d: true,
         },
-      }
+      },
     );
     assert.deepEqual(await keys(result), ["a", "c/"]);
     assert.deepEqual(await plain(result), {
@@ -32,7 +32,7 @@ describe("mask", () => {
   });
 
   test("can pull from a functional map", async () => {
-    const result = await mask((key) => key.toUpperCase(), {
+    const result = mask((key) => key.toUpperCase(), {
       a: true,
       b: false,
       c: true,

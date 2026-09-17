@@ -12,7 +12,7 @@ describe("deepReverse", () => {
         d: 3,
       },
     };
-    const reversed = await deepReverse(tree);
+    const reversed = deepReverse(tree);
     assert.deepEqual(await plain(reversed), {
       b: {
         d: 3,

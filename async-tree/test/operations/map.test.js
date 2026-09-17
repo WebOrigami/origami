@@ -12,7 +12,7 @@ describe("map", () => {
       b: "letter b",
     };
     assert.rejects(async () => {
-      await map(tree, {});
+      map(tree, {});
     });
   });
 
@@ -22,7 +22,7 @@ describe("map", () => {
       b: "letter b",
       c: undefined, // Won't be mapped
     });
-    const mapped = await map(tree, {
+    const mapped = map(tree, {
       value: (sourceValue, sourceKey, innerTree) => {
         assert(sourceKey === "a" || sourceKey === "b");
         assert.equal(innerTree, tree);
@@ -41,7 +41,7 @@ describe("map", () => {
       a: "letter a",
       b: "letter b",
     };
-    const uppercaseValues = await map(tree, (sourceValue, sourceKey, tree) => {
+    const uppercaseValues = map(tree, (sourceValue, sourceKey, tree) => {
       assert(sourceKey === "a" || sourceKey === "b");
       return sourceValue.toUpperCase();
     });
@@ -56,7 +56,7 @@ describe("map", () => {
       a: "letter a",
       b: "letter b",
     };
-    const underscoreKeys = await map(tree, {
+    const underscoreKeys = map(tree, {
       key: addUnderscore,
       inverseKey: removeUnderscore,
     });
@@ -71,7 +71,7 @@ describe("map", () => {
       a: "letter a",
       b: "letter b",
     };
-    const underscoreKeys = await map(tree, {
+    const underscoreKeys = map(tree, {
       key: addUnderscore,
     });
     assert.deepEqual(await plain(underscoreKeys), {
@@ -86,7 +86,7 @@ describe("map", () => {
       { name: "Bob", age: 2 },
       { name: "Carol", age: 3 },
     ]);
-    const result = await map(maplike, {
+    const result = map(maplike, {
       key: (value, key, tree) => value.name,
       value: (value, key, tree) => value.age,
     });
@@ -104,7 +104,7 @@ describe("map", () => {
         b: "letter b",
       },
     };
-    const underscoreKeys = await map(tree, {
+    const underscoreKeys = map(tree, {
       key: async (value, sourceKey, tree) => `_${sourceKey}`,
       inverseKey: async (resultKey, tree) => resultKey.slice(1),
       value: async (sourceValue, sourceKey, tree) => sourceKey,
@@ -123,7 +123,7 @@ describe("map", () => {
       a: "letter a",
       b: "letter b",
     };
-    const mapped = await map(tree, uppercase);
+    const mapped = map(tree, uppercase);
     assert.deepEqual(await plain(mapped), {
       _a: "LETTER A",
       _b: "LETTER B",
@@ -138,9 +138,9 @@ describe("map", () => {
           b: "letter b",
         },
       },
-      { deep: true }
+      { deep: true },
     );
-    const uppercaseValues = await map(tree, {
+    const uppercaseValues = map(tree, {
       deep: true,
       value: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
     });
@@ -160,9 +160,9 @@ describe("map", () => {
           b: "letter b",
         },
       },
-      { deep: true }
+      { deep: true },
     );
-    const underscoreKeys = await map(tree, {
+    const underscoreKeys = map(tree, {
       deep: true,
       key: addUnderscore,
       inverseKey: removeUnderscore,
@@ -183,9 +183,9 @@ describe("map", () => {
           b: "letter b",
         },
       },
-      { deep: true }
+      { deep: true },
     );
-    const underscoreKeysUppercaseValues = await map(tree, {
+    const underscoreKeysUppercaseValues = map(tree, {
       deep: true,
       key: addUnderscore,
       inverseKey: removeUnderscore,
@@ -205,7 +205,7 @@ describe("map", () => {
       b: "letter b",
       c: "letter c",
     };
-    const mapped = await map(tree, {
+    const mapped = map(tree, {
       keyNeedsSourceValue: false,
       key: (value, key) => {
         assert.equal(value, null);

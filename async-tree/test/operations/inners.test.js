@@ -20,9 +20,9 @@ describe("inners", () => {
           h: 5,
         },
       },
-      { deep: true }
+      { deep: true },
     );
-    const result = await inners(obj);
+    const result = inners(obj);
     assert.deepEqual(await plain(result), {
       b: {
         d: {},

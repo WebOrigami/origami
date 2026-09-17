@@ -8,7 +8,7 @@ import keys from "../../src/operations/keys.js";
 describe("cache", () => {
   test("caches reads of values from one tree into another", async () => {
     const objectCache = new SyncMap();
-    const fixture = await cache(
+    const fixture = cache(
       new ObjectMap(
         {
           a: 1,
@@ -18,9 +18,9 @@ describe("cache", () => {
             d: 4,
           },
         },
-        { deep: true }
+        { deep: true },
       ),
-      objectCache
+      objectCache,
     );
 
     const treeKeys = await keys(fixture);

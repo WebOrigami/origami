@@ -5,14 +5,14 @@ import plain from "../../src/operations/plain.js";
 
 describe("filter", () => {
   test("returns values that pass a filter function", async () => {
-    const result = await filter(
+    const result = filter(
       {
         a: 1,
         b: 2,
         c: 3,
         d: 4,
       },
-      (value) => value % 2 === 1 // odd
+      (value) => value % 2 === 1, // odd
     );
     assert.deepEqual(await plain(result), {
       a: 1,
@@ -21,7 +21,7 @@ describe("filter", () => {
   });
 
   test("returns deep values that pass a filter function", async () => {
-    const result = await filter(
+    const result = filter(
       {
         a: 1,
         b: 2,
@@ -33,7 +33,7 @@ describe("filter", () => {
       {
         deep: true,
         test: (value) => value % 2 === 1, // odd
-      }
+      },
     );
     assert.deepEqual(await plain(result), {
       a: 1,

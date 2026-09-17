@@ -5,7 +5,7 @@ import plain from "../../src/operations/plain.js";
 
 describe("invokeFunctions", () => {
   test("invokes function values, leaves other values as is", async () => {
-    const fixture = await invokeFunctions({
+    const fixture = invokeFunctions({
       a: 1,
       b: () => 2,
     });

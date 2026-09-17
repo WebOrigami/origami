@@ -9,7 +9,7 @@ describe("parent", () => {
       sub: new ObjectMap({}),
     });
     const sub = await tree.get("sub");
-    const result = await parent(sub);
+    const result = parent(sub);
     assert.equal(result, tree);
   });
 });

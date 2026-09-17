@@ -5,13 +5,13 @@ import withKeys from "../../src/operations/withKeys.js";
 
 describe("withKeys", () => {
   test("applies the indicated keys", async () => {
-    const result = await withKeys(
+    const result = withKeys(
       {
         a: 1,
         b: 2,
         c: 3,
       },
-      ["a", "c"]
+      ["a", "c"],
     );
     assert.deepEqual(await plain(result), {
       a: 1,

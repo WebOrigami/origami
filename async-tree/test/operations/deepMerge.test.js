@@ -6,7 +6,7 @@ import plain from "../../src/operations/plain.js";
 
 describe("mergeDeep", () => {
   test("can merge deep", async () => {
-    const fixture = await deepMerge(
+    const fixture = deepMerge(
       new ObjectMap(
         {
           a: {
@@ -16,7 +16,7 @@ describe("mergeDeep", () => {
             },
           },
         },
-        { deep: true }
+        { deep: true },
       ),
       new ObjectMap(
         {
@@ -28,8 +28,8 @@ describe("mergeDeep", () => {
             f: 4,
           },
         },
-        { deep: true }
-      )
+        { deep: true },
+      ),
     );
     assert.deepEqual(await plain(fixture), {
       a: {

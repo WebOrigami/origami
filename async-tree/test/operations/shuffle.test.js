@@ -12,7 +12,7 @@ describe("shuffle", () => {
       d: 4,
       e: 5,
     };
-    const result = await shuffle(obj);
+    const result = shuffle(obj);
     const treeKeys = await keys(result);
     assert.deepEqual(treeKeys.sort(), Object.keys(obj).sort());
   });
@@ -33,10 +33,10 @@ describe("shuffle", () => {
       };
     }
 
-    const result1 = await shuffle(obj, { randoms: count() });
+    const result1 = shuffle(obj, { randoms: count() });
     const keys1 = await keys(result1);
 
-    const result2 = await shuffle(obj, { randoms: count() });
+    const result2 = shuffle(obj, { randoms: count() });
     const keys2 = await keys(result2);
 
     assert.deepEqual(keys1, keys2);

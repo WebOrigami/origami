@@ -11,7 +11,7 @@ describe("take", () => {
       c: 3,
       d: 4,
     };
-    const result = await take(tree, 2);
+    const result = take(tree, 2);
     assert.deepEqual(await plain(result), {
       a: 1,
       b: 2,
