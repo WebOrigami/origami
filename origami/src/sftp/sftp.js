@@ -27,7 +27,7 @@ export default async function sftp(options) {
     privateKey,
     shellAccess,
     username,
-  } = args.options(options, "Origami.sftp", {
+  } = args.dictionary(options, "Origami.sftp", {
     agent: { required: false },
     host: {},
     passphrase: { required: false },

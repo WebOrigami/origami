@@ -10,7 +10,7 @@ import isMap from "./isMap.js";
  * @param {{ deep?: boolean }} [options]
  */
 export default async function forEach(maplike, callbackFn, options = {}) {
-  const { deep } = args.options(options, "Tree.forEach", {
+  const { deep } = args.dictionary(options, "Tree.forEach", {
     deep: { required: false, type: "boolean" },
   });
   const map = args.map(maplike, "Tree.forEach", { deep: deep ?? true });

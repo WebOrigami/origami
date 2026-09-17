@@ -1,7 +1,6 @@
 import AsyncMap from "../drivers/AsyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import * as args from "../utilities/args.js";
-import isPlainObject from "../utilities/isPlainObject.js";
 import toFunction from "../utilities/toFunction.js";
 import cachedKeyFunctions from "./cachedKeyFunctions.js";
 import isMap from "./isMap.js";
@@ -21,7 +20,6 @@ import keys from "./keys.js";
 export default function map(maplike, options = {}) {
   const validated = validateOptions(options);
   const mapFn = createMapFn(validated);
-
   const tree = args.map(maplike, "Tree.map", {
     deep: validated.deep,
   });
@@ -30,14 +28,14 @@ export default function map(maplike, options = {}) {
 
 // Create a get() function for the map
 function createGet(tree, options, mapFn) {
-  const { inverseKeyFn, deep, valueFn } = options;
+  const { inverseKey, deep, value } = options;
   return async (resultKey) => {
     if (resultKey === undefined) {
       throw new ReferenceError(`Tree.map: Cannot get an undefined key.`);
     }
 
     // Step 1: Map the result key to the source key
-    let sourceKey = await inverseKeyFn?.(resultKey, tree);
+    let sourceKey = await inverseKey?.(resultKey, tree);
 
     if (sourceKey === undefined) {
       if (deep && trailingSlash.has(resultKey)) {
@@ -47,7 +45,7 @@ function createGet(tree, options, mapFn) {
         const resultValue = isMap(sourceValue) ? mapFn(sourceValue) : undefined;
         return resultValue;
       } else {
-        // No inverseKeyFn, or it returned undefined; use resultKey
+        // No inverseKey, or it returned undefined; use resultKey
         sourceKey = resultKey;
       }
     }
@@ -67,9 +65,9 @@ function createGet(tree, options, mapFn) {
     } else if (deep && isMap(sourceValue)) {
       // We weren't expecting a subtree but got one; map it
       resultValue = mapFn(sourceValue);
-    } else if (valueFn) {
+    } else if (value) {
       // Map a single value
-      resultValue = await valueFn(sourceValue, sourceKey, tree);
+      resultValue = await value(sourceValue, sourceKey, tree);
     } else {
       // Return source value as is
       resultValue = sourceValue;
@@ -81,11 +79,11 @@ function createGet(tree, options, mapFn) {
 
 // Create a keys() function for the map
 function createKeys(tree, options) {
-  const { deep, keyFn, keyNeedsSourceValue } = options;
+  const { deep, key, keyNeedsSourceValue } = options;
   return async function* () {
-    // Apply the keyFn to source keys for leaf values (not subtrees).
+    // Apply the key to source keys for leaf values (not subtrees).
     const sourceKeys = await keys(tree);
-    if (!keyFn) {
+    if (!key) {
       // Return keys as is
       yield* sourceKeys;
       return;
@@ -98,11 +96,11 @@ function createKeys(tree, options) {
         // Deep maps leave source keys for subtrees alone
         deep && trailingSlash.has(sourceKey)
           ? sourceKey
-          : await keyFn(sourceValues[index], sourceKey, tree),
+          : await key(sourceValues[index], sourceKey, tree),
       ),
     );
-    // Filter out any cases where the keyFn returned undefined.
-    const resultKeys = mapped.filter((key) => key !== undefined);
+    // Filter out any cases where the key returned undefined.
+    const resultKeys = mapped.filter((resultKey) => resultKey !== undefined);
     yield* resultKeys;
   };
 }
@@ -125,87 +123,48 @@ function createMapFn(options) {
   };
 }
 
-// Return the indicated option, throwing if it's specified but not defined;
-// that's probably an accident.
-function validateOption(options, key) {
-  const value = options[key];
-  if (key in options && value === undefined) {
-    throw new TypeError(
-      `Tree.map: The ${key} option is given but its value is undefined.`,
-    );
-  }
-  return value;
-}
-
 // Extract and validate options
 function validateOptions(options) {
-  let deep;
-  let description;
-  let inverseKeyFn;
-  let keyFn;
-  let keyNeedsSourceValue;
-  let valueFn;
-
-  if (typeof options === "function") {
-    // Take the single function argument as the valueFn
-    valueFn = options;
-  } else if (isPlainObject(options)) {
-    // Extract options from the dictionary
-    description = options.description; // fine if it's undefined
-
-    // Validate individual options
-    deep = validateOption(options, "deep");
-    inverseKeyFn = validateOption(options, "inverseKey");
-    keyFn = validateOption(options, "key");
-    keyNeedsSourceValue = validateOption(options, "keyNeedsSourceValue");
-    valueFn = validateOption(options, "value");
-
-    // Cast function options to functions
-    inverseKeyFn &&= castToFunction(inverseKeyFn, "inverseKey");
-    if (
-      typeof keyFn === "string" &&
-      (keyFn.includes("=>") || keyFn.includes("→"))
-    ) {
-      throw new TypeError(
-        `Tree.map: The key option appears to be an extension mapping. Did you mean to call Tree.mapExtension() ?`,
-      );
-    }
-    keyFn &&= castToFunction(keyFn, "key");
-    valueFn &&= castToFunction(valueFn, "value");
-  } else if (options === undefined) {
-    /** @type {any} */
-    const error = new TypeError(
-      `Tree.map: The second parameter was undefined.`,
+  let { deep, description, inverseKey, key, keyNeedsSourceValue, value } =
+    args.dictionaryOrFn(
+      options,
+      "Tree.map",
+      "value",
+      {
+        deep: { type: "boolean", required: false },
+        description: { type: "string", required: false },
+        inverseKey: { type: "fn", required: false },
+        key: { type: "fn", required: false },
+        keyNeedsSourceValue: { type: "boolean", required: false },
+        value: { type: "fn", required: false },
+      },
+      { position: 2 },
     );
-    error.position = 2;
-    throw error;
-  } else {
-    /** @type {any} */
-    const error = new TypeError(
-      `Tree.map: You must specify a value function or options dictionary as the second parameter.`,
+
+  if (typeof key === "string" && (key.includes("=>") || key.includes("→"))) {
+    throw new TypeError(
+      `Tree.map: The key option appears to be an extension mapping. Did you mean to call Tree.mapExtension() ?`,
     );
-    error.position = 2;
-    throw error;
   }
 
   // If key or inverseKey weren't specified, look for sidecar functions
-  inverseKeyFn ??= valueFn?.inverseKey;
-  keyFn ??= valueFn?.key;
+  inverseKey ??= value?.inverseKey;
+  key ??= value?.key;
 
-  if (!keyFn && inverseKeyFn) {
+  if (!key && inverseKey) {
     throw new TypeError(
       `Tree.map: You can't specify an inverseKey function without a key function`,
     );
   }
 
-  if (keyFn && !inverseKeyFn) {
-    // Only keyFn was provided, so we need to generate the inverseKeyFn
-    const keyFns = cachedKeyFunctions(keyFn, deep);
-    keyFn = keyFns.key;
-    inverseKeyFn = keyFns.inverseKey;
+  if (key && !inverseKey) {
+    // Only key was provided, so we need to generate the inverseKey
+    const keys = cachedKeyFunctions(key, deep);
+    key = keys.key;
+    inverseKey = keys.inverseKey;
   }
 
-  if (!valueFn && !keyFn) {
+  if (!value && !key) {
     throw new TypeError(
       `Tree.map: You must specify a value function or a key function`,
     );
@@ -214,15 +173,15 @@ function validateOptions(options) {
   // Set defaults for options not specified. We don't set a default value for
   // `deep` because a false value is a stronger signal than undefined.
   description ??= "key/value map";
-  keyNeedsSourceValue ??= keyFn?.needsSourceValue ?? true;
+  keyNeedsSourceValue ??= key?.needsSourceValue ?? true;
 
   return {
     deep,
     description,
-    inverseKeyFn,
-    keyFn,
+    inverseKey,
+    key,
     keyNeedsSourceValue,
-    valueFn,
+    value,
   };
 }
 

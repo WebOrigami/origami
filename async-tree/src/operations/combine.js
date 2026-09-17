@@ -29,16 +29,16 @@ export default async function combine(maplike1, maplike2, options) {
     deep: true,
     position: 2,
   });
-
-  let compareFn;
-  let includeUndefined;
-  if (typeof options === "function") {
-    compareFn = options;
-    includeUndefined = false;
-  } else if (options && typeof options === "object") {
-    compareFn = options.compare;
-    includeUndefined = options.includeUndefined ?? false;
-  }
+  const { compare, includeUndefined } = args.dictionaryOrFn(
+    options,
+    "Tree.combine",
+    "compare",
+    {
+      compare: { type: "fn", required: true },
+      includeUndefined: { type: "boolean", required: false },
+    },
+    { position: 3 },
+  );
 
   const result = new SyncMap();
   result.trailingSlashKeys =
@@ -61,10 +61,10 @@ export default async function combine(maplike1, maplike2, options) {
     const combination =
       isMap(value1) && isMap(value2)
         ? await combine(value1, value2, {
-            compare: compareFn,
+            compare: compare,
             includeUndefined,
           })
-        : await compareFn(value1, value2, key);
+        : await compare(value1, value2, key);
 
     const include = includeUndefined || combination !== undefined;
     if (include) {

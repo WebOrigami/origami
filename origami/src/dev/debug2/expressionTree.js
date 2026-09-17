@@ -9,9 +9,9 @@ let version = 0;
  * Evaluate the given expression using the indicated parent path to produce a
  * resource tree, then transform that tree with debug resources and return it.
  *
- * @param {Object} options
- * @param {string} options.expression
- * @param {import("@weborigami/language").OrigamiFileMap} options.parent
+ * @param {Object} dictionary
+ * @param {string} dictionary.expression
+ * @param {import("@weborigami/language").OrigamiFileMap} dictionary.parent
  */
 export default async function expressionTree(options) {
   const { expression, parent } = options;

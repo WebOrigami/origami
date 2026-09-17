@@ -13,17 +13,18 @@ import map from "./map.js";
  * @returns {AsyncMap}
  */
 export default function filter(maplike, options) {
-  let testFn;
-  let deep;
-  if (typeof options === "function") {
-    testFn = options;
-    deep = false;
-  } else {
-    testFn = options.test;
-    deep = options.deep ?? false;
-  }
-
+  const { deep, test } = args.dictionaryOrFn(
+    options,
+    "Tree.filter",
+    "test",
+    {
+      test: { type: "fn", required: true },
+      deep: { type: "boolean", required: false },
+    },
+    { position: 2 },
+  );
   const tree = args.map(maplike, "Tree.filter", { deep });
+
   return map(tree, {
     deep,
 
@@ -33,7 +34,7 @@ export default function filter(maplike, options) {
     inverseKey: async (resultKey) => resultKey,
 
     key: async (sourceValue, sourceKey, tree) => {
-      const passes = await testFn(sourceValue, sourceKey, tree);
+      const passes = await test(sourceValue, sourceKey, tree);
       return passes ? sourceKey : undefined;
     },
   });

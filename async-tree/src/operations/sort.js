@@ -16,18 +16,18 @@ import keys from "./keys.js";
  * @param {Maplike} maplike
  * @param {SortOptions|ValueKeyFn} [options]
  */
-export default function sort(maplike, options) {
+export default function sort(maplike, options = {}) {
   const source = args.map(maplike, "Tree.sort");
-
-  let sortKey;
-  let compare;
-  if (options instanceof Function) {
-    // Take the function as the `sortKey` option
-    sortKey = options;
-  } else {
-    compare = options?.compare;
-    sortKey = options?.sortKey;
-  }
+  const { compare, sortKey } = args.dictionaryOrFn(
+    options,
+    "Tree.sort",
+    "sortKey",
+    {
+      compare: { type: "fn", required: false },
+      sortKey: { type: "fn", required: false },
+    },
+    { position: 2 },
+  );
 
   const transformed = Object.assign(new AsyncMap(), {
     descriptor: "sort",

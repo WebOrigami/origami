@@ -13,6 +13,116 @@ import toString from "./toString.js";
  */
 
 /**
+ * Check a boolean argument.
+ *
+ * @param {boolean} arg
+ * @param {string} operation
+ * @param {*} options
+ */
+export function boolean(arg, operation, options = {}) {
+  if (typeof arg !== "boolean") {
+    /** @type {any} */
+    const error = new TypeError(`${operation}: Expected a boolean argument.`);
+    error.position = options.position ?? 1;
+    throw error;
+  }
+  return arg;
+}
+
+/**
+ * Check an options dictionary
+ *
+ * @param {Maplike} maplike
+ * @param {string} operation
+ * @param {Record<string, { type?: string, required?: boolean }>} schema
+ * @param {any} options
+ */
+export function dictionary(maplike, operation, schema, options = {}) {
+  const optionsMap = map(maplike, operation, options);
+
+  const result = {};
+  for (const [optionKey, optionSchema] of Object.entries(schema)) {
+    const optionValue = optionsMap.get(optionKey);
+    result[optionKey] = dictionaryEntry(
+      optionValue,
+      optionKey,
+      operation,
+      optionSchema,
+      options,
+    );
+  }
+  return result;
+}
+
+/**
+ * Check an entry in an options dictionary.
+ */
+export function dictionaryEntry(
+  optionValue,
+  optionKey,
+  operation,
+  schema,
+  options = {},
+) {
+  const required = schema.required ?? true;
+  if (optionValue == null) {
+    if (required) {
+      /** @type {any} */
+      const error = new TypeError(
+        `${operation}: Missing required option "${optionKey}".`,
+      );
+      error.position = options.position ?? 1;
+      throw error;
+    }
+    return;
+  }
+
+  const optionType = schema.type ?? "string";
+  const validators = {
+    boolean,
+    fn,
+    number,
+    string,
+    stringlike,
+  };
+  return validators[optionType](optionValue, operation, options);
+}
+
+/**
+ * Check an argument that could either be an options dictionary or a shorthand
+ * that's just a function. If it's a function, return it as a dictionary with
+ * the function under the specified key.
+ *
+ * @param {function|Maplike} arg
+ * @param {string} operation
+ * @param {string} fnOptionKey
+ * @param {Record<string, { type?: string, required?: boolean }>} schema
+ * @param {any} options
+ */
+export function dictionaryOrFn(
+  arg,
+  operation,
+  fnOptionKey,
+  schema = {},
+  options = {},
+) {
+  if (isMaplike(arg) && typeof arg !== "function") {
+    return dictionary(arg, operation, schema, options);
+  } else if (typeof arg === "function") {
+    return {
+      [fnOptionKey]: arg,
+    };
+  } else {
+    /** @type {any} */
+    const error = new TypeError(
+      `${operation}: Expected an options dictionary or a function.`,
+    );
+    error.position = 1;
+    throw error;
+  }
+}
+
+/**
  * Check a function argument. If it's a map, coerce it to a function.
  */
 export function fn(arg, operation, options = {}) {
@@ -70,54 +180,6 @@ export function number(arg, operation, options = {}) {
     throw error;
   }
   return arg;
-}
-
-/**
- * Check an option.
- */
-export function option(optionValue, optionKey, operation, options = {}) {
-  const required = options.required ?? true;
-  if (optionValue == null) {
-    if (required) {
-      /** @type {any} */
-      const error = new TypeError(
-        `${operation}: Missing required option "${optionKey}".`,
-      );
-      error.position = options.position ?? 1;
-      throw error;
-    }
-    return;
-  }
-
-  const expectedType = options.type ?? "string";
-  if (typeof optionValue !== expectedType) {
-    /** @type {any} */
-    const error = new TypeError(
-      `${operation}: option "${optionKey}" must be a ${expectedType}.`,
-    );
-    error.position = options.position ?? 1;
-    throw error;
-  }
-
-  return optionValue;
-}
-
-/**
- * Check an options dictionary
- *
- * @param {Maplike} maplike
- * @param {string} operation
- * @param {Record<string, { type?: string, required?: boolean }>} schema
- */
-export function options(maplike, operation, schema) {
-  const optionsMap = map(maplike, operation);
-
-  const result = {};
-  for (const [optionKey, optionSchema] of Object.entries(schema)) {
-    const optionValue = optionsMap.get(optionKey);
-    result[optionKey] = option(optionValue, optionKey, operation, optionSchema);
-  }
-  return result;
 }
 
 /**

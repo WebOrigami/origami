@@ -138,8 +138,8 @@ export function keysFromUrl(url) {
  * https.createServer calls, letting you serve an async tree as a set of pages.
  *
  * @typedef {import("@weborigami/async-tree").Maplike} Maplike
- * @param {object} options
- * @param {boolean} [options.quiet] If true, suppresses logging of incoming requests.
+ * @param {object} dictionary
+ * @param {boolean} [dictionary.quiet] If true, suppresses logging of incoming requests.
  * @param {Maplike} maplike
  */
 export function requestListener(maplike, options = {}) {

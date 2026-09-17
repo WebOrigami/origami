@@ -1,4 +1,4 @@
-import isPlainObject from "../utilities/isPlainObject.js";
+import * as args from "../utilities/args.js";
 import extensionKeyFunctions from "./extensionKeyFunctions.js";
 import map from "./map.js";
 import parseExtensions from "./parseExtensions.js";
@@ -47,36 +47,33 @@ import parseExtensions from "./parseExtensions.js";
 export default function mapExtension(maplike, arg2, arg3) {
   let extension;
 
-  /** @type {import("../../index.ts").MapOptions} */
-  let options = { keyNeedsSourceValue: false };
-  let optionsArg;
+  const schema = {
+    deep: { type: "boolean", required: false },
+    description: { type: "string", required: false },
+    extension: { type: "string", required: false },
+    inverseKey: { type: "fn", required: false },
+    key: { type: "fn", required: false },
+    keyNeedsSourceValue: { type: "boolean", required: false },
+    value: { type: "fn", required: false },
+  };
+
+  /** @type {any} */
+  let options = {};
   if (arg3 === undefined) {
     if (typeof arg2 === "string") {
-      extension = arg2;
-    } else if (isPlainObject(arg2)) {
-      extension = arg2.extension;
-      optionsArg = arg2;
+      extension = args.string(arg2, "Tree.mapExtension", { position: 2 });
     } else {
-      throw new TypeError(
-        "Tree.mapExtension: Expected a string or options object for the second argument.",
-      );
+      options = args.dictionary(arg2, "Tree.mapExtension", schema, {
+        position: 2,
+      });
+      extension ??= options.extension;
     }
   } else {
-    if (typeof arg2 !== "string") {
-      throw new TypeError(
-        "Tree.mapExtension: Expected a string for the second argument.",
-      );
-    }
-    extension = arg2;
-    if (typeof arg3 === "function") {
-      options.value = arg3;
-    } else if (isPlainObject(arg3)) {
-      optionsArg = arg3;
-    } else {
-      throw new TypeError(
-        "Tree.mapExtension: Expected a function or options object for the third argument.",
-      );
-    }
+    // @ts-ignore
+    extension = args.string(arg2, "Tree.mapExtension", { position: 2 });
+    options = args.dictionaryOrFn(arg3, "Tree.mapExtension", "value", schema, {
+      position: 3,
+    });
   }
 
   if (!extension) {
@@ -85,19 +82,9 @@ export default function mapExtension(maplike, arg2, arg3) {
     );
   }
 
-  if (optionsArg?.deep !== undefined) {
-    options.deep = optionsArg.deep;
-  }
-  if (optionsArg?.description !== undefined) {
-    options.description = optionsArg.description;
-  }
-  if (optionsArg?.value !== undefined) {
-    options.value = optionsArg.value;
-  }
-
-  if (!options.description) {
-    options.description = `mapExtension ${extension}`;
-  }
+  // Our key function never needs the source value
+  options.keyNeedsSourceValue = false;
+  options.description ??= `mapExtension ${extension}`;
 
   // Use the extension mapping to generate key and inverseKey functions
   const parsed = parseExtensions(extension);
