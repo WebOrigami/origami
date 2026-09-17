@@ -22,7 +22,8 @@ describe("keys", () => {
       yield "y";
       yield "z";
     };
-    const result = await keys(map);
+    const promise = keys(map);
+    const result = await promise;
     assert.deepEqual(result, ["x", "y", "z"]);
   });
 });

@@ -3,10 +3,25 @@
  * confirm our code is type safe.
  */
 
+export type AsyncGeneratorFunction = (
+  ...args: any[]
+) => AsyncGenerator<any, any, any>;
+
 import AsyncMap from "./src/drivers/AsyncMap.js";
+
+export type AsyncMaplike =
+  AsyncMap |
+  AsyncIterator<any> |
+  Function;
 
 // Re-export all exports from main.js
 export * from "./main.js";
+
+// Typescript declares GeneratorFunction, but it's definition doesn't seem to
+// match a `function* foo() {}` declaration, so define our own version.
+export type GeneratorFunction = (
+  ...args: any[]
+) => Generator<any, any, any>;
 
 export type Invocable = Function | Maplike | Unpackable;
 
@@ -31,12 +46,8 @@ export type MapExtensionOptions = {
 };
 
 export type Maplike =
-  any[] |
-  Iterator<any> |
-  Function | 
-  SyncOrAsyncMap |
-  PlainObject | 
-  Set<any>;
+  SyncMaplike |
+  AsyncMaplike;
 
 export type MapOptions = {
   deep?: boolean;
@@ -48,6 +59,13 @@ export type MapOptions = {
   needsSourceValue?: boolean;
   value?: ValueKeyFn;
 };
+
+export type SyncMaplike =
+  any[] |
+  Iterator<any> |
+  Map<any, any> |
+  PlainObject |
+  Set<any>;
 
 export interface SyncTree<K, V> extends Map<K, V> {
   apply?(source: Map<K, V>): SyncTree<K, V>;
@@ -82,6 +100,10 @@ export type PlainObject = {
 export type ReduceFn = (mapped: Map<any, any>, source: SyncOrAsyncMap) => any | Promise<any>;
 
 export type Stringlike = string | HasString;
+
+export type SyncOrAsyncGeneratorFunction =
+  GeneratorFunction |
+  AsyncGeneratorFunction;
 
 export type SyncOrAsyncMap = Map<any, any> | AsyncMap;
 

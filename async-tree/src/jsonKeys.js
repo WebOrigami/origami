@@ -14,6 +14,8 @@ import * as trailingSlash from "./trailingSlash.js";
  * This file format is a JSON array of key descriptors: a string like
  * "index.html" for a specific resource available at the node, or a string with
  * a trailing slash like "about/" for a subtree of that node.
+ *
+ * @param {import("../index.ts").Maplike} maplike
  */
 export async function stringify(maplike) {
   const tree = from(maplike);
@@ -25,7 +27,7 @@ export async function stringify(maplike) {
     // Use entries() to determine which keys are subtrees.
     const treeEntries = await entries(tree);
     treeKeys = treeEntries.map(([key, value]) =>
-      trailingSlash.toggle(key, isMap(value))
+      trailingSlash.toggle(key, isMap(value)),
     );
   }
 

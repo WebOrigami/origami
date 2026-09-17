@@ -6,18 +6,40 @@ import * as args from "../utilities/args.js";
 import withKeys from "./withKeys.js";
 
 /**
+ * @typedef {(a: any, b: any) => number} CompareFn
+ * @typedef {(key: any, map: SyncMap) => any} SyncSortKeyFn
+ * @typedef {(key: any, map: SyncOrAsyncMap) => any} SortKeyFn
+ * @typedef {import("../../index.ts").AsyncMap} AsyncMap
+ * @typedef {import("../../index.ts").Maplike} Maplike
+ * @typedef {import("../../index.ts").SyncMaplike} SyncMaplike
+ * @typedef {import("../../index.ts").SyncOrAsyncMap} SyncOrAsyncMap
+ * @typedef {import("../../index.ts").ValueKeyFn} ValueKeyFn
+ * @typedef {{ compare?: CompareFn, sortKey?: SortKeyFn }} SortOptions
+ * @typedef {{ compare?: CompareFn, sortKey?: SyncSortKeyFn }} SyncSortOptions
+ */
+
+/**
+ * @overload
+ * @param {SyncMaplike} maplike
+ * @param {SyncSortOptions|ValueKeyFn} [options]
+ * @returns {SyncMap}
+ */
+
+/**
+ * @overload
+ * @param {Maplike} maplike
+ * @param {SortOptions|ValueKeyFn} [options]
+ * @returns {AsyncMap}
+ */
+
+/**
  * Return a new map with the original's keys sorted. A comparison function can
  * be provided; by default the keys will be sorted in [natural sort
  * order](https://en.wikipedia.org/wiki/Natural_sort_order).
  *
- * @typedef {import("../../index.ts").SyncOrAsyncMap} SyncOrAsyncMap
- * @typedef {(key: any, map: SyncOrAsyncMap) => any} SortKeyFn
- * @typedef {{ compare?: (a: any, b: any) => number, sortKey?: SortKeyFn }} SortOptions
- * @typedef {import("../../index.ts").Maplike} Maplike
- * @typedef {import("../../index.ts").ValueKeyFn} ValueKeyFn
- *
  * @param {Maplike} maplike
- * @param {SortOptions|ValueKeyFn} [options]
+ * @param {SortOptions|SyncSortOptions|ValueKeyFn} [options]
+ * @returns {SyncOrAsyncMap}
  */
 export default function sort(maplike, options = {}) {
   const source = args.map(maplike, "Tree.sort");

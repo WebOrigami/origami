@@ -4,15 +4,39 @@ import * as ambi from "../utilities/ambi.js";
 import * as args from "../utilities/args.js";
 
 /**
+ * @typedef {import("../../index.ts").AsyncMaplike} AsyncMaplike
+ * @typedef {import("../../index.ts").GeneratorFunction} GeneratorFunction
+ * @typedef {import("../../index.ts").Maplike} Maplike
+ * @typedef {import("../../index.ts").SyncMaplike} SyncMaplike
+ * @typedef {import("../../index.ts").SyncOrAsyncGeneratorFunction} SyncOrAsyncGeneratorFunction
+ * @typedef {import("../../index.ts").SyncOrAsyncMap} SyncOrAsyncMap
+ *
+ * @typedef {{ description?: string }} WithKeysOptions
+ */
+
+/**
+ * @overload
+ * @param {SyncMaplike} maplike
+ * @param {GeneratorFunction|SyncMaplike} keysSource
+ * @param {WithKeysOptions} [options]
+ * @returns {SyncMap}
+ */
+
+/**
+ * @overload
+ * @param {Maplike} maplike
+ * @param {SyncOrAsyncGeneratorFunction|Maplike} keysSource
+ * @param {WithKeysOptions} [options]
+ * @returns {AsyncMap}
+ */
+
+/**
  * Return a map whose keys are provided by the _values_ of a second map (e.g.,
  * an array of keys).
  *
- * @typedef {import("../../index.ts").Maplike} Maplike
- * @typedef {import("../../index.ts").SyncOrAsyncMap} SyncOrAsyncMap
- *
  * @param {Maplike} maplike
- * @param {AsyncGeneratorFunction|GeneratorFunction|Maplike} keysSource
- * @param {{ description?: string }} [options]
+ * @param {SyncOrAsyncGeneratorFunction|Maplike} keysSource
+ * @param {WithKeysOptions} [options]
  * @returns {SyncOrAsyncMap}
  */
 export default function withKeys(maplike, keysSource, options = {}) {
