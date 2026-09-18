@@ -6,38 +6,9 @@ import {
 } from "@weborigami/async-tree";
 import { formatError, systemCache, SystemCacheMap } from "@weborigami/language";
 import { ServerResponse } from "node:http";
+import * as cachedResponse from "./cachedResponse.js";
 import constructResponse from "./constructResponse.js";
 import parsePostData from "./parsePostData.js";
-
-/**
- * Copy a constructed response to a ServerResponse. Return true if the response
- * was successfully copied, and false if there was a problem.
- *
- * @param {Response} original
- * @param {ServerResponse} response
- */
-async function copyResponse(original, response) {
-  const clone = original.clone();
-  response.statusCode = clone.status;
-  response.statusMessage = clone.statusText;
-
-  // @ts-ignore Headers has an iterator in ES2022 but tsc doesn't know that.
-  for (const [key, value] of clone.headers) {
-    response.setHeader(key, value);
-  }
-
-  if (clone.body) {
-    // Write the response body
-    const reader = clone.body.getReader();
-    let { done, value } = await reader.read();
-    while (!done) {
-      response.write(value);
-      ({ done, value } = await reader.read());
-    }
-  }
-
-  response.end();
-}
 
 /**
  * Handle a client request.
@@ -56,10 +27,10 @@ export async function handleRequest(request, response, map) {
     cachePath += "index.html";
   }
   const cacheEntry = systemCache.get(cachePath)?.value;
-  const etag = cacheEntry?.headers?.get("Etag");
+  const etag = cacheEntry?.headers.etag;
   if (etag) {
     // Does the client already have this version?
-    const ifNoneMatch = request?.headers?.["if-none-match"];
+    const ifNoneMatch = request?.headers["if-none-match"];
     if (ifNoneMatch === etag) {
       // Client already has this version
       response.writeHead(304, {
@@ -80,7 +51,7 @@ export async function handleRequest(request, response, map) {
     // resource and copy the constructed response to the ServerResponse. The
     // etag is already included in the response headers so we don't need to
     // receive it here.
-    const constructed = await systemCache.getOrInsertComputedAsync(
+    const cached = await systemCache.getOrInsertComputedAsync(
       cachePath,
       async () => {
         let resource = await Tree.traverseOrThrow(map, ...keys);
@@ -91,16 +62,19 @@ export async function handleRequest(request, response, map) {
           resource = data ? await resource(data) : await resource();
         }
 
+        if (resource == null) {
+          return resource;
+        }
+
         // Construct the response
-        return resource != null
-          ? await constructResponse(request, resource)
-          : null;
+        const constructed = await constructResponse(request, resource);
+        return cachedResponse.cachedFromResponse(constructed);
       },
     );
 
-    // Copy the constructed (and cached) response to the server response
-    if (constructed) {
-      await copyResponse(constructed, response);
+    if (cached) {
+      // Copy the constructed (and cached) response to the server response
+      cachedResponse.copyToResponse(cached, response);
       return true;
     }
   } catch (/** @type {any} */ error) {
