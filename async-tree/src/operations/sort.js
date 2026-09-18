@@ -1,5 +1,6 @@
 import sortKeysAsync from "../async/sortKeysAsync.js";
-import SyncMap from "../drivers/SyncMap.js";
+// import SyncMap from "../drivers/SyncMap.js";
+import { SyncMap } from "../internal.js";
 import sortKeysSync from "../sync/sortKeysSync.js";
 import * as ambi from "../utilities/ambi.js";
 import * as args from "../utilities/args.js";

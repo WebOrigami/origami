@@ -1,3 +1,4 @@
+import sort from "../operations/sort.js";
 import * as trailingSlash from "../trailingSlash.js";
 import setParent from "../utilities/setParent.js";
 
@@ -214,6 +215,13 @@ export default class SyncMap extends Map {
   }
 
   /**
+   * Returns the map's `entries()`.
+   */
+  [Symbol.iterator]() {
+    return this.entries();
+  }
+
+  /**
    * Returns a new `Iterator` object that contains the keys for each element in
    * the map in insertion order.
    *
@@ -281,11 +289,8 @@ export default class SyncMap extends Map {
     return keys.length;
   }
 
-  /**
-   * Returns the map's `entries()`.
-   */
-  [Symbol.iterator]() {
-    return this.entries();
+  sort(options) {
+    return sort(this, options);
   }
 
   trailingSlashKeys = false;

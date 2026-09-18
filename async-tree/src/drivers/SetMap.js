@@ -1,4 +1,5 @@
-import SyncMap from "./SyncMap.js";
+// import SyncMap from "./SyncMap.js";
+import { SyncMap } from "../internal.js";
 
 /**
  * A standard `Set` represented as a `Map`. The keys are integer indices; the

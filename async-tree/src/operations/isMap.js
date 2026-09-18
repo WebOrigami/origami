@@ -1,4 +1,5 @@
-import AsyncMap from "../drivers/AsyncMap.js";
+// import AsyncMap from "../drivers/AsyncMap.js";
+import { AsyncMap } from "../internal.js";
 
 /**
  * Return true if the indicated object is a Map instance or supports

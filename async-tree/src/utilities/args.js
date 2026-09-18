@@ -1,4 +1,5 @@
-import from from "../operations/from.js";
+// import from from "../operations/from.js";
+import { from } from "../internal.js";
 import isMaplike from "../operations/isMaplike.js";
 import toFunction from "./toFunction.js";
 import toString from "./toString.js";
