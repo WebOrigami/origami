@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ObjectMap from "../../src/drivers/ObjectMap.js";
+import { ObjectMap } from "../../src/internal.js";
 import mapReduce from "../../src/operations/mapReduce.js";
 import values from "../../src/operations/values.js";
 

@@ -1,5 +1,4 @@
-import ObjectMap from "../drivers/ObjectMap.js";
-import SyncMap from "../drivers/SyncMap.js";
+import { ObjectMap, SyncMap } from "../internal.js";
 import isMaplike from "../operations/isMaplike.js";
 import mapReduce from "../operations/mapReduce.js";
 import * as trailingSlash from "../trailingSlash.js";

@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import FunctionMap from "../../src/drivers/FunctionMap.js";
+import { FunctionMap } from "../../src/internal.js";
 import visit from "../../src/operations/visit.js";
 
 describe("visit", () => {
@@ -12,7 +12,7 @@ describe("visit", () => {
         values.push(value);
         return value;
       },
-      ["a", "b", "c"]
+      ["a", "b", "c"],
     );
     const result = await visit(map);
     assert.strictEqual(result, undefined);

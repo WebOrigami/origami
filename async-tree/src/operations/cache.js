@@ -1,5 +1,4 @@
-import AsyncMap from "../drivers/AsyncMap.js";
-import SyncMap from "../drivers/SyncMap.js";
+import { AsyncMap, SyncMap } from "../internal.js";
 import * as args from "../utilities/args.js";
 import child from "./child.js";
 import isMap from "./isMap.js";

@@ -1,9 +1,8 @@
+import { SyncMap } from "../internal.js";
 import * as symbols from "../symbols.js";
 import * as trailingSlash from "../trailingSlash.js";
 import isPlainObject from "../utilities/isPlainObject.js";
 import setParent from "../utilities/setParent.js";
-// import SyncMap from "./SyncMap.js";
-import { SyncMap } from "../internal.js";
 
 /**
  * Map wrapper for a JavaScript object or array

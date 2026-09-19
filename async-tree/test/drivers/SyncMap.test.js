@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import SyncMap from "../../src/drivers/SyncMap.js";
+import { SyncMap } from "../../src/internal.js";
 
 describe("SyncMap", () => {
   test("passes instanceof Map", () => {

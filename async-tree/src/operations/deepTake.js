@@ -1,5 +1,5 @@
+import { from } from "../internal.js";
 import * as args from "../utilities/args.js";
-import from from "./from.js";
 import isMap from "./isMap.js";
 
 /**

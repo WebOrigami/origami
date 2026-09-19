@@ -1,5 +1,5 @@
 import FileMap from "../src/drivers/FileMap.js";
-import SyncMap from "../src/drivers/SyncMap.js";
+import { SyncMap } from "../src/internal.js";
 import asyncToSync from "./asyncToSync.js";
 
 /**

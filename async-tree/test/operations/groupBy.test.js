@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import from from "../../src/operations/from.js";
+import { from } from "../../src/internal.js";
 import groupBy from "../../src/operations/groupBy.js";
 import plain from "../../src/operations/plain.js";
 

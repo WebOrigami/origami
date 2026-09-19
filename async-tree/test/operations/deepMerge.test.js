@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ObjectMap from "../../src/drivers/ObjectMap.js";
+import { ObjectMap } from "../../src/internal.js";
 import deepMerge from "../../src/operations/deepMerge.js";
 import plain from "../../src/operations/plain.js";
 

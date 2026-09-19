@@ -1,6 +1,5 @@
-import setParent from "../utilities/setParent.js";
-// import SyncMap from "./SyncMap.js";
 import { SyncMap } from "../internal.js";
+import setParent from "../utilities/setParent.js";
 
 export default class FunctionMap extends SyncMap {
   constructor(fn, domain = []) {

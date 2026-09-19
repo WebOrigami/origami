@@ -1,4 +1,4 @@
-import from from "../operations/from.js";
+import { from } from "../internal.js";
 import isMaplike from "../operations/isMaplike.js";
 
 /**

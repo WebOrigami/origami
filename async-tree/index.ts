@@ -7,7 +7,7 @@ export type AsyncGeneratorFunction = (
   ...args: any[]
 ) => AsyncGenerator<any, any, any>;
 
-import AsyncMap from "./src/drivers/AsyncMap.js";
+import { AsyncMap } from "./src/internal.js";
 
 export type AsyncMaplike =
   AsyncMap |

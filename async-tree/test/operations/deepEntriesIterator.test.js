@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ObjectMap from "../../src/drivers/ObjectMap.js";
+import { ObjectMap } from "../../src/internal.js";
 import deepEntriesIterator from "../../src/operations/deepEntriesIterator.js";
 
 describe("deepEntriesIterator", () => {

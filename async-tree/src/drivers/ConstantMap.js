@@ -1,5 +1,5 @@
+import { SyncMap } from "../internal.js";
 import * as trailingSlash from "../trailingSlash.js";
-import SyncMap from "./SyncMap.js";
 
 /**
  * A tree that returns a constant value for any key. If the key ends with a

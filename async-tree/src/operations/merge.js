@@ -1,7 +1,6 @@
-import AsyncMap from "../drivers/AsyncMap.js";
+import { AsyncMap, from } from "../internal.js";
 import * as trailingSlash from "../trailingSlash.js";
 import isUnpackable from "../utilities/isUnpackable.js";
-import from from "./from.js";
 import isMaplike from "./isMaplike.js";
 import keys from "./keys.js";
 

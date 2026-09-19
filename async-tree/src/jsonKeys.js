@@ -1,5 +1,5 @@
+import { from } from "./internal.js";
 import entries from "./operations/entries.js";
-import from from "./operations/from.js";
 import isMap from "./operations/isMap.js";
 import keys from "./operations/keys.js";
 import * as trailingSlash from "./trailingSlash.js";

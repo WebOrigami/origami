@@ -1,4 +1,4 @@
-import SyncMap from "../drivers/SyncMap.js";
+import { SyncMap } from "../internal.js";
 import * as args from "../utilities/args.js";
 import keys from "./keys.js";
 import withKeys from "./withKeys.js";

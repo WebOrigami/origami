@@ -1,8 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import FunctionMap from "../../src/drivers/FunctionMap.js";
+import { from, FunctionMap } from "../../src/internal.js";
 import deepText from "../../src/operations/deepText.js";
-import from from "../../src/operations/from.js";
 
 describe("deepText", () => {
   test("concatenates deep tree values", async () => {
@@ -26,7 +25,7 @@ describe("deepText", () => {
         lowercase: letter,
         uppercase: letter.toUpperCase(),
       }),
-      letters
+      letters,
     );
     const result = await deepText(specimens);
     assert.equal(result, "aAbBcC");

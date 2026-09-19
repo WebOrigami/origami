@@ -1,4 +1,4 @@
-import SyncMap from "../drivers/SyncMap.js";
+import { SyncMap } from "../internal.js";
 import * as trailingSlash from "../trailingSlash.js";
 import * as args from "../utilities/args.js";
 import deepEntriesIterator from "./deepEntriesIterator.js";

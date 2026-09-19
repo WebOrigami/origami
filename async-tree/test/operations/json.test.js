@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import from from "../../src/operations/from.js";
+import { from } from "../../src/internal.js";
 import json from "../../src/operations/json.js";
 
 describe("json", () => {
@@ -12,7 +12,7 @@ describe("json", () => {
       `{
   "person1": "Alice",
   "person2": "Bob"
-}`
+}`,
     );
   });
 });

@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { hiddenFileNames } from "../constants.js";
+import { SyncMap } from "../internal.js";
 import * as trailingSlash from "../trailingSlash.js";
 import handleDotKey from "../utilities/handleDotKey.js";
 import interop from "../utilities/interop.js";
@@ -9,7 +10,6 @@ import isPacked from "../utilities/isPacked.js";
 import isStringlike from "../utilities/isStringlike.js";
 import naturalOrder from "../utilities/naturalOrder.js";
 import * as resolveChildPath from "../utilities/resolveChildPath.js";
-import SyncMap from "./SyncMap.js";
 
 /**
  * A file system folder as a Map.

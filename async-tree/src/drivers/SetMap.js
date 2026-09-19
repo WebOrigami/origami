@@ -1,4 +1,3 @@
-// import SyncMap from "./SyncMap.js";
 import { SyncMap } from "../internal.js";
 
 /**

@@ -1,8 +1,8 @@
+import { from } from "../internal.js";
 import * as trailingSlash from "../trailingSlash.js";
 import TraverseError from "../TraverseError.js";
 import isPacked from "../utilities/isPacked.js";
 import isUnpackable from "../utilities/isUnpackable.js";
-import from from "./from.js";
 import isMaplike from "./isMaplike.js";
 
 /**

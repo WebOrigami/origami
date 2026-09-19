@@ -1,4 +1,4 @@
-import AsyncMap from "../drivers/AsyncMap.js";
+import { AsyncMap } from "../internal.js";
 import * as trailingSlash from "../trailingSlash.js";
 import * as args from "../utilities/args.js";
 import isMap from "./isMap.js";

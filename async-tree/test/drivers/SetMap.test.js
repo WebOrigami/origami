@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import SetMap from "../../src/drivers/SetMap.js";
+import { SetMap } from "../../src/internal.js";
 
 describe("SetMap", () => {
   test("can get the keys of the map", async () => {

@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import AsyncMap from "../../src/drivers/AsyncMap.js";
+import { AsyncMap } from "../../src/internal.js";
 import awaitValues from "../../src/operations/awaitValues.js";
 
 class SampleAsyncMap extends AsyncMap {

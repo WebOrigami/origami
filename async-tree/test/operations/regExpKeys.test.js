@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ObjectMap from "../../src/drivers/ObjectMap.js";
+import { ObjectMap } from "../../src/internal.js";
 import regExpKeys from "../../src/operations/regExpKeys.js";
 import traverse from "../../src/operations/traverse.js";
 
@@ -17,8 +17,8 @@ describe("regExpKeys", () => {
           },
           f: true,
         },
-        { deep: true }
-      )
+        { deep: true },
+      ),
     );
     assert(await traverse(fixture, "a"));
     assert(!(await traverse(fixture, "alice")));

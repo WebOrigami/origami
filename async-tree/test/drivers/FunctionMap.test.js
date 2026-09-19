@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import FunctionMap from "../../src/drivers/FunctionMap.js";
+import { FunctionMap } from "../../src/internal.js";
 import * as symbols from "../../src/symbols.js";
 
 describe("FunctionMap", () => {
@@ -51,6 +51,6 @@ function createFixture() {
       }
       return undefined;
     },
-    ["Alice.md", "Bob.md", "Carol.md"]
+    ["Alice.md", "Bob.md", "Carol.md"],
   );
 }

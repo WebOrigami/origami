@@ -1,4 +1,3 @@
-// import AsyncMap from "../drivers/AsyncMap.js";
 import { AsyncMap } from "../internal.js";
 
 /**

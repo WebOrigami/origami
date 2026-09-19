@@ -1,4 +1,4 @@
-import AsyncMap from "../drivers/AsyncMap.js";
+import { AsyncMap } from "../internal.js";
 
 export function allSync(...args) {
   return args.every(isSync);

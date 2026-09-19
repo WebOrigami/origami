@@ -1,10 +1,9 @@
 // Exports for both Node.js and browser
 
+export * from "./src/internal.js";
+
 import { default as ExplorableSiteMap } from "./src/drivers/ExplorableSiteMap.js";
 import { default as FileMap } from "./src/drivers/FileMap.js";
-import { default as FunctionMap } from "./src/drivers/FunctionMap.js";
-import { default as ObjectMap } from "./src/drivers/ObjectMap.js";
-import { default as SetMap } from "./src/drivers/SetMap.js";
 import { default as SiteMap } from "./src/drivers/SiteMap.js";
 
 export { default as AsyncMap } from "./src/drivers/AsyncMap.js";
@@ -41,4 +40,4 @@ export { default as setParent } from "./src/utilities/setParent.js";
 export { default as toPlainValue } from "./src/utilities/toPlainValue.js";
 export { default as toString } from "./src/utilities/toString.js";
 
-export { ExplorableSiteMap, FileMap, FunctionMap, ObjectMap, SetMap, SiteMap };
+export { ExplorableSiteMap, FileMap, SiteMap };

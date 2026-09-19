@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import SyncMap from "../../src/drivers/SyncMap.js";
+import { SyncMap } from "../../src/internal.js";
 import * as symbols from "../../src/symbols.js";
 import setParent from "../../src/utilities/setParent.js";
 

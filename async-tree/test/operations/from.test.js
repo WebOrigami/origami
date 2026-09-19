@@ -1,8 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ObjectMap from "../../src/drivers/ObjectMap.js";
-import SetMap from "../../src/drivers/SetMap.js";
-import from from "../../src/operations/from.js";
+import { from, ObjectMap, SetMap } from "../../src/internal.js";
 import values from "../../src/operations/values.js";
 import * as symbols from "../../src/symbols.js";
 

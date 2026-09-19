@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import AsyncMap from "../../src/drivers/AsyncMap.js";
+import { AsyncMap } from "../../src/internal.js";
 import keys from "../../src/operations/keys.js";
 import shuffle from "../../src/operations/shuffle.js";
 import SampleAsyncMap from "../SampleAsyncMap.js";

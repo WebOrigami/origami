@@ -1,5 +1,5 @@
+import { SyncMap } from "../internal.js";
 import * as trailingSlash from "../trailingSlash.js";
-import SyncMap from "./SyncMap.js";
 
 /**
  * Return a tree of years, months, and days from a start date to an end date.

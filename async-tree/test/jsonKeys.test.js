@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ObjectMap from "../src/drivers/ObjectMap.js";
+import { ObjectMap } from "../src/internal.js";
 import * as jsonKeys from "../src/jsonKeys.js";
 
 describe("jsonKeys", () => {
@@ -19,7 +19,7 @@ describe("jsonKeys", () => {
         about: {},
         "index.html": "Home",
       },
-      { deep: true }
+      { deep: true },
     );
     const json = await jsonKeys.stringify(tree);
     assert.strictEqual(json, '["about/","index.html"]');

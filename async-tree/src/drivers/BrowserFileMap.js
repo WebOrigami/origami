@@ -1,10 +1,10 @@
 import { hiddenFileNames } from "../constants.js";
+import { AsyncMap } from "../internal.js";
 import isMap from "../operations/isMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import isStringlike from "../utilities/isStringlike.js";
 import naturalOrder from "../utilities/naturalOrder.js";
 import setParent from "../utilities/setParent.js";
-import AsyncMap from "./AsyncMap.js";
 
 const TypedArray = Object.getPrototypeOf(Uint8Array);
 
@@ -73,7 +73,7 @@ export default class BrowserFileMap extends AsyncMap {
     if (key == null) {
       // Reject nullish key.
       throw new ReferenceError(
-        `${this.constructor.name}: Cannot get a null or undefined key.`
+        `${this.constructor.name}: Cannot get a null or undefined key.`,
       );
     }
     if (key === "") {

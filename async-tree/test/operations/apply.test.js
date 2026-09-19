@@ -1,7 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ObjectMap from "../../src/drivers/ObjectMap.js";
-import SyncMap from "../../src/drivers/SyncMap.js";
+import { ObjectMap, SyncMap } from "../../src/internal.js";
 import apply from "../../src/operations/apply.js";
 import deepArrays from "../../src/operations/deepArrays.js";
 import plain from "../../src/operations/plain.js";

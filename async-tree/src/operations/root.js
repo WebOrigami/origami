@@ -1,5 +1,5 @@
+import { from } from "../internal.js";
 import * as symbols from "../symbols.js";
-import from from "./from.js";
 
 /**
  * Walk up the `parent` chain to find the root of the tree.

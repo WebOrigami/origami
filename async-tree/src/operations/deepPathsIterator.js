@@ -1,7 +1,7 @@
+import { from } from "../internal.js";
 import * as trailingSlash from "../trailingSlash.js";
 import * as args from "../utilities/args.js";
 import interop from "../utilities/interop.js";
-import from from "./from.js";
 import isMap from "./isMap.js";
 import isMaplike from "./isMaplike.js";
 import keys from "./keys.js";

@@ -1,6 +1,6 @@
+import { AsyncMap } from "../internal.js";
 import * as trailingSlash from "../trailingSlash.js";
 import setParent from "../utilities/setParent.js";
-import AsyncMap from "./AsyncMap.js";
 
 /**
  * A tree of values obtained via HTTP/HTTPS calls. These values will be strings
@@ -30,7 +30,7 @@ export default class SiteMap extends AsyncMap {
     if (key == null) {
       // Reject nullish key.
       throw new ReferenceError(
-        `${this.constructor.name}: Cannot get a null or undefined key.`
+        `${this.constructor.name}: Cannot get a null or undefined key.`,
       );
     }
 

@@ -1,4 +1,4 @@
-import AsyncMap from "../drivers/AsyncMap.js";
+import { AsyncMap } from "../internal.js";
 import * as args from "../utilities/args.js";
 import deepPathsIterator from "./deepPathsIterator.js";
 import traversePath from "./traversePath.js";

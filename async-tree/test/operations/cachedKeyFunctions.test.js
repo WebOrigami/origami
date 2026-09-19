@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ObjectMap from "../../src/drivers/ObjectMap.js";
+import { ObjectMap } from "../../src/internal.js";
 import cachedKeyFunctions from "../../src/operations/cachedKeyFunctions.js";
 import * as trailingSlash from "../../src/trailingSlash.js";
 
@@ -48,7 +48,7 @@ describe("cachedKeyFunctions", () => {
           c: "letter c",
         },
       },
-      { deep: true }
+      { deep: true },
     );
 
     let callCount = 0;
