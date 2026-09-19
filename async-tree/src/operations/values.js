@@ -1,24 +1,37 @@
 import * as args from "../utilities/args.js";
 
 /**
- * Return the values in the map.
- *
  * @typedef {import("../../index.ts").Maplike} Maplike
+ * @typedef {import("../../index.ts").AsyncMaplike} AsyncMaplike
+ * @typedef {import("../../index.ts").SyncMaplike} SyncMaplike
+ */
+
+/**
+ * @overload
+ * @param {AsyncMaplike} maplike
+ * @returns {Promise<Array<any>>}
+ */
+
+/**
+ * @overload
+ * @param {SyncMaplike} maplike
+ * @returns {Array<any>}
+ */
+
+/**
+ * @overload
+ * @param {Maplike} maplike
+ * @returns {Array<any>|Promise<Array<any>>}
+ */
+
+/**
+ * Return the values in the map.
  *
  * @param {Maplike} maplike
  */
-export default async function values(maplike) {
+export default function values(maplike) {
   const map = args.map(maplike, "Tree.values");
-  let result;
-  /** @type {any} */
-  let iterable = map.values();
-  if (Symbol.asyncIterator in iterable) {
-    result = [];
-    for await (const key of iterable) {
-      result.push(key);
-    }
-  } else {
-    result = Array.from(iterable);
-  }
-  return result;
+  return map instanceof Map
+    ? Array.from(map.values())
+    : Array.fromAsync(map.values());
 }

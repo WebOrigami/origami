@@ -1,27 +1,32 @@
 import * as args from "../utilities/args.js";
 
 /**
+ * @typedef {import("../../index.ts").Maplike} Maplike
+ * @typedef {import("../../index.ts").AsyncMaplike} AsyncMaplike
+ * @typedef {import("../../index.ts").SyncMaplike} SyncMaplike
+ */
+
+/**
  * @overload
- * @param {import("../../index.ts").AsyncMaplike} maplike
+ * @param {AsyncMaplike} maplike
  * @returns {Promise<Array<any>>}
  */
 
 /**
  * @overload
- * @param {import("../../index.ts").SyncMaplike} maplike
+ * @param {SyncMaplike} maplike
  * @returns {Array<any>}
  */
 
 /**
  * @overload
- * @param {import("../../index.ts").Maplike} maplike
+ * @param {Maplike} maplike
  * @returns {Array<any>|Promise<Array<any>>}
  */
 
 /**
  * Return the keys of the map.
  *
- * @typedef {import("../../index.ts").Maplike} Maplike
  * @param {Maplike} maplike
  */
 export default function keys(maplike) {
