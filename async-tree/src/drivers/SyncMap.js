@@ -1,3 +1,4 @@
+import { ExtendedStandardMap } from "../internal.js";
 import MapMethodsMixin from "../operations/MapMethodsMixin.js";
 import * as trailingSlash from "../trailingSlash.js";
 import setParent from "../utilities/setParent.js";
@@ -307,4 +308,15 @@ class SyncMapBase extends Map {
   }
 }
 
-export default class SyncMap extends MapMethodsMixin(SyncMapBase) {}
+export default class SyncMap extends MapMethodsMixin(SyncMapBase) {
+  // This constructor only exists so that TypeScript 6.x recognizees it.
+  constructor(iterable) {
+    // @ts-ignore
+    super(iterable);
+  }
+
+  static groupBy(iterable, keyFn) {
+    const grouped = Map.groupBy(iterable, keyFn);
+    return new ExtendedStandardMap(grouped);
+  }
+}
