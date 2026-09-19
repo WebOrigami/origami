@@ -1,9 +1,6 @@
 import { SyncMap } from "../internal.js";
 import isMap from "../operations/isMap.js";
-import reverse from "../operations/reverse.js";
-import shuffle from "../operations/shuffle.js";
-import sort from "../operations/sort.js";
-import withKeys from "../operations/withKeys.js";
+import MapMethodsMixin from "../operations/MapMethodsMixin.js";
 import * as trailingSlash from "../trailingSlash.js";
 
 /**
@@ -12,10 +9,8 @@ import * as trailingSlash from "../trailingSlash.js";
  *
  * @typedef {import("../../index.ts").AsyncTree<AsyncMap>} AsyncTree
  * @typedef {import("../../index.ts").SyncOrAsyncMap} SyncOrAsyncMap
- *
- * @implements {AsyncTree}
  */
-export default class AsyncMap {
+class AsyncMapBase {
   /** @type {SyncOrAsyncMap|null} */
   _parent = null;
 
@@ -159,28 +154,6 @@ export default class AsyncMap {
   }
 
   /**
-   * Groups items from an async iterable into an AsyncMap according to the keys
-   * returned by the given function.
-   *
-   * @param {Iterable<any>|AsyncIterable<any>} iterable
-   * @param {(element: any, index: any) => Promise<any>} keyFn
-   * @returns {Promise<Map>}
-   */
-  static async groupBy(iterable, keyFn) {
-    const map = new SyncMap();
-    let index = 0;
-    for await (const element of iterable) {
-      const key = await keyFn(element, index);
-      if (!map.has(key)) {
-        map.set(key, []);
-      }
-      map.get(key).push(element);
-      index++;
-    }
-    return map;
-  }
-
-  /**
    * Returns true if the given key appears in the set returned by keys().
    *
    * It doesn't matter whether the value returned by get() is defined or not.
@@ -244,10 +217,6 @@ export default class AsyncMap {
     );
   }
 
-  reverse() {
-    return reverse(this);
-  }
-
   /**
    * Sets the value for the given key.
    *
@@ -279,14 +248,6 @@ export default class AsyncMap {
     })();
   }
 
-  shuffle(options) {
-    return shuffle(this, options);
-  }
-
-  sort(options) {
-    return sort(this, options);
-  }
-
   trailingSlashKeys = false;
 
   /**
@@ -305,8 +266,31 @@ export default class AsyncMap {
     const values = await Promise.all(valuePromises);
     yield* values;
   }
+}
 
-  withKeys(keysSource, options) {
-    return withKeys(this, keysSource, options);
+/**
+ * @implements {AsyncTree}
+ */
+export default class AsyncMap extends MapMethodsMixin(AsyncMapBase) {
+  /**
+   * Groups items from an async iterable into an AsyncMap according to the keys
+   * returned by the given function.
+   *
+   * @param {Iterable<any>|AsyncIterable<any>} iterable
+   * @param {(element: any, index: any) => Promise<any>} keyFn
+   * @returns {Promise<SyncMap>}
+   */
+  static async groupBy(iterable, keyFn) {
+    const map = new SyncMap();
+    let index = 0;
+    for await (const element of iterable) {
+      const key = await keyFn(element, index);
+      if (!map.has(key)) {
+        map.set(key, []);
+      }
+      map.get(key).push(element);
+      index++;
+    }
+    return map;
   }
 }

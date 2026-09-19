@@ -1,7 +1,4 @@
-import reverse from "../operations/reverse.js";
-import shuffle from "../operations/shuffle.js";
-import sort from "../operations/sort.js";
-import withKeys from "../operations/withKeys.js";
+import MapMethodsMixin from "../operations/MapMethodsMixin.js";
 import * as trailingSlash from "../trailingSlash.js";
 import setParent from "../utilities/setParent.js";
 
@@ -25,7 +22,7 @@ import setParent from "../utilities/setParent.js";
  *
  * @implements {SyncTree}
  */
-export default class SyncMap extends Map {
+class SyncMapBase extends Map {
   _initialized = false;
 
   constructor(iterable) {
@@ -250,14 +247,10 @@ export default class SyncMap extends Map {
    */
   get readOnly() {
     return (
-      this.get !== SyncMap.prototype.get &&
-      (this.set === SyncMap.prototype.set ||
-        this.delete === SyncMap.prototype.delete)
+      this.get !== SyncMapBase.prototype.get &&
+      (this.set === SyncMapBase.prototype.set ||
+        this.delete === SyncMapBase.prototype.delete)
     );
-  }
-
-  reverse() {
-    return reverse(this);
   }
 
   /**
@@ -296,14 +289,6 @@ export default class SyncMap extends Map {
     return keys.length;
   }
 
-  shuffle(options) {
-    return shuffle(this, options);
-  }
-
-  sort(options) {
-    return sort(this, options);
-  }
-
   trailingSlashKeys = false;
 
   /**
@@ -320,8 +305,6 @@ export default class SyncMap extends Map {
     }
     return /** @type {MapIterator<[any]>} */ (gen());
   }
-
-  withKeys(keysSource, options) {
-    return withKeys(this, keysSource, options);
-  }
 }
+
+export default class SyncMap extends MapMethodsMixin(SyncMapBase) {}
