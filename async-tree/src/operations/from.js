@@ -1,5 +1,6 @@
 import {
   AsyncMap,
+  ExtendedStandardMap,
   FunctionMap,
   ObjectMap,
   SetMap,
@@ -38,6 +39,12 @@ export default function from(object, options = {}) {
     throw new TypeError(
       "The map argument was a Promise. Did you mean to use await?",
     );
+  } else if (
+    object instanceof Map &&
+    Object.getPrototypeOf(object) === Map.prototype
+  ) {
+    // Upgrade standard Map to a SyncMap
+    map = new ExtendedStandardMap(object);
   } else if (isMap(object)) {
     // Already a map
     return object;

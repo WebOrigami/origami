@@ -1,4 +1,10 @@
-import { AsyncMap, isPlainObject, SyncMap, Tree } from "@weborigami/async-tree";
+import {
+  AsyncMap,
+  ExtendedStandardMap,
+  isPlainObject,
+  SyncMap,
+  Tree,
+} from "@weborigami/async-tree";
 import { cachePathSymbol, noCacheSymbol } from "../runtime/symbols.js";
 import AsyncCacheTransform from "./AsyncCacheTransform.js";
 import SyncCacheTransform from "./SyncCacheTransform.js";
@@ -126,16 +132,7 @@ export function cacheFunction(fn, cachePath) {
 
 // Create a cached, SyncMap wrapper around a standard map
 function cacheStandardMap(map) {
-  class DelegateMap extends SyncMap {
-    get(key) {
-      return map.get(key);
-    }
-
-    keys() {
-      return map.keys();
-    }
-  }
-  return new (SyncCacheTransform(DelegateMap))();
+  return new (SyncCacheTransform(ExtendedStandardMap))(map);
 }
 
 function getKeyCachePath(cachePath, args) {

@@ -18,6 +18,7 @@ export { default as AsyncMap } from "./drivers/AsyncMap.js";
 export { default as SyncMap } from "./drivers/SyncMap.js";
 
 // And finally these classes depend on SyncMap
+export { default as ExtendedStandardMap } from "./drivers/ExtendedStandardMap.js";
 export { default as FunctionMap } from "./drivers/FunctionMap.js";
 export { default as ObjectMap } from "./drivers/ObjectMap.js";
 export { default as SetMap } from "./drivers/SetMap.js";

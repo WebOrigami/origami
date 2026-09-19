@@ -1,17 +1,27 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { from, ObjectMap, SetMap } from "../../src/internal.js";
+import { from, ObjectMap, SetMap, SyncMap } from "../../src/internal.js";
 import values from "../../src/operations/values.js";
 import * as symbols from "../../src/symbols.js";
 
 describe("from", () => {
-  test("returns a Map as is", async () => {
-    const tree1 = new Map([
+  test("upgrades a standard Map to a SyncMap", async () => {
+    const map = new Map([
       ["a", 1],
       ["b", 2],
     ]);
-    const tree2 = from(tree1);
-    assert.equal(tree2, tree1);
+    const tree = from(map);
+    assert(tree instanceof SyncMap);
+  });
+
+  test("returns a custom Map subclass instance as is", async () => {
+    class CustomMap extends Map {}
+    const map = new CustomMap([
+      ["a", 1],
+      ["b", 2],
+    ]);
+    const tree = from(map);
+    assert(tree instanceof CustomMap);
   });
 
   test("returns a deep object map if deep option is true", async () => {
