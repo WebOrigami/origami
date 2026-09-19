@@ -1,6 +1,7 @@
 import reverse from "../operations/reverse.js";
 import shuffle from "../operations/shuffle.js";
 import sort from "../operations/sort.js";
+import withKeys from "../operations/withKeys.js";
 import * as trailingSlash from "../trailingSlash.js";
 import setParent from "../utilities/setParent.js";
 
@@ -318,5 +319,9 @@ export default class SyncMap extends Map {
       }
     }
     return /** @type {MapIterator<[any]>} */ (gen());
+  }
+
+  withKeys(keysSource, options) {
+    return withKeys(this, keysSource, options);
   }
 }

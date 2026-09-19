@@ -2,6 +2,7 @@ import isMap from "../operations/isMap.js";
 import reverse from "../operations/reverse.js";
 import shuffle from "../operations/shuffle.js";
 import sort from "../operations/sort.js";
+import withKeys from "../operations/withKeys.js";
 import * as trailingSlash from "../trailingSlash.js";
 
 /**
@@ -302,5 +303,9 @@ export default class AsyncMap {
     // Now wait for all promises to resolve
     const values = await Promise.all(valuePromises);
     yield* values;
+  }
+
+  withKeys(keysSource, options) {
+    return withKeys(this, keysSource, options);
   }
 }
