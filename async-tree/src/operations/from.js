@@ -27,7 +27,7 @@ const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
  *
  * @param {Maplike | Object} object
  * @param {{ deep?: boolean, parent?: Map|AsyncMap|null }} [options]
- * @returns {Map|AsyncMap}
+ * @returns {SyncMap|AsyncMap}
  */
 export default function from(object, options = {}) {
   const deep = options.deep ?? object?.[symbols.deep];

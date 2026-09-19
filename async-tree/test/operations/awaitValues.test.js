@@ -1,22 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { AsyncMap } from "../../src/internal.js";
 import awaitValues from "../../src/operations/awaitValues.js";
-
-class SampleAsyncMap extends AsyncMap {
-  constructor(iterable) {
-    super();
-    this.map = new Map(iterable);
-  }
-
-  async get(key) {
-    return this.map.get(key);
-  }
-
-  async *keys() {
-    yield* this.map.keys();
-  }
-}
+import SampleAsyncMap from "../SampleAsyncMap.js";
 
 describe("awaitValues", () => {
   test("converts an async tree to a sync tree", async () => {

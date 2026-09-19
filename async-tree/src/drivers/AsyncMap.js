@@ -1,3 +1,4 @@
+import { SyncMap } from "../internal.js";
 import isMap from "../operations/isMap.js";
 import reverse from "../operations/reverse.js";
 import shuffle from "../operations/shuffle.js";
@@ -166,7 +167,7 @@ export default class AsyncMap {
    * @returns {Promise<Map>}
    */
   static async groupBy(iterable, keyFn) {
-    const map = new Map();
+    const map = new SyncMap();
     let index = 0;
     for await (const element of iterable) {
       const key = await keyFn(element, index);
