@@ -1,4 +1,5 @@
 import isMap from "../operations/isMap.js";
+import reverse from "../operations/reverse.js";
 import shuffle from "../operations/shuffle.js";
 import sort from "../operations/sort.js";
 import * as trailingSlash from "../trailingSlash.js";
@@ -239,6 +240,10 @@ export default class AsyncMap {
       (this.set === AsyncMap.prototype.set ||
         this.delete === AsyncMap.prototype.delete)
     );
+  }
+
+  reverse() {
+    return reverse(this);
   }
 
   /**

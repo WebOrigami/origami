@@ -1,3 +1,4 @@
+import reverse from "../operations/reverse.js";
 import shuffle from "../operations/shuffle.js";
 import sort from "../operations/sort.js";
 import * as trailingSlash from "../trailingSlash.js";
@@ -252,6 +253,10 @@ export default class SyncMap extends Map {
       (this.set === SyncMap.prototype.set ||
         this.delete === SyncMap.prototype.delete)
     );
+  }
+
+  reverse() {
+    return reverse(this);
   }
 
   /**
