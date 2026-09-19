@@ -1,4 +1,6 @@
 import isMap from "../operations/isMap.js";
+import shuffle from "../operations/shuffle.js";
+import sort from "../operations/sort.js";
 import * as trailingSlash from "../trailingSlash.js";
 
 /**
@@ -268,6 +270,14 @@ export default class AsyncMap {
       }
       return count;
     })();
+  }
+
+  shuffle(options) {
+    return shuffle(this, options);
+  }
+
+  sort(options) {
+    return sort(this, options);
   }
 
   trailingSlashKeys = false;

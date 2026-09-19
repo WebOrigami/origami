@@ -1,3 +1,4 @@
+import shuffle from "../operations/shuffle.js";
 import sort from "../operations/sort.js";
 import * as trailingSlash from "../trailingSlash.js";
 import setParent from "../utilities/setParent.js";
@@ -287,6 +288,10 @@ export default class SyncMap extends Map {
   get size() {
     const keys = Array.from(this.keys());
     return keys.length;
+  }
+
+  shuffle(options) {
+    return shuffle(this, options);
   }
 
   sort(options) {
