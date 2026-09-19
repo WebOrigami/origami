@@ -2,10 +2,34 @@ import * as args from "../utilities/args.js";
 import withKeys from "./withKeys.js";
 
 /**
- * Return a new map with the keys reversed.
- *
+ * @typedef {import("../../index.ts").AsyncMap} AsyncMap
+ * @typedef {import("../../index.ts").AsyncMaplike} AsyncMaplike
  * @typedef {import("../../index.ts").Maplike} Maplike
+ * @typedef {import("../../index.ts").SyncMaplike} SyncMaplike
+ * @typedef {import("../../index.ts").SyncMap} SyncMap
  * @typedef {import("../../index.ts").SyncOrAsyncMap} SyncOrAsyncMap
+ */
+
+/**
+ * @overload
+ * @param {AsyncMaplike} maplike
+ * @returns {AsyncMap}
+ */
+
+/**
+ * @overload
+ * @param {SyncMaplike} maplike
+ * @returns {SyncMap}
+ */
+
+/**
+ * @overload
+ * @param {Maplike} maplike
+ * @returns {AsyncMap}
+ */
+
+/**
+ * Return a new map with the keys reversed.
  *
  * @param {Maplike} maplike
  * @returns {SyncOrAsyncMap}
@@ -24,5 +48,5 @@ export default function reverse(maplike) {
           treeKeys.reverse();
           yield* treeKeys;
         };
-  return withKeys(source, reversedKeys);
+  return withKeys(source, reversedKeys, { description: "reverse" });
 }
