@@ -43,7 +43,7 @@ import withKeys from "./withKeys.js";
  *
  * @param {Maplike} maplike
  * @param {ShuffleOptions} [options]
- * @returns {SyncMap|AsyncMap}
+ * @returns {AsyncMap|SyncMap}
  */
 export default function shuffle(maplike, options = {}) {
   const source = args.map(maplike, "Tree.shuffle");

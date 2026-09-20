@@ -1,14 +1,14 @@
-import sortKeysAsync from "../async/sortKeysAsync.js";
+import sortAsync from "../async/sortAsync.js";
 import { SyncMap } from "../internal.js";
-import sortKeysSync from "../sync/sortKeysSync.js";
+import sortSync from "../sync/sortSync.js";
 import * as ambi from "../utilities/ambi.js";
 import * as args from "../utilities/args.js";
-import withKeys from "./withKeys.js";
 
 /**
  * @typedef {(a: any, b: any) => number} CompareFn
  * @typedef {(key: any, map: SyncMap) => any} SyncSortKeyFn
  * @typedef {(key: any, map: SyncOrAsyncMap) => any} SortKeyFn
+ * @typedef {import("../../index.ts").AsyncMaplike} AsyncMaplike
  * @typedef {import("../../index.ts").AsyncMap} AsyncMap
  * @typedef {import("../../index.ts").Maplike} Maplike
  * @typedef {import("../../index.ts").SyncMaplike} SyncMaplike
@@ -16,6 +16,13 @@ import withKeys from "./withKeys.js";
  * @typedef {import("../../index.ts").ValueKeyFn} ValueKeyFn
  * @typedef {{ compare?: CompareFn, sortKey?: SortKeyFn }} SortOptions
  * @typedef {{ compare?: CompareFn, sortKey?: SyncSortKeyFn }} SyncSortOptions
+ */
+
+/**
+ * @overload
+ * @param {AsyncMaplike} maplike
+ * @param {SortOptions|ValueKeyFn} [options]
+ * @returns {AsyncMap}
  */
 
 /**
@@ -39,7 +46,7 @@ import withKeys from "./withKeys.js";
  *
  * @param {Maplike} maplike
  * @param {SortOptions|SyncSortOptions|ValueKeyFn} [options]
- * @returns {SyncOrAsyncMap}
+ * @returns {AsyncMap|SyncMap}
  */
 export default function sort(maplike, options = {}) {
   const source = args.map(maplike, "Tree.sort");
@@ -58,9 +65,7 @@ export default function sort(maplike, options = {}) {
     source instanceof SyncMap &&
     !(compare instanceof ambi.AsyncFunction) &&
     !(sortKey instanceof ambi.AsyncFunction);
-  const sortedKeys = allSync
-    ? sortKeysSync(source, compare, sortKey)
-    : sortKeysAsync(source, compare, sortKey);
-
-  return withKeys(source, sortedKeys, { description: "sort" });
+  return allSync
+    ? sortSync(source, compare, sortKey)
+    : sortAsync(source, compare, sortKey);
 }
