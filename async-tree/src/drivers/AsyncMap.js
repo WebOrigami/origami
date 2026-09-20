@@ -1,4 +1,5 @@
 import { SyncMap } from "../internal.js";
+import awaitValues from "../operations/awaitValues.js";
 import isMap from "../operations/isMap.js";
 import MapMethodsMixin from "../operations/MapMethodsMixin.js";
 import * as trailingSlash from "../trailingSlash.js";
@@ -292,5 +293,9 @@ export default class AsyncMap extends MapMethodsMixin(AsyncMapBase) {
       index++;
     }
     return map;
+  }
+
+  async settle() {
+    return awaitValues(this);
   }
 }

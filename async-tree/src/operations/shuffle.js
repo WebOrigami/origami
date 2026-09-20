@@ -4,19 +4,46 @@ import keys from "./keys.js";
 import withKeys from "./withKeys.js";
 
 /**
+ * @typedef {import("../../index.ts").AsyncMap} AsyncMap
+ * @typedef {import("../../index.ts").AsyncMaplike} AsyncMaplike
+ * @typedef {import("../../index.ts").Maplike} Maplike
+ * @typedef {import("../../index.ts").SyncMaplike} SyncMaplike
+ * @typedef {import("../../index.ts").SyncOrAsyncMap} SyncOrAsyncMap
+ *
+ * @typedef {{ randoms?: (() => number) }} ShuffleOptions
+ */
+
+/**
+ * @overload
+ * @param {AsyncMaplike} maplike
+ * @param {ShuffleOptions} [options]
+ * @returns {AsyncMap}
+ */
+
+/**
+ * @overload
+ * @param {SyncMaplike} maplike
+ * @param {ShuffleOptions} [options]
+ * @returns {SyncMap}
+ */
+
+/**
+ * @overload
+ * @param {Maplike} maplike
+ * @param {ShuffleOptions} [options]
+ * @returns {AsyncMap}
+ */
+
+/**
  * Return a new tree with the original's keys shuffled.
  *
  * The `randoms` option allows you to provide a function that either returns a
  * random number between 0 and 1 (like `Math.random`) or a random integer. This
  * can be used to create deterministic shuffling.
  *
- * @typedef {import("../../index.ts").Maplike} Maplike
- * @typedef {import("../../index.ts").Stringlike} Stringlike
- * @typedef {import("../../index.ts").SyncOrAsyncMap} SyncOrAsyncMap
- *
  * @param {Maplike} maplike
- * @param {{ randoms?: (() => number) }} [options]
- * @returns {SyncOrAsyncMap}
+ * @param {ShuffleOptions} [options]
+ * @returns {SyncMap|AsyncMap}
  */
 export default function shuffle(maplike, options = {}) {
   const source = args.map(maplike, "Tree.shuffle");
