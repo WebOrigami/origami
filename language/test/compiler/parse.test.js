@@ -313,7 +313,7 @@ describe("Origami parser", () => {
           ["b", [[[ops.params, 0], 0], "b"]],
           [
             "rest",
-            [ops.objectRest, [[ops.params, 0], 0], [ops.array, "a", "b"]],
+            [ops.paramRest, [[ops.params, 0], 0], [ops.array, "a", "b"]],
           ],
         ],
         [markers.traverse, [markers.reference, "rest"]],

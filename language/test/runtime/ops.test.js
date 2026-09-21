@@ -408,13 +408,13 @@ describe("ops", () => {
     assert.strictEqual(result.world, "WORLD");
   });
 
-  test("ops.objectRest returns an object without specified keys", async () => {
+  test("ops.paramRest returns an object without specified keys", async () => {
     const obj = {
       a: 1,
       b: 2,
       c: 3,
     };
-    const result = await ops.objectRest(obj, ["a", "b"]);
+    const result = await ops.paramRest(obj, ["a", "b"]);
     assert.deepEqual(result, { c: 3 });
   });
 

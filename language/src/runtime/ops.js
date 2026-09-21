@@ -417,16 +417,24 @@ export async function object(cachePath, ...entries) {
 addOpLabel(object, "«ops.object»");
 object.unevaluatedArgs = true;
 
-export async function objectRest(source, excludeKeys) {
+/**
+ * Create an object for a rest parameter by creating a copy of the source object
+ * that excludes the specified keys.
+ *
+ * @param {any} source
+ * @param {string[]} excludeKeys
+ */
+export async function paramRest(source, excludeKeys) {
   const result = {};
   for (const [key, value] of Object.entries(source)) {
     if (!excludeKeys.includes(key)) {
       result[key] = value; // might be a promise
     }
   }
+  await Promise.all(Object.values(result));
   return result;
 }
-addOpLabel(objectRest, "«ops.objectRest»");
+addOpLabel(paramRest, "«ops.paramRest");
 
 /**
  * Return the stack frame that's `depth` levels up the stack.

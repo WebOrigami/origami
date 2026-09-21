@@ -580,11 +580,11 @@ function makeParamObject(entries, reference, state) {
     if (entry[0] === markers.paramRest) {
       // Rest parameter; exclude keys we've seen so far
       const annotatedKeys = annotate([ops.array, ...keys], entry.location);
-      const objectRest = annotate(
-        [ops.objectRest, reference, annotatedKeys],
+      const paramRest = annotate(
+        [ops.paramRest, reference, annotatedKeys],
         entry.location,
       );
-      return makeParam(entry[1], objectRest, state);
+      return makeParam(entry[1], paramRest, state);
     }
     const [key, binding] = entry;
     keys.push(key);
