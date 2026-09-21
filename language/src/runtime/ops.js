@@ -275,6 +275,9 @@ export function lambda(length, parameters, code) {
     value: length,
   });
 
+  // A template may want access to packed arguments
+  invoke.unpackArgs = false;
+
   return invoke;
 }
 addOpLabel(lambda, "«ops.lambda»");
@@ -504,6 +507,7 @@ export async function property(object, key) {
   // Handle as tree traversal
   return Tree.traverseOrThrow(object, key);
 }
+property.unpackArgs = false;
 addOpLabel(property, "«ops.property»");
 
 export function remainder(a, b) {

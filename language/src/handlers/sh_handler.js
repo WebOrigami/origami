@@ -15,9 +15,11 @@ export default {
       throw new Error(".sh handler: input isn't text");
     }
 
-    return async (input) => {
+    const run = async (input) => {
       return runShellScript(scriptText, input);
     };
+    run.unpackArgs = false;
+    return run;
   },
 };
 
