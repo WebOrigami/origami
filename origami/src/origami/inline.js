@@ -1,4 +1,5 @@
 import { isUnpackable, symbols, toString } from "@weborigami/async-tree";
+import { executionContext } from "@weborigami/language";
 import { oridocument_handler } from "@weborigami/language/src/handlers/handlers.js";
 import documentObject from "../common/documentObject.js";
 
@@ -24,7 +25,8 @@ export default async function inline(input, options = {}) {
   const parent =
     options.parent ??
     /** @type {any} */ (input).parent ??
-    /** @type {any} */ (input)[symbols.parent];
+    /** @type {any} */ (input)[symbols.parent] ??
+    executionContext.getStore().parent;
 
   let front;
   if (inputIsDocument) {
