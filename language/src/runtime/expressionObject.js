@@ -127,7 +127,7 @@ function defineProperty(object, propertyInfo, context, map) {
       configurable: true,
       enumerable,
       get: async () => {
-        return executeProperty(object, propertyInfo, context, map);
+        return await executeProperty(object, propertyInfo, context, map);
       },
     });
   }
