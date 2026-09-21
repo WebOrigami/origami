@@ -39,7 +39,14 @@ export default async function execute(context) {
 
   if (isUnpackable(fn)) {
     // Unpack the object and use the result as the function or map.
-    fn = await fn.unpack();
+    try {
+      fn = await fn.unpack();
+    } catch (/** @type {any} */ error) {
+      if (!error.context) {
+        error.context = context; // For error formatting
+      }
+      throw error;
+    }
   }
 
   let args;
@@ -52,12 +59,19 @@ export default async function execute(context) {
       tail.map((arg) => execute({ ...context, code: arg })),
     );
 
-    args =
-      fn.unpackArgs === false
-        ? // Function has opted out of argument unpacking
-          evaluated
-        : // Unpack arguments
-          await unpackArguments(evaluated);
+    try {
+      args =
+        fn.unpackArgs === false
+          ? // Function has opted out of argument unpacking
+            evaluated
+          : // Unpack arguments
+            await unpackArguments(evaluated);
+    } catch (/** @type {any} */ error) {
+      if (!error.context) {
+        error.context = context; // For error formatting
+      }
+      throw error;
+    }
   }
 
   if (fn.parentAsTarget && context.parent) {
@@ -105,8 +119,14 @@ async function unpackPlainObject(object) {
   const processedEntries = await Promise.all(
     entries.map(async ([key, value]) => {
       if (isUnpackable(value)) {
-        value = await value.unpack();
+        value = value.unpack();
       }
+      // We need to await the unpack -- as well as the value itself. If we don't
+      // await the value, the Object.entries call may have kicked off some other
+      // async operation. If we don't wait for it here, a rejected promise can
+      // go unnoticed. In corner cases, this might cause the exception to be
+      // uncaught by the CLI's main try/catch.
+      value = await value;
       return [key, value];
     }),
   );
