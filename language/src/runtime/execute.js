@@ -53,11 +53,11 @@ export default async function execute(context) {
     );
 
     args =
-      fn.unpackArgs !== false
-        ? // Unpack arguments
-          await unpackArguments(evaluated)
-        : // Function has opted out of argument unpacking
-          evaluated;
+      fn.unpackArgs === false
+        ? // Function has opted out of argument unpacking
+          evaluated
+        : // Unpack arguments
+          await unpackArguments(evaluated);
   }
 
   if (fn.parentAsTarget && context.parent) {
@@ -99,6 +99,7 @@ async function unpackArguments(args) {
   );
 }
 
+// Unpack top-level values in the object (don't recurse)
 async function unpackPlainObject(object) {
   const entries = Object.entries(object);
   const processedEntries = await Promise.all(
