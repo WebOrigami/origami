@@ -1,4 +1,4 @@
-import { SyncMap } from "@weborigami/async-tree";
+import { SyncMap, trailingSlash } from "@weborigami/async-tree";
 import path from "node:path";
 import systemCache from "../cache/systemCache.js";
 import { cachePathSymbol } from "../runtime/symbols.js";
@@ -30,7 +30,12 @@ export default class ScopeMap extends SyncMap {
         systemCache.trackCurrentDependency(folderKeysPath);
       }
 
-      value = current.get(key);
+      // ScopeMap normally works with FileMap which, if asked for a key with a
+      // trailing slash, would interpret it as a subfolder even if the subfolder
+      // doesn't exist yet. We only want to find existing files/folders, so we
+      // remove any trailing slash from the key before looking it up.
+      const normalized = trailingSlash.remove(key);
+      value = current.get(normalized);
       if (value !== undefined) {
         break;
       }
