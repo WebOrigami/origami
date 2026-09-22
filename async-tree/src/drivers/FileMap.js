@@ -111,18 +111,7 @@ export default class FileMap extends SyncMap {
 
     const stats = getStats(valuePath);
     if (stats === null) {
-      if (trailingSlash.has(key)) {
-        // Assume this is a reference to a desired but nonexistent subdirectory
-        value = Reflect.construct(this.constructor, [valuePath]);
-      } else if (directoryExists(this.path)) {
-        // This directory exists, but doesn't have the indicated file or subfolder
-        return undefined;
-      } else {
-        // return undefined;
-        throw new Error(
-          `Tried to access "${key}" in a directory that doesn't exist: ${this.path}`,
-        );
-      }
+      return undefined; // File or directory doesn't exist
     } else if (stats.isDirectory()) {
       // Return subdirectory as an instance of this class
       value = Reflect.construct(this.constructor, [valuePath]);
