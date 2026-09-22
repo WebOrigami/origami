@@ -1,10 +1,7 @@
-import { isUnpackable, toString } from "@weborigami/async-tree";
+import { toString } from "@weborigami/async-tree";
 import { Marked } from "marked";
 
 export default async function mdOutline(input) {
-  if (isUnpackable(input)) {
-    input = await input.unpack();
-  }
   const inputIsDocument = typeof input === "object" && "_body" in input;
   const markdown = inputIsDocument ? input._body : toString(input);
   if (markdown === null) {
@@ -74,6 +71,7 @@ export default async function mdOutline(input) {
 
   return outline;
 }
+mdOutline.unpackArgs = true;
 
 function consolidateText(node) {
   // If the node's last property value is an object with only a _text property,

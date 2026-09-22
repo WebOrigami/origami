@@ -1,4 +1,4 @@
-import { args, isPlainObject, isUnpackable } from "@weborigami/async-tree";
+import { args, isPlainObject } from "@weborigami/async-tree";
 import documentObject from "../common/documentObject.js";
 
 /**
@@ -9,12 +9,9 @@ import documentObject from "../common/documentObject.js";
  * @param {any} [data]
  */
 export default async function documentBuiltin(input, data) {
-  if (isUnpackable(input)) {
-    // Unpack the input first, might already be a document object.
-    input = await input.unpack();
-  }
   input = isPlainObject(input)
     ? input
     : args.stringlike(input, "Origami.document");
   return documentObject(input, data);
 }
+documentBuiltin.unpackArgs = true;

@@ -1,4 +1,4 @@
-import { isUnpackable, toPlainValue } from "@weborigami/async-tree";
+import { toPlainValue } from "@weborigami/async-tree";
 
 /**
  * Render the object as text in CSV format.
@@ -12,9 +12,6 @@ import { isUnpackable, toPlainValue } from "@weborigami/async-tree";
 export default async function csv(object) {
   if (object === undefined) {
     return undefined;
-  }
-  if (isUnpackable(object)) {
-    object = await object.unpack();
   }
   const value = await toPlainValue(object);
   const array = Array.isArray(value) ? value : Object.values(value);
@@ -58,3 +55,4 @@ function formatCsv(array) {
   // Concatenate header and data rows, joining and ending with CRLF.
   return [headerRow, ...dataRows].join("\r\n") + "\r\n";
 }
+csv.unpackArgs = true;

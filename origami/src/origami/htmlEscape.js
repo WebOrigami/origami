@@ -13,3 +13,4 @@ export default async function htmlEscape(html) {
   div.textContent = toString(text);
   return div.innerHTML;
 }
+htmlEscape.unpackArgs = true;

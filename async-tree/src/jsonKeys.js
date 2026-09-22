@@ -36,3 +36,4 @@ export async function stringify(maplike) {
   const json = JSON.stringify(treeKeys);
   return json;
 }
+stringify.unpackArgs = true;

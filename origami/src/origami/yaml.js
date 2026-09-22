@@ -15,3 +15,4 @@ export default async function yamlBuiltin(obj) {
   }
   return toYaml(obj);
 }
+yamlBuiltin.unpackArgs = true;

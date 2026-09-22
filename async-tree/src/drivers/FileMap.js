@@ -118,6 +118,7 @@ export default class FileMap extends SyncMap {
         // This directory exists, but doesn't have the indicated file or subfolder
         return undefined;
       } else {
+        // return undefined;
         throw new Error(
           `Tried to access "${key}" in a directory that doesn't exist: ${this.path}`,
         );

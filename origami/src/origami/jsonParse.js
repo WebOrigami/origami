@@ -9,3 +9,4 @@ export default async function jsonParse(input) {
   const text = args.stringlike(input, "Origami.jsonParse");
   return text ? JSON.parse(text) : undefined;
 }
+jsonParse.unpackArgs = true;

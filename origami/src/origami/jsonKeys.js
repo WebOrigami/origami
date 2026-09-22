@@ -12,6 +12,7 @@ export default async function jsonKeysBuiltin(maplike) {
   const source = args.map(maplike, "Origami.jsonKeys");
   return jsonKeysMap(source);
 }
+jsonKeysBuiltin.unpackArgs = true;
 
 function jsonKeysMap(source) {
   const result = Object.assign(new AsyncMap(), {

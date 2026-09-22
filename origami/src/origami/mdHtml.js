@@ -55,7 +55,9 @@ export default async function mdHtml(input) {
   const html = marked.parse(markdown);
   return inputIsDocument ? documentObject(html, input) : html;
 }
+mdHtml.unpackArgs = true;
 
+// Sidecar functions
 mdHtml.key = (sourceValue, sourceKey) =>
   extension.replace(sourceKey, ".md", ".html");
 mdHtml.key.needsSourceValue = false;

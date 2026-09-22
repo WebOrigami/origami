@@ -13,3 +13,4 @@ export default async function htmlParse(html) {
   const dom = await htmlDom(html);
   return dom;
 }
+htmlParse.unpackArgs = true;

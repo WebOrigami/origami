@@ -98,3 +98,4 @@ export default async function audit(maplike, baseHref) {
 
   return errors;
 }
+audit.unpackArgs = true;

@@ -13,6 +13,7 @@ export default async function staticBuiltin(maplike) {
   const source = args.map(maplike, "Origami.static");
   return staticMap(source);
 }
+staticBuiltin.unpackArgs = true;
 
 // The name we'll register as a builtin
 staticBuiltin.key = "static";

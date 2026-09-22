@@ -1,4 +1,4 @@
-import { isUnpackable, toPlainValue } from "@weborigami/async-tree";
+import { toPlainValue } from "@weborigami/async-tree";
 import { EOL } from "node:os";
 
 /**
@@ -14,9 +14,6 @@ import { EOL } from "node:os";
 export default async function tsv(object) {
   if (object == null) {
     return "";
-  }
-  if (isUnpackable(object)) {
-    object = await object.unpack();
   }
   const value = await toPlainValue(object);
   const array = Array.isArray(value) ? value : Object.values(value);
@@ -41,3 +38,4 @@ function formatTsv(array) {
   // Concatenate header and data rows, joining and ending with EOL.
   return [headerRow, ...dataRows].join(EOL) + EOL;
 }
+tsv.unpackArgs = true;

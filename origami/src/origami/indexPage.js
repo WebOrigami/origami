@@ -65,3 +65,4 @@ ${list}
   result.unpack = () => tree;
   return result;
 }
+indexPage.unpackArgs = true;

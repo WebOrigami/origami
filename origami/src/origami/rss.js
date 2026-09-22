@@ -12,3 +12,4 @@ export default async function rss(jsonFeed, options = {}) {
   const jsonFeedPlain = await Tree.plain(tree);
   return jsonFeedToRss(jsonFeedPlain, options);
 }
+rss.unpackArgs = true;

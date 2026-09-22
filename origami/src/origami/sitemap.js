@@ -39,3 +39,4 @@ export default async function sitemap(maplike, options = {}) {
   const templateResult = await templateFn(htmlPaths);
   return String(templateResult);
 }
+sitemap.unpackArgs = true;
