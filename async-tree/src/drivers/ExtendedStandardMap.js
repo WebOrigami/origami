@@ -7,8 +7,17 @@ export default class ExtendedStandardMap extends SyncMap {
     }
 
     super();
-    this.source = source ?? new Map();
-    Object.assign(this, this.source);
+
+    source ??= new Map();
+
+    // Copy over properties from the source map that aren't SyncMap members
+    for (const key of Object.keys(source)) {
+      if (!(key in SyncMap.prototype)) {
+        this[key] = source[key];
+      }
+    }
+
+    this.source = source;
   }
 
   delete(key) {
