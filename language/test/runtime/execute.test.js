@@ -23,6 +23,7 @@ describe("execute", () => {
   describe("argument unpacking", () => {
     test("unpacks packed arguments", async () => {
       const fn = (...args) => args.join(",");
+      fn.unpackArgs = true;
       const packedArg = new String("a");
       /** @type {any} */ (packedArg).unpack = async () => "a unpacked";
       const code = createCode([fn, packedArg, "b", "c"]);
@@ -32,6 +33,7 @@ describe("execute", () => {
 
     test("unpacks plain object arguments", async () => {
       const fn = (...args) => args;
+      fn.unpackArgs = true;
       const packedValue = new String("value");
       /** @type {any} */ (packedValue).unpack = async () => "unpacked value";
       const plainObjectArg = { key: packedValue };

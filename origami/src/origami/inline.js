@@ -26,7 +26,7 @@ export default async function inline(input, options = {}) {
     options.parent ??
     /** @type {any} */ (input).parent ??
     /** @type {any} */ (input)[symbols.parent] ??
-    executionContext.getStore().parent;
+    executionContext.getStore()?.parent;
 
   let front;
   if (inputIsDocument) {
