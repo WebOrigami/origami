@@ -104,7 +104,11 @@ export function cacheFunction(fn, cachePath) {
     };
   } else {
     // Return a sync function that caches results
-    result = (...args) => {
+    result = function wrapped(...args) {
+      if (new.target) {
+        // Function was called as a constructor; bypass caching
+        return Reflect.construct(fn, args);
+      }
       const keyCachePath = getKeyCachePath(cachePath, args);
       if (keyCachePath === null) {
         // Run function but don't cache result

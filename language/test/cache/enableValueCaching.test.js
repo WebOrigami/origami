@@ -63,4 +63,15 @@ describe("enableValueCaching", () => {
     assert.equal(value("Hello", "world"), "Hello world");
     assert.equal(value[cachePathSymbol], "foo.ori/");
   });
+
+  test("when applied to a constructor, constructor can be used as is", () => {
+    function User(name) {
+      this.name = name;
+    }
+    const CachedClass = enableValueCaching(User, "foo.ori/");
+    const instance = new CachedClass("Alice");
+    assert(instance instanceof User);
+    assert.equal(instance.name, "Alice");
+    assert.equal(CachedClass[cachePathSymbol], "foo.ori/");
+  });
 });
