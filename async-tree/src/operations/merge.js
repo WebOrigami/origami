@@ -91,3 +91,4 @@ export default async function merge(...treelikes) {
     trailingSlashKeys,
   });
 }
+merge.unpackArgs = true;

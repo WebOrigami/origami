@@ -97,3 +97,4 @@ export default function mapExtension(maplike, arg2, arg3) {
 
   return map(maplike, options);
 }
+mapExtension.unpackArgs = true;

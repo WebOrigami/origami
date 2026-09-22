@@ -13,3 +13,4 @@ export default async function del(maplike, key) {
   const map = args.map(maplike, "Tree.delete");
   return map.delete(key);
 }
+del.unpackArgs = true;

@@ -18,3 +18,4 @@ export default async function set(maplike, key, value) {
   // being dumped to the console.
   return undefined;
 }
+set.unpackArgs = true;

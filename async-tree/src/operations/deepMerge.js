@@ -81,3 +81,4 @@ export default function deepMerge(...maplikes) {
     trailingSlashKeys: true,
   });
 }
+deepMerge.unpackArgs = true;

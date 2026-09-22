@@ -45,3 +45,4 @@ export default function invokeFunctions(maplike) {
 
   return result;
 }
+invokeFunctions.unpackArgs = true;

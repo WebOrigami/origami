@@ -38,3 +38,4 @@ export default function isMap(object) {
 
   return false;
 }
+isMap.unpackArgs = true;

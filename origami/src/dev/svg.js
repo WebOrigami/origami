@@ -30,3 +30,4 @@ export default async function svg(maplike, options = {}) {
   result.unpack = () => tree;
   return result;
 }
+svg.unpackArgs = true;

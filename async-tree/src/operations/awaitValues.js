@@ -12,3 +12,4 @@ export default async function awaitValues(source) {
   const tree = args.map(source, "Tree.resolve", { deep: true });
   return reduce(tree, (mapped) => mapped);
 }
+awaitValues.unpackArgs = true;

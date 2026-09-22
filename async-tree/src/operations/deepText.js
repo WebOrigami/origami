@@ -28,3 +28,4 @@ export default async function deepText(maplike) {
   }
   return strings.join("");
 }
+deepText.unpackArgs = true;

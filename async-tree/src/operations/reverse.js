@@ -50,3 +50,4 @@ export default function reverse(maplike) {
         };
   return withKeys(source, reversedKeys, { description: "reverse" });
 }
+reverse.unpackArgs = true;

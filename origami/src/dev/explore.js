@@ -27,6 +27,7 @@ export default async function explore(maplike) {
 
   return result;
 }
+explore.unpackArgs = true;
 
 async function getScopeData(scope) {
   const trees = scope.trees ?? [scope];

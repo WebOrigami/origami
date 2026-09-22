@@ -24,3 +24,4 @@ export default async function paths(maplike, options = {}) {
   }
   return result;
 }
+paths.unpackArgs = true;

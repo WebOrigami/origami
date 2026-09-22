@@ -24,4 +24,3 @@ export default async function format(input, format, options) {
   // not accepted in some contexts, so we convert it to a regular Uint8Array.
   return new Uint8Array(data);
 }
-format.unpackArgs = false;

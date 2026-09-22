@@ -29,6 +29,7 @@ See https://github.com/WebOrigami/origami/releases/tag/0.7.0`,
 
   return tree;
 }
+debug.unpackArgs = true;
 
 /**
  * @typedef {import("../../index.ts").Constructor<AsyncMap>} AsyncMapConstructor

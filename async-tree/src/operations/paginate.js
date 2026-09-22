@@ -66,3 +66,4 @@ export default function paginate(maplike, size = 10) {
 
   return paginated;
 }
+paginate.unpackArgs = true;

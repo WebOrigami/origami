@@ -14,3 +14,4 @@ export default async function sync(source) {
   const tree = args.map(source, "Tree.sync");
   return resolve(tree);
 }
+sync.unpackArgs = true;

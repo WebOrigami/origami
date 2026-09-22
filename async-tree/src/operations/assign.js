@@ -14,3 +14,4 @@ export default async function assign(target, source) {
   });
   return apply(sourceTree, targetTree);
 }
+assign.unpackArgs = true;

@@ -52,3 +52,4 @@ export default async function groupBy(maplike, groupKeyFn) {
 
   return result;
 }
+groupBy.unpackArgs = true;

@@ -18,7 +18,6 @@ export default {
     const run = async (input) => {
       return runShellScript(scriptText, input);
     };
-    run.unpackArgs = false;
     return run;
   },
 };

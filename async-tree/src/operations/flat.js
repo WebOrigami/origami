@@ -43,3 +43,4 @@ export default async function flat(maplike, depth = 1) {
     return result;
   }
 }
+flat.unpackArgs = true;

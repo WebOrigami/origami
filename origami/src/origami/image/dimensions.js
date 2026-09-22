@@ -28,4 +28,3 @@ export default async function dimensions(input) {
   const rotated = orientation && orientation >= 5 && orientation <= 8;
   return rotated ? { height: width, width: height } : { height, width };
 }
-dimensions.unpackArgs = false;

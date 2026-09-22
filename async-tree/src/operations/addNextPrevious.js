@@ -54,3 +54,4 @@ export default async function addNextPrevious(maplike) {
     trailingSlashKeys: /** @type {any} */ (source).trailingSlashKeys,
   });
 }
+addNextPrevious.unpackArgs = true;

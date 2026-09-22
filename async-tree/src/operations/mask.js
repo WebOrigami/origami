@@ -80,3 +80,4 @@ export default function mask(aMaplike, bMaplike) {
     trailingSlashKeys: true,
   });
 }
+mask.unpackArgs = true;

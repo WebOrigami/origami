@@ -18,6 +18,7 @@ export default async function deepTake(maplike, count) {
   const { values } = await traverse(tree, count);
   return from(values, { deep: true });
 }
+deepTake.unpackArgs = true;
 
 async function traverse(tree, count) {
   const values = [];

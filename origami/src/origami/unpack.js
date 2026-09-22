@@ -12,4 +12,3 @@ export default function unpack(obj) {
   }
   return obj.unpack?.() ?? obj;
 }
-unpack.unpackArgs = false;

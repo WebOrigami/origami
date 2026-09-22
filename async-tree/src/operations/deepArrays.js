@@ -9,15 +9,16 @@ import isMap from "./isMap.js";
  *
  * @param {Maplike} maplike
  */
-export default async function deepEntries(maplike) {
-  const tree = args.map(maplike, "Tree.deepEntries");
+export default async function deepArrays(maplike) {
+  const tree = args.map(maplike, "Tree.deepArrays");
 
   const treeEntries = await entries(tree);
   const result = await Promise.all(
     treeEntries.map(async ([key, value]) => {
-      const resolvedValue = isMap(value) ? await deepEntries(value) : value;
+      const resolvedValue = isMap(value) ? await deepArrays(value) : value;
       return [key, resolvedValue];
     }),
   );
   return result;
 }
+deepArrays.unpackArgs = true;

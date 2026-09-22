@@ -31,3 +31,4 @@ export default function inners(maplike) {
     trailingSlashKeys: /** @type {any} */ (source).trailingSlashKeys,
   });
 }
+inners.unpackArgs = true;

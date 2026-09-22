@@ -39,3 +39,4 @@ export default function filter(maplike, options) {
     },
   });
 }
+filter.unpackArgs = true;

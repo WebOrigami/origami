@@ -33,6 +33,7 @@ export default async function dot(maplike, options = {}) {
 ${treeArcs.join("\n")}
 }`;
 }
+dot.unpackArgs = true;
 
 async function statements(tree, nodePath, nodeLabel, options) {
   let result = [];

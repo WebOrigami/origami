@@ -19,3 +19,4 @@ export default async function findKey(maplike, predicate) {
   }
   return undefined;
 }
+findKey.unpackArgs = true;

@@ -68,3 +68,4 @@ export default async function mapReduce(source, valueFn, reduceFn) {
   // Reduce the values to a single result.
   return reduceFn(mapped, sourceMap);
 }
+mapReduce.unpackArgs = true;

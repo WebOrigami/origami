@@ -12,3 +12,4 @@ export default async function has(maplike, key) {
   const map = args.map(maplike, "Tree.has");
   return map.has(key);
 }
+has.unpackArgs = true;

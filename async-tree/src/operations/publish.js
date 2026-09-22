@@ -101,3 +101,4 @@ export default async function publish(source, target, options = {}) {
     await manifestContainer.set(manifestKey, manifestJson);
   }
 }
+publish.unpackArgs = true;

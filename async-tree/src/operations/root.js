@@ -16,3 +16,4 @@ export default function root(maplike) {
   }
   return current;
 }
+root.unpackArgs = true;

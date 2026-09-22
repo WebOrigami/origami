@@ -61,11 +61,11 @@ export default async function execute(context) {
 
     try {
       args =
-        fn.unpackArgs === false
-          ? // Function has opted out of argument unpacking
-            evaluated
-          : // Unpack arguments
-            await unpackArguments(evaluated);
+        fn.unpackArgs === true
+          ? // Function wants to opt into argument unpacking
+            await unpackArguments(evaluated)
+          : // Pass arguments as is, including packed values
+            evaluated;
     } catch (/** @type {any} */ error) {
       if (!error.context) {
         error.context = context; // For error formatting

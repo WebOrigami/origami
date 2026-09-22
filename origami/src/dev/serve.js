@@ -44,3 +44,4 @@ export default async function serve(maplike, port) {
     );
   });
 }
+serve.unpackArgs = true;

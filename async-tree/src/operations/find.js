@@ -19,3 +19,4 @@ export default async function find(maplike, predicate) {
   }
   return undefined;
 }
+find.unpackArgs = true;

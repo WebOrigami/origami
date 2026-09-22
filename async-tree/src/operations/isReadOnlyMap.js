@@ -12,3 +12,4 @@ export default function isReadOnlyMap(object) {
   // Respect readOnly if defined, otherwise assume read/write
   return "readOnly" in object ? object.readOnly : false;
 }
+isReadOnlyMap.unpackArgs = true;

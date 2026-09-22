@@ -35,4 +35,3 @@ export default function toString(object) {
     return null;
   }
 }
-toString.unpackArgs = false;

@@ -14,3 +14,4 @@ export default async function reduce(maplike, reduceFn) {
   const map = args.map(maplike, "Tree.reduce");
   return mapReduce(map, null, reduceFn);
 }
+reduce.unpackArgs = true;

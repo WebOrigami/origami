@@ -13,6 +13,7 @@ export default async function code(input) {
   const fn = compile.program(text);
   return functionNames(fn.code);
 }
+code.unpackArgs = true;
 
 function functionNames(code) {
   if (!Array.isArray(code)) {

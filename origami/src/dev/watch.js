@@ -43,6 +43,7 @@ export default async function watch(maplike, fn) {
 
   return handle;
 }
+watch.unpackArgs = true;
 
 async function evaluateTree(parent, fn) {
   let tree;

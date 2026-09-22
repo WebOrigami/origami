@@ -88,3 +88,4 @@ export default function withKeys(maplike, keysSource, options = {}) {
 
   return result;
 }
+withKeys.unpackArgs = true;

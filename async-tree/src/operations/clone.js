@@ -13,3 +13,4 @@ export default async function clone(maplike) {
   const cloned = await awaitValues(source);
   return cloned;
 }
+clone.unpackArgs = true;

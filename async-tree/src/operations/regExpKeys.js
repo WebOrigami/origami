@@ -83,3 +83,4 @@ export default async function regExpKeys(maplike) {
 
   return result;
 }
+regExpKeys.unpackArgs = true;

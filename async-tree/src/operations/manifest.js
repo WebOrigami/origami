@@ -42,3 +42,4 @@ export default async function manifest(maplike) {
   result = await awaitValues(result);
   return result;
 }
+manifest.unpackArgs = true;

@@ -18,3 +18,4 @@ export default async function first(maplike) {
   const value = firstKey ? await map.get(firstKey) : undefined;
   return value;
 }
+first.unpackArgs = true;

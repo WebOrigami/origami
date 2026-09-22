@@ -17,3 +17,4 @@ export default async function clear(maplike) {
   // method doesn't.
   return map;
 }
+clear.unpackArgs = true;

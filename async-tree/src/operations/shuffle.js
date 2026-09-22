@@ -79,6 +79,7 @@ export default function shuffle(maplike, options = {}) {
 
   return withKeys(source, shuffledKeys, { description: "shuffle" });
 }
+shuffle.unpackArgs = true;
 
 /*
  * Shuffle an array.

@@ -12,3 +12,4 @@ export default function toFunction(maplike) {
   const map = args.map(maplike, "Tree.toFunction");
   return map.get.bind(map);
 }
+toFunction.unpackArgs = true;

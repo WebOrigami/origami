@@ -55,4 +55,3 @@ export default async function inline(input, options = {}) {
 
   return result;
 }
-inline.unpackArgs = false;

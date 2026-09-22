@@ -26,6 +26,7 @@ export default async function indent(strings, ...values) {
   );
   return joinBlocks(modifiedStrings, valueTexts, blockIndentations);
 }
+indent.unpackArgs = true;
 
 // Join strings and values, applying the given block indentation to the lines of
 // values for block placholders.

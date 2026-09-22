@@ -69,3 +69,4 @@ export default function sort(maplike, options = {}) {
     ? sortSync(source, compare, sortKey)
     : sortAsync(source, compare, sortKey);
 }
+sort.unpackArgs = true;

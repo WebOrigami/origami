@@ -50,3 +50,4 @@ export default async function applyChanges(source, target) {
 
   return manifestChanges;
 }
+applyChanges.unpackArgs = true;

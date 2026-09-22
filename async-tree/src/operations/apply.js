@@ -57,3 +57,4 @@ export default async function apply(source, target) {
 
   return targetTree;
 }
+apply.unpackArgs = true;

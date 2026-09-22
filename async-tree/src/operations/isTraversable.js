@@ -13,3 +13,4 @@ export default function isTraversable(object) {
     (isPacked(object) && /** @type {any} */ (object).unpack instanceof Function)
   );
 }
+isTraversable.unpackArgs = true;

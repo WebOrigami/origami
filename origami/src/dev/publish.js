@@ -36,3 +36,4 @@ export default async function publish(source, target, options = {}) {
     progressOptions,
   );
 }
+publish.unpackArgs = true;

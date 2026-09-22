@@ -24,3 +24,4 @@ export default async function traverse(maplike, ...keys) {
     }
   }
 }
+traverse.unpackArgs = true;

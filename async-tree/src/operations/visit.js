@@ -12,3 +12,4 @@ export default async function visit(source) {
   const tree = args.map(source, "Tree.visit", { deep: true });
   return reduce(tree, () => undefined);
 }
+visit.unpackArgs = true;

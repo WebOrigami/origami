@@ -16,3 +16,4 @@ export default async function traversePath(maplike, path) {
   const keys = keysFromPath(path);
   return traverse(map, ...keys);
 }
+traversePath.unpackArgs = true;

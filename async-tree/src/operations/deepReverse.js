@@ -38,3 +38,4 @@ export default function deepReverse(maplike) {
     trailingSlashKeys: /** @type {any} */ (source).trailingSlashKeys,
   });
 }
+deepReverse.unpackArgs = true;

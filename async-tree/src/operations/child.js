@@ -33,3 +33,4 @@ export default async function child(maplike, key) {
 
   return result;
 }
+child.unpackArgs = true;

@@ -65,3 +65,4 @@ export default function match(pattern, resultFn, keys = []) {
 
   return result;
 }
+match.unpackArgs = true;

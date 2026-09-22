@@ -32,3 +32,4 @@ export default function isMaplike(object) {
     isPlainObject(object)
   );
 }
+isMaplike.unpackArgs = true;

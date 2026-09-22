@@ -32,6 +32,7 @@ export default async function changes(oldMaplike, newMaplike) {
   const combined = await combine(oldManifest, newManifest, compare);
   return combined;
 }
+changes.unpackArgs = true;
 
 function compare(oldValue, newValue) {
   if (oldValue !== undefined && newValue === undefined) {

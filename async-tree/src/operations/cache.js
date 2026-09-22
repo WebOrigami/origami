@@ -78,3 +78,4 @@ export default function treeCache(sourceMaplike, cacheMaplike) {
     trailingSlashKeys: /** @type {any} */ (source).trailingSlashKeys,
   });
 }
+treeCache.unpackArgs = true;

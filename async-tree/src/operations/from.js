@@ -83,6 +83,7 @@ export default function from(object, options = {}) {
 
   return map;
 }
+from.unpackArgs = true;
 
 function upgradeToMap(object) {
   const isAsync =

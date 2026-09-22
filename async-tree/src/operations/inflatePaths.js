@@ -31,3 +31,4 @@ function setValue(map, keys, value, classFn) {
   }
   node.set(keys[keys.length - 1], value);
 }
+inflatePaths.unpackArgs = true;

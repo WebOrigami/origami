@@ -24,6 +24,7 @@ export default function map(maplike, options = {}) {
   });
   return mapFn(tree);
 }
+map.unpackArgs = true;
 
 // Create a get() function for the map
 function createGet(tree, options, mapFn) {

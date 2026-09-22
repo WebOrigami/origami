@@ -18,3 +18,4 @@ export default async function deepEntries(maplike) {
   }
   return entries;
 }
+deepEntries.unpackArgs = true;

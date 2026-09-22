@@ -23,3 +23,4 @@ export default function deepMap(maplike, options) {
       { deep: true, value: options };
   return map(tree, withDeep);
 }
+deepMap.unpackArgs = true;

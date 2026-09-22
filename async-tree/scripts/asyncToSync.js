@@ -32,4 +32,4 @@ export default function asyncToSync(source) {
   }
   return text;
 }
-asyncToSync.unpackArgs = false;
+asyncToSync.unpackArgs = true;

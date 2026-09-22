@@ -11,3 +11,4 @@ export default async function size(maplike) {
   const map = args.map(maplike, "Tree.size");
   return map.size;
 }
+size.unpackArgs = true;

@@ -69,3 +69,4 @@ export default function scope(maplike) {
     trailingSlashKeys: /** @type {any} */ (source).trailingSlashKeys,
   });
 }
+scope.unpackArgs = true;

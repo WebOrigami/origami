@@ -14,3 +14,4 @@ export default async function deepValues(maplike, options = { expand: false }) {
   }
   return values;
 }
+deepValues.unpackArgs = true;

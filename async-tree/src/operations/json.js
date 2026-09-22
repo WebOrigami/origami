@@ -11,3 +11,4 @@ export default async function json(maplike) {
   const value = await toPlainValue(tree);
   return JSON.stringify(value, null, 2);
 }
+json.unpackArgs = true;

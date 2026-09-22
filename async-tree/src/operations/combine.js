@@ -80,3 +80,4 @@ export default async function combine(maplike1, maplike2, options) {
 
   return result.size > 0 ? result : undefined;
 }
+combine.unpackArgs = true;

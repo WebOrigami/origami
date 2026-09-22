@@ -17,3 +17,4 @@ export default async function copy(source, target) {
     targetTree,
   );
 }
+copy.unpackArgs = true;

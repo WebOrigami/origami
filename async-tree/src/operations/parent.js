@@ -11,3 +11,4 @@ export default function parent(maplike) {
   const map = args.map(maplike, "Tree.parent");
   return "parent" in map ? map.parent : undefined;
 }
+parent.unpackArgs = true;

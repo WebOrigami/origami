@@ -33,3 +33,4 @@ export default function take(maplike, count) {
     trailingSlashKeys: /** @type {any} */ (source).trailingSlashKeys,
   });
 }
+take.unpackArgs = true;

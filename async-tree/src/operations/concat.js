@@ -49,3 +49,4 @@ export default async function concat(...trees) {
     return map;
   }
 }
+concat.unpackArgs = true;

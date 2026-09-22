@@ -35,3 +35,4 @@ export default function entries(maplike) {
     ? Array.from(map.entries())
     : Array.fromAsync(map.entries());
 }
+entries.unpackArgs = true;

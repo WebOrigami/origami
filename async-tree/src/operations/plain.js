@@ -32,3 +32,4 @@ export default async function plain(maplike) {
   const tree = args.map(maplike, "Tree.plain");
   return toPlainValue(tree);
 }
+plain.unpackArgs = true;

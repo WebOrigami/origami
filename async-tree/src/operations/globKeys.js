@@ -30,6 +30,7 @@ export default function globKeys(maplike) {
     trailingSlashKeys: /** @type {any} */ (source).trailingSlashKeys,
   });
 }
+globKeys.unpackArgs = true;
 
 // Convert the glob to a regular expression
 function matchGlob(glob, key) {

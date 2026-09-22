@@ -39,3 +39,4 @@ export default function deflatePaths(maplike, options = {}) {
     },
   });
 }
+deflatePaths.unpackArgs = true;

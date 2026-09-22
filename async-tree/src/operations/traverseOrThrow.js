@@ -107,3 +107,4 @@ export default async function traverseOrThrow(maplike, ...keys) {
 
   return value;
 }
+traverseOrThrow.unpackArgs = true;

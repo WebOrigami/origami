@@ -25,3 +25,4 @@ export default async function forEach(maplike, callbackFn, options = {}) {
     }
   }
 }
+forEach.unpackArgs = true;
