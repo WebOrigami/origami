@@ -1,5 +1,5 @@
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
-import { args } from "@weborigami/async-tree";
+import { args, isUnpackable } from "@weborigami/async-tree";
 
 import dot from "./treeDot.js";
 
@@ -18,6 +18,9 @@ export default async function svg(maplike, options = {}) {
   if (!graphviz) {
     graphviz = await Graphviz.load();
   }
+  if (isUnpackable(maplike)) {
+    maplike = await maplike.unpack();
+  }
   const tree = args.map(maplike, "Dev.svg", { deep: true });
   const dotText = await dot(tree, options);
   if (dotText === undefined) {
@@ -30,4 +33,3 @@ export default async function svg(maplike, options = {}) {
   result.unpack = () => tree;
   return result;
 }
-svg.unpackArgs = true;
