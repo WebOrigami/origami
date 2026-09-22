@@ -16,6 +16,9 @@ import { cachePathSymbol } from "./symbols.js";
 // Base class for async functions
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
 
+// Counter for unpacked files that don't have a parent
+let parentlessFileCounter = 0;
+
 /**
  * If the given value is packed (e.g., buffer) and the key is a string-like path
  * that ends in an extension, search for a handler for that extension and, if
@@ -80,7 +83,7 @@ export default function handleExtension(value, key, handlers, parent = null) {
             normalized,
           );
         } else {
-          fileCachePath = filePath;
+          fileCachePath = `_unpacked${parentlessFileCounter++}/${filePath}`;
         }
         const unpackCachePath = trailingSlash.add(fileCachePath);
         value.unpack = async () =>
