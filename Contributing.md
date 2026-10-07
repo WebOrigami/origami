@@ -71,7 +71,7 @@ But if you can write all, it really will help the project. Even a rough draft is
 
 Above all, please give some thought to creating focused and meaningful code samples for the separate [samples](https://github.com/WebOrigami/samples) repository. These are incorporated into the documentation. It makes all the difference to a reader to see a good demonstration of a feature, particularly if the demo is as small as possible -- i.e., doesn't require first understanding many other features.
 
-It's ideal if the code sample isn't all `foo(bar)` code and instead includes meaningful names or concepts that might realistcally come up in the practice of making websites. That said, some _working_ code samples are better than none.
+It's ideal if the code sample isn't all `foo(bar)` code and instead includes meaningful names or concepts that might realistically come up in the practice of making websites. That said, some _working_ code samples are better than none.
 
 ## Developing in the context of your own project
 
