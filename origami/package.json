@@ -29,7 +29,7 @@
     "marked-gfm-heading-id": "4.1.4",
     "marked-highlight": "2.2.4",
     "marked-smartypants": "1.1.12",
-    "sharp": "0.35.4",
+    "sharp": "0.35.5",
     "ssh2": "1.17.0",
     "whatwg-mimetype": "5.0.0",
     "yaml": "2.9.1"
