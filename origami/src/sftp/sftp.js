@@ -63,3 +63,4 @@ export default async function sftp(options) {
 
   return tree;
 }
+sftp.unpackArgs = true;
