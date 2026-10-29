@@ -3,7 +3,7 @@ import { Handlers, OrigamiFileMap, volatile } from "@weborigami/language";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { getDescriptor } from "../common/utilities.js";
-import debug from "./debug.js";
+import debugTransform from "../dev/debug2/debugTransform.js";
 
 let templatePromise;
 
@@ -23,7 +23,7 @@ export default async function explore(maplike) {
   // If the user navigates inside this page, unpack back to the original tree.
   /** @type {any} */
   const result = volatile(text);
-  result.unpack = () => debug(tree);
+  result.unpack = () => debugTransform(tree);
 
   return result;
 }
