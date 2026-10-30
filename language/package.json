@@ -6,8 +6,8 @@
   "main": "./main.js",
   "types": "./index.ts",
   "devDependencies": {
-    "@types/node": "26.1.2",
-    "peggy": "5.1.0",
+    "@types/node": "26.6.6",
+    "peggy": "5.1.1",
     "typescript": "7.0.2"
   },
   "dependencies": {

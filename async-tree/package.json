@@ -7,8 +7,8 @@
   "browser": "./browser.js",
   "types": "./index.ts",
   "devDependencies": {
-    "@types/node": "26.1.2",
-    "puppeteer": "25.10.0",
+    "@types/node": "26.6.6",
+    "puppeteer": "25.16.0",
     "typescript": "7.0.2"
   },
   "scripts": {
