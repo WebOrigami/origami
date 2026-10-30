@@ -10,6 +10,8 @@
  * Response objects without relying on `clone()`.
  */
 
+import { symbols } from "@weborigami/language";
+
 /**
  * @typedef {object} CachedResponse
  * @property {ArrayBuffer} body
@@ -28,12 +30,16 @@
 export async function cachedFromResponse(response) {
   const body = await response.arrayBuffer();
   const headers = Object.fromEntries(response.headers.entries());
-  return {
+  const cached = {
     body,
     headers,
     status: response.status,
     statusText: response.statusText,
   };
+  if (response[symbols.volatileSymbol]) {
+    cached[symbols.volatileSymbol] = true;
+  }
+  return cached;
 }
 
 /**
