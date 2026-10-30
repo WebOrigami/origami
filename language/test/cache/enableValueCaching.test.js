@@ -65,12 +65,14 @@ describe("enableValueCaching", () => {
   });
 
   test("when applied to a constructor, constructor can be used as is", () => {
+    /** @this {any} */
     function User(name) {
       this.name = name;
     }
     const CachedClass = enableValueCaching(User, "foo.ori/");
     const instance = new CachedClass("Alice");
     assert(instance instanceof User);
+    // @ts-ignore
     assert.equal(instance.name, "Alice");
     assert.equal(CachedClass[cachePathSymbol], "foo.ori/");
   });

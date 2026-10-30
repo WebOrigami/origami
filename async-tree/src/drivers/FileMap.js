@@ -210,11 +210,6 @@ export default class FileMap extends SyncMap {
   trailingSlashKeys = true;
 }
 
-function directoryExists(dirPath) {
-  const stats = getStats(dirPath);
-  return stats !== null && stats.isDirectory();
-}
-
 // Return stats for the path, or null if it doesn't exist.
 function getStats(filePath) {
   let stats;
