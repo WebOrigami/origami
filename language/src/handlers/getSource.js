@@ -1,4 +1,5 @@
 import { getParent, toString } from "@weborigami/async-tree";
+import { pathToFileURL } from "node:url";
 import SystemCacheMap from "../cache/SystemCacheMap.js";
 
 let parentCounter = 0;
@@ -24,14 +25,13 @@ export default function getSource(packed, options = {}) {
       url = new URL(sourceName, parentHref);
     } else if (/** @type {any} */ (parent)?.path) {
       // Parent with path
-      let parentHref = new URL(/** @type {any} */ (parent).path, "file:///")
-        .href;
+      const parentPath = /** @type {any} */ (parent).path;
+      let parentHref = pathToFileURL(parentPath).href;
       if (!parentHref.endsWith("/")) {
         parentHref += "/";
       }
       url = new URL(sourceName, parentHref);
 
-      const parentPath = /** @type {any} */ (parent).path;
       cachePath = SystemCacheMap.joinPath(parentPath, sourceName);
     } else {
       // Parent with no URL or path, use a counter to create unique path
