@@ -185,11 +185,13 @@ export function number(arg, operation, options = {}) {
 /**
  * Check a string argument.
  *
- * @param {string} arg
+ * @param {any} arg
  * @param {string} operation
  */
 export function string(arg, operation, options = {}) {
-  if (typeof arg !== "string") {
+  if (arg instanceof String) {
+    return String(arg);
+  } else if (typeof arg !== "string") {
     /** @type {any} */
     const error = new TypeError(`${operation}: Expected a string argument.`);
     error.position = options.position ?? 1;
