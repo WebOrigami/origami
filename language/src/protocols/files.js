@@ -1,4 +1,4 @@
-import { FileMap, scope, Tree } from "@weborigami/async-tree";
+import { FileMap, isUnpackable, scope, Tree } from "@weborigami/async-tree";
 import os from "node:os";
 import path from "node:path";
 import OrigamiFileMap from "../runtime/OrigamiFileMap.js";
@@ -32,14 +32,21 @@ export default async function files(...keys) {
 
   while (keys.length > 0) {
     const key = keys[0];
-    const value = await current.get(key);
+    let value = await current.get(key);
     if (value instanceof FileMap) {
       keys.shift();
       current = value;
     } else if (value) {
-      // A file; traverse with remaining keys
       keys.shift();
-      return keys.length > 0 ? Tree.traverse(value, ...keys) : value;
+      if (keys.length === 0) {
+        // The file is the end of the path
+        return value;
+      }
+      // Traverse with remaining keys
+      if (isUnpackable(value)) {
+        value = await value.unpack();
+      }
+      return Tree.traverse(value, ...keys);
     } else if (keys.at(-1)?.endsWith("/")) {
       // Last argument has slash, create map for not-yet-existing directory
       const result = mapForNewDirectory(current, keys);

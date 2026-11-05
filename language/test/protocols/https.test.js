@@ -3,7 +3,7 @@ import { beforeEach, describe, test } from "node:test";
 import systemCache from "../../src/cache/systemCache.js";
 import https from "../../src/protocols/https.js";
 
-describe("https", () => {
+describe("https: protocol", () => {
   beforeEach(() => {
     systemCache.clear();
   });
