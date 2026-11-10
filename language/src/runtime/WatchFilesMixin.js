@@ -1,4 +1,4 @@
-import { keysFromPath, Tree } from "@weborigami/async-tree";
+import { keysFromPath, normalizeSlashes, Tree } from "@weborigami/async-tree";
 import * as fs from "node:fs";
 import path from "node:path";
 import Watcher from "watcher";
@@ -66,7 +66,7 @@ export default function WatchFilesMixin(Base) {
         }
 
         const keys = keysFromPath(relativePath);
-        const key = keys.pop();
+        const key = normalizeSlashes(keys.pop());
 
         const target = await Tree.traverse(this, ...keys);
         if (target) {

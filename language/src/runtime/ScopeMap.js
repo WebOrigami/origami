@@ -1,6 +1,6 @@
 import { SyncMap, trailingSlash } from "@weborigami/async-tree";
-import path from "node:path";
 import systemCache from "../cache/systemCache.js";
+import SystemCacheMap from "../cache/SystemCacheMap.js";
 import { cachePathSymbol } from "../runtime/symbols.js";
 
 /**
@@ -26,7 +26,10 @@ export default class ScopeMap extends SyncMap {
       // value. Whether or not the get() request below succeeds, track the keys
       // of this folder as an upstream dependency of the value being requested.
       if (current[cachePathSymbol]) {
-        const folderKeysPath = path.join(current[cachePathSymbol], "_keys");
+        const folderKeysPath = SystemCacheMap.joinPath(
+          current[cachePathSymbol],
+          "_keys",
+        );
         systemCache.trackCurrentDependency(folderKeysPath);
       }
 

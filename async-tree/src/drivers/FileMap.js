@@ -9,6 +9,7 @@ import interop from "../utilities/interop.js";
 import isPacked from "../utilities/isPacked.js";
 import isStringlike from "../utilities/isStringlike.js";
 import naturalOrder from "../utilities/naturalOrder.js";
+import normalizeSlashes from "../utilities/normalizeSlashes.js";
 import * as resolveChildPath from "../utilities/resolveChildPath.js";
 
 /**
@@ -34,9 +35,10 @@ export default class FileMap extends SyncMap {
     }
 
     super();
-    this.dirname = location.startsWith("file://")
+    const dirname = location.startsWith("file://")
       ? fileURLToPath(location)
       : path.resolve(process.cwd(), location);
+    this.dirname = normalizeSlashes(dirname);
   }
 
   // Return the (possibly new) subdirectory with the given key.
