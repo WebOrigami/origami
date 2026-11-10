@@ -1,6 +1,8 @@
 import { ObjectMap } from "@weborigami/async-tree";
 import assert from "node:assert";
+import path from "node:path";
 import { beforeEach, describe, test } from "node:test";
+import { pathToFileURL } from "node:url";
 import systemCache from "../../src/cache/systemCache.js";
 import coreGlobals from "../../src/project/coreGlobals.js";
 import { formatError } from "../../src/runtime/errors.js";
@@ -34,16 +36,18 @@ evaluating: \x1b[31mfoo\x1b[0m`,
     });
 
     test("references the Origami file that produced the error", async () => {
+      const normalized = path.resolve("/path/to/test.ori");
+      const url = pathToFileURL(normalized).href;
       await assertError(
         {
           text: `foo()`,
           name: "test.ori",
-          url: "file:///path/to/test.ori",
+          url: url,
         },
         `ReferenceError: Couldn't find the function or map to execute.
 "foo" is not in scope.
 evaluating: \x1b[31mfoo\x1b[0m
-    at /path/to/test.ori:1:1`,
+    at ${normalized}:1:1`,
       );
     });
 
