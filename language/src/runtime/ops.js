@@ -14,6 +14,7 @@ import {
 } from "@weborigami/async-tree";
 import os from "node:os";
 import systemCache from "../cache/systemCache.js";
+import { default as filesProtocol } from "../protocols/files.js";
 import execute from "./execute.js";
 import executionContext from "./executionContext.js";
 import expressionObject from "./expressionObject.js";
@@ -161,6 +162,11 @@ export function exponentiation(a, b) {
   return a ** b;
 }
 addOpLabel(exponentiation, "«ops.exponentiation»");
+
+export function files(...keys) {
+  return filesProtocol(...keys);
+}
+addOpLabel(files, "«ops.files»");
 
 /**
  * Flatten the values of the given trees by one level.
