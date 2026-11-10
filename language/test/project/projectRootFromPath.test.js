@@ -1,3 +1,4 @@
+import { normalizeSlashes, trailingSlash } from "@weborigami/async-tree";
 import assert from "node:assert";
 import path from "node:path";
 import { describe, test } from "node:test";
@@ -15,8 +16,9 @@ describe("projectRootFromPath", () => {
     const root = await projectRootFromPath(subfolderPath);
 
     // Get result path, it'll need a trailing slash to compare.
-    const resultPath = root.path + path.sep;
-    assert.equal(resultPath, fileURLToPath(projectUrl));
+    const resultPath = trailingSlash.add(root.path);
+    const projectPath = normalizeSlashes(fileURLToPath(projectUrl));
+    assert.equal(resultPath, projectPath);
   });
 
   test("finds package.json file", async () => {
@@ -29,12 +31,15 @@ describe("projectRootFromPath", () => {
     const root = await projectRootFromPath(subfolderPath);
 
     // Get result path, it'll need a trailing slash to compare.
-    const resultPath = root.path + path.sep;
-    assert.equal(resultPath, fileURLToPath(projectUrl));
+    const resultPath = trailingSlash.add(root.path);
+    const projectPath = normalizeSlashes(fileURLToPath(projectUrl));
+    assert.equal(resultPath, projectPath);
   });
 
   test("defaults to supplied directory", async () => {
+    const fileSystemRoot = path.parse(path.resolve("/")).root;
+    const normalized = normalizeSlashes(fileSystemRoot);
     const root = await projectRootFromPath("/");
-    assert.equal(root.path, "/");
+    assert.equal(root.path, normalized);
   });
 });
