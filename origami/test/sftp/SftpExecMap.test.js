@@ -13,7 +13,7 @@ const fixture = await sftp({
   path: fixturePath,
 });
 
-describe("SftpExecMap", () => {
+describe("SftpExecMap", { skip: process.platform === "win32" }, () => {
   test("child calls mkdir", async () => {
     const child = await fixture.child("newdir");
     assert.equal(child.path, fixture.path + "newdir/");

@@ -11,7 +11,7 @@ const fixture = await sftp({
   path: fixturePath,
 });
 
-describe("SftpMap", () => {
+describe("SftpMap", { skip: process.platform === "win32" }, () => {
   test("returns keys", async () => {
     const keys = await Tree.keys(fixture);
     assert(keys.includes("greetings.yaml"));
