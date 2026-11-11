@@ -1083,3 +1083,37 @@ whitespaceOrParenthesis
 
 whitespaceWithNewLine
   = inlineSpace* comment? newLine __
+
+windowsPath
+  = head:windowsPathHead "\\" tail:windowsPathKey|1..| {
+      return makePath([head].concat(tail));
+    }
+
+windowsPathHead
+  = [a-zA-Z] ":" // drive letter: `C:`
+  / "."
+  / ".."
+  / windowsUncPathHead
+
+windowsPathKey
+  = chars:windowsPathKeyChar+ backslash:"\\"? {
+      // Map backslash to slash
+      const text = chars.join("") + (backslash ? "/" : "");
+      return annotate([ops.literal, text()], location());
+    }
+
+// A character in a Windows path, which rejects:
+// - Path separators: \ /
+// - Invalid Windows filename characters: : * ? " < > |
+// - ASCII control characters: U+0000–U+001F
+windowsPathKeyChar
+  = [^\\/:*?"<>|\x00-\x1F]
+
+// The start of a UNC path: `\\server\share`
+windowsUncPathHead
+  = "\\\\" server:windowsPathKey "\\" share:windowsPathKey {
+      // Map backslashes to slashes
+      return [
+        annotate([ops.unc, `//${server}/${share}/`], location())
+      ];
+    }
