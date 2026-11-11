@@ -45,9 +45,9 @@ export default function WatchFilesMixin(Base) {
       }
 
       // Ensure the directory exists.
-      fs.mkdirSync(this.dirname, { recursive: true });
+      fs.mkdirSync(this.path, { recursive: true });
 
-      this.watcher = new Watcher(this.dirname, {
+      this.watcher = new Watcher(this.path, {
         debounce: 100,
         ignoreInitial: true,
         recursive: true,
@@ -56,7 +56,7 @@ export default function WatchFilesMixin(Base) {
         this.watcher?.on("ready", resolve);
       });
       this.watcher.on("all", async (event, filePath) => {
-        const relativePath = path.relative(this.dirname, filePath);
+        const relativePath = path.relative(this.path, filePath);
         if (relativePath.startsWith(".git")) {
           return; // Ignore noisy events in .git folder
         }

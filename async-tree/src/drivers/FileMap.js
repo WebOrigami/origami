@@ -38,12 +38,12 @@ export default class FileMap extends SyncMap {
     const dirname = location.startsWith("file://")
       ? fileURLToPath(location)
       : path.resolve(process.cwd(), location);
-    this.dirname = normalizeSlashes(dirname);
+    this.path = normalizeSlashes(dirname);
   }
 
   // Return the (possibly new) subdirectory with the given key.
   child(key) {
-    const childPath = resolveChildPath.required(this.dirname, key);
+    const childPath = resolveChildPath.required(this.path, key);
 
     const stats = getStats(childPath);
     if (stats === null || !stats.isDirectory()) {
@@ -62,14 +62,14 @@ export default class FileMap extends SyncMap {
 
   clear() {
     // Ensure this directory exists.
-    fs.mkdirSync(this.dirname, { recursive: true });
+    fs.mkdirSync(this.path, { recursive: true });
 
     // Clear any existing contents
     super.clear();
   }
 
   delete(key) {
-    const childPath = resolveChildPath.required(this.dirname, key);
+    const childPath = resolveChildPath.required(this.path, key);
     try {
       fs.rmSync(childPath, { recursive: true });
       return true;
@@ -93,7 +93,7 @@ export default class FileMap extends SyncMap {
     // trailing slash and still expect to get the plain file. So we have to
     // remove the trailing slash here.
     let valuePath = resolveChildPath.optional(
-      this.dirname,
+      this.path,
       trailingSlash.remove(key),
     );
 
@@ -130,7 +130,7 @@ export default class FileMap extends SyncMap {
   keys() {
     let dirEntries;
     try {
-      dirEntries = fs.readdirSync(this.dirname, { withFileTypes: true });
+      dirEntries = fs.readdirSync(this.path, { withFileTypes: true });
     } catch (/** @type {any} */ error) {
       if (error.code !== "ENOENT") {
         throw error;
@@ -154,12 +154,8 @@ export default class FileMap extends SyncMap {
     return names[Symbol.iterator]();
   }
 
-  get path() {
-    return this.dirname;
-  }
-
   set(key, value) {
-    const childPath = resolveChildPath.required(this.dirname, key);
+    const childPath = resolveChildPath.required(this.path, key);
 
     // Ensure this directory exists.
     const dirname = path.dirname(childPath);
