@@ -1463,6 +1463,10 @@ Body`,
           [ops.literal, "file.txt"],
         ],
       ]);
+      assertParse("objectEntry", "\\\\designs\\public\\assets", [
+        "assets",
+        [ops.files, [ops.literal, "//designs/public"], [ops.literal, "assets"]],
+      ]);
     });
 
     test("key: value", () => {
