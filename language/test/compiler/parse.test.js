@@ -78,6 +78,20 @@ describe("Origami parser", () => {
         [ops.literal, "data.yaml"],
       ]);
     });
+
+    test("with Windows path", () => {
+      assertParse("angleBracketLiteral", "<C:\\path\\to\\folder>", [
+        ops.files,
+        [ops.literal, "C:"],
+        [ops.literal, "path"],
+        [ops.literal, "to"],
+        [ops.literal, "folder"],
+      ]);
+      assertParse("angleBracketLiteral", "<\\\\server\\share>", [
+        ops.files,
+        [ops.literal, "//server/share"],
+      ]);
+    });
   });
 
   test("arrayLiteral", () => {
@@ -2011,6 +2025,7 @@ Body text`,
 
   describe("windowsPath", () => {
     test("relative path", () => {
+      assertParse("windowsPath", ".\\", [ops.files, [ops.literal, "."]]);
       assertParse("windowsPath", ".\\foo\\bar", [
         ops.files,
         [ops.literal, "."],
@@ -2019,7 +2034,16 @@ Body text`,
       ]);
     });
 
+    test("parent directory path", () => {
+      assertParse("windowsPath", "..\\baz\\", [
+        ops.files,
+        [ops.literal, ".."],
+        [ops.literal, "baz"],
+      ]);
+    });
+
     test("with drive letter", () => {
+      assertParse("windowsPath", "C:", [ops.files, [ops.literal, "C:"]]);
       assertParse("windowsPath", "C:\\Users\\Alice", [
         ops.files,
         [ops.literal, "C:"],
@@ -2029,6 +2053,10 @@ Body text`,
     });
 
     test("UNC path", () => {
+      assertParse("windowsPath", "\\\\127.0.0.1\\public", [
+        ops.files,
+        [ops.literal, "//127.0.0.1/public"],
+      ]);
       assertParse("windowsPath", "\\\\server\\share\\file.txt", [
         ops.files,
         [ops.literal, "//server/share"],

@@ -53,6 +53,10 @@ angleBracketLiteral
   = "<" scheme:uriScheme "//"? path:angleBracketPath ">" {
     return annotate([scheme, ...path], location());
     }
+  / "<" path:windowsPath ">" {
+      const keys = path.slice(1);
+      return annotate([ops.files, ...keys], location());
+    }
   / "</" path:angleBracketPath ">" {
       const external = annotate([markers.external, "/"], location());
       return annotate([markers.traverse, external, ...path], location());
@@ -1087,10 +1091,14 @@ whitespaceWithNewLine
 
 // Windows drive letter: `C:`
 windowsDriveLetter
-  = [a-zA-Z] ":"
+  = [a-zA-Z] ":"  {
+      return annotate([ops.literal, text()], location());
+    }
 
 windowsLocalPathHead
-  = (windowsDriveLetter / "." / "..") {
+  = windowsDriveLetter
+  // longer `..` must come before `.`
+  / (".." / ".") {
       return annotate([ops.literal, text()], location());
     }
 
@@ -1098,6 +1106,9 @@ windowsPath
   = head:windowsPathHead "\\" tail:windowsPathSegment|0..| {
       return annotate([ops.files, head, ...tail], location());
     }
+  / head:(windowsDriveLetter / windowsUncPathHead) {
+    return annotate([ops.files, head], location());
+  }
 
 windowsPathHead
   = windowsLocalPathHead
