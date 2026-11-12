@@ -353,6 +353,14 @@ function peg$parse(input, options) {
     whitespaceRequiredForShell: peg$parsewhitespaceRequiredForShell,
     whitespaceOrParenthesis: peg$parsewhitespaceOrParenthesis,
     whitespaceWithNewLine: peg$parsewhitespaceWithNewLine,
+    windowsDriveLetter: peg$parsewindowsDriveLetter,
+    windowsLocalPathHead: peg$parsewindowsLocalPathHead,
+    windowsPath: peg$parsewindowsPath,
+    windowsPathHead: peg$parsewindowsPathHead,
+    windowsPathKey: peg$parsewindowsPathKey,
+    windowsPathKeyChar: peg$parsewindowsPathKeyChar,
+    windowsPathSegment: peg$parsewindowsPathSegment,
+    windowsUncPathHead: peg$parsewindowsUncPathHead,
   };
   let peg$startRuleFunction = peg$parse__;
 
@@ -430,6 +438,7 @@ function peg$parse(input, options) {
   const peg$c71 = "await";
   const peg$c72 = "typeof";
   const peg$c73 = "void";
+  const peg$c74 = "\\\\";
 
 
   const peg$e0 = peg$literalExpectation("+", false);
@@ -562,6 +571,9 @@ function peg$parse(input, options) {
   const peg$e127 = peg$classExpectation([["a", "z"]], false, false, false);
   const peg$e128 = peg$classExpectation([["a", "z"], ["0", "9"], ["+", "."]], false, false, false);
   const peg$e129 = peg$classExpectation([":"], false, false, false);
+  const peg$e130 = peg$classExpectation([["a", "z"], ["A", "Z"]], false, false, false);
+  const peg$e131 = peg$classExpectation(["\\", "/", ":", "*", "?", "\"", "<", ">", "|", ["\0", "\x1F"]], true, false, false);
+  const peg$e132 = peg$literalExpectation("\\\\", false);
 
   function peg$f0() {
     return null;
@@ -1028,6 +1040,22 @@ function peg$parse(input, options) {
   }
   function peg$f138(char) {    return /\s/.test(char);  }
   function peg$f139(char) {    return char;  }
+  function peg$f140() {
+    return annotate([ops.literal, text()], location());
+  }
+  function peg$f141(head, tail) {
+    return annotate([ops.files, head, ...tail], location());
+  }
+  function peg$f142() {
+    return text();
+  }
+  function peg$f143(key, backslash) {
+    return annotate([ops.literal, key], location());
+  }
+  function peg$f144(server, share) {
+    // Map backslashes to slashes
+    return annotate([ops.literal, `//${server}/${share}`], location());
+  }
   let peg$currPos = options.peg$currPos | 0;
   let peg$savedPos = peg$currPos;
   const peg$posDetailsCache = [{ line: 1, column: 1 }];
@@ -5736,7 +5764,10 @@ function peg$parse(input, options) {
                     s0 = peg$FAILED;
                   }
                   if (s0 === peg$FAILED) {
-                    s0 = peg$parsepathLiteral();
+                    s0 = peg$parsewindowsPath();
+                    if (s0 === peg$FAILED) {
+                      s0 = peg$parsepathLiteral();
+                    }
                   }
                 }
               }
@@ -7448,6 +7479,225 @@ function peg$parse(input, options) {
     return s0;
   }
 
+  function peg$parsewindowsDriveLetter() {
+    let s0, s1, s2;
+
+    s0 = peg$currPos;
+    s1 = input.charAt(peg$currPos);
+    if ((peg$charCode = s1.charCodeAt(0), (peg$charCode >= 97 && peg$charCode <= 122) || (peg$charCode >= 65 && peg$charCode <= 90))) {
+      peg$currPos++;
+    } else {
+      s1 = peg$FAILED;
+      if (peg$silentFails === 0) { peg$fail(peg$e130); }
+    }
+    if (s1 !== peg$FAILED) {
+      if (input.charCodeAt(peg$currPos) === 58) {
+        s2 = peg$c15;
+        peg$currPos++;
+      } else {
+        s2 = peg$FAILED;
+        if (peg$silentFails === 0) { peg$fail(peg$e20); }
+      }
+      if (s2 !== peg$FAILED) {
+        s1 = [s1, s2];
+        s0 = s1;
+      } else {
+        peg$currPos = s0;
+        s0 = peg$FAILED;
+      }
+    } else {
+      peg$currPos = s0;
+      s0 = peg$FAILED;
+    }
+
+    return s0;
+  }
+
+  function peg$parsewindowsLocalPathHead() {
+    let s0, s1;
+
+    s0 = peg$currPos;
+    s1 = peg$parsewindowsDriveLetter();
+    if (s1 === peg$FAILED) {
+      if (input.charCodeAt(peg$currPos) === 46) {
+        s1 = peg$c40;
+        peg$currPos++;
+      } else {
+        s1 = peg$FAILED;
+        if (peg$silentFails === 0) { peg$fail(peg$e59); }
+      }
+      if (s1 === peg$FAILED) {
+        if (input.substr(peg$currPos, 2) === peg$c41) {
+          s1 = peg$c41;
+          peg$currPos += 2;
+        } else {
+          s1 = peg$FAILED;
+          if (peg$silentFails === 0) { peg$fail(peg$e60); }
+        }
+      }
+    }
+    if (s1 !== peg$FAILED) {
+      peg$savedPos = s0;
+      s1 = peg$f140();
+    }
+    s0 = s1;
+
+    return s0;
+  }
+
+  function peg$parsewindowsPath() {
+    let s0, s1, s2, s3, s4;
+
+    s0 = peg$currPos;
+    s1 = peg$parsewindowsPathHead();
+    if (s1 !== peg$FAILED) {
+      if (input.charCodeAt(peg$currPos) === 92) {
+        s2 = peg$c31;
+        peg$currPos++;
+      } else {
+        s2 = peg$FAILED;
+        if (peg$silentFails === 0) { peg$fail(peg$e38); }
+      }
+      if (s2 !== peg$FAILED) {
+        s3 = [];
+        s4 = peg$parsewindowsPathSegment();
+        while (s4 !== peg$FAILED) {
+          s3.push(s4);
+          s4 = peg$parsewindowsPathSegment();
+        }
+        peg$savedPos = s0;
+        s0 = peg$f141(s1, s3);
+      } else {
+        peg$currPos = s0;
+        s0 = peg$FAILED;
+      }
+    } else {
+      peg$currPos = s0;
+      s0 = peg$FAILED;
+    }
+
+    return s0;
+  }
+
+  function peg$parsewindowsPathHead() {
+    let s0;
+
+    s0 = peg$parsewindowsLocalPathHead();
+    if (s0 === peg$FAILED) {
+      s0 = peg$parsewindowsUncPathHead();
+    }
+
+    return s0;
+  }
+
+  function peg$parsewindowsPathKey() {
+    let s0, s1, s2;
+
+    s0 = peg$currPos;
+    s1 = [];
+    for (;;) {
+      s2 = peg$parsewindowsPathKeyChar();
+      if (s2 === peg$FAILED) { break; }
+      s1.push(s2);
+    }
+    if (s1.length < 1) {
+      s1 = peg$FAILED;
+    }
+    if (s1 !== peg$FAILED) {
+      peg$savedPos = s0;
+      s1 = peg$f142();
+    }
+    s0 = s1;
+
+    return s0;
+  }
+
+  function peg$parsewindowsPathKeyChar() {
+    let s0;
+
+    s0 = input.charAt(peg$currPos);
+    if (s0 !== "" && !(peg$charCode = s0.charCodeAt(0), peg$charCode === 92 || peg$charCode === 47 || peg$charCode === 58 || peg$charCode === 42 || peg$charCode === 63 || peg$charCode === 34 || peg$charCode === 60 || peg$charCode === 62 || peg$charCode === 124 || (peg$charCode >= 0 && peg$charCode <= 31))) {
+      peg$currPos++;
+    } else {
+      s0 = peg$FAILED;
+      if (peg$silentFails === 0) { peg$fail(peg$e131); }
+    }
+
+    return s0;
+  }
+
+  function peg$parsewindowsPathSegment() {
+    let s0, s1, s2;
+
+    s0 = peg$currPos;
+    s1 = peg$parsewindowsPathKey();
+    if (s1 !== peg$FAILED) {
+      if (input.charCodeAt(peg$currPos) === 92) {
+        s2 = peg$c31;
+        peg$currPos++;
+      } else {
+        s2 = peg$FAILED;
+        if (peg$silentFails === 0) { peg$fail(peg$e38); }
+      }
+      if (s2 === peg$FAILED) {
+        s2 = null;
+      }
+      peg$savedPos = s0;
+      s0 = peg$f143(s1, s2);
+    } else {
+      peg$currPos = s0;
+      s0 = peg$FAILED;
+    }
+
+    return s0;
+  }
+
+  function peg$parsewindowsUncPathHead() {
+    let s0, s1, s2, s3, s4;
+
+    s0 = peg$currPos;
+    if (input.substr(peg$currPos, 2) === peg$c74) {
+      s1 = peg$c74;
+      peg$currPos += 2;
+    } else {
+      s1 = peg$FAILED;
+      if (peg$silentFails === 0) { peg$fail(peg$e132); }
+    }
+    if (s1 !== peg$FAILED) {
+      s2 = peg$parsewindowsPathKey();
+      if (s2 !== peg$FAILED) {
+        if (input.charCodeAt(peg$currPos) === 92) {
+          s3 = peg$c31;
+          peg$currPos++;
+        } else {
+          s3 = peg$FAILED;
+          if (peg$silentFails === 0) { peg$fail(peg$e38); }
+        }
+        if (s3 !== peg$FAILED) {
+          s4 = peg$parsewindowsPathKey();
+          if (s4 !== peg$FAILED) {
+            peg$savedPos = s0;
+            s0 = peg$f144(s2, s4);
+          } else {
+            peg$currPos = s0;
+            s0 = peg$FAILED;
+          }
+        } else {
+          peg$currPos = s0;
+          s0 = peg$FAILED;
+        }
+      } else {
+        peg$currPos = s0;
+        s0 = peg$FAILED;
+      }
+    } else {
+      peg$currPos = s0;
+      s0 = peg$FAILED;
+    }
+
+    return s0;
+  }
+
   peg$result = peg$startRuleFunction();
 
   const peg$success = (peg$result !== peg$FAILED && peg$currPos === input.length);
@@ -7647,7 +7897,15 @@ const peg$allowedStartRules = [
   "whitespaceOptionalForProgram",
   "whitespaceRequiredForShell",
   "whitespaceOrParenthesis",
-  "whitespaceWithNewLine"
+  "whitespaceWithNewLine",
+  "windowsDriveLetter",
+  "windowsLocalPathHead",
+  "windowsPath",
+  "windowsPathHead",
+  "windowsPathKey",
+  "windowsPathKeyChar",
+  "windowsPathSegment",
+  "windowsUncPathHead"
 ];
 
 export {

@@ -2008,6 +2008,34 @@ Body text`,
       false,
     );
   });
+
+  describe("windowsPath", () => {
+    test("relative path", () => {
+      assertParse("windowsPath", ".\\foo\\bar", [
+        ops.files,
+        [ops.literal, "."],
+        [ops.literal, "foo"],
+        [ops.literal, "bar"],
+      ]);
+    });
+
+    test("with drive letter", () => {
+      assertParse("windowsPath", "C:\\Users\\Alice", [
+        ops.files,
+        [ops.literal, "C:"],
+        [ops.literal, "Users"],
+        [ops.literal, "Alice"],
+      ]);
+    });
+
+    test("UNC path", () => {
+      assertParse("windowsPath", "\\\\server\\share\\file.txt", [
+        ops.files,
+        [ops.literal, "//server/share"],
+        [ops.literal, "file.txt"],
+      ]);
+    });
+  });
 });
 
 function assertParse(

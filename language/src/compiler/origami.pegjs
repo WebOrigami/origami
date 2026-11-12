@@ -810,6 +810,7 @@ primary
 
   // These are more ambiguous
   / @numberLiteral !keyChar // numbers + chars would be a key
+  / windowsPath
   / pathLiteral
 
 // Top-level Origami progam with possible shebang directive (which is ignored)
@@ -1084,22 +1085,27 @@ whitespaceOrParenthesis
 whitespaceWithNewLine
   = inlineSpace* comment? newLine __
 
+// Windows drive letter: `C:`
+windowsDriveLetter
+  = [a-zA-Z] ":"
+
+windowsLocalPathHead
+  = (windowsDriveLetter / "." / "..") {
+      return annotate([ops.literal, text()], location());
+    }
+
 windowsPath
-  = head:windowsPathHead "\\" tail:windowsPathKey|1..| {
-      return makePath([head].concat(tail));
+  = head:windowsPathHead "\\" tail:windowsPathSegment|0..| {
+      return annotate([ops.files, head, ...tail], location());
     }
 
 windowsPathHead
-  = [a-zA-Z] ":" // drive letter: `C:`
-  / "."
-  / ".."
+  = windowsLocalPathHead
   / windowsUncPathHead
 
 windowsPathKey
-  = chars:windowsPathKeyChar+ backslash:"\\"? {
-      // Map backslash to slash
-      const text = chars.join("") + (backslash ? "/" : "");
-      return annotate([ops.literal, text()], location());
+  = windowsPathKeyChar+ {
+      return text();
     }
 
 // A character in a Windows path, which rejects:
@@ -1109,11 +1115,14 @@ windowsPathKey
 windowsPathKeyChar
   = [^\\/:*?"<>|\x00-\x1F]
 
+windowsPathSegment
+  = key:windowsPathKey backslash:"\\"? {
+    return annotate([ops.literal, key], location());
+  }
+
 // The start of a UNC path: `\\server\share`
 windowsUncPathHead
   = "\\\\" server:windowsPathKey "\\" share:windowsPathKey {
       // Map backslashes to slashes
-      return [
-        annotate([ops.unc, `//${server}/${share}/`], location())
-      ];
+      return annotate([ops.literal, `//${server}/${share}`], location());
     }
