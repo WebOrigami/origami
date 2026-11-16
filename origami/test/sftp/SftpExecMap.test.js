@@ -1,11 +1,14 @@
 import { FileMap } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import sftp from "../../src/sftp/sftp.js";
 import SftpExecMap from "../../src/sftp/SftpExecMap.js";
 
-// Traverse to the fixture directory in the SFTP server
-const fixturePath = new URL("fixture", import.meta.url).pathname;
+// Get the fixture directory path relative to this module
+const fixturePath = join(fileURLToPath(import.meta.url), "..", "fixture");
+
 const fixtureFiles = new FileMap(fixturePath);
 const fixture = await sftp({
   shellAccess: true,
@@ -13,15 +16,21 @@ const fixture = await sftp({
   path: fixturePath,
 });
 
-describe("SftpExecMap", { skip: process.platform === "win32" }, () => {
-  test("child calls mkdir", async () => {
+// SftpExecMap requires a POSIX shell (bash/sh) to run its commands.
+// On Windows, this requires additional configuration to make bash the default
+// SSH shell. Skip these tests on Windows unless explicitly configured.
+const isWindows = process.platform === "win32";
+const skipOnWindows = isWindows ? test.skip : test;
+
+describe("SftpExecMap", () => {
+  skipOnWindows("child calls mkdir", async () => {
     const child = await fixture.child("newdir");
     assert.equal(child.path, fixture.path + "newdir/");
     assert(await fixtureFiles.get("newdir/"));
     await fixtureFiles.delete("newdir/");
   });
 
-  test("child removes preexisting file before calling mkdir", async () => {
+  skipOnWindows("child removes preexisting file before calling mkdir", async () => {
     await fixtureFiles.set("newdir", "some content");
     const child = await fixture.child("newdir");
     assert.equal(child.path, fixture.path + "newdir/");
@@ -41,7 +50,7 @@ describe("SftpExecMap", { skip: process.platform === "win32" }, () => {
       assert.equal(value, undefined);
     });
 
-    test("delete a directory with trailing slash", async () => {
+    skipOnWindows("delete a directory with trailing slash", async () => {
       // Create the directory directly
       await fixtureFiles.child("temp");
       const result = await fixture.delete("temp/");
@@ -66,7 +75,7 @@ describe("SftpExecMap", { skip: process.platform === "win32" }, () => {
     });
   });
 
-  test("manifest", async () => {
+  skipOnWindows("manifest", async () => {
     assert(fixture instanceof SftpExecMap);
     const manifest = await fixture.manifest();
     const greetingsHash = manifest.get("greetings.yaml");

@@ -180,11 +180,21 @@ export default class SftpClient {
   }
 
   async mkdir(path) {
+    // Normalize to forward slashes for SFTP path operations
+    path = posix.normalize(path.replace(/\\/g, "/"));
+    
     const parts = path.split("/").filter(Boolean);
     let current = path.startsWith("/") ? "/" : "";
 
     for (const part of parts) {
-      current = posix.join(current, part);
+      // On Windows, the first part might be like "C:" - don't apply posix.join to it
+      if (current === "" && /^[a-z]:$/i.test(part)) {
+        current = part + "/";
+        // Skip mkdir on drive letter (e.g., "C:/" can't be created)
+        continue;
+      } else {
+        current = posix.join(current, part);
+      }
 
       try {
         await this.callSftp("mkdir", current);
