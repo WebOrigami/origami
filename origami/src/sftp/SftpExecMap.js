@@ -1,9 +1,15 @@
 import { resolveChildPath, setParent, Tree } from "@weborigami/async-tree";
 import fs from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import SftpMap from "./SftpMap.js";
 
 // Read the script used for generating the manifest. See command notes below.
-const manifestShPath = new URL("./manifest.sh", import.meta.url);
+const manifestShPath = path.join(
+  fileURLToPath(import.meta.url),
+  "..",
+  "manifest.sh",
+);
 const manifestShBufer = await fs.readFile(manifestShPath);
 const manifestSh = new TextDecoder().decode(manifestShBufer);
 

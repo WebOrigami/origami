@@ -1,13 +1,13 @@
 import { FileMap } from "@weborigami/async-tree";
 import assert from "node:assert";
+import path from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { join } from "node:path";
 import sftp from "../../src/sftp/sftp.js";
 import SftpExecMap from "../../src/sftp/SftpExecMap.js";
 
 // Get the fixture directory path relative to this module
-const fixturePath = join(fileURLToPath(import.meta.url), "..", "fixture");
+const fixturePath = path.join(fileURLToPath(import.meta.url), "..", "fixture");
 
 const fixtureFiles = new FileMap(fixturePath);
 const fixture = await sftp({
@@ -30,13 +30,16 @@ describe("SftpExecMap", () => {
     await fixtureFiles.delete("newdir/");
   });
 
-  skipOnWindows("child removes preexisting file before calling mkdir", async () => {
-    await fixtureFiles.set("newdir", "some content");
-    const child = await fixture.child("newdir");
-    assert.equal(child.path, fixture.path + "newdir/");
-    assert(await fixtureFiles.get("newdir/"));
-    await fixtureFiles.delete("newdir/");
-  });
+  skipOnWindows(
+    "child removes preexisting file before calling mkdir",
+    async () => {
+      await fixtureFiles.set("newdir", "some content");
+      const child = await fixture.child("newdir");
+      assert.equal(child.path, fixture.path + "newdir/");
+      assert(await fixtureFiles.get("newdir/"));
+      await fixtureFiles.delete("newdir/");
+    },
+  );
 
   describe("delete", () => {
     // TODO: Investigate this flappy test

@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import sftp from "../../src/sftp/sftp.js";
 
 // Get the fixture directory path relative to this module
-const fixturePath = path.join(fileURLToPath(import.meta.url), "../fixture");
+const fixturePath = path.join(fileURLToPath(import.meta.url), "..", "fixture");
 
 const fixtureFiles = new FileMap(fixturePath);
 const fixture = await sftp({
