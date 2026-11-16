@@ -1,17 +1,20 @@
 import { FileMap, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
+import path from "node:path";
 import { describe, test } from "node:test";
+import { fileURLToPath } from "node:url";
 import sftp from "../../src/sftp/sftp.js";
 
-// Traverse to the fixture directory in the SFTP server
-const fixturePath = new URL("fixture", import.meta.url).pathname;
+// Get the fixture directory path relative to this module
+const fixturePath = path.join(fileURLToPath(import.meta.url), "../fixture");
+
 const fixtureFiles = new FileMap(fixturePath);
 const fixture = await sftp({
   host: "localhost",
   path: fixturePath,
 });
 
-describe("SftpMap", { skip: process.platform === "win32" }, () => {
+describe("SftpMap", () => {
   test("returns keys", async () => {
     const keys = await Tree.keys(fixture);
     assert(keys.includes("greetings.yaml"));
@@ -100,15 +103,19 @@ describe("SftpMap", { skip: process.platform === "win32" }, () => {
     });
   });
 
-  test("can create a child map", async () => {
-    const child = await fixture.child("child");
-    assert.equal(child.path, `${fixture.path}child/`);
+  test(
+    "can create a child map",
+    { skip: process.platform === "win32" },
+    async () => {
+      const child = await fixture.child("child");
+      assert.equal(child.path, `${fixture.path}child/`);
 
-    // Verify child directory was created
-    const created = await fixtureFiles.has("child/");
-    assert(created);
+      // Verify child directory was created
+      const created = await fixtureFiles.has("child/");
+      assert(created);
 
-    // Clean up by deleting directory directly
-    await fixtureFiles.delete("child");
-  });
+      // Clean up by deleting directory directly
+      await fixtureFiles.delete("child");
+    },
+  );
 });
