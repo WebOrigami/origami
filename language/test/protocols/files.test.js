@@ -1,13 +1,17 @@
 import assert from "node:assert";
+import path from "node:path";
 import { describe, test } from "node:test";
+import { fileURLToPath } from "node:url";
 import files from "../../src/protocols/files.js";
 import OrigamiFileMap from "../../src/runtime/OrigamiFileMap.js";
 import executionContext from "../../src/runtime/executionContext.js";
 
-// Construct a sufficient execution context for files:
-const fixturesUrl = new URL("fixtures", import.meta.url);
-const fixtures = new OrigamiFileMap(fixturesUrl);
+// Get the fixture directory path relative to this module
+const fixturePath = path.join(fileURLToPath(import.meta.url), "..", "fixtures");
+const fixtures = new OrigamiFileMap(fixturePath);
 await fixtures.initializeGlobals();
+
+// Construct a sufficient execution context for files:
 const context = { parent: fixtures };
 
 describe("files: protocol", () => {
@@ -15,7 +19,9 @@ describe("files: protocol", () => {
     const buffer = await executionContext.run(context, async () =>
       files("folder/", "sub/", "data.json"),
     );
-    const text = new TextDecoder().decode(buffer);
+    let text = new TextDecoder().decode(buffer);
+    // Normalize line endings to handle Windows
+    text = text.replace(/\r\n/g, "\n");
     assert.strictEqual(text, '{\n  "message": "Hello"\n}\n');
   });
 
