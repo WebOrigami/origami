@@ -78,6 +78,20 @@ describe("Origami parser", () => {
         [ops.literal, "data.yaml"],
       ]);
     });
+
+    test("with Windows path", () => {
+      assertParse("angleBracketLiteral", "<C:\\path\\to\\folder>", [
+        ops.files,
+        [ops.literal, "C:"],
+        [ops.literal, "path"],
+        [ops.literal, "to"],
+        [ops.literal, "folder"],
+      ]);
+      assertParse("angleBracketLiteral", "<\\\\server\\share>", [
+        ops.files,
+        [ops.literal, "//server/share"],
+      ]);
+    });
   });
 
   test("arrayLiteral", () => {
@@ -1449,6 +1463,10 @@ Body`,
           [ops.literal, "file.txt"],
         ],
       ]);
+      assertParse("objectEntry", "\\\\designs\\public\\assets", [
+        "assets",
+        [ops.files, [ops.literal, "//designs/public"], [ops.literal, "assets"]],
+      ]);
     });
 
     test("key: value", () => {
@@ -2007,6 +2025,48 @@ Body text`,
       "program",
       false,
     );
+  });
+
+  describe("windowsPath", () => {
+    test("relative path", () => {
+      assertParse("windowsPath", ".\\", [ops.files, [ops.literal, "."]]);
+      assertParse("windowsPath", ".\\foo\\bar", [
+        ops.files,
+        [ops.literal, "."],
+        [ops.literal, "foo"],
+        [ops.literal, "bar"],
+      ]);
+    });
+
+    test("parent directory path", () => {
+      assertParse("windowsPath", "..\\baz\\", [
+        ops.files,
+        [ops.literal, ".."],
+        [ops.literal, "baz"],
+      ]);
+    });
+
+    test("with drive letter", () => {
+      assertParse("windowsPath", "C:", [ops.files, [ops.literal, "C:"]]);
+      assertParse("windowsPath", "C:\\Users\\Alice", [
+        ops.files,
+        [ops.literal, "C:"],
+        [ops.literal, "Users"],
+        [ops.literal, "Alice"],
+      ]);
+    });
+
+    test("UNC path", () => {
+      assertParse("windowsPath", "\\\\127.0.0.1\\public", [
+        ops.files,
+        [ops.literal, "//127.0.0.1/public"],
+      ]);
+      assertParse("windowsPath", "\\\\server\\share\\file.txt", [
+        ops.files,
+        [ops.literal, "//server/share"],
+        [ops.literal, "file.txt"],
+      ]);
+    });
   });
 });
 

@@ -1,12 +1,14 @@
 import assert from "node:assert";
 import { after, before, describe, test } from "node:test";
+import { fileURLToPath } from "node:url";
 import DebugParent from "../../../src/dev/debug2/DebugParent.js";
 
 describe("DebugParent", () => {
   let debugParent;
 
   before(async () => {
-    const fixturesPath = new URL("./fixtures", import.meta.url).pathname;
+    const fixturesUrl = new URL("./fixtures", import.meta.url);
+    const fixturesPath = fileURLToPath(fixturesUrl);
     debugParent = new DebugParent({
       expression: "{ index.html: counter.js() }",
       parentPath: fixturesPath,

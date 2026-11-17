@@ -53,6 +53,10 @@ angleBracketLiteral
   = "<" scheme:uriScheme "//"? path:angleBracketPath ">" {
     return annotate([scheme, ...path], location());
     }
+  / "<" path:windowsPath ">" {
+      const keys = path.slice(1);
+      return annotate([ops.files, ...keys], location());
+    }
   / "</" path:angleBracketPath ">" {
       const external = annotate([markers.external, "/"], location());
       return annotate([markers.traverse, external, ...path], location());
@@ -590,17 +594,20 @@ objectProperty "object property"
 
 // A shorthand reference inside an object literal: `foo`
 objectShorthandProperty "object identifier"
-  = path:pathLiteral {
+  = path:angleBracketLiteral {
+      const lastKey = path.at(-1)[1];
+      return annotate([lastKey, path], location());
+    }
+  / path:windowsPath {
+      const lastKey = path.at(-1)[1];
+      return annotate([lastKey, path], location());
+    }
+  / path:pathLiteral {
       const lastKey = path[0] === ops.unpack
         // [ops.unpack, [markers.traverse, [markers.reference, lastKey]]]
         ? path[1][1][1]
         // [markers.traverse, ..., [markers.reference, lastKey]
         : path.at(-1)[1];
-      return annotate([lastKey, path], location());
-    }
-  / path:angleBracketLiteral {
-      // [markers.traverse, ..., [markers.reference, lastKey]]
-      const lastKey = path.at(-1)[1];
       return annotate([lastKey, path], location());
     }
 
@@ -810,6 +817,7 @@ primary
 
   // These are more ambiguous
   / @numberLiteral !keyChar // numbers + chars would be a key
+  / windowsPath
   / pathLiteral
 
 // Top-level Origami progam with possible shebang directive (which is ignored)
@@ -1083,3 +1091,52 @@ whitespaceOrParenthesis
 
 whitespaceWithNewLine
   = inlineSpace* comment? newLine __
+
+// Windows drive letter: `C:`
+windowsDriveLetter
+  = [a-zA-Z] ":"  {
+      return annotate([ops.literal, text()], location());
+    }
+
+windowsLocalPathHead
+  = windowsDriveLetter
+  // longer `..` must come before `.`
+  / (".." / ".") {
+      return annotate([ops.literal, text()], location());
+    }
+
+windowsPath
+  = head:windowsPathHead "\\" tail:windowsPathSegment|0..| {
+      return annotate([ops.files, head, ...tail], location());
+    }
+  / head:(windowsDriveLetter / windowsUncPathHead) {
+    return annotate([ops.files, head], location());
+  }
+
+windowsPathHead
+  = windowsLocalPathHead
+  / windowsUncPathHead
+
+windowsPathKey
+  = windowsPathKeyChar+ {
+      return text();
+    }
+
+// A character in a Windows path, which rejects:
+// - Path separators: \ /
+// - Invalid Windows filename characters: : * ? " < > |
+// - ASCII control characters: U+0000–U+001F
+windowsPathKeyChar
+  = [^\\/:*?"<>|\x00-\x1F]
+
+windowsPathSegment
+  = key:windowsPathKey backslash:"\\"? {
+    return annotate([ops.literal, key], location());
+  }
+
+// The start of a UNC path: `\\server\share`
+windowsUncPathHead
+  = "\\\\" server:windowsPathKey "\\" share:windowsPathKey {
+      // Map backslashes to slashes
+      return annotate([ops.literal, `//${server}/${share}`], location());
+    }

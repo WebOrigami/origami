@@ -1,4 +1,4 @@
-import { keysFromPath, Tree } from "@weborigami/async-tree";
+import { keysFromPath, normalizeSlashes, Tree } from "@weborigami/async-tree";
 import * as fs from "node:fs";
 import path from "node:path";
 import Watcher from "watcher";
@@ -45,9 +45,9 @@ export default function WatchFilesMixin(Base) {
       }
 
       // Ensure the directory exists.
-      fs.mkdirSync(this.dirname, { recursive: true });
+      fs.mkdirSync(this.path, { recursive: true });
 
-      this.watcher = new Watcher(this.dirname, {
+      this.watcher = new Watcher(this.path, {
         debounce: 100,
         ignoreInitial: true,
         recursive: true,
@@ -56,7 +56,7 @@ export default function WatchFilesMixin(Base) {
         this.watcher?.on("ready", resolve);
       });
       this.watcher.on("all", async (event, filePath) => {
-        const relativePath = path.relative(this.dirname, filePath);
+        const relativePath = path.relative(this.path, filePath);
         if (relativePath.startsWith(".git")) {
           return; // Ignore noisy events in .git folder
         }
@@ -66,7 +66,7 @@ export default function WatchFilesMixin(Base) {
         }
 
         const keys = keysFromPath(relativePath);
-        const key = keys.pop();
+        const key = normalizeSlashes(keys.pop());
 
         const target = await Tree.traverse(this, ...keys);
         if (target) {

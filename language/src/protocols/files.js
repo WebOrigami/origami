@@ -13,7 +13,14 @@ export default async function files(...keys) {
   let current;
 
   let head = keys.shift();
-  if (head === "~") {
+  if (head?.startsWith("//") || head?.startsWith("\\\\")) {
+    // Windows UNC path
+    const server = head;
+    const share = keys.shift();
+    const sharePath = [server, share].join(path.sep);
+    current = new OrigamiFileMap(sharePath);
+    await current.initializeGlobals();
+  } else if (head === "~") {
     // Head of path is home directory
     current = new OrigamiFileMap(os.homedir());
     await current.initializeGlobals();

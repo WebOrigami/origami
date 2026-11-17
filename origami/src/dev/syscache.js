@@ -1,6 +1,7 @@
 import { activeProjectRoot, systemCache, volatile } from "@weborigami/language";
 import path from "node:path";
 import * as YAMLModule from "yaml";
+import trailingSlash from "../origami/slash.js";
 
 // The "yaml" package doesn't seem to provide a default export that the browser can
 // recognize, so we have to handle two ways to accommodate Node and the browser.
@@ -45,7 +46,7 @@ function preferRelativePath(projectRoot, inputPath) {
   if (!path.isAbsolute(inputPath)) {
     return inputPath;
   }
-  const prefix = `${projectRoot.path}${path.sep}`;
+  const prefix = trailingSlash.add(projectRoot.path);
   if (!inputPath.startsWith(prefix)) {
     return inputPath;
   }

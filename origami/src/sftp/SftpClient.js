@@ -1,4 +1,6 @@
 import { isPacked, toString } from "@weborigami/async-tree";
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import posix from "node:path/posix";
 import { Client as SshClient } from "ssh2";
 
@@ -39,8 +41,13 @@ export default class SftpClient {
     // Default to SSH agent
     agent ??= process.env.SSH_AUTH_SOCK;
 
+    // If no explicit authentication method is provided, try loading a default
+    // SSH key.
+    if (!privateKey && !agent && !password) {
+      privateKey = defaultPrivateKey();
+    }
+
     this.options = {
-      agent,
       // debug: console.error,
       host,
       passphrase,
@@ -49,6 +56,11 @@ export default class SftpClient {
       privateKey,
       username,
     };
+
+    // Only include agent if explicitly provided or SSH_AUTH_SOCK is set
+    if (agent) {
+      this.options.agent = agent;
+    }
 
     this.client = null;
     this.sftp = null;
@@ -168,11 +180,21 @@ export default class SftpClient {
   }
 
   async mkdir(path) {
+    // Normalize to forward slashes for SFTP path operations
+    path = posix.normalize(path.replace(/\\/g, "/"));
+    
     const parts = path.split("/").filter(Boolean);
     let current = path.startsWith("/") ? "/" : "";
 
     for (const part of parts) {
-      current = posix.join(current, part);
+      // On Windows, the first part might be like "C:" - don't apply posix.join to it
+      if (current === "" && /^[a-z]:$/i.test(part)) {
+        current = part + "/";
+        // Skip mkdir on drive letter (e.g., "C:/" can't be created)
+        continue;
+      } else {
+        current = posix.join(current, part);
+      }
 
       try {
         await this.callSftp("mkdir", current);
@@ -245,4 +267,32 @@ export default class SftpClient {
   async unlink(path) {
     return this.callSftp("unlink", path);
   }
+}
+
+/**
+ * Try to load a default SSH private key from ~/.ssh/. Returns the first key
+ * that exists, or null if none is found. Tries keys in order: id_ed25519,
+ * id_ecdsa, id_rsa.
+ *
+ * @returns {Buffer|null}
+ */
+function defaultPrivateKey() {
+  const homeDir = process.env.HOME || process.env.USERPROFILE;
+  if (!homeDir) {
+    return null;
+  }
+
+  const sshDir = path.join(homeDir, ".ssh");
+  const keyNames = ["id_ed25519", "id_ecdsa", "id_rsa"];
+
+  for (const keyName of keyNames) {
+    const keyPath = path.join(sshDir, keyName);
+    try {
+      return readFileSync(keyPath);
+    } catch {
+      // Try next key
+    }
+  }
+
+  return null;
 }

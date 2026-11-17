@@ -6,13 +6,13 @@ import * as moduleCache from "./moduleCache.js";
 
 /**
  * @typedef {import("@weborigami/async-tree").AsyncMap} AsyncMap
- * @typedef {import("../../index.ts").Constructor<AsyncMap & { dirname: string }>} BaseConstructor
+ * @typedef {import("../../index.ts").Constructor<AsyncMap & { path: string }>} BaseConstructor
  * @param {BaseConstructor} Base
  */
 export default function ImportModulesMixin(Base) {
   return class ImportModules extends Base {
     async import(...keys) {
-      const filePath = path.join(this.dirname, ...keys);
+      const filePath = path.join(this.path, ...keys);
       // On Windows, absolute paths must be valid file:// URLs.
       const fileUrl = pathToFileURL(filePath);
       // Add cache-busting timestamp
@@ -39,7 +39,7 @@ export default function ImportModulesMixin(Base) {
         // Module exists, but we can't load it. Is the error internal?
         if (maybeOrigamiSourceCode(error.message)) {
           throw new Error(
-            `Internal Origami error loading ${filePath}\n${error.message}`
+            `Internal Origami error loading ${filePath}\n${error.message}`,
           );
         }
 
