@@ -1094,24 +1094,29 @@ whitespaceWithNewLine
 
 // Windows drive letter: `C:`
 windowsDriveLetter
-  = [a-zA-Z] ":"  {
-      return annotate([ops.literal, text()], location());
-    }
+  = [a-zA-Z] ":" {
+    return text();
+  }
 
 windowsLocalPathHead
-  = windowsDriveLetter
   // longer `..` must come before `.`
-  / (".." / ".") {
-      return annotate([ops.literal, text()], location());
+  = head:(windowsDriveLetter / ".." / ".") slash:windowsOptionalBackslash {
+      return annotate([ops.literal, head + slash], location());
     }
 
+windowsOptionalBackslash
+  // Any number of backslashes get mapped to forward slash
+  = "\\"+ {
+    return "/";
+  }
+  / !"\\" {
+    return "";
+  }
+
 windowsPath
-  = head:windowsPathHead "\\" tail:windowsPathSegment|0..| {
+  = head:windowsPathHead tail:windowsPathSegment|0..| {
       return annotate([ops.files, head, ...tail], location());
     }
-  / head:(windowsDriveLetter / windowsUncPathHead) {
-    return annotate([ops.files, head], location());
-  }
 
 windowsPathHead
   = windowsLocalPathHead
@@ -1130,13 +1135,13 @@ windowsPathKeyChar
   = [^\\/:*?"<>|\x00-\x1F]
 
 windowsPathSegment
-  = key:windowsPathKey backslash:"\\"? {
-    return annotate([ops.literal, key], location());
+  = key:windowsPathKey slash:windowsOptionalBackslash {
+    return annotate([ops.literal, key + slash], location());
   }
 
 // The start of a UNC path: `\\server\share`
 windowsUncPathHead
-  = "\\\\" server:windowsPathKey "\\" share:windowsPathKey {
-      // Map backslashes to slashes
-      return annotate([ops.literal, `//${server}/${share}`], location());
+  = "\\\\" server:windowsPathKey "\\" share:windowsPathKey slash:windowsOptionalBackslash {
+      const text = `//${server}/${share}` + slash;
+      return annotate([ops.literal, text], location());
     }
