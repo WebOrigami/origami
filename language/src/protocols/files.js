@@ -11,15 +11,23 @@ import executionContext from "../runtime/executionContext.js";
  */
 export default async function files(...keys) {
   let head = keys.shift();
-  let current;
+  if (head === undefined) {
+    throw new Error("files: No path provided.");
+  }
 
   // Special cases for head of path
-  if (head?.startsWith("//") || head?.startsWith("\\\\")) {
+  let current;
+  if (head.startsWith("//") || head.startsWith("\\\\")) {
     // Windows UNC path
     const server = head;
     const share = keys.shift();
-    const sharePath = [server, share].join(path.sep);
+    const sharePath = [server, share].join("/");
     current = new OrigamiFileMap(sharePath);
+  } else if (/^[a-zA-Z]:\//.test(head)) {
+    // Windows drive letter
+    const folder = keys.shift();
+    const folderPath = [head, folder].join("");
+    current = new OrigamiFileMap(folderPath);
   } else if (head === "~" || head === "~/") {
     // Home directory
     current = new OrigamiFileMap(os.homedir());
