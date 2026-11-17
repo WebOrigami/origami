@@ -10,19 +10,26 @@ import executionContext from "../runtime/executionContext.js";
  * @param {string[]} keys
  */
 export default async function files(...keys) {
+  let head = keys.shift();
   let current;
 
-  let head = keys.shift();
+  // Special cases for head of path
   if (head?.startsWith("//") || head?.startsWith("\\\\")) {
     // Windows UNC path
     const server = head;
     const share = keys.shift();
     const sharePath = [server, share].join(path.sep);
     current = new OrigamiFileMap(sharePath);
-    await current.initializeGlobals();
-  } else if (head === "~") {
-    // Head of path is home directory
+  } else if (head === "~" || head === "~/") {
+    // Home directory
     current = new OrigamiFileMap(os.homedir());
+  } else if (head === "/") {
+    // Root directory
+    current = new OrigamiFileMap("/");
+  }
+
+  if (current) {
+    // Need to initialize globals for this file map
     await current.initializeGlobals();
   } else {
     // Find head key in scope
