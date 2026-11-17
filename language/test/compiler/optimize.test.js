@@ -265,56 +265,47 @@ describe("optimize", () => {
       ];
       assertCodeEqual(actual, expected);
     });
+  });
 
-    test("root directory", () => {
-      // Compilation of `</etc/passwd>`
-      const code = createCode([
-        markers.traverse,
-        [markers.external, "/"],
-        [ops.literal, "etc/"],
-        [ops.literal, "passwd"],
-      ]);
+  describe("caches files calls", () => {
+    test("home directory", () => {
+      // Compilation of `<~>`
+      const code = createCode([ops.files, [ops.literal, "~"]]);
       const expected = [
-        [ops.cache, "test.ori/_refs//", [ops.rootDirectory]],
-        [ops.literal, "etc/"],
-        [ops.literal, "passwd"],
+        ops.cache,
+        "test.ori/_refs/~",
+        [ops.files, [ops.literal, "~"]],
       ];
       assertCodeEqual(optimize(code, { cachePath: "test.ori" }), expected);
     });
 
-    test("home directory", () => {
-      // Compilation of `<~>`
-      const code = createCode([markers.traverse, [ops.homeDirectory]]);
-      const expected = [ops.cache, "test.ori/_refs/~", [ops.homeDirectory]];
-      assertCodeEqual(optimize(code, { cachePath: "test.ori" }), expected);
-    });
-  });
-
-  describe("path traversal", () => {
-    test("explicit external path", () => {
+    test("angle bracket path", () => {
       // `<path/to/file>`
       const code = createCode([
-        markers.traverse,
-        [markers.external, "path/"],
+        ops.files,
+        [ops.literal, "path/"],
         [ops.literal, "to/"],
         [ops.literal, "file"],
       ]);
       const parent = {};
       const expected = [
+        ops.cache,
+        "test.ori/_refs/path/to/file",
         [
-          ops.cache,
-          "test.ori/_refs/path/",
-          [[ops.scope], [ops.literal, "path/"]],
+          ops.files,
+          [ops.literal, "path/"],
+          [ops.literal, "to/"],
+          [ops.literal, "file"],
         ],
-        [ops.literal, "to/"],
-        [ops.literal, "file"],
       ];
       assertCodeEqual(
         optimize(code, { cachePath: "test.ori", parent }),
         expected,
       );
     });
+  });
 
+  describe("path traversal", () => {
     test("implicit external path", () => {
       // Compilation of `package.json/name` where package is neither local nor global
       const code = createCode([

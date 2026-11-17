@@ -22,20 +22,17 @@ describe("Origami parser", () => {
   describe("angleBracketLiteral", () => {
     test("with path", () => {
       assertParse("angleBracketLiteral", "<index.html>", [
-        markers.traverse,
-        [markers.external, "index.html"],
+        ops.files,
+        [ops.literal, "index.html"],
       ]);
       assertParse(
         "angleBracketLiteral",
         "<Path with spaces (and parens).html>",
-        [
-          markers.traverse,
-          [markers.external, "Path with spaces (and parens).html"],
-        ],
+        [ops.files, [ops.literal, "Path with spaces (and parens).html"]],
       );
       assertParse("angleBracketLiteral", "<foo/bar/baz>", [
-        markers.traverse,
-        [markers.external, "foo/"],
+        ops.files,
+        [ops.literal, "foo/"],
         [ops.literal, "bar/"],
         [ops.literal, "baz"],
       ]);
@@ -43,12 +40,12 @@ describe("Origami parser", () => {
 
     test("root directory", () => {
       assertParse("angleBracketLiteral", "</>", [
-        markers.traverse,
-        [markers.external, "/"],
+        ops.files,
+        [ops.literal, "/"],
       ]);
       assertParse("angleBracketLiteral", "</etc/passwd>", [
-        markers.traverse,
-        [markers.external, "/"],
+        ops.files,
+        [ops.literal, "/"],
         [ops.literal, "etc/"],
         [ops.literal, "passwd"],
       ]);
@@ -56,12 +53,12 @@ describe("Origami parser", () => {
 
     test("home directory", () => {
       assertParse("angleBracketLiteral", "<~>", [
-        markers.traverse,
-        [markers.external, "~"],
+        ops.files,
+        [ops.literal, "~"],
       ]);
       assertParse("angleBracketLiteral", "<~/.bash_profile>", [
-        markers.traverse,
-        [markers.external, "~/"],
+        ops.files,
+        [ops.literal, "~/"],
         [ops.literal, ".bash_profile"],
       ]);
     });
@@ -882,7 +879,7 @@ Body`,
 
       assertParse("expression", "keys(</>)", [
         [markers.traverse, [markers.reference, "keys"]],
-        [markers.traverse, [markers.external, "/"]],
+        [ops.files, [ops.literal, "/"]],
       ]);
 
       assertParse("expression", "'Hello' -> test.ori.html", [
@@ -987,7 +984,7 @@ Body`,
       ]);
       assertParse("expression", "keys(<~>)", [
         [markers.traverse, [markers.reference, "keys"]],
-        [markers.traverse, [markers.external, "~"]],
+        [ops.files, [ops.literal, "~"]],
       ]);
       assertParse("expression", "!x ? 0 : 1", [
         ops.conditional,
@@ -1363,8 +1360,8 @@ Body`,
         [
           "file.txt",
           [
-            markers.traverse,
-            [markers.external, "path/"],
+            ops.files,
+            [ops.literal, "path/"],
             [ops.literal, "to/"],
             [ops.literal, "file.txt"],
           ],
@@ -1452,13 +1449,13 @@ Body`,
       ]);
       assertParse("objectEntry", "<folder/>", [
         "folder/",
-        [markers.traverse, [markers.external, "folder/"]],
+        [ops.files, [ops.literal, "folder/"]],
       ]);
       assertParse("objectEntry", "<path/to/file.txt>", [
         "file.txt",
         [
-          markers.traverse,
-          [markers.external, "path/"],
+          ops.files,
+          [ops.literal, "path/"],
           [ops.literal, "to/"],
           [ops.literal, "file.txt"],
         ],
@@ -1719,8 +1716,8 @@ Body`,
       [ops.literal, 2],
     ]);
     assertParse("primary", "<index.html>", [
-      markers.traverse,
-      [markers.external, "index.html"],
+      ops.files,
+      [ops.literal, "index.html"],
     ]);
   });
 

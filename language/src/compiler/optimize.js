@@ -55,6 +55,9 @@ export default function optimize(code, options = {}) {
     case markers.traverse:
       return resolvePath(code, globals, locals, cachePath);
 
+    case ops.files:
+      return filesCall(code, cachePath);
+
     case ops.lambda:
       const parameters = args[1];
       if (parameters.length > 0) {
@@ -242,6 +245,13 @@ function externalReference(key, location) {
   return annotate([scope, literal], location);
 }
 
+// Cache an explicit files: call (an angle bracket path, Windows path)
+function filesCall(code, cachePath) {
+  const keys = code.slice(1).map((c) => inlineLiteral(c));
+  const path = keys.join("");
+  return [ops.cache, `${cachePath}/_refs/${path}`, code];
+}
+
 function findLocalDetails(key, locals) {
   const normalized = trailingSlash.remove(key);
   let paramDepth = 0;
@@ -360,30 +370,7 @@ function paramReference(key, depth, location) {
 
 function reference(code, globals, locals) {
   const key = keyFromCode(code);
-  const normalized = trailingSlash.remove(key);
   const location = code.location;
-
-  if (normalized === "~") {
-    // Special case for home directory
-    return {
-      type: REFERENCE_EXTERNAL,
-      result: annotate([ops.homeDirectory], location),
-    };
-  } else if (normalized === "") {
-    // Special case for root directory
-    return {
-      type: REFERENCE_EXTERNAL,
-      result: annotate([ops.rootDirectory], location),
-    };
-  }
-
-  if (code[0] === markers.external) {
-    // Explicit external reference
-    return {
-      type: REFERENCE_EXTERNAL,
-      result: externalReference(key, location),
-    };
-  }
 
   // See if the whole key is a global or local variable
   const whole = localOrGlobalReference(key, globals, locals, location);

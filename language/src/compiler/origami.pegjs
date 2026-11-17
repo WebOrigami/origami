@@ -57,14 +57,16 @@ angleBracketLiteral
       const keys = path.slice(1);
       return annotate([ops.files, ...keys], location());
     }
-  / "</" path:angleBracketPath ">" {
-      const external = annotate([markers.external, "/"], location());
-      return annotate([markers.traverse, external, ...path], location());
+  / "<" root:angleBracketRoot keys:angleBracketPath ">" {
+      return annotate([ops.files, root, ...keys], location());
     }
-  / "<" path:angleBracketPath ">" {
-      const [head, ...tail] = path;
-      const external = annotate([markers.external, head[1]], location());
-      return annotate([markers.traverse, external, ...tail], location());
+  / "<" keys:angleBracketPath ">" {
+      return annotate([ops.files, ...keys], location());
+    }
+
+angleBracketRoot
+  = "/" {
+      return annotate([ops.literal, "/"], location());
     }
 
 angleBracketPath
