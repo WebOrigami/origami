@@ -25,6 +25,16 @@ describe("files: protocol", () => {
     assert.strictEqual(text, '{\n  "message": "Hello"\n}\n');
   });
 
+  test("breaks apart arguments that contain slashes", async () => {
+    const buffer = await executionContext.run(context, async () =>
+      files("folder/sub/data.json"),
+    );
+    let text = new TextDecoder().decode(buffer);
+    // Normalize line endings to handle Windows
+    text = text.replace(/\r\n/g, "\n");
+    assert.strictEqual(text, '{\n  "message": "Hello"\n}\n');
+  });
+
   test("can traverse into an unpackable file", async () => {
     const message = await executionContext.run(context, async () =>
       files("folder/", "sub/", "data.json/", "message"),

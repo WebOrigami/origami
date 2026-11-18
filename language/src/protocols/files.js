@@ -10,6 +10,9 @@ import executionContext from "../runtime/executionContext.js";
  * @param {string[]} keys
  */
 export default async function files(...keys) {
+  // Expand any keys that contain slashes into separate keys
+  keys = keys.flatMap((key) => key.match(/[^/]+\/|[^/]+$/g) ?? key);
+
   let head = keys.shift();
   if (head === undefined) {
     throw new Error("files: No path provided.");
@@ -21,7 +24,7 @@ export default async function files(...keys) {
     // Windows UNC path
     const server = head;
     const share = keys.shift();
-    const sharePath = [server, share].join("/");
+    const sharePath = [server, share].join();
     current = new OrigamiFileMap(sharePath);
   } else if (/^[a-zA-Z]:\//.test(head)) {
     // Windows drive letter
