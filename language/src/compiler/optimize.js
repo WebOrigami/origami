@@ -249,7 +249,10 @@ function externalReference(key, location) {
 function filesCall(code, cachePath) {
   const keys = code.slice(1).map((c) => inlineLiteral(c));
   const path = keys.join("");
-  return [ops.cache, `${cachePath}/_refs/${path}`, code];
+  return annotate(
+    [ops.cache, `${cachePath}/_refs/${path}`, code],
+    code.location,
+  );
 }
 
 function findLocalDetails(key, locals) {
