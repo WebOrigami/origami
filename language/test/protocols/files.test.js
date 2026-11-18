@@ -35,6 +35,13 @@ describe("files: protocol", () => {
     assert.strictEqual(text, '{\n  "message": "Hello"\n}\n');
   });
 
+  test("handles Windows UNC paths", async () => {
+    const map = await executionContext.run(context, async () =>
+      files("//server/share/"),
+    );
+    assert.equal(map.path, "//server/share/");
+  });
+
   test("can traverse into an unpackable file", async () => {
     const message = await executionContext.run(context, async () =>
       files("folder/", "sub/", "data.json/", "message"),
