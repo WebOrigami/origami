@@ -214,7 +214,11 @@ function getStats(filePath) {
   try {
     stats = fs.statSync(filePath);
   } catch (/** @type {any} */ error) {
-    if (error.code === "ENOENT" /* File not found */) {
+    if (
+      error.code === "ENOENT" /* File not found */ ||
+      error.code ===
+        "UNKNOWN" /* Windows can return this for non-existent files */
+    ) {
       return null;
     }
     throw error;
