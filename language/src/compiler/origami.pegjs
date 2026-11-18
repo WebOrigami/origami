@@ -1142,9 +1142,9 @@ windowsPathSegment
     return annotate([ops.literal, key + slash], location());
   }
 
-// The start of a UNC path: `\\server\share`
+// The start of a UNC path: `\\server`
 windowsUncPathHead
-  = "\\\\" server:windowsPathKey "\\" share:windowsPathKey slash:windowsOptionalBackslash {
-      const text = `//${server}/${share}` + slash;
+  = "\\\\" server:windowsPathKey "\\" {
+      const text = `//${server}/`;
       return annotate([ops.literal, text], location());
     }

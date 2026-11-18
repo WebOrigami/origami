@@ -86,7 +86,8 @@ describe("Origami parser", () => {
       ]);
       assertParse("angleBracketLiteral", "<\\\\server\\share>", [
         ops.files,
-        [ops.literal, "//server/share"],
+        [ops.literal, "//server/"],
+        [ops.literal, "share"],
       ]);
     });
   });
@@ -1464,7 +1465,8 @@ Body`,
         "assets",
         [
           ops.files,
-          [ops.literal, "//designs/public/"],
+          [ops.literal, "//designs/"],
+          [ops.literal, "public/"],
           [ops.literal, "assets"],
         ],
       ]);
@@ -2060,11 +2062,13 @@ Body text`,
     test("UNC path", () => {
       assertParse("windowsPath", "\\\\127.0.0.1\\public", [
         ops.files,
-        [ops.literal, "//127.0.0.1/public"],
+        [ops.literal, "//127.0.0.1/"],
+        [ops.literal, "public"],
       ]);
       assertParse("windowsPath", "\\\\server\\share\\file.txt", [
         ops.files,
-        [ops.literal, "//server/share/"],
+        [ops.literal, "//server/"],
+        [ops.literal, "share/"],
         [ops.literal, "file.txt"],
       ]);
     });

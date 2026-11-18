@@ -1068,8 +1068,8 @@ function peg$parse(input, options) {
   function peg$f149(key, slash) {
     return annotate([ops.literal, key + slash], location());
   }
-  function peg$f150(server, share, slash) {
-    const text = `//${server}/${share}` + slash;
+  function peg$f150(server) {
+    const text = `//${server}/`;
     return annotate([ops.literal, text], location());
   }
   let peg$currPos = options.peg$currPos | 0;
@@ -7797,7 +7797,7 @@ function peg$parse(input, options) {
   }
 
   function peg$parsewindowsUncPathHead() {
-    let s0, s1, s2, s3, s4, s5;
+    let s0, s1, s2, s3;
 
     s0 = peg$currPos;
     if (input.substr(peg$currPos, 2) === peg$c73) {
@@ -7818,20 +7818,8 @@ function peg$parse(input, options) {
           if (peg$silentFails === 0) { peg$fail(peg$e37); }
         }
         if (s3 !== peg$FAILED) {
-          s4 = peg$parsewindowsPathKey();
-          if (s4 !== peg$FAILED) {
-            s5 = peg$parsewindowsOptionalBackslash();
-            if (s5 !== peg$FAILED) {
-              peg$savedPos = s0;
-              s0 = peg$f150(s2, s4, s5);
-            } else {
-              peg$currPos = s0;
-              s0 = peg$FAILED;
-            }
-          } else {
-            peg$currPos = s0;
-            s0 = peg$FAILED;
-          }
+          peg$savedPos = s0;
+          s0 = peg$f150(s2);
         } else {
           peg$currPos = s0;
           s0 = peg$FAILED;
