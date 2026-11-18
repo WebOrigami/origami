@@ -1051,7 +1051,7 @@ function peg$parse(input, options) {
     return text();
   }
   function peg$f144(head, slash) {
-    return annotate([ops.literal, head + slash], location());
+    return annotate([ops.literal, head + "/"], location());
   }
   function peg$f145() {
     return "/";
@@ -7600,7 +7600,7 @@ function peg$parse(input, options) {
   }
 
   function peg$parsewindowsLocalPathHead() {
-    let s0, s1, s2;
+    let s0, s1, s2, s3;
 
     s0 = peg$currPos;
     s1 = peg$parsewindowsDriveLetter();
@@ -7623,7 +7623,21 @@ function peg$parse(input, options) {
       }
     }
     if (s1 !== peg$FAILED) {
-      s2 = peg$parsewindowsOptionalBackslash();
+      s2 = [];
+      for (;;) {
+        if (input.charCodeAt(peg$currPos) === 92) {
+          s3 = peg$c30;
+          peg$currPos++;
+        } else {
+          s3 = peg$FAILED;
+          if (peg$silentFails === 0) { peg$fail(peg$e37); }
+        }
+        if (s3 === peg$FAILED) { break; }
+        s2.push(s3);
+      }
+      if (s2.length < 1) {
+        s2 = peg$FAILED;
+      }
       if (s2 !== peg$FAILED) {
         peg$savedPos = s0;
         s0 = peg$f144(s1, s2);

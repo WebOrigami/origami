@@ -2048,7 +2048,7 @@ Body text`,
     });
 
     test("with drive letter", () => {
-      assertParse("windowsPath", "C:", [ops.files, [ops.literal, "C:"]]);
+      assertParse("windowsPath", "C:\\", [ops.files, [ops.literal, "C:/"]]);
       assertParse("windowsPath", "C:\\Users\\Alice", [
         ops.files,
         [ops.literal, "C:/"],

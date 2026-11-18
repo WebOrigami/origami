@@ -1101,9 +1101,10 @@ windowsDriveLetter
   }
 
 windowsLocalPathHead
-  // longer `..` must come before `.`
-  = head:(windowsDriveLetter / ".." / ".") slash:windowsOptionalBackslash {
-      return annotate([ops.literal, head + slash], location());
+  // Local path head needs a backslash to count as a Windows path.
+  // The longer `..` must come before `.`.
+  = head:(windowsDriveLetter / ".." / ".") slash:"\\"+ {
+      return annotate([ops.literal, head + "/"], location());
     }
 
 windowsOptionalBackslash
