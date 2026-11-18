@@ -40,7 +40,7 @@ export default async function traverseOrThrow(maplike, ...keys) {
     lastValue = value;
 
     // If the value is packed and can be unpacked, unpack it.
-    if (isPacked(value)) {
+    while (isPacked(value)) {
       if (typeof value.unpack === "function") {
         value = await value.unpack();
       } else {
