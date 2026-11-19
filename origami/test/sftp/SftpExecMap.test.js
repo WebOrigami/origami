@@ -19,19 +19,19 @@ const fixture = await sftp({
 // SftpExecMap requires a POSIX shell (bash/sh) to run its commands.
 // On Windows, this requires additional configuration to make bash the default
 // SSH shell. Skip these tests on Windows unless explicitly configured.
-const isWindows = process.platform === "win32";
-const skipOnWindows = isWindows ? test.skip : test;
+const onWindows = process.platform === "win32";
 
 describe("SftpExecMap", () => {
-  skipOnWindows("child calls mkdir", async () => {
+  test("child calls mkdir", { skip: onWindows }, async () => {
     const child = await fixture.child("newdir");
     assert.equal(child.path, fixture.path + "newdir/");
     assert(await fixtureFiles.get("newdir/"));
     await fixtureFiles.delete("newdir/");
   });
 
-  skipOnWindows(
+  test(
     "child removes preexisting file before calling mkdir",
+    { skip: onWindows },
     async () => {
       await fixtureFiles.set("newdir", "some content");
       const child = await fixture.child("newdir");
@@ -53,14 +53,18 @@ describe("SftpExecMap", () => {
       assert.equal(value, undefined);
     });
 
-    skipOnWindows("delete a directory with trailing slash", async () => {
-      // Create the directory directly
-      await fixtureFiles.child("temp");
-      const result = await fixture.delete("temp/");
-      assert(result);
-      const value = await fixtureFiles.get("temp");
-      assert.equal(value, undefined);
-    });
+    test(
+      "delete a directory with trailing slash",
+      { skip: onWindows },
+      async () => {
+        // Create the directory directly
+        await fixtureFiles.child("temp");
+        const result = await fixture.delete("temp/");
+        assert(result);
+        const value = await fixtureFiles.get("temp");
+        assert.equal(value, undefined);
+      },
+    );
 
     // TODO: Investigate this flappy test
     test.skip("delete a directory without trailing slash", async () => {
@@ -78,7 +82,7 @@ describe("SftpExecMap", () => {
     });
   });
 
-  skipOnWindows("manifest", async () => {
+  test("manifest", { skip: onWindows }, async () => {
     assert(fixture instanceof SftpExecMap);
     const manifest = await fixture.manifest();
     const greetingsHash = manifest.get("greetings.yaml");

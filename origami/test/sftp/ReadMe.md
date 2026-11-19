@@ -41,7 +41,7 @@ Prerequisites:
 - Registry keys like `HKEY_LOCAL_MACHINE\SOFTWARE\OpenSSH\Users\<username>\Shell` apply only to interactive login shells, not exec
 - The `ForceCommand` sshd_config option replaces user commands instead of executing them through a shell
 
-**Solution:** Tests that require shell commands are automatically skipped on Windows (see `skipOnWindows` helper in SftpExecMap.test.js).
+**Solution:** Tests that require shell commands are automatically skipped on Windows.
 
 **For Future Maintainers:** If you need to enable SftpExecMap tests on Windows, options are:
 
