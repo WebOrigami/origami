@@ -16,7 +16,10 @@ export default async function debugValue(value) {
     // Wrap the unpack method so that the result can be debugged
     const original = value.unpack.bind(value);
     value.unpack = async () => {
-      const content = await original();
+      let content = await original();
+      while (isUnpackable(content)) {
+        content = await content.unpack();
+      }
       if (!Tree.isTraversable(content) || typeof content === "function") {
         return content;
       }
