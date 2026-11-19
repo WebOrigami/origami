@@ -1,4 +1,10 @@
-import { FileMap, isUnpackable, scope, Tree } from "@weborigami/async-tree";
+import {
+  FileMap,
+  interop,
+  isUnpackable,
+  scope,
+  Tree,
+} from "@weborigami/async-tree";
 import os from "node:os";
 import path from "node:path";
 import OrigamiFileMap from "../runtime/OrigamiFileMap.js";
@@ -10,6 +16,17 @@ import executionContext from "../runtime/executionContext.js";
  * @param {string[]} keys
  */
 export default async function files(...keys) {
+  // TEMPORARY HACK: Find out whether the source code used `files:` protocol.
+  const context = executionContext.getStore();
+  const code = context?.code;
+  const usedFilesProtocol = code?.source?.startsWith("files:");
+  if (usedFilesProtocol && !keys.at(-1)?.endsWith("/")) {
+    interop.warn(
+      `Warning: The files: protocol will soon require a trailing slash if you want to create a directory: ${keys.at(-1)}/`,
+    );
+    return oldFiles(...keys);
+  }
+
   // Expand any keys that contain slashes into separate keys. Preserve
   // leading slashes to keep UNC server name intact.
   keys = keys.flatMap((key) => key.match(/\/*[^/]+(\/|$)/g) ?? key);
@@ -21,6 +38,7 @@ export default async function files(...keys) {
 
   // Special cases for head of path
   let current;
+  let parent; // Where new directory would be created
   if (head.startsWith("//") || head.startsWith("\\\\")) {
     // Windows UNC path
     const server = head;
@@ -43,17 +61,15 @@ export default async function files(...keys) {
   if (current) {
     // Need to initialize globals for this file map
     await current.initializeGlobals();
+    parent = current;
   } else {
     // Find head key in scope
-    const parent = executionContext.getStore()?.parent;
+    parent = executionContext.getStore()?.parent;
     if (!parent) {
       throw new Error("files: No parent context available.");
     }
-    const parentScope = scope(parent);
-    current = await parentScope.get(head);
-    if (!current) {
-      throw new ReferenceError(`files: Unable to find "${head}" in scope.`);
-    }
+    current = scope(parent);
+    keys.unshift(head); // Process key in loop below
   }
 
   while (keys.length > 0) {
@@ -62,6 +78,7 @@ export default async function files(...keys) {
     if (value instanceof FileMap) {
       keys.shift();
       current = value;
+      parent = current;
     } else if (value) {
       keys.shift();
       if (keys.length === 0) {
@@ -75,13 +92,15 @@ export default async function files(...keys) {
       return Tree.traverse(value, ...keys);
     } else if (keys.at(-1)?.endsWith("/")) {
       // Last argument has slash, create map for not-yet-existing directory
-      const result = mapForNewDirectory(current, keys);
+      const result = mapForNewDirectory(parent, keys);
       return result;
     } else if (keys.length === 1) {
       // It's acceptable for the last key to not exist, value is undefined
       return undefined;
     } else {
-      const folderPath = path.join(current.path, ...keys);
+      /** @type {any} */
+      const folder = current;
+      const folderPath = path.join(folder.path, ...keys);
       throw new ReferenceError(
         `files: The folder "${key}" in this path doesn't exist: ${folderPath}`,
       );
@@ -103,5 +122,25 @@ function mapForNewChild(parent, key) {
   const dirPath = path.join(parent.path, key);
   const result = new OrigamiFileMap(dirPath);
   result.parent = parent;
+  return result;
+}
+
+// TODO: Remove
+async function oldFiles(...args) {
+  // If path begins with `~`, treat it relative to the home directory.
+  // Otherwise, treat it relative to the current container.
+  let relativePath = args.join(path.sep);
+  let basePath;
+  if (relativePath.startsWith("~")) {
+    basePath = os.homedir();
+    relativePath = relativePath.slice(2);
+  } else {
+    const parent = executionContext.getStore()?.parent;
+    basePath = parent.path;
+  }
+  const resolved = path.resolve(basePath, relativePath);
+
+  const result = new OrigamiFileMap(resolved);
+  await result.initializeGlobals();
   return result;
 }
