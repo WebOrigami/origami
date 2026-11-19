@@ -42,7 +42,7 @@ describe("files: protocol", () => {
     // The path is only preserved on Windows (which is only where it will work),
     // but we want to be able to run the test on non-Windows platforms as well.
     const expected =
-      process.platform === "win32" ? "//server/share/" : "/server/share/";
+      process.platform === "win32" ? "//server/share/" : "/server/share";
     assert.equal(map.path, expected);
   });
 
