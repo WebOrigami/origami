@@ -93,6 +93,7 @@ export default async function files(...keys) {
       parent = value;
     } else if (value) {
       // Traverse with remaining keys
+      // TODO: Align with exception handling logic in Tree.traverseOrThrow
       if (isUnpackable(value) && trailingSlash.has(key)) {
         value = await value.unpack();
       }
