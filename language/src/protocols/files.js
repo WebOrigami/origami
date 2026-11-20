@@ -22,7 +22,7 @@ export default async function files(...keys) {
   const usedFilesProtocol = code?.source?.startsWith("files:");
   if (usedFilesProtocol && !keys.at(-1)?.endsWith("/")) {
     interop.warn(
-      `Warning: The files: protocol will soon require a trailing slash if you want to create a directory: ${keys.at(-1)}/`,
+      `Warning: The files: protocol will soon require a trailing slash if you want to create a new directory: ${keys.at(-1)}/`,
     );
     return oldFiles(...keys);
   }
