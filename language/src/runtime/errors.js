@@ -169,6 +169,10 @@ export function reconstructTraversalKeys(code) {
     case ops.cache:
       return reconstructTraversalKeys(code[2]);
 
+    case ops.files:
+      const keys = args.map((arg) => arg[1]);
+      return keys;
+
     case ops.unpack:
       return reconstructTraversalKeys(code[1]);
   }

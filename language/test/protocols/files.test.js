@@ -67,7 +67,7 @@ describe("files: protocol", () => {
           files("folder/", "non-existing/", "data.json"),
         ),
       {
-        name: "ReferenceError",
+        name: "TraverseError",
       },
     );
   });

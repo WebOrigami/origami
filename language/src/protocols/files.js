@@ -3,6 +3,7 @@ import {
   interop,
   isUnpackable,
   scope,
+  TraverseError,
   Tree,
 } from "@weborigami/async-tree";
 import os from "node:os";
@@ -31,57 +32,66 @@ export default async function files(...keys) {
   // leading slashes to keep UNC server name intact.
   keys = keys.flatMap((key) => key.match(/\/*[^/]+(\/|$)/g) ?? key);
 
-  let head = keys.shift();
+  // For error reporting
+  let lastValue;
+  let position = 0;
+
+  let head = keys[position];
   if (head === undefined) {
     throw new Error("files: No path provided.");
   }
 
   // Special cases for head of path
-  let current;
+  let value;
   let parent; // Where new directory would be created
   if (head.startsWith("//") || head.startsWith("\\\\")) {
     // Windows UNC path
     const server = head;
-    const share = keys.shift();
+    position++;
+    const share = keys[position];
+    position++;
     const sharePath = [server, share].join("");
-    current = new OrigamiFileMap(sharePath);
+    value = new OrigamiFileMap(sharePath);
   } else if (/^[a-zA-Z]:\//.test(head)) {
     // Windows drive letter
-    const folder = keys.shift();
+    position++;
+    const folder = keys[position];
+    position++;
     const folderPath = [head, folder].join("");
-    current = new OrigamiFileMap(folderPath);
+    value = new OrigamiFileMap(folderPath);
   } else if (head === "~" || head === "~/") {
     // Home directory
-    current = new OrigamiFileMap(os.homedir());
+    position++;
+    value = new OrigamiFileMap(os.homedir());
   } else if (head === "/") {
     // Root directory
-    current = new OrigamiFileMap("/");
+    position++;
+    value = new OrigamiFileMap("/");
   }
 
-  if (current) {
+  if (value) {
     // Need to initialize globals for this file map
-    await current.initializeGlobals();
-    parent = current;
+    await value.initializeGlobals();
+    parent = value;
   } else {
-    // Find head key in scope
+    // Start traversal in current scope
     parent = executionContext.getStore()?.parent;
     if (!parent) {
       throw new Error("files: No parent context available.");
     }
-    current = scope(parent);
-    keys.unshift(head); // Process key in loop below
+    value = scope(parent);
   }
 
-  while (keys.length > 0) {
-    const key = keys[0];
-    let value = await current.get(key);
+  while (position < keys.length) {
+    const key = keys[position];
+    lastValue = value;
+    value = await value.get(key);
+    position++;
     if (value instanceof FileMap) {
-      keys.shift();
-      current = value;
-      parent = current;
+      value = value;
+      parent = value;
     } else if (value) {
-      keys.shift();
-      if (keys.length === 0) {
+      if (position >= keys.length) {
         // The file is the end of the path
         return value;
       }
@@ -89,25 +99,26 @@ export default async function files(...keys) {
       if (isUnpackable(value)) {
         value = await value.unpack();
       }
-      return Tree.traverse(value, ...keys);
+      const remainingKeys = keys.slice(position);
+      return Tree.traverse(value, ...remainingKeys);
     } else if (keys.at(-1)?.endsWith("/")) {
       // Last argument has slash, create map for not-yet-existing directory
       const result = mapForNewDirectory(parent, keys);
       return result;
-    } else if (keys.length === 1) {
-      // It's acceptable for the last key to not exist, value is undefined
+    } else if (position === keys.length) {
+      // Acceptable for the last key to not exist; value is undefined
       return undefined;
     } else {
       /** @type {any} */
-      const folder = current;
-      const folderPath = path.join(folder.path, ...keys);
-      throw new ReferenceError(
-        `files: The folder "${key}" in this path doesn't exist: ${folderPath}`,
-      );
+      throw new TraverseError("A path hit a null or undefined value.", {
+        lastValue,
+        keys,
+        position,
+      });
     }
   }
 
-  return current;
+  return value;
 }
 
 function mapForNewDirectory(parent, keys) {
