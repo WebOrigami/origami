@@ -25,6 +25,13 @@ describe("files: protocol", () => {
     assert.strictEqual(text, '{\n  "message": "Hello"\n}\n');
   });
 
+  test("unpacks a file if path ends in trailing slash", async () => {
+    const data = await executionContext.run(context, async () =>
+      files("folder/", "sub/", "data.json/"),
+    );
+    assert.strictEqual(data.message, "Hello");
+  });
+
   test("breaks apart arguments that contain slashes", async () => {
     const buffer = await executionContext.run(context, async () =>
       files("folder/sub/data.json"),

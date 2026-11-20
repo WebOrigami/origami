@@ -3,6 +3,7 @@ import {
   interop,
   isUnpackable,
   scope,
+  trailingSlash,
   TraverseError,
   Tree,
 } from "@weborigami/async-tree";
@@ -91,16 +92,14 @@ export default async function files(...keys) {
       value = value;
       parent = value;
     } else if (value) {
-      if (position >= keys.length) {
-        // The file is the end of the path
-        return value;
-      }
       // Traverse with remaining keys
-      if (isUnpackable(value)) {
+      if (isUnpackable(value) && trailingSlash.has(key)) {
         value = await value.unpack();
       }
       const remainingKeys = keys.slice(position);
-      return Tree.traverse(value, ...remainingKeys);
+      return remainingKeys.length === 0
+        ? value
+        : Tree.traverse(value, ...remainingKeys);
     } else if (keys.at(-1)?.endsWith("/")) {
       // Last argument has slash, create map for not-yet-existing directory
       const result = mapForNewDirectory(parent, keys);
