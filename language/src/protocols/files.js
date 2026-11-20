@@ -89,7 +89,6 @@ export default async function files(...keys) {
     value = await value.get(key);
     position++;
     if (value instanceof FileMap) {
-      value = value;
       parent = value;
     } else if (value) {
       // Traverse with remaining keys
