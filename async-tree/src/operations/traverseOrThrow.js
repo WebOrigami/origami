@@ -30,7 +30,6 @@ export default async function traverseOrThrow(maplike, ...keys) {
   while (remainingKeys.length > 0) {
     if (value == null) {
       throw new TraverseError("A path hit a null or undefined value.", {
-        head: maplike,
         lastValue,
         keys,
         position,
@@ -51,7 +50,6 @@ export default async function traverseOrThrow(maplike, ...keys) {
         throw new TraverseError(
           `A path hit ${type} data that can't be unpacked.`,
           {
-            head: maplike,
             lastValue,
             keys,
             position,
