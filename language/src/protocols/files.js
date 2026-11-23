@@ -31,57 +31,12 @@ export default async function files(...keys) {
 
   // Expand any keys that contain slashes into separate keys. Preserve
   // leading slashes to keep UNC server name intact.
-  keys = keys.flatMap((key) => key.match(/\/*[^/]+(\/|$)/g) ?? key);
+  keys = splitKeysWithSlashes(keys);
+
+  let { parent, position, value } = await mapForPathHead(keys);
 
   // For error reporting
   let lastValue;
-  let position = 0;
-
-  let head = keys[position];
-  if (head === undefined) {
-    throw new Error("files: No path provided.");
-  }
-
-  // Special cases for head of path
-  let value;
-  let parent; // Where new directory would be created
-  if (head.startsWith("//") || head.startsWith("\\\\")) {
-    // Windows UNC path
-    const server = head;
-    position++;
-    const share = keys[position];
-    position++;
-    const sharePath = [server, share].join("");
-    value = new OrigamiFileMap(sharePath);
-  } else if (/^[a-zA-Z]:\//.test(head)) {
-    // Windows drive letter
-    position++;
-    const folder = keys[position];
-    position++;
-    const folderPath = [head, folder].join("");
-    value = new OrigamiFileMap(folderPath);
-  } else if (head === "~" || head === "~/") {
-    // Home directory
-    position++;
-    value = new OrigamiFileMap(os.homedir());
-  } else if (head === "/") {
-    // Root directory
-    position++;
-    value = new OrigamiFileMap("/");
-  }
-
-  if (value) {
-    // Need to initialize globals for this file map
-    await value.initializeGlobals();
-    parent = value;
-  } else {
-    // Start traversal in current scope
-    parent = executionContext.getStore()?.parent;
-    if (!parent) {
-      throw new Error("files: No parent context available.");
-    }
-    value = scope(parent);
-  }
 
   while (position < keys.length) {
     const key = keys[position];
@@ -135,6 +90,64 @@ function mapForNewChild(parent, key) {
   return result;
 }
 
+/**
+ * Given an array of keys, return the initial position and the corresponding
+ * value for the map representing the head of the path.
+ *
+ * @typedef {import("@weborigami/async-tree").SyncOrAsyncMap} SyncOrAsyncMap
+ * @returns {Promise<{ parent: FileMap, position: number, value: SyncOrAsyncMap }>}
+ */
+async function mapForPathHead(keys) {
+  let position = 0;
+  let head = keys[position];
+  if (head === undefined) {
+    throw new Error("files: No path provided.");
+  }
+
+  // Special cases
+  let value = null;
+  if (head.startsWith("//") || head.startsWith("\\\\")) {
+    // Windows UNC path
+    const server = head;
+    position++;
+    const share = keys[position];
+    position++;
+    const sharePath = [server, share].join("");
+    value = new OrigamiFileMap(sharePath);
+  } else if (/^[a-zA-Z]:\//.test(head)) {
+    // Windows drive letter
+    position++;
+    const folder = keys[position];
+    position++;
+    const folderPath = [head, folder].join("");
+    value = new OrigamiFileMap(folderPath);
+  } else if (head === "~" || head === "~/") {
+    // Home directory
+    position++;
+    value = new OrigamiFileMap(os.homedir());
+  } else if (head === "/") {
+    // Root directory
+    position++;
+    value = new OrigamiFileMap("/");
+  }
+
+  let parent;
+  if (value) {
+    // Need to initialize globals for this file map
+    await value.initializeGlobals();
+    parent = value;
+  } else {
+    // Default path head is the current scope
+    parent = executionContext.getStore()?.parent;
+    if (!parent) {
+      throw new Error("files: No parent context available.");
+    }
+    value = scope(parent);
+  }
+
+  return { parent, position, value };
+}
+
 // TODO: Remove
 async function oldFiles(...args) {
   // If path begins with `~`, treat it relative to the home directory.
@@ -153,4 +166,10 @@ async function oldFiles(...args) {
   const result = new OrigamiFileMap(resolved);
   await result.initializeGlobals();
   return result;
+}
+
+// Expand any keys that contain slashes into separate keys. Preserve leading
+// slashes to keep UNC server name intact.
+function splitKeysWithSlashes(keys) {
+  return keys.flatMap((key) => key.match(/\/*[^/]+(\/|$)/g) ?? key);
 }
