@@ -270,11 +270,11 @@ describe("optimize", () => {
   describe("caches files calls", () => {
     test("home directory", () => {
       // Compilation of `<~>`
-      const code = createCode([ops.files, [ops.literal, "~"]]);
+      const code = createCode([ops.path, [ops.literal, "~"]]);
       const expected = [
         ops.cache,
         "test.ori/_refs/~",
-        [ops.files, [ops.literal, "~"]],
+        [ops.path, [ops.literal, "~"]],
       ];
       assertCodeEqual(optimize(code, { cachePath: "test.ori" }), expected);
     });
@@ -282,7 +282,7 @@ describe("optimize", () => {
     test("angle bracket path", () => {
       // `<path/to/file>`
       const code = createCode([
-        ops.files,
+        ops.path,
         [ops.literal, "path/"],
         [ops.literal, "to/"],
         [ops.literal, "file"],
@@ -292,7 +292,7 @@ describe("optimize", () => {
         ops.cache,
         "test.ori/_refs/path/to/file",
         [
-          ops.files,
+          ops.path,
           [ops.literal, "path/"],
           [ops.literal, "to/"],
           [ops.literal, "file"],

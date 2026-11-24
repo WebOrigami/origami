@@ -22,16 +22,16 @@ describe("Origami parser", () => {
   describe("angleBracketLiteral", () => {
     test("with path", () => {
       assertParse("angleBracketLiteral", "<index.html>", [
-        ops.files,
+        ops.path,
         [ops.literal, "index.html"],
       ]);
       assertParse(
         "angleBracketLiteral",
         "<Path with spaces (and parens).html>",
-        [ops.files, [ops.literal, "Path with spaces (and parens).html"]],
+        [ops.path, [ops.literal, "Path with spaces (and parens).html"]],
       );
       assertParse("angleBracketLiteral", "<foo/bar/baz>", [
-        ops.files,
+        ops.path,
         [ops.literal, "foo/"],
         [ops.literal, "bar/"],
         [ops.literal, "baz"],
@@ -39,12 +39,9 @@ describe("Origami parser", () => {
     });
 
     test("root directory", () => {
-      assertParse("angleBracketLiteral", "</>", [
-        ops.files,
-        [ops.literal, "/"],
-      ]);
+      assertParse("angleBracketLiteral", "</>", [ops.path, [ops.literal, "/"]]);
       assertParse("angleBracketLiteral", "</etc/passwd>", [
-        ops.files,
+        ops.path,
         [ops.literal, "/"],
         [ops.literal, "etc/"],
         [ops.literal, "passwd"],
@@ -52,12 +49,9 @@ describe("Origami parser", () => {
     });
 
     test("home directory", () => {
-      assertParse("angleBracketLiteral", "<~>", [
-        ops.files,
-        [ops.literal, "~"],
-      ]);
+      assertParse("angleBracketLiteral", "<~>", [ops.path, [ops.literal, "~"]]);
       assertParse("angleBracketLiteral", "<~/.bash_profile>", [
-        ops.files,
+        ops.path,
         [ops.literal, "~/"],
         [ops.literal, ".bash_profile"],
       ]);
@@ -78,14 +72,14 @@ describe("Origami parser", () => {
 
     test("with Windows path", () => {
       assertParse("angleBracketLiteral", "<C:\\path\\to\\folder>", [
-        ops.files,
+        ops.path,
         [ops.literal, "C:/"],
         [ops.literal, "path/"],
         [ops.literal, "to/"],
         [ops.literal, "folder"],
       ]);
       assertParse("angleBracketLiteral", "<\\\\server\\share>", [
-        ops.files,
+        ops.path,
         [ops.literal, "//server/"],
         [ops.literal, "share"],
       ]);
@@ -880,7 +874,7 @@ Body`,
 
       assertParse("expression", "keys(</>)", [
         [markers.traverse, [markers.reference, "keys"]],
-        [ops.files, [ops.literal, "/"]],
+        [ops.path, [ops.literal, "/"]],
       ]);
 
       assertParse("expression", "'Hello' -> test.ori.html", [
@@ -985,7 +979,7 @@ Body`,
       ]);
       assertParse("expression", "keys(<~>)", [
         [markers.traverse, [markers.reference, "keys"]],
-        [ops.files, [ops.literal, "~"]],
+        [ops.path, [ops.literal, "~"]],
       ]);
       assertParse("expression", "!x ? 0 : 1", [
         ops.conditional,
@@ -1361,7 +1355,7 @@ Body`,
         [
           "file.txt",
           [
-            ops.files,
+            ops.path,
             [ops.literal, "path/"],
             [ops.literal, "to/"],
             [ops.literal, "file.txt"],
@@ -1450,12 +1444,12 @@ Body`,
       ]);
       assertParse("objectEntry", "<folder/>", [
         "folder/",
-        [ops.files, [ops.literal, "folder/"]],
+        [ops.path, [ops.literal, "folder/"]],
       ]);
       assertParse("objectEntry", "<path/to/file.txt>", [
         "file.txt",
         [
-          ops.files,
+          ops.path,
           [ops.literal, "path/"],
           [ops.literal, "to/"],
           [ops.literal, "file.txt"],
@@ -1464,7 +1458,7 @@ Body`,
       assertParse("objectEntry", "\\\\designs\\public\\assets", [
         "assets",
         [
-          ops.files,
+          ops.path,
           [ops.literal, "//designs/"],
           [ops.literal, "public/"],
           [ops.literal, "assets"],
@@ -1718,7 +1712,7 @@ Body`,
       [ops.literal, 2],
     ]);
     assertParse("primary", "<index.html>", [
-      ops.files,
+      ops.path,
       [ops.literal, "index.html"],
     ]);
   });
@@ -2032,9 +2026,9 @@ Body text`,
 
   describe("windowsPath", () => {
     test("relative path", () => {
-      assertParse("windowsPath", ".\\", [ops.files, [ops.literal, "./"]]);
+      assertParse("windowsPath", ".\\", [ops.path, [ops.literal, "./"]]);
       assertParse("windowsPath", ".\\foo\\bar", [
-        ops.files,
+        ops.path,
         [ops.literal, "./"],
         [ops.literal, "foo/"],
         [ops.literal, "bar"],
@@ -2043,16 +2037,16 @@ Body text`,
 
     test("parent directory path", () => {
       assertParse("windowsPath", "..\\baz\\", [
-        ops.files,
+        ops.path,
         [ops.literal, "../"],
         [ops.literal, "baz/"],
       ]);
     });
 
     test("with drive letter", () => {
-      assertParse("windowsPath", "C:\\", [ops.files, [ops.literal, "C:/"]]);
+      assertParse("windowsPath", "C:\\", [ops.path, [ops.literal, "C:/"]]);
       assertParse("windowsPath", "C:\\Users\\Alice", [
-        ops.files,
+        ops.path,
         [ops.literal, "C:/"],
         [ops.literal, "Users/"],
         [ops.literal, "Alice"],
@@ -2061,12 +2055,12 @@ Body text`,
 
     test("UNC path", () => {
       assertParse("windowsPath", "\\\\127.0.0.1\\public", [
-        ops.files,
+        ops.path,
         [ops.literal, "//127.0.0.1/"],
         [ops.literal, "public"],
       ]);
       assertParse("windowsPath", "\\\\server\\share\\file.txt", [
-        ops.files,
+        ops.path,
         [ops.literal, "//server/"],
         [ops.literal, "share/"],
         [ops.literal, "file.txt"],

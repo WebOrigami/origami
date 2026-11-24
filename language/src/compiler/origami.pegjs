@@ -55,13 +55,13 @@ angleBracketLiteral
     }
   / "<" path:windowsPath ">" {
       const keys = path.slice(1);
-      return annotate([ops.files, ...keys], location());
+      return annotate([ops.path, ...keys], location());
     }
   / "<" root:angleBracketRoot keys:angleBracketPath ">" {
-      return annotate([ops.files, root, ...keys], location());
+      return annotate([ops.path, root, ...keys], location());
     }
   / "<" keys:angleBracketPath ">" {
-      return annotate([ops.files, ...keys], location());
+      return annotate([ops.path, ...keys], location());
     }
 
 angleBracketRoot
@@ -1118,7 +1118,7 @@ windowsOptionalBackslash
 
 windowsPath
   = head:windowsPathHead tail:windowsPathSegment|0..| {
-      return annotate([ops.files, head, ...tail], location());
+      return annotate([ops.path, head, ...tail], location());
     }
 
 windowsPathHead

@@ -55,7 +55,7 @@ export default function optimize(code, options = {}) {
     case markers.traverse:
       return resolvePath(code, globals, locals, cachePath);
 
-    case ops.files:
+    case ops.path:
       return filesCall(code, cachePath);
 
     case ops.lambda:

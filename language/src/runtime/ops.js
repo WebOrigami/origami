@@ -14,7 +14,6 @@ import {
 } from "@weborigami/async-tree";
 import os from "node:os";
 import systemCache from "../cache/systemCache.js";
-import { default as filesProtocol } from "../protocols/files.js";
 import execute from "./execute.js";
 import executionContext from "./executionContext.js";
 import expressionObject from "./expressionObject.js";
@@ -22,6 +21,7 @@ import mergeTrees from "./mergeTrees.js";
 import OrigamiFileMap from "./OrigamiFileMap.js";
 import ScopeMap from "./ScopeMap.js";
 import { codeSymbol } from "./symbols.js";
+import traversePath from "./traversePath.js";
 
 function addOpLabel(op, label) {
   Object.defineProperty(op, "toString", {
@@ -162,11 +162,6 @@ export function exponentiation(a, b) {
   return a ** b;
 }
 addOpLabel(exponentiation, "«ops.exponentiation»");
-
-export function files(...keys) {
-  return filesProtocol(...keys);
-}
-addOpLabel(files, "«ops.files»");
 
 /**
  * Flatten the values of the given trees by one level.
@@ -453,6 +448,11 @@ export async function params(depth) {
   return stack[stack.length - 1 - depth];
 }
 addOpLabel(params, "«ops.params»");
+
+export function path(...keys) {
+  return traversePath(...keys);
+}
+addOpLabel(path, "«ops.path»");
 
 /**
  * If the value is null or undefined, return undefined; otherwise, invoke the

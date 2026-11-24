@@ -2,22 +2,27 @@ import assert from "node:assert";
 import path from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
-import files from "../../src/protocols/files.js";
 import OrigamiFileMap from "../../src/runtime/OrigamiFileMap.js";
 import executionContext from "../../src/runtime/executionContext.js";
+import traversePath from "../../src/runtime/traversePath.js";
 
 // Get the fixture directory path relative to this module
-const fixturePath = path.join(fileURLToPath(import.meta.url), "..", "fixtures");
+const fixturePath = path.join(
+  fileURLToPath(import.meta.url),
+  "..",
+  "fixtures",
+  "traversePath",
+);
 const fixtures = new OrigamiFileMap(fixturePath);
 await fixtures.initializeGlobals();
 
 // Construct a sufficient execution context for files:
 const context = { parent: fixtures };
 
-describe("files: protocol", () => {
+describe("traversePath", () => {
   test("returns an existing file", async () => {
     const buffer = await executionContext.run(context, async () =>
-      files("folder/", "sub/", "data.json"),
+      traversePath("folder/", "sub/", "data.json"),
     );
     let text = new TextDecoder().decode(buffer);
     // Normalize line endings to handle Windows
@@ -27,14 +32,14 @@ describe("files: protocol", () => {
 
   test("unpacks a file if path ends in trailing slash", async () => {
     const data = await executionContext.run(context, async () =>
-      files("folder/", "sub/", "data.json/"),
+      traversePath("folder/", "sub/", "data.json/"),
     );
     assert.strictEqual(data.message, "Hello");
   });
 
   test("breaks apart arguments that contain slashes", async () => {
     const buffer = await executionContext.run(context, async () =>
-      files("folder/sub/data.json"),
+      traversePath("folder/sub/data.json"),
     );
     let text = new TextDecoder().decode(buffer);
     // Normalize line endings to handle Windows
@@ -44,7 +49,7 @@ describe("files: protocol", () => {
 
   test("handles Windows UNC paths", async () => {
     const map = await executionContext.run(context, async () =>
-      files("//server/share/"),
+      traversePath("//server/share/"),
     );
     // The path is only preserved on Windows (which is only where it will work),
     // but we want to be able to run the test on non-Windows platforms as well.
@@ -55,14 +60,14 @@ describe("files: protocol", () => {
 
   test("can traverse into an unpackable file", async () => {
     const message = await executionContext.run(context, async () =>
-      files("folder/", "sub/", "data.json/", "message"),
+      traversePath("folder/", "sub/", "data.json/", "message"),
     );
     assert.strictEqual(message, "Hello");
   });
 
   test("returns undefined for a non-existing file", async () => {
     const buffer = await executionContext.run(context, async () =>
-      files("folder/", "sub/", "non-existing.txt"),
+      traversePath("folder/", "sub/", "non-existing.txt"),
     );
     assert.strictEqual(buffer, undefined);
   });
@@ -71,7 +76,7 @@ describe("files: protocol", () => {
     await assert.rejects(
       async () =>
         await executionContext.run(context, async () =>
-          files("folder/", "non-existing/", "data.json"),
+          traversePath("folder/", "non-existing/", "data.json"),
         ),
       {
         name: "TraverseError",
@@ -81,14 +86,14 @@ describe("files: protocol", () => {
 
   test("returns an existing folder", async () => {
     const map = await executionContext.run(context, async () =>
-      files("folder/", "sub/"),
+      traversePath("folder/", "sub/"),
     );
     assert(map instanceof OrigamiFileMap);
   });
 
   test("returns a Map for a non-existent path as long as last key ends in a trailing slash", async () => {
     const map = await executionContext.run(context, async () =>
-      files("folder/", "non-existing/", "sub/"),
+      traversePath("folder/", "non-existing/", "sub/"),
     );
     assert(map instanceof OrigamiFileMap);
   });
