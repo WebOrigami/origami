@@ -22,23 +22,18 @@ export default async function explainTraverseError(code, error) {
     return null;
   }
 
-  if (position === 0) {
-    // Shouldn't happen; should have been a ReferenceError
+  // Try to identify the key that caused the error
+  const reconstructedKeys = reconstructTraversalKeys(code);
+  if (reconstructedKeys === null) {
+    // Shouldn't happen
     return null;
   }
 
-  // The key that caused the error is the one before the current position
-  const problemKey = error.keys[position - 1];
-  const reconstructedKeys = reconstructTraversalKeys(code);
-  let message;
-  if (reconstructedKeys === null) {
-    message = `Path traversal stopped unexpectedly at: ${problemKey}`;
-  } else {
-    const path = pathFromKeys(reconstructedKeys);
-    message = `Tried to traverse path:  ${path}\nStopped unexpectedly at: ${problemKey}`;
-  }
+  let problemKey = reconstructedKeys[position];
+  const path = pathFromKeys(reconstructedKeys);
+  let message = `Tried to traverse path:  ${path}\nStopped unexpectedly at: ${problemKey}`;
 
-  const key = trailingSlash.remove(keys[position - 1]);
+  const key = trailingSlash.remove(problemKey);
 
   if (
     error.message === "A path tried to unpack data that's already unpacked."

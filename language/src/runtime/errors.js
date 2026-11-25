@@ -173,17 +173,22 @@ export function reconstructTraversalKeys(code) {
       const keys = args.map((arg) => arg[1]);
       return keys;
 
+    case ops.scope:
+      return [args[1][1]];
+
     case ops.unpack:
       return reconstructTraversalKeys(code[1]);
   }
 
   if (op instanceof Array) {
     if (op[0] === ops.scope) {
-      // Simple scope reference
-      const key = args[0][1];
-      return [key];
-    } else if (op[0] === ops.cache) {
       // Traversal starting with external scope reference
+      const head = op[2][1];
+      const tail = args.map((code) => code[1]);
+      const keys = [head, ...tail];
+      return keys;
+    } else if (op[0] === ops.cache) {
+      // Traversal starting with to-be-deprecated cache operation
       const head = op[2][1][1];
       const tail = args.map((code) => code[1]);
       const keys = [head, ...tail];

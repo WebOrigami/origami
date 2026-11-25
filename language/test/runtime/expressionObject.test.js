@@ -18,8 +18,8 @@ describe("expressionObject", () => {
     });
 
     const entries = [
-      ["hello", [[[ops.scope], "upper"], "hello"]],
-      ["world", [[[ops.scope], "upper"], "world"]],
+      ["hello", [[ops.scope, "_test", "upper"], "hello"]],
+      ["world", [[ops.scope, "_test", "upper"], "world"]],
     ];
     const context = new SyncMap();
 

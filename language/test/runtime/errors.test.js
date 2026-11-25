@@ -250,12 +250,12 @@ evaluating: \x1B[31m1/\x1B[0m`,
 
     test("identifies when a value couldn't be unpacked due to a missing extension handler", async () => {
       const parent = new ObjectMap({
-        "file.foo": Uint8Array.from("hello"),
+        "file.foo": new TextEncoder().encode("hello"),
       });
       await assertError(
         `file.foo/bar`,
         `TraverseError: A path tried to unpack data but there's no unpack function.
-Tried to traverse path:  file.foo/
+Tried to traverse path:  file.foo/bar
 Stopped unexpectedly at: file.foo/
 The value couldn't be unpacked because no file extension handler is registered for ".foo".
 evaluating: \x1B[31mfile.foo/\x1B[0m`,

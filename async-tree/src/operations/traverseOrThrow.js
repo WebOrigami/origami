@@ -43,18 +43,7 @@ export default async function traverseOrThrow(maplike, ...keys) {
       if (typeof value.unpack === "function") {
         value = await value.unpack();
       } else {
-        const type =
-          typeof value === "string" || value instanceof String
-            ? "string"
-            : "binary";
-        throw new TraverseError(
-          `A path hit ${type} data that can't be unpacked.`,
-          {
-            lastValue,
-            keys,
-            position,
-          },
-        );
+        throwUnpackError(value, maplike, lastValue, keys, position);
       }
     }
 
@@ -88,21 +77,25 @@ export default async function traverseOrThrow(maplike, ...keys) {
     if (isUnpackable(value)) {
       value = await value.unpack();
     } else {
-      const message =
-        value === undefined
-          ? "A path tried to unpack a value that doesn't exist."
-          : isPacked(value)
-            ? "A path tried to unpack data but there's no unpack function."
-            : "A path tried to unpack data that's already unpacked.";
-      throw new TraverseError(message, {
-        head: maplike,
-        lastValue: value ?? lastValue,
-        keys,
-        position,
-      });
+      throwUnpackError(value, maplike, lastValue, keys, position);
     }
   }
 
   return value;
 }
 traverseOrThrow.unpackArgs = true;
+
+function throwUnpackError(value, maplike, lastValue, keys, position) {
+  const message =
+    value === undefined
+      ? "A path tried to unpack a value that doesn't exist."
+      : isPacked(value)
+        ? "A path tried to unpack data but there's no unpack function."
+        : "A path tried to unpack data that's already unpacked.";
+  throw new TraverseError(message, {
+    head: maplike,
+    lastValue: value ?? lastValue,
+    keys,
+    position,
+  });
+}
