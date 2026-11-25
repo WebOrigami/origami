@@ -136,26 +136,6 @@ async function mapForPathHead(keys) {
   return { parent, position, value };
 }
 
-// TODO: Remove
-async function oldFiles(...args) {
-  // If path begins with `~`, treat it relative to the home directory.
-  // Otherwise, treat it relative to the current container.
-  let relativePath = args.join(path.sep);
-  let basePath;
-  if (relativePath.startsWith("~")) {
-    basePath = os.homedir();
-    relativePath = relativePath.slice(2);
-  } else {
-    const parent = executionContext.getStore()?.parent;
-    basePath = parent.path;
-  }
-  const resolved = path.resolve(basePath, relativePath);
-
-  const result = new OrigamiFileMap(resolved);
-  await result.initializeGlobals();
-  return result;
-}
-
 // Expand any keys that contain slashes into separate keys. Preserve leading
 // slashes to keep UNC server name intact.
 function splitKeysWithSlashes(keys) {
