@@ -118,11 +118,7 @@ describe("optimize", () => {
         [markers.reference, "folder"],
       ]);
       const parent = {};
-      const expected = [
-        ops.cache,
-        "test.ori/_refs/folder",
-        [[ops.scope], [ops.literal, "folder"]],
-      ];
+      const expected = [ops.scope, "test.ori/_refs", [ops.literal, "folder"]];
       const globals = {};
       assertCodeEqual(
         optimize(code, { cachePath: "test.ori", globals, parent }),
@@ -140,11 +136,7 @@ describe("optimize", () => {
       ]);
       const parent = {};
       const expected = [
-        [
-          ops.cache,
-          "test.ori/_refs/src/",
-          [[ops.scope], [ops.literal, "src/"]],
-        ],
+        [ops.scope, "test.ori/_refs", [ops.literal, "src/"]],
         [ops.literal, "templates/"],
         [ops.literal, "page.ori"],
       ];
@@ -163,11 +155,7 @@ describe("optimize", () => {
       ]);
       const parent = {};
       const expected = [
-        [
-          ops.cache,
-          "test.ori/_refs/greet.ori/",
-          [ops.unpack, [[ops.scope], [ops.literal, "greet.ori"]]],
-        ],
+        [ops.unpack, [ops.scope, "test.ori/_refs", [ops.literal, "greet.ori"]]],
         "world",
       ];
       const globals = {};
@@ -195,11 +183,7 @@ describe("optimize", () => {
           "(posts)",
           [
             ops.getter,
-            [
-              ops.cache,
-              "/folder/test.ori/_refs/posts.txt",
-              [[ops.scope], [ops.literal, "posts.txt"]],
-            ],
+            [ops.scope, "/folder/test.ori/_refs", [ops.literal, "posts.txt"]],
           ],
         ],
       ];
@@ -316,11 +300,7 @@ describe("optimize", () => {
       const globals = {};
       const parent = {};
       const expected = [
-        [
-          ops.cache,
-          "test.ori/_refs/package.json/",
-          [[ops.scope], [ops.literal, "package.json/"]],
-        ],
+        [ops.scope, "test.ori/_refs", [ops.literal, "package.json/"]],
         [ops.literal, "name"],
       ];
       assertCodeEqual(

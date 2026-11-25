@@ -457,7 +457,7 @@ describe("ops", () => {
   });
 
   describe("ops.scope", () => {
-    test("returns the scope of the given tree", async () => {
+    test.only("finds the given key in scope and caches the result", async () => {
       const tree = new ObjectMap(
         {
           a: {
@@ -473,10 +473,12 @@ describe("ops", () => {
       const context = {
         parent: b,
       };
-      const scope = await executionContext.run(context, async () =>
-        ops.scope(),
+      const c = await executionContext.run(context, async () =>
+        ops.scope("a.ori/_refs/", "c"),
       );
-      assert.equal(await scope?.get("c"), 1);
+      assert.equal(await c, 1);
+      const cached = systemCache.get("a.ori/_refs/c");
+      assert.equal(await cached?.value, 1);
     });
   });
 

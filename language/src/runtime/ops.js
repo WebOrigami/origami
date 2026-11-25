@@ -9,11 +9,11 @@ import {
   getParent,
   isUnpackable,
   setParent,
-  SyncMap,
   Tree,
 } from "@weborigami/async-tree";
 import os from "node:os";
 import systemCache from "../cache/systemCache.js";
+import SystemCacheMap from "../cache/SystemCacheMap.js";
 import execute from "./execute.js";
 import executionContext from "./executionContext.js";
 import expressionObject from "./expressionObject.js";
@@ -538,15 +538,22 @@ export async function rootDirectory(...keys) {
 addOpLabel(rootDirectory, "«ops.rootDirectory»");
 
 /**
- * Return the scope of the current tree
+ * Find the indicated key in the current scope and caches the result.
+ *
+ * @param {string} baseCachePath
+ * @param {string} key
  */
-export async function scope() {
+export async function scope(baseCachePath, key) {
   const parent = executionContext.getStore().parent;
   if (!parent) {
-    return new SyncMap(); // empty scope if there's no parent
+    return undefined;
   }
   const scopeMap = new ScopeMap(parent);
-  return scopeMap;
+  const cachePath = SystemCacheMap.joinPath(baseCachePath, key);
+  const result = systemCache.getOrInsertComputedAsync(cachePath, async () =>
+    scopeMap.get(key),
+  );
+  return result;
 }
 addOpLabel(scope, "«ops.scope»");
 

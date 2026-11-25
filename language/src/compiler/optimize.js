@@ -239,10 +239,10 @@ function compoundReference(key, globals, locals, location) {
   return { type: headReference.type, result };
 }
 
-function externalReference(key, location) {
-  const scope = annotate([ops.scope], location);
+function externalReference(key, location, cachePath) {
+  const refCachePath = SystemCacheMap.joinPath(cachePath, "_refs");
   const literal = annotate([ops.literal, key], location);
-  return annotate([scope, literal], location);
+  return annotate([ops.scope, refCachePath, literal], location);
 }
 
 // Cache an explicit files: call (an angle bracket path, Windows path)
@@ -371,7 +371,7 @@ function paramReference(key, depth, location) {
   return annotate([params, literal], location);
 }
 
-function reference(code, globals, locals) {
+function reference(code, globals, locals, cachePath) {
   const key = keyFromCode(code);
   const location = code.location;
 
@@ -390,7 +390,7 @@ function reference(code, globals, locals) {
   // Must be external
   return {
     type: REFERENCE_EXTERNAL,
-    result: externalReference(key, location),
+    result: externalReference(key, location, cachePath),
   };
 }
 
@@ -398,14 +398,7 @@ function resolvePath(code, globals, locals, cachePath) {
   const args = code.slice(1);
   const [head, ...tail] = args;
 
-  let { type, result } = reference(head, globals, locals);
-
-  if (type === REFERENCE_EXTERNAL && cachePath) {
-    // External references should be cached
-    const headKey = keyFromCode(head);
-    const refCachePath = SystemCacheMap.joinPath(cachePath, "_refs", headKey);
-    result = annotate([ops.cache, refCachePath, result], head.location);
-  }
+  let { result } = reference(head, globals, locals, cachePath);
 
   if (tail.length > 0) {
     // If the result is a traversal, we can safely extend it

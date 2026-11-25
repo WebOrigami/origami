@@ -66,41 +66,6 @@ export default class SystemCacheMap extends SyncMap {
     return true;
   }
 
-  // Return all entries that directly or indirectly depend on the given path
-  visitDependentEntries(path, dependentEntries) {
-    // The entries that will be added for the given path
-    const pathAdditions = new Map();
-
-    const entry = this.get(path);
-    if (entry) {
-      // Path itself has an entry
-      pathAdditions.set(path, entry);
-    }
-
-    // Add all entries with child paths that implicitly depend on this entry
-    // REVIEW: This is expensive: it iterates through the entire cache, and is
-    // done for each node visit.
-    for (const [otherPath, otherEntry] of this.entries()) {
-      if (this.isChildPath(path, otherPath)) {
-        pathAdditions.set(otherPath, otherEntry);
-      }
-    }
-
-    // Add all the direct dependencies
-    for (const [dependentPath, dependentEntry] of pathAdditions.entries()) {
-      if (!dependentEntries.has(dependentPath)) {
-        // Didn't already have this path in the result set
-        dependentEntries.set(dependentPath, dependentEntry);
-        // Visit all entries downstream of this one
-        for (const downstreamPath of dependentEntry.downstreams ?? []) {
-          if (!dependentEntries.has(downstreamPath)) {
-            this.visitDependentEntries(downstreamPath, dependentEntries);
-          }
-        }
-      }
-    }
-  }
-
   // REVIEW: This doesn't have the correct signature for getOrInsertComputed,
   // because it returns the entry `value` property, not the actual entry.
   getOrInsertComputed(path, computeFn) {
@@ -268,6 +233,41 @@ export default class SystemCacheMap extends SyncMap {
       // Add the upstream entry to the downstream entry's upstreams
       downstreamEntry.upstreams ??= new Set();
       downstreamEntry.upstreams.add(upstreamPath);
+    }
+  }
+
+  // Return all entries that directly or indirectly depend on the given path
+  visitDependentEntries(path, dependentEntries) {
+    // The entries that will be added for the given path
+    const pathAdditions = new Map();
+
+    const entry = this.get(path);
+    if (entry) {
+      // Path itself has an entry
+      pathAdditions.set(path, entry);
+    }
+
+    // Add all entries with child paths that implicitly depend on this entry
+    // REVIEW: This is expensive: it iterates through the entire cache, and is
+    // done for each node visit.
+    for (const [otherPath, otherEntry] of this.entries()) {
+      if (this.isChildPath(path, otherPath)) {
+        pathAdditions.set(otherPath, otherEntry);
+      }
+    }
+
+    // Add all the direct dependencies
+    for (const [dependentPath, dependentEntry] of pathAdditions.entries()) {
+      if (!dependentEntries.has(dependentPath)) {
+        // Didn't already have this path in the result set
+        dependentEntries.set(dependentPath, dependentEntry);
+        // Visit all entries downstream of this one
+        for (const downstreamPath of dependentEntry.downstreams ?? []) {
+          if (!dependentEntries.has(downstreamPath)) {
+            this.visitDependentEntries(downstreamPath, dependentEntries);
+          }
+        }
+      }
     }
   }
 }
