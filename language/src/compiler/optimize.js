@@ -149,10 +149,10 @@ export default function optimize(code, options = {}) {
     code.location,
   );
 
-  if (optimized[0] instanceof Array && optimized[0][0] === ops.cache) {
-    // An external reference in function position: add implied unpack
-    optimized = impliedUnpack(optimized);
-  }
+  // if (optimized[0] instanceof Array) {
+  //   // An external reference in function position implies unpacking
+  //   optimized = impliedUnpack(optimized);
+  // }
 
   return annotate(optimized, code.location);
 }
@@ -291,8 +291,7 @@ function globalReference(key, globals) {
 }
 
 // The code starts with a cached external reference in function position. If the
-// cache path doesn't end in a trailing slash, wrap the external reference in an
-// unpack operation.
+// key for the file doesn't end in a trailing slash, add one to force unpacking.
 function impliedUnpack(code) {
   const [opCache, cachePath, refCode] = code[0];
   if (cachePath.endsWith("/")) {
