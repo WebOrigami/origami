@@ -132,11 +132,14 @@ export default class FileMap extends SyncMap {
     try {
       dirEntries = fs.readdirSync(this.path, { withFileTypes: true });
     } catch (/** @type {any} */ error) {
-      if (error.code !== "ENOENT") {
+      if (error.code === "ENOENT") {
+        // Directory doesn't exist yet
+        throw new Error(
+          `Can't get the keys of a directory that doesn't exist: ${this.path}`,
+        );
+      } else {
         throw error;
       }
-      // Directory doesn't exist yet; treat as empty
-      dirEntries = [];
     }
 
     // Add slashes to directory names.

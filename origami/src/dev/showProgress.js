@@ -43,6 +43,7 @@ function wrapWithProgress(target, counts) {
   const iteratorKey = isSync ? Symbol.iterator : Symbol.asyncIterator;
 
   const progressTree = Object.assign(new MapClass(), {
+    clear: target.clear.bind(target),
     delete: target.delete.bind(target),
     keys: target.keys.bind(target),
     [iteratorKey]: target[iteratorKey].bind(target),
