@@ -37,7 +37,7 @@ export default async function execute(context) {
     throw error;
   }
 
-  if (isUnpackable(fn)) {
+  while (isUnpackable(fn)) {
     // Unpack the object and use the result as the function or map.
     try {
       fn = await fn.unpack();
