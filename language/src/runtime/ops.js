@@ -164,6 +164,26 @@ export function exponentiation(a, b) {
 addOpLabel(exponentiation, "«ops.exponentiation»");
 
 /**
+ * Cache and return a new file map for the given path.
+ *
+ * The path will always be some form of absolutely-determined path: home
+ * directory, root path, drive letter, UNC path.
+ *
+ * @param {string} path
+ */
+export async function files(path) {
+  // Absolutely-determined paths are the same for all project source files, so
+  // the file path is the cache path.
+  const result = systemCache.getOrInsertComputedAsync(path, async () => {
+    const tree = new OrigamiFileMap(path);
+    await tree.initializeGlobals();
+    return tree;
+  });
+  return result;
+}
+addOpLabel(files, "«ops.files»");
+
+/**
  * Flatten the values of the given trees by one level.
  *
  * @param {...any} args

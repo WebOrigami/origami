@@ -6,6 +6,7 @@ import systemCache from "../../src/cache/systemCache.js";
 import execute from "../../src/runtime/execute.js";
 import executionContext from "../../src/runtime/executionContext.js";
 import { ops } from "../../src/runtime/internal.js";
+import OrigamiFileMap from "../../src/runtime/OrigamiFileMap.js";
 import { createCode } from "../compiler/codeHelpers.js";
 
 describe("ops", () => {
@@ -151,6 +152,13 @@ describe("ops", () => {
     test("returns the second value if the first is undefined", async () => {
       assert.strictEqual(await ops.defaultValue(undefined, trueFn), true);
     });
+  });
+
+  test("ops.files creates a file map for the given path", async () => {
+    const path = "/folder";
+    const tree = await ops.files(path);
+    assert(tree instanceof OrigamiFileMap);
+    assert.equal(tree.path, path);
   });
 
   describe("ops.flat", () => {
